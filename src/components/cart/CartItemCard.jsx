@@ -63,8 +63,8 @@ const CartItemCard = ({ item }) => {
     <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-shadow">
       {/* Compact savings banner */}
       {savings > 0 && (
-        <div className="bg-green-50 border-b border-green-100 px-4 py-1.5 flex items-center gap-1.5">
-          <span className="text-[10px] md:text-xs text-green-700 font-medium">
+        <div className="bg-success-muted border-b border-success-border px-4 py-1.5 flex items-center gap-1.5">
+          <span className="text-[10px] md:text-xs text-success-muted-foreground font-medium">
             You save ₹{savings.toLocaleString("en-IN")} vs daily pricing
           </span>
         </div>
@@ -165,9 +165,9 @@ const CartItemCard = ({ item }) => {
             )}
             <div className="flex justify-between text-xs">
               <span className="text-muted-foreground">Deposit</span>
-              <span className="font-medium">₹{item.deposit.toLocaleString("en-IN")} <span className="text-green-600 text-[10px]">refundable</span></span>
+              <span className="font-medium">₹{item.deposit.toLocaleString("en-IN")} <span className="text-success text-[10px]">refundable</span></span>
             </div>
-            <div className="flex justify-between text-xs text-green-600">
+            <div className="flex justify-between text-xs text-success">
               <span>Delivery + Install + Maintenance</span>
               <span className="font-medium">Free</span>
             </div>
@@ -284,9 +284,9 @@ const CartItemCard = ({ item }) => {
               </div>
             )}
             <div className="text-xs text-muted-foreground">
-              + ₹{item.deposit.toLocaleString("en-IN")} deposit <span className="text-green-600">refundable</span>
+              + ₹{item.deposit.toLocaleString("en-IN")} deposit <span className="text-success">refundable</span>
             </div>
-            <div className="flex items-center justify-end gap-1 text-[10px] text-green-600 mt-1">
+            <div className="flex items-center justify-end gap-1 text-[10px] text-success mt-1">
               <CheckCircle className="w-3 h-3" />
               Free Delivery + Installation
             </div>
@@ -328,7 +328,7 @@ const CartItemCard = ({ item }) => {
                         }`}
                       >
                         {is12m && (
-                          <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-green-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                          <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-success text-success-foreground text-[8px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap">
                             Best Value
                           </span>
                         )}

@@ -2,7 +2,7 @@ import { CheckCircle2, Phone, MessageCircle, HelpCircle, Download, FileText, Che
 import { Link } from "react-router-dom";
 
 export const IncludedBenefits = () => (
-  <div className="bg-[#2EB361] rounded-[24px] p-7 text-white shadow-xl shadow-green-600/10 mb-8 relative overflow-hidden">
+  <div className="bg-success rounded-[24px] p-7 text-white shadow-xl shadow-success/20 mb-8 relative overflow-hidden">
     <div className="relative z-10">
       <h4 className="text-[15px] font-bold mb-5 uppercase tracking-[0.1em] text-white/90">
         INCLUDED WITH YOUR RENTAL

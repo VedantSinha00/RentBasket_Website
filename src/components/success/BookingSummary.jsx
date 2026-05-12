@@ -55,7 +55,7 @@ const BookingSummary = ({ orderData }) => {
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground font-medium flex items-center gap-1.5">
               Security Deposit
-              <ShieldCheck className="w-3.5 h-3.5 text-green-600" />
+              <ShieldCheck className="w-3.5 h-3.5 text-success" />
             </span>
             <span className="font-bold">₹{totalDeposit.toLocaleString("en-IN")}</span>
           </div>
@@ -75,13 +75,13 @@ const BookingSummary = ({ orderData }) => {
               <span className="text-xs text-muted-foreground flex items-center gap-2 font-medium">
                 <Truck className="w-3.5 h-3.5" /> Delivery & Installation
               </span>
-              <span className="text-[11px] font-bold text-green-600 uppercase tracking-widest">Free</span>
+              <span className="text-[11px] font-bold text-success uppercase tracking-widest">Free</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground flex items-center gap-2 font-medium">
                 <Wrench className="w-3.5 h-3.5" /> Maintenance & Support
               </span>
-              <span className="text-[11px] font-bold text-green-600 uppercase tracking-widest">Included</span>
+              <span className="text-[11px] font-bold text-success uppercase tracking-widest">Included</span>
             </div>
           </div>
 
@@ -131,7 +131,7 @@ const BookingSummary = ({ orderData }) => {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Invoice</span>
-                <span className="font-medium text-green-600 text-xs">Sent to email</span>
+                <span className="font-medium text-success text-xs">Sent to email</span>
               </div>
             </div>
           </div>

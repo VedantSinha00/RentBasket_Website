@@ -58,6 +58,13 @@ export default {
         coral: "hsl(var(--coral))",
         gold: "hsl(var(--gold))",
         cream: "hsl(var(--cream))",
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+          muted: "hsl(var(--success-muted))",
+          "muted-foreground": "hsl(var(--success-muted-foreground))",
+          border: "hsl(var(--success-border))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

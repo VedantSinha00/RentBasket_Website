@@ -118,7 +118,7 @@ const OrderSummary = () => {
 
           {/* Discount */}
           {couponApplied && (
-            <div className="flex items-center justify-between text-green-600">
+            <div className="flex items-center justify-between text-success">
               <span className="text-sm flex items-center gap-1">
                 <Tag className="w-3.5 h-3.5" />
                 Coupon Discount
@@ -138,7 +138,7 @@ const OrderSummary = () => {
                   <Icon className="w-3.5 h-3.5" />
                   {label}
                 </span>
-                <span className="inline-flex items-center gap-1 text-sm font-medium text-green-600">
+                <span className="inline-flex items-center gap-1 text-sm font-medium text-success">
                   <CheckCircle className="w-3.5 h-3.5" />
                   Free
                 </span>
@@ -149,7 +149,7 @@ const OrderSummary = () => {
                 <Wrench className="w-3.5 h-3.5" />
                 Maintenance
               </span>
-              <span className="inline-flex items-center gap-1 text-sm font-medium text-green-600">
+              <span className="inline-flex items-center gap-1 text-sm font-medium text-success">
                 <CheckCircle className="w-3.5 h-3.5" />
                 Included
               </span>
@@ -166,7 +166,7 @@ const OrderSummary = () => {
             </span>
           </div>
           <p className="text-[10px] md:text-xs text-muted-foreground mt-1.5 flex items-start gap-1">
-            <ShieldCheck className="w-3 h-3 mt-0.5 flex-shrink-0 text-green-600" />
+            <ShieldCheck className="w-3 h-3 mt-0.5 flex-shrink-0 text-success" />
             Security deposit is fully refundable as per rental terms.
           </p>
         </div>
@@ -175,8 +175,8 @@ const OrderSummary = () => {
         <div className="pt-4 border-t border-border/50">
           <p className="text-xs font-medium text-muted-foreground mb-2">Have a coupon?</p>
           {couponApplied ? (
-            <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-2.5">
-              <div className="flex items-center gap-2 text-green-700 text-sm font-medium">
+            <div className="flex items-center justify-between bg-success-muted border border-success-border rounded-xl px-4 py-2.5">
+              <div className="flex items-center gap-2 text-success-muted-foreground text-sm font-medium">
                 <Tag className="w-4 h-4" />
                 RENTBASKET10 applied
               </div>
@@ -210,11 +210,7 @@ const OrderSummary = () => {
         {/* CTAs */}
         <div className="space-y-2.5 pt-2">
           <button
-            className="btn-primary w-full py-3.5 text-base font-semibold flex items-center justify-center gap-2"
-            style={{
-              background:
-                "linear-gradient(89.03deg, #D72F26 -14.8%, #EF1040 50.11%, #FECC87 129.44%)",
-            }}
+            className="btn-gradient-coral w-full py-3.5 text-base font-semibold flex items-center justify-center gap-2"
             onClick={() => {
               toast.success("Proceeding to checkout...");
               navigate("/checkout");

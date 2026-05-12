@@ -73,7 +73,7 @@ const HowItWorks = () => {
   });
 
   return (
-    <section className="section-container py-12 md:py-20 overflow-hidden">
+    <section className="section-container py-12 md:py-20 overflow-hidden bg-background">
       <div className="flex flex-col w-full max-w-3xl mx-auto">
         
         {/* Header Section */}

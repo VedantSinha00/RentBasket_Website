@@ -8,7 +8,7 @@ const Header = () => {
   const cartCount = getCartItemCount();
 
   return (
-    <header className="sticky top-0 z-50 bg:transparent  md:bg-background/95 md:backdrop-blur-sm md:border-b border-border">
+    <header className="sticky top-0 z-50 bg-transparent md:bg-background/95 md:backdrop-blur-sm md:border-b border-border">
       <div className="section-container" style={{ width: "100%" }}>
         <div
           className="flex items-center justify-between h-16 md:h-20"

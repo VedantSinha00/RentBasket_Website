@@ -214,7 +214,7 @@ const CheckoutForm = ({ formData, setFormData }) => {
       </CheckoutCard>
 
       {/* 4. Included Benefits Trust Card */}
-      <div className="bg-green-600 rounded-2xl p-5 md:p-6 text-white shadow-lg shadow-green-600/20 mb-8 relative overflow-hidden">
+      <div className="bg-success rounded-2xl p-5 md:p-6 text-white shadow-lg shadow-success/25 mb-8 relative overflow-hidden">
         <div className="relative z-10">
           <h4 className="text-base font-bold mb-4 flex items-center gap-2">
             <CheckCircle2 className="w-5 h-5" />
@@ -230,8 +230,8 @@ const CheckoutForm = ({ formData, setFormData }) => {
               "Relocation Support",
             ].map((benefit) => (
               <div key={benefit} className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-green-200" />
-                <span className="text-xs font-medium text-green-50 uppercase tracking-wide">{benefit}</span>
+                <CheckCircle2 className="w-3.5 h-3.5 text-white/70" />
+                <span className="text-xs font-medium text-white/90 uppercase tracking-wide">{benefit}</span>
               </div>
             ))}
           </div>

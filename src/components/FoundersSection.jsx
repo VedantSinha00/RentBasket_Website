@@ -3,11 +3,10 @@ import founderHardik from "@/assets/Group 65.png";
 
 const FoundersSection = () => {
   return (
-    <section className="section-container py-12 md:py-20">
+    <section className="section-container py-12 md:py-20 bg-cream/50">
       <div
-        className="flex lg:hidden text-center font-[500] text-[32px] leading-[100%] tracking-normal"
+        className="flex lg:hidden text-center font-medium text-[32px] leading-[100%] tracking-normal font-display text-foreground max-w-2xl"
         style={{
-          fontFamily: "Sans Atwic Modern Trial",
           width: "80%",
           margin: "auto",
           marginBottom: "5%",

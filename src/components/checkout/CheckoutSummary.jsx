@@ -93,7 +93,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
                     <Icon className="w-3 h-3" />
                     {label}
                   </span>
-                  <span className="text-[11px] font-bold text-green-600 flex items-center gap-1 uppercase tracking-wider">
+                  <span className="text-[11px] font-bold text-success flex items-center gap-1 uppercase tracking-wider">
                     <CheckCircle className="w-3 h-3" />
                     Free
                   </span>
@@ -104,7 +104,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
                   <Wrench className="w-3 h-3" />
                   Maintenance
                 </span>
-                <span className="text-[11px] font-bold text-green-600 uppercase tracking-wider">Included</span>
+                <span className="text-[11px] font-bold text-success uppercase tracking-wider">Included</span>
               </div>
             </div>
           </div>
@@ -117,7 +117,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
                 ₹{grandTotal.toLocaleString("en-IN")}
               </span>
             </div>
-            <div className="flex items-center gap-1.5 text-green-600 bg-green-50 px-2.5 py-1.5 rounded-xl border border-green-100 mt-3 shadow-sm">
+            <div className="flex items-center gap-1.5 text-success bg-success-muted px-2.5 py-1.5 rounded-xl border border-success-border mt-3 shadow-sm">
               <ShieldCheck className="w-4 h-4 flex-shrink-0" />
               <p className="text-[10px] font-bold leading-tight uppercase tracking-wider">
                 Full Security Deposit Refundable
@@ -144,10 +144,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
           <button
             onClick={onPlaceOrder}
             disabled={isProcessing}
-            style={{
-              background: "linear-gradient(89.03deg, #D72F26 -14.8%, #EF1040 50.11%, #FECC87 129.44%)",
-            }}
-            className="w-full py-4 rounded-2xl text-white font-black text-lg shadow-lg shadow-primary/30 transition-all hover:shadow-primary/40 active:scale-[0.98] disabled:opacity-70 disabled:grayscale flex items-center justify-center gap-3 group"
+            className="gradient-coral w-full py-4 rounded-2xl font-black text-lg shadow-lg shadow-primary/30 transition-all hover:shadow-primary/40 hover:opacity-95 active:scale-[0.98] disabled:opacity-70 disabled:grayscale flex items-center justify-center gap-3 group"
           >
             {isProcessing ? "Processing..." : "Confirm & Pay Now"}
             {!isProcessing && <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">→</div>}

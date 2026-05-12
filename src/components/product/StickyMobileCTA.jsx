@@ -27,10 +27,7 @@ const StickyMobileCTA = ({ product, selectedDuration, onAddToCart }) => {
         {/* CTA */}
         <button
           onClick={onAddToCart}
-          className="btn-primary px-6 py-2.5 text-sm font-semibold whitespace-nowrap flex-shrink-0"
-          style={{
-            background: "linear-gradient(89.03deg, #D72F26 -14.8%, #EF1040 50.11%, #FECC87 129.44%)",
-          }}
+          className="btn-gradient-coral px-6 py-2.5 text-sm font-semibold whitespace-nowrap flex-shrink-0"
         >
           Add to Cart
         </button>

@@ -5,7 +5,7 @@ const DownloadSection = () => {
   return (
     <section
       id="download"
-      className="relative overflow-hidden mt-6 pt-0"
+      className="relative overflow-hidden mt-6 pt-0 bg-background"
       style={{
         background: "transparent",
       }}
@@ -39,7 +39,7 @@ const DownloadSection = () => {
                   marginBottom: "-30px",
                 }}
               />
-              <h1 className="text-4xl font-bold tracking-tight text-black md:text-5xl lg:text-5xl mt-0 font-sans">
+              <h1 className="font-display text-4xl font-bold tracking-tight text-black md:text-5xl lg:text-5xl mt-0">
                 DOWNLOAD TODAY
               </h1>
             </div>
@@ -63,7 +63,7 @@ const DownloadSection = () => {
           <div className="relative z-20 pb-8 mb-32">
             <div className="container mx-auto px-6">
               <div className="flex flex-col items-center">
-                <h1 className="font-sans text-3xl font-bold tracking-tight text-black text-center">
+                <h1 className="font-display text-3xl font-bold tracking-tight text-black text-center">
                   DOWNLOAD TODAY
                 </h1>
               </div>
@@ -73,10 +73,7 @@ const DownloadSection = () => {
 
         {/* Bottom Red Section - Reduced height on mobile */}
         <div
-          className="relative pb-16 pt-5 lg:pt-20 md:pb-20 md:pt-12"
-          style={{
-            background: "linear-gradient(to right, #D72F26, #B02020)",
-          }}
+          className="relative pb-16 pt-5 lg:pt-20 md:pb-20 md:pt-12 bg-gradient-download"
         >
           <div className="container mx-auto px-6">
             {/* Mobile: Content below phone and text */}
@@ -89,8 +86,8 @@ const DownloadSection = () => {
                 <p className="hidden lg:flex text-lg md:text-xl font-semibold text-transparent  lg:text-white md:text-2xl">
                   Get exclusive Deals
                 </p>
-                <p className="text-lg md:text-xl font-semibold text-transparent  lg:text-white md:text-2xl">
-                  Other features here.
+                <p className="text-lg md:text-xl font-semibold text-transparent lg:text-white md:text-2xl">
+                  Track orders and renewals in one place.
                 </p>
               </div>
 

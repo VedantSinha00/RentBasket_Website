@@ -219,7 +219,7 @@ const CrossSellStrip = () => {
                     <span className="text-[10px] font-semibold text-muted-foreground">{product.rating}</span>
                   </div>
                 </div>
-                <div className="mt-2 text-[9px] text-green-700 font-bold bg-green-50 px-1.5 py-0.5 rounded inline-block border border-green-100">
+                <div className="mt-2 text-[9px] text-success-muted-foreground font-bold bg-success-muted px-1.5 py-0.5 rounded inline-block border border-success-border">
                   <s className="text-muted-foreground font-medium mr-1 opacity-70">₹{product.deposit}</s> ₹0 Deposit
                 </div>
               </div>

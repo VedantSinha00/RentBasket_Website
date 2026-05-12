@@ -19,7 +19,7 @@ const CheckoutHeader = () => {
           </Link>
 
           {/* Secure Trust Badge (Center-rightish on desktop) */}
-          <div className="hidden md:flex items-center gap-2 text-green-600 bg-green-50 px-3 py-1.5 rounded-full border border-green-100">
+          <div className="hidden md:flex items-center gap-2 text-success bg-success-muted px-3 py-1.5 rounded-full border border-success-border">
             <ShieldCheck className="w-4 h-4" />
             <span className="text-xs font-bold uppercase tracking-wider">Secure Checkout</span>
           </div>

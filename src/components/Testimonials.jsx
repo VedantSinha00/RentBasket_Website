@@ -17,7 +17,7 @@ const TestimonialCard = ({ className, content, showHighlight = false }) => (
     <p
       className={`text-[13px] md:text-sm leading-relaxed text-gray-600 font-medium ${
         showHighlight
-          ? "underline decoration-[#8B5CF6] decoration-2 underline-offset-4"
+          ? "underline decoration-primary decoration-2 underline-offset-4"
           : ""
       }`}
     >
@@ -35,9 +35,9 @@ const Testimonials = () => {
     "RentBasket is a savior in terms of furnishing and maintaining the aesthetics of the house. Thanks to the team at RentBasket for always being around to solve our issues quickly, ever faced :) Definitely recommend!";
 
   return (
-    <section className="relative pb-6 lg:pb-28 px-6 bg-white overflow-hidden">
+    <section className="relative pb-6 lg:pb-28 px-6 bg-cream/50 overflow-hidden">
       <div className="max-w-7xl mx-auto flex flex-col items-center">
-        <h2 className="text-4xl md:text-6xl font-bold text-center mb-0 lg:mb-12 text-black tracking-tight">
+        <h2 className="font-display text-4xl md:text-6xl font-bold text-center mb-0 lg:mb-12 text-black tracking-tight">
           Loved by Customers
         </h2>
 

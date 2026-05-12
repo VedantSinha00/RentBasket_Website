@@ -16,11 +16,7 @@ const CatalogCTA = () => {
               href="https://www.rentbasket.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary py-3 px-7 text-sm md:text-base"
-              style={{
-                background:
-                  "linear-gradient(89.03deg, #D72F26 -14.8%, #EF1040 50.11%, #FECC87 129.44%)",
-              }}
+              className="btn-gradient-coral py-3 px-7 text-sm md:text-base"
             >
               Get Home Setup Quote
             </a>

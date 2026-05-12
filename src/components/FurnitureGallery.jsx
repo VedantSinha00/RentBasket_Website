@@ -92,13 +92,15 @@ const FurnitureGallery = () => {
   const [visibleSlides, setVisibleSlides] = useState(1);
   const slideInterval = useRef(null);
   const containerRef = useRef(null);
-  const isMobile = useRef(false);
+  const [isScrollLayout, setIsScrollLayout] = useState(
+    () => typeof window !== "undefined" && window.innerWidth < 1024,
+  );
 
   const items = categoryData[activeCategory] || categoryData.Furniture;
 
   // Scroll to specific slide (for mobile)
   const scrollToSlide = (index) => {
-    if (containerRef.current && isMobile.current) {
+    if (containerRef.current && isScrollLayout) {
       const container = containerRef.current;
       const slide = container.children[0];
       if (slide) {
@@ -121,16 +123,16 @@ const FurnitureGallery = () => {
       const width = window.innerWidth;
       if (width >= 1280) {
         setVisibleSlides(3);
-        isMobile.current = false;
+        setIsScrollLayout(false);
       } else if (width >= 1024) {
         setVisibleSlides(3);
-        isMobile.current = false;
+        setIsScrollLayout(false);
       } else if (width >= 768) {
         setVisibleSlides(2.5);
-        isMobile.current = true;
+        setIsScrollLayout(true);
       } else {
         setVisibleSlides(1.5);
-        isMobile.current = true;
+        setIsScrollLayout(true);
       }
 
       // Reset auto-scroll when switching between mobile/desktop
@@ -149,7 +151,7 @@ const FurnitureGallery = () => {
         if (slideInterval.current) clearInterval(slideInterval.current);
 
         slideInterval.current = setInterval(() => {
-          if (isMobile.current) {
+          if (isScrollLayout) {
             // Mobile auto-scroll logic
             if (containerRef.current) {
               const container = containerRef.current;
@@ -194,25 +196,25 @@ const FurnitureGallery = () => {
     return () => {
       if (slideInterval.current) clearInterval(slideInterval.current);
     };
-  }, [autoScroll, items.length, activeCategory, visibleSlides, isMobile.current]);
+  }, [autoScroll, items.length, activeCategory, visibleSlides, isScrollLayout]);
 
   // Reset slide when category changes
   useEffect(() => {
     setCurrentSlide(0);
     // Reset scroll position for mobile
-    if (containerRef.current && isMobile.current) {
+    if (containerRef.current && isScrollLayout) {
       containerRef.current.scrollTo({
         left: 0,
         behavior: 'smooth'
       });
     }
-  }, [activeCategory]);
+  }, [activeCategory, isScrollLayout]);
 
   // Navigation handlers
   const nextSlide = () => {
     setAutoScroll(false);
 
-    if (!isMobile.current) {
+    if (!isScrollLayout) {
       const maxSlide = Math.max(0, items.length - Math.floor(visibleSlides));
       setCurrentSlide(prev => prev >= maxSlide ? 0 : prev + 1);
     } else {
@@ -252,7 +254,7 @@ const FurnitureGallery = () => {
   const prevSlide = () => {
     setAutoScroll(false);
 
-    if (!isMobile.current) {
+    if (!isScrollLayout) {
       const maxSlide = Math.max(0, items.length - Math.floor(visibleSlides));
       setCurrentSlide(prev => prev <= 0 ? maxSlide : prev - 1);
     } else {
@@ -291,7 +293,7 @@ const FurnitureGallery = () => {
 
   // Calculate transform for desktop carousel
   const getTransformValue = () => {
-    if (typeof window === 'undefined' || isMobile.current) return 'translateX(0)';
+    if (typeof window === 'undefined' || isScrollLayout) return 'translateX(0)';
 
     let slideWidth, gap;
     if (window.innerWidth >= 1280) {
@@ -310,7 +312,7 @@ const FurnitureGallery = () => {
 
   // Update current slide based on scroll position for mobile
   const handleScroll = () => {
-    if (containerRef.current && isMobile.current) {
+    if (containerRef.current && isScrollLayout) {
       const container = containerRef.current;
       const scrollLeft = container.scrollLeft;
       const slideWidth = container.children[0]?.offsetWidth || 0;
@@ -323,8 +325,8 @@ const FurnitureGallery = () => {
   };
 
   return (
-    <section className="py-6 md:py-10">
-      <div className={`mx-auto ${isMobile.current ? 'w-full px-4' : 'w-[80%] max-w-7xl'}`}>
+    <section className="py-6 md:py-10 bg-cream/50">
+      <div className={`mx-auto ${isScrollLayout ? 'w-full px-4' : 'w-[80%] max-w-7xl'}`}>
         {/* Category Tabs - Moved to top */}
         <div className="flex justify-center mb-6 md:mb-8">
           <div className="flex gap-4 md:gap-8 px-4 md:px-0 w-full max-w-4xl justify-center overflow-x-auto pb-2">
@@ -346,7 +348,7 @@ const FurnitureGallery = () => {
         {/* Carousel Container */}
         <div className="relative">
           {/* Mobile & Tablet - Scrollable Container */}
-          {isMobile.current && (
+          {isScrollLayout && (
             <div className="relative">
               <div
                 ref={containerRef}
@@ -404,7 +406,7 @@ const FurnitureGallery = () => {
           )}
 
           {/* Desktop Carousel */}
-          {!isMobile.current && (
+          {!isScrollLayout && (
             <div className="relative overflow-hidden">
               <div
                 className="flex gap-6 transition-transform duration-500 ease-out"
@@ -461,7 +463,7 @@ const FurnitureGallery = () => {
               <button
                 key={index}
                 onClick={() => {
-                  if (!isMobile.current) {
+                  if (!isScrollLayout) {
                     setCurrentSlide(index);
                     setAutoScroll(false);
                     setTimeout(() => setAutoScroll(true), 10000);

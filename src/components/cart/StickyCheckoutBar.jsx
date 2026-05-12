@@ -37,11 +37,7 @@ const StickyCheckoutBar = () => {
               description: "Checkout page will be available soon",
             })
           }
-          className="btn-primary px-6 py-2.5 text-sm font-semibold whitespace-nowrap flex-shrink-0 inline-flex items-center gap-1.5"
-          style={{
-            background:
-              "linear-gradient(89.03deg, #D72F26 -14.8%, #EF1040 50.11%, #FECC87 129.44%)",
-          }}
+          className="btn-gradient-coral px-6 py-2.5 text-sm font-semibold whitespace-nowrap flex-shrink-0 inline-flex items-center gap-1.5"
         >
           <Lock className="w-3.5 h-3.5" />
           Checkout

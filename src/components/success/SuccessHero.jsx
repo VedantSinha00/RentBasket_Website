@@ -6,8 +6,8 @@ const SuccessHero = ({ orderData }) => {
     <div className="w-full flex flex-col items-center text-center py-8">
       {/* Checkmark Illustration */}
       <div className="relative mb-6">
-        <div className="absolute inset-0 bg-green-500 blur-[32px] rounded-full opacity-20" />
-        <div className="w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-xl shadow-green-500/20 relative z-10">
+        <div className="absolute inset-0 bg-success blur-[32px] rounded-full opacity-20" />
+        <div className="w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-success-muted to-success rounded-full flex items-center justify-center shadow-xl shadow-success/25 relative z-10">
           <CheckCircle2 className="w-10 h-10 md:w-12 md:h-12 text-white" />
         </div>
       </div>
@@ -34,7 +34,7 @@ const SuccessHero = ({ orderData }) => {
           <div className="col-span-2 pt-4 border-t border-border/50 flex items-center justify-between">
             <div>
               <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Payment Status</p>
-              <div className="flex items-center gap-1.5 text-green-600">
+              <div className="flex items-center gap-1.5 text-success">
                 <CheckCircle2 className="w-4 h-4" />
                 <span className="text-sm font-bold">Successful</span>
               </div>

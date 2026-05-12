@@ -32,11 +32,7 @@ const CatalogHero = () => {
               href="https://www.rentbasket.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary text-sm py-2.5 px-5"
-              style={{
-                background:
-                  "linear-gradient(89.03deg, #D72F26 -14.8%, #EF1040 50.11%, #FECC87 129.44%)",
-              }}
+              className="btn-gradient-coral text-sm py-2.5 px-5"
             >
               Complete Home Setup
             </a>
@@ -74,11 +70,7 @@ const CatalogHero = () => {
                 href="https://www.rentbasket.com/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-primary py-3 px-7"
-                style={{
-                  background:
-                    "linear-gradient(89.03deg, #D72F26 -14.8%, #EF1040 50.11%, #FECC87 129.44%)",
-                }}
+                className="btn-gradient-coral py-3 px-7"
               >
                 Complete Home Setup
               </a>

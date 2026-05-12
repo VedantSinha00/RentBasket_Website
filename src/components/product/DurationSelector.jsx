@@ -42,7 +42,7 @@ const DurationSelector = ({ product, selectedDuration, onDurationChange }) => {
                       ? "bg-primary text-primary-foreground"
                       : badge === "Most Popular"
                       ? "bg-gold text-white"
-                      : "bg-green-500 text-white"
+                      : "bg-primary text-primary-foreground"
                   }`}
                 >
                   {badge}

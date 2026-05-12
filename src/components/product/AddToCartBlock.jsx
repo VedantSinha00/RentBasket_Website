@@ -91,10 +91,7 @@ const AddToCartBlock = ({ product, selectedDuration, quantity, onQuantityChange 
       <div className="flex flex-col gap-2.5">
         <button
           onClick={handleAddToCart}
-          className="btn-primary w-full py-3.5 text-base font-semibold"
-          style={{
-            background: "linear-gradient(89.03deg, #D72F26 -14.8%, #EF1040 50.11%, #FECC87 129.44%)",
-          }}
+          className="btn-gradient-coral w-full py-3.5 text-base font-semibold"
         >
           Add to Cart
         </button>

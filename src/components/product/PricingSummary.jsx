@@ -47,7 +47,7 @@ const PricingSummary = ({ product, selectedDuration, quantity }) => {
           </span>
           <span className="text-sm font-medium text-foreground">
             ₹{deposit.toLocaleString("en-IN")}
-            <span className="text-xs text-green-600 ml-1">refundable</span>
+            <span className="text-xs text-success ml-1">refundable</span>
           </span>
         </div>
 
@@ -56,7 +56,7 @@ const PricingSummary = ({ product, selectedDuration, quantity }) => {
           {["Delivery", "Installation", "Maintenance"].map((item) => (
             <div key={item} className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">{item}</span>
-              <span className="inline-flex items-center gap-1 text-sm font-medium text-green-600">
+              <span className="inline-flex items-center gap-1 text-sm font-medium text-success">
                 <CheckCircle className="w-3.5 h-3.5" />
                 Free
               </span>

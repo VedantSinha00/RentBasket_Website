@@ -21,7 +21,7 @@ const CheckoutPayment = ({ selectedMethod, onSelect }) => {
               <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Secure and encrypted transactions</p>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-green-600 bg-green-50 px-2 py-1 rounded-lg border border-green-100">
+          <div className="flex items-center gap-1.5 text-success bg-success-muted px-2 py-1 rounded-lg border border-success-border">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span className="text-[9px] font-bold uppercase tracking-widest">Safe</span>
           </div>
@@ -71,7 +71,7 @@ const CheckoutPayment = ({ selectedMethod, onSelect }) => {
 
           <div className="mt-6 flex flex-col items-center justify-center border-t border-border/50 pt-5 text-center">
             <div className="flex items-center gap-2 mb-2">
-              <ShieldCheck className="w-4 h-4 text-green-600" />
+              <ShieldCheck className="w-4 h-4 text-success" />
               <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">PCI-DSS Secure Payment Gateway</p>
             </div>
             <p className="text-[10px] text-muted-foreground max-w-sm">

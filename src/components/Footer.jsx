@@ -104,21 +104,16 @@ const Footer = () => {
         </div>
 
         {/* Social Icons & Copyright */}
-        <div className="flex flex-col md:flex-row items-center justify-between mt-12 pt-8 border-t border-border">
-          <div className="flex items-center gap-4 w-full">
-            <p className="flex justify-center text-sm text-muted-foreground w-full m-auto font-sans">
-              © 2025 RentBasket. All rights reserved.
-            </p>
-            <div
-              className="w-8 h-8"
-              style={{ position: "fixed", right: 5, bottom: 5 }}
-            >
-              <img
-                src={logo}
-                alt="RentBasket mascot"
-                className="w-24 md:w-32 hidden md:block"
-              />
-            </div>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pt-8 border-t border-border">
+          <p className="text-sm text-muted-foreground text-center sm:text-left font-sans order-2 sm:order-1">
+            © 2025 RentBasket. All rights reserved.
+          </p>
+          <div className="order-1 sm:order-2 shrink-0">
+            <img
+              src={logo}
+              alt="RentBasket mascot"
+              className="w-16 h-16 md:w-20 md:h-20 object-contain"
+            />
           </div>
         </div>
       </div>

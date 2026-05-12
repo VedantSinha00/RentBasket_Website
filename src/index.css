@@ -46,8 +46,31 @@
     --dark: 0 0% 13%;
     --gray-text: 0 0% 45%;
 
+    /* Semantic success (replaces generic greens in cart/checkout) */
+    --success: 145 63% 35%;
+    --success-foreground: 0 0% 100%;
+    --success-muted: 145 35% 96%;
+    --success-muted-foreground: 145 45% 28%;
+    --success-border: 145 30% 82%;
+
     /* Gradients */
-    --gradient-coral: linear-gradient(135deg, hsl(4, 77%, 60%), hsl(4, 77%, 50%));
+    --gradient-coral: linear-gradient(
+      89.03deg,
+      hsl(4, 77%, 50%) -14.8%,
+      hsl(350, 88%, 50%) 50.11%,
+      hsl(45, 98%, 76%) 129.44%
+    );
+    --gradient-hero: linear-gradient(
+      86.65deg,
+      hsl(4, 76%, 51%) 15.65%,
+      hsl(350, 88%, 50%) 53.1%,
+      hsl(43, 90%, 78%) 90.55%
+    );
+    --gradient-download: linear-gradient(
+      to right,
+      hsl(4, 77%, 50%),
+      hsl(4, 77%, 38%)
+    );
     --gradient-myth-card: linear-gradient(180deg, hsl(4, 70%, 60%) 0%, hsl(4, 77%, 50%) 100%);
     
     /* Shadows */
@@ -122,12 +145,21 @@
 @layer components {
   .btn-primary {
     @apply bg-primary text-primary-foreground px-6 py-3 rounded-full font-medium 
-           hover:bg-coral-dark transition-all duration-300 shadow-soft hover:shadow-elevated;
+           hover:bg-coral-dark transition-all duration-300 shadow-soft hover:shadow-elevated
+           active:scale-[0.98];
   }
 
   .btn-outline {
     @apply border-2 border-primary text-primary px-6 py-3 rounded-full font-medium 
-           hover:bg-primary hover:text-primary-foreground transition-all duration-300;
+           hover:bg-primary hover:text-primary-foreground transition-all duration-300
+           active:scale-[0.98];
+  }
+
+  .btn-gradient-coral {
+    @apply px-6 py-3 rounded-full font-medium text-primary-foreground
+           transition-all duration-300 shadow-soft hover:shadow-elevated
+           hover:opacity-95 active:scale-[0.98];
+    background: var(--gradient-coral);
   }
 
   .section-container {
@@ -144,6 +176,18 @@
 
   .gradient-coral {
     background: var(--gradient-coral);
+    color: hsl(var(--primary-foreground));
+  }
+
+  .gradient-hero-text {
+    background-image: var(--gradient-hero);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .bg-gradient-download {
+    background: var(--gradient-download);
   }
 
   .gradient-myth {

@@ -19,11 +19,7 @@ const EmptyCart = () => {
       </p>
       <Link
         to="/catalog"
-        className="btn-primary py-3 px-8 text-sm md:text-base inline-flex items-center gap-2"
-        style={{
-          background:
-            "linear-gradient(89.03deg, #D72F26 -14.8%, #EF1040 50.11%, #FECC87 129.44%)",
-        }}
+        className="btn-gradient-coral py-3 px-8 text-sm md:text-base inline-flex items-center gap-2"
       >
         Browse Catalogue
         <ArrowRight className="w-4 h-4" />

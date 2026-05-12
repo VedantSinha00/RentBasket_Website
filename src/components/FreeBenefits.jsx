@@ -1,80 +1,41 @@
 import { Link } from "react-router-dom";
 import mascotSofa from "@/assets/ChatGPT Image Jan 17, 2026, 02_58_19 AM 1.png";
 
+const benefits = ["Delivery", "Installation", "Maintenance"];
+
 const FreeBenefits = () => {
-  const benefits = ["Delivery", "Installation", "Maintainance"];
-
   return (
-    <section className="section-container py-6 md:py-12 lg:py-16">
-      {/* Mobile Layout */}
-      <div className="lg:hidden flex flex-col items-center text-center w-full mt-12">
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "row",
-        }}>
-          <h2 className="text-6xl sm:text-4xl font-bold mb-3">
-            <span className="text-primary">Free</span>
-          </h2>
-          <ul className="space-y-1 mb-6 ml-4">
-            {benefits.map((benefit) => (
-              <li key={benefit} className="flex items-start text-left gap-2 text-md font-semibold sm:text-base"
-                style={{ color: "#868585" }}>
-                <span className="w-1.5 h-1.5 rounded-full bg-foreground mt-1.5 flex-shrink-0"></span>
-                {benefit}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-
-        <div className="flex flex-col gap-2 w-75% max-w-xs mt-10">
-
-          <Link to="/catalog">
-            <button className="btn-outline py-2.5 px-6 text-sm w-full">
-              Browse Catalogue
-            </button>
-          </Link>
-        </div>
-
-        <div className="mb-4 flex justify-center mt-12">
+    <section className="section-container py-6 md:py-12 lg:py-16 bg-background">
+      <div className="flex flex-col items-center text-center w-full mt-8 lg:mt-0 gap-10 lg:gap-16">
+        <div className="order-3 lg:order-1 w-full flex justify-center px-2">
           <img
             src={mascotSofa}
             alt="RentBasket mascots carrying sofa"
-            className="w-full max-w-2xl sm:w-4/5 md:w-3/4"
+            className="w-full max-w-2xl sm:w-4/5 md:w-3/4 lg:w-[360px] lg:max-w-none xl:w-[400px] object-contain"
           />
         </div>
 
-      </div>
-
-      {/* Desktop Layout */}
-      <div className="hidden lg:flex flex-col items-center gap-16">
-        <div className="flex-1 flex justify-center">
-          <img
-            src={mascotSofa}
-            alt="RentBasket mascots carrying sofa"
-            className="w-90 xl:w-100"
-          />
-        </div>
-
-        <div className="flex-1 flex flex-row items-center gap-12">
-          <div>
-            <h2 className="text-5xl font-bold mb-4">
+        <div className="order-1 lg:order-2 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 w-full max-w-4xl">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 lg:block lg:text-left">
+            <h2 className="text-5xl sm:text-6xl lg:text-5xl font-bold lg:mb-4">
               <span className="text-primary">Free</span>
             </h2>
-            <ul className="space-y-2">
+            <ul className="space-y-1 lg:space-y-2 text-left">
               {benefits.map((benefit) => (
-                <li key={benefit} className="flex items-center gap-2 text-lg">
-                  <span className="w-2 h-2 rounded-full bg-foreground"></span>
+                <li
+                  key={benefit}
+                  className="flex items-start gap-2 text-base sm:text-md font-semibold text-muted-foreground"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-foreground mt-1.5 lg:mt-2 flex-shrink-0" />
                   {benefit}
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col gap-2 w-full max-w-xs sm:max-w-sm lg:max-w-none lg:w-auto shrink-0">
             <Link to="/catalog" className="w-full">
-              <button className="btn-outline py-3 px-8 text-center w-full whitespace-nowrap">
+              <button className="btn-outline py-2.5 px-6 text-sm w-full lg:py-3 lg:px-8 lg:text-base whitespace-nowrap">
                 Browse Catalogue
               </button>
             </Link>
