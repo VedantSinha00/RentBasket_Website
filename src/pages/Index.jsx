@@ -3,8 +3,8 @@ import HeroSection from "@/components/HeroSection";
 import FurnitureGallery from "@/components/FurnitureGallery";
 import FreeBenefits from "@/components/FreeBenefits";
 import ResponsibilitySection from "@/components/ResponsibilitySection";
-import HowItWorks from "@/components/HowItWorks";
-import FoundersSection from "@/components/FoundersSection";
+// import HowItWorks from "@/components/HowItWorks";
+// import FoundersSection from "@/components/FoundersSection";
 import MythOrFact from "@/components/MythOrFact";
 import Testimonials from "@/components/Testimonials";
 import WhatMakesDifferent from "@/components/WhatMakesDifferent";
@@ -20,8 +20,10 @@ const Index = () => {
         <FurnitureGallery />
         <FreeBenefits />
         <ResponsibilitySection />
-        <HowItWorks />
-        <FoundersSection />
+        {/* v1: How it works — hidden for this release */}
+        {/* <HowItWorks /> */}
+        {/* v1: Founders — hidden for this release */}
+        {/* <FoundersSection /> */}
         <MythOrFact />
         <Testimonials />
         <DownloadSection />
