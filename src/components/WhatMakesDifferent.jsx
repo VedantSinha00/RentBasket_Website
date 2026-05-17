@@ -203,7 +203,7 @@ const WhatMakesDifferent = () => {
                   margin: "auto",
                 }}
               >
-                Browse Catalogue
+                Browse Catalgue
               </button>
             </a>
           </div>
@@ -226,7 +226,7 @@ const WhatMakesDifferent = () => {
                   margin: "auto",
                 }}
               >
-                Browse Catalogue
+                Browse Catalgue
               </button>
             </a>
           </div>

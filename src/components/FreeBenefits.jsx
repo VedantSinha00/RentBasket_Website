@@ -36,7 +36,7 @@ const FreeBenefits = () => {
           <div className="flex flex-col gap-2 w-full max-w-xs sm:max-w-sm lg:max-w-none lg:w-auto shrink-0">
             <Link to="/catalog" className="w-full">
               <button className="btn-outline py-2.5 px-6 text-sm w-full lg:py-3 lg:px-8 lg:text-base whitespace-nowrap">
-                Browse Catalogue
+                Browse Catalgue
               </button>
             </Link>
           </div>
