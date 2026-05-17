@@ -237,12 +237,13 @@ const WhatMakesDifferent = () => {
 
       <div className="flex justify-center w-full border-none bg-cream/50">
         <video
-          className="w-full"
+          className="block w-full h-auto"
           src={kuCloudsVideo}
           autoPlay
           loop
           muted
           playsInline
+          aria-label="RentBasket mascot Ku popping out of the clouds"
         />
       </div>
     </>

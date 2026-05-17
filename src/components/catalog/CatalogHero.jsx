@@ -1,21 +1,16 @@
 import { MapPin } from "lucide-react";
 import mascotVideo from "@/assets/Ku Saying Hi.webm";
 
-/** Same mascot video as home hero — cropped to Ku’s face and waving hand on the left */
 const KuMascotVideo = ({ className = "" }) => (
-  <div
-    className={`relative overflow-hidden rounded-3xl bg-secondary/30 ${className}`}
-  >
-    <video
-      src={mascotVideo}
-      className="absolute inset-y-0 left-0 h-full w-[175%] max-w-none object-cover object-[12%_42%]"
-      autoPlay
-      loop
-      muted
-      playsInline
-      aria-label="RentBasket mascot Ku waving hello"
-    />
-  </div>
+  <video
+    src={mascotVideo}
+    className={`block w-full h-auto ${className}`}
+    autoPlay
+    loop
+    muted
+    playsInline
+    aria-label="RentBasket mascot Ku saying hello"
+  />
 );
 
 const CatalogHero = () => {
@@ -29,7 +24,9 @@ const CatalogHero = () => {
             Delhi NCR
           </span>
 
-          <KuMascotVideo className="aspect-[5/4] w-full max-w-xs mb-6" />
+          <div className="mb-6 flex justify-center">
+            <KuMascotVideo className="max-w-[280px] sm:max-w-[320px]" />
+          </div>
 
           <h1 className="font-display text-3xl sm:text-4xl font-bold leading-tight mb-4 text-foreground">
             Rent furniture and appliances for{" "}
@@ -63,8 +60,8 @@ const CatalogHero = () => {
             </p>
           </div>
 
-          <div className="flex-shrink-0 flex justify-end">
-            <KuMascotVideo className="aspect-[2/5] w-72 xl:w-80" />
+          <div className="flex-shrink-0 flex justify-center">
+            <KuMascotVideo className="max-w-[320px] xl:max-w-[380px]" />
           </div>
         </div>
       </div>

@@ -5,17 +5,16 @@ const HeroSection = () => {
   return (
     <section className="section-container py-6 md:py-12 lg:py-16 bg-background">
       <div className="flex flex-col lg:items-center lg:text-center">
-        <div className="order-1 lg:order-2 flex justify-center w-full mb-4 lg:mb-0">
-          <div className="overflow-hidden h-[200px] sm:h-[240px] lg:h-[350px] xl:h-[400px] 2xl:h-[420px]">
-            <video
-              src={mascotVideo}
-              className="w-full max-h-full object-contain lg:w-80 xl:w-96 2xl:w-[700px]"
-              autoPlay
-              loop
-              muted
-              playsInline
-            />
-          </div>
+        <div className="order-1 lg:order-2 flex justify-center w-full mb-4 lg:mb-0 px-2">
+          <video
+            src={mascotVideo}
+            className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[380px] lg:max-w-[420px] xl:max-w-[480px] h-auto"
+            autoPlay
+            loop
+            muted
+            playsInline
+            aria-label="RentBasket mascot Ku saying hello"
+          />
         </div>
 
         <div className="order-2 lg:order-1 flex flex-col justify-center items-center text-center px-1">
