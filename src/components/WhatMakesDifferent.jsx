@@ -1,5 +1,5 @@
 import { Truck, Wrench, Home, Package } from "lucide-react";
-import footerSection from "@/assets/footer-video.mp4";
+import kuCloudsVideo from "@/assets/Ku Popping out of the Clouds.webm";
 import { useRef, useEffect, useState, useCallback } from "react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 
@@ -236,10 +236,14 @@ const WhatMakesDifferent = () => {
       <div className="flex justify-center w-full pt-12 bg-gradient-to-t from-cream to-secondary/40 dark:from-secondary dark:to-transparent shadow-lg" />
 
       <div className="flex justify-center w-full border-none bg-cream/50">
-        <video className="w-full" autoPlay loop muted playsInline>
-          <source src={footerSection} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        <video
+          className="w-full"
+          src={kuCloudsVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
       </div>
     </>
   );

@@ -1,5 +1,5 @@
 import { Star } from "lucide-react";
-import mascotVideo from "@/assets/kling_20260104_Image_to_Video_Just_Make__1408_0.mp4";
+import mascotVideo from "@/assets/Ku Saying Hi.webm";
 
 const HeroSection = () => {
   return (
