@@ -13,20 +13,6 @@ const CatalogCTA = () => {
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href="https://www.rentbasket.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-gradient-coral py-3 px-7 text-sm md:text-base"
-            >
-              Get Home Setup Quote
-            </a>
-            <a
-              href="#appliances"
-              className="btn-outline py-3 px-7 text-sm md:text-base"
-            >
-              Browse Appliances
-            </a>
-            <a
               href="tel:+919958858473"
               className="btn-outline py-3 px-7 text-sm md:text-base"
             >

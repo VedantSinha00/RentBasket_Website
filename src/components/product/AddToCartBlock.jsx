@@ -95,14 +95,6 @@ const AddToCartBlock = ({ product, selectedDuration, quantity, onQuantityChange 
         >
           Add to Cart
         </button>
-        <a
-          href="https://www.rentbasket.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-outline w-full py-3 text-sm text-center"
-        >
-          Get Home Setup Quote
-        </a>
       </div>
 
       {/* Micro Trust Points */}

@@ -26,7 +26,7 @@ const FreeServices = () => {
               </ul>
             </div>
 
-            {/* CTAs */}
+            {/* CTA */}
             <div className="flex flex-col gap-5 mt-10 md:mt-12 w-full max-w-[400px]">
               <Link
                 to="/catalog"
@@ -34,18 +34,6 @@ const FreeServices = () => {
               >
                 Browse Catalogue
               </Link>
-              <a
-                href="#download"
-                className="flex items-center justify-center h-[64px] rounded-full font-sans font-bold text-white text-[18px] sm:text-[20px] tracking-tight transition-all shadow-elevated hover:opacity-95 active:scale-[0.98]"
-                style={{
-                  background:
-                    "linear-gradient(86.35deg, hsl(4, 69%, 50%) 14.8%, hsl(351, 88%, 50%) 50.1%, hsl(28, 99%, 76%) 129.4%)",
-                  boxShadow:
-                    "inset 0 2px 16px rgba(255,255,255,0.55), 0 8px 24px rgba(215,47,38,0.25)",
-                }}
-              >
-                Get home setup quote
-              </a>
             </div>
           </div>
 
