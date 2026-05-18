@@ -1,7 +1,8 @@
+import { useState, useRef } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import FurnitureGallery from "@/components/FurnitureGallery";
-import FreeBenefits from "@/components/FreeBenefits";
+import FreeServices from "@/components/FreeServices";
 import ResponsibilitySection from "@/components/ResponsibilitySection";
 // import HowItWorks from "@/components/HowItWorks";
 // import FoundersSection from "@/components/FoundersSection";
@@ -12,13 +13,26 @@ import DownloadSection from "@/components/DownloadSection";
 import Footer from "@/components/Footer";
 
 const Index = () => {
+  const [activeCategory, setActiveCategory] = useState("Furniture");
+  const galleryRef = useRef(null);
+
+  const handleCategoryChange = (cat) => {
+    setActiveCategory(cat);
+    galleryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main>
-        <HeroSection />
-        <FurnitureGallery />
-        <FreeBenefits />
+        <HeroSection
+          activeCategory={activeCategory}
+          onCategoryChange={handleCategoryChange}
+        />
+        <div ref={galleryRef}>
+          <FurnitureGallery activeCategory={activeCategory} />
+        </div>
+        <FreeServices />
         <ResponsibilitySection />
         {/* v1: How it works — hidden for this release */}
         {/* <HowItWorks /> */}

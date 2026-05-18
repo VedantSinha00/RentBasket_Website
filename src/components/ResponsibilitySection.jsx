@@ -89,7 +89,7 @@ const ScrollRevealText = () => {
 
 const ResponsibilitySection = () => {
   return (
-    <section className="section-container py-12 md:py-20 bg-cream/50">
+    <section className="section-container pt-2 md:pt-4 pb-4 md:pb-6 bg-cream/50">
       <div className="flex flex-col lg:hidden max-w-3xl mx-auto text-left lg:text-center">
         <h2
           className="flex justify-items-start text-3xl md:text-4xl lg:text-5xl font-display font-semibold mb-8"
@@ -99,7 +99,7 @@ const ResponsibilitySection = () => {
             marginBottom: "5%",
           }}
         >
-          We don't just rent, We take responsibility.
+          We don't just rent out, We take responsibility.
         </h2>
 
         <div
@@ -122,7 +122,7 @@ const ResponsibilitySection = () => {
             marginBottom: "5%",
           }}
         >
-          We don't just rent, We take responsibility.
+          We don't just rent out, We take responsibility.
         </h2>
 
         <div

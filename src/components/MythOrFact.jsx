@@ -69,7 +69,7 @@ const Card = ({ belief, reality }) => {
         >
           <InnerBorder />
           {/* Responsive Heading */}
-          <h2 className="text-white text-3xl sm:text-4xl md:text-5xl font-serif font-bold mb-2 md:mb-4 tracking-tighter opacity-20 z-10">
+          <h2 className="text-white text-4xl sm:text-5xl md:text-6xl font-serif font-bold mb-2 md:mb-4 tracking-tighter opacity-40 z-10 leading-none max-h-[120px]">
             REALITY
           </h2>
           {/* Responsive reality Text */}
@@ -117,7 +117,7 @@ const MythOrFact = () => {
   ];
 
   return (
-    <section className="bg-background py-12 md:py-20 px-4 md:px-6">
+    <section className="bg-background pt-4 md:pt-6 pb-12 md:pb-20 px-4 md:px-6">
       <div className="text-center mb-8 md:mb-12">
         {/* Responsive Section Header */}
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4">

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
-// Import images
 import img1 from "@/assets/Furniture/1.png";
 import img2 from "@/assets/Furniture/2.png";
 import img3 from "@/assets/Furniture/3.png";
@@ -20,10 +20,6 @@ import app4 from "@/assets/Appliances/13.png";
 import app5 from "@/assets/Appliances/14.png";
 import app6 from "@/assets/Appliances/15.png";
 
-import oth1 from "@/assets/Others/15.png";
-import oth2 from "@/assets/Others/16.png";
-import oth3 from "@/assets/Others/17.png";
-
 import best1 from "@/assets/Bestsellers/1.png";
 import best2 from "@/assets/Bestsellers/3.png";
 import best3 from "@/assets/Bestsellers/5.png";
@@ -32,15 +28,7 @@ import best5 from "@/assets/Bestsellers/9.png";
 import best6 from "@/assets/Bestsellers/10.png";
 import best7 from "@/assets/Bestsellers/11.png";
 import best8 from "@/assets/Bestsellers/12.png";
-import best9 from "@/assets/Bestsellers/13.png";
-import best10 from "@/assets/Bestsellers/14.png";
-import best11 from "@/assets/Bestsellers/15.png";
-import best12 from "@/assets/Bestsellers/16.png";
 
-
-
-
-// Category data
 const categoryData = {
   Furniture: [
     { id: 1, src: img1, name: "Modern Chair" },
@@ -62,10 +50,12 @@ const categoryData = {
     { id: 5, src: app5, name: "4-Slice Toaster" },
     { id: 6, src: app6, name: "Electric Kettle" },
   ],
-  Others: [
-    { id: 1, src: oth1, name: "Wall Decor" },
-    { id: 2, src: oth2, name: "Area Rug" },
-    { id: 3, src: oth3, name: "Decorative Mirror" },
+  Combos: [
+    { id: 1, src: img2, name: "Living Room Combo" },
+    { id: 2, src: app1, name: "Kitchen Starter" },
+    { id: 3, src: img4, name: "Bedroom Combo" },
+    { id: 4, src: app2, name: "Studio Setup" },
+    { id: 5, src: img7, name: "Work-from-Home Combo" },
   ],
   Bestsellers: [
     { id: 1, src: best1, name: "Best Seller Chair" },
@@ -73,411 +63,85 @@ const categoryData = {
     { id: 3, src: best3, name: "Coffee Maker Pro" },
     { id: 4, src: best4, name: "Premium Mirror" },
     { id: 5, src: best5, name: "Luxury Accent Chair" },
-    { id: 6, src: best6, name: "Luxury Accent Chair" },
-    { id: 7, src: best7, name: "Luxury Accent Chair" },
-    { id: 8, src: best8, name: "Luxury Accent Chair" },
-    { id: 9, src: best9, name: "Luxury Accent Chair" },
-    { id: 10, src: best10, name: "Luxury Accent Chair" },
-    { id: 11, src: best11, name: "Luxury Accent Chair" },
-    { id: 12, src: best12, name: "Luxury Accent Chair" },
+    { id: 6, src: best6, name: "Top-rated Sofa" },
+    { id: 7, src: best7, name: "Hero Bedframe" },
+    { id: 8, src: best8, name: "Customer Favourite" },
   ],
 };
 
-const categories = ["Furniture", "Appliances", "Others", "Bestsellers"];
-
-const FurnitureGallery = () => {
-  const [activeCategory, setActiveCategory] = useState("Furniture");
-  const [currentSlide, setCurrentSlide] = useState(0);
+const FurnitureGallery = ({ activeCategory = "Furniture" }) => {
   const [autoScroll, setAutoScroll] = useState(true);
-  const [visibleSlides, setVisibleSlides] = useState(1);
-  const slideInterval = useRef(null);
   const containerRef = useRef(null);
-  const [isScrollLayout, setIsScrollLayout] = useState(
-    () => typeof window !== "undefined" && window.innerWidth < 1024,
-  );
+  const intervalRef = useRef(null);
 
   const items = categoryData[activeCategory] || categoryData.Furniture;
 
-  // Scroll to specific slide (for mobile)
-  const scrollToSlide = (index) => {
-    if (containerRef.current && isScrollLayout) {
-      const container = containerRef.current;
-      const slide = container.children[0];
-      if (slide) {
-        const slideWidth = slide.offsetWidth;
-        const gap = 12;
-        const newScrollLeft = index * (slideWidth + gap);
-
-        container.scrollTo({
-          left: newScrollLeft,
-          behavior: 'smooth'
-        });
-        setCurrentSlide(index);
-      }
-    }
-  };
-
-  // Calculate visible slides based on screen size
+  // Auto-scroll horizontally; loops back to start when reaching the end.
   useEffect(() => {
-    const updateVisibleSlides = () => {
-      const width = window.innerWidth;
-      if (width >= 1280) {
-        setVisibleSlides(3);
-        setIsScrollLayout(false);
-      } else if (width >= 1024) {
-        setVisibleSlides(3);
-        setIsScrollLayout(false);
-      } else if (width >= 768) {
-        setVisibleSlides(2.5);
-        setIsScrollLayout(true);
-      } else {
-        setVisibleSlides(1.5);
-        setIsScrollLayout(true);
-      }
+    if (!autoScroll) return;
+    intervalRef.current = setInterval(() => {
+      const c = containerRef.current;
+      if (!c) return;
+      const max = c.scrollWidth - c.clientWidth;
+      const next = c.scrollLeft + 320;
+      c.scrollTo({ left: next >= max - 4 ? 0 : next, behavior: "smooth" });
+    }, 3500);
+    return () => clearInterval(intervalRef.current);
+  }, [autoScroll, activeCategory]);
 
-      // Reset auto-scroll when switching between mobile/desktop
-      setAutoScroll(true);
-    };
-
-    updateVisibleSlides();
-    window.addEventListener('resize', updateVisibleSlides);
-    return () => window.removeEventListener('resize', updateVisibleSlides);
-  }, []);
-
-  // Auto scroll functionality for both desktop and mobile
+  // Reset scroll position when switching categories.
   useEffect(() => {
-    const startAutoScroll = () => {
-      if (autoScroll && items.length > 0) {
-        if (slideInterval.current) clearInterval(slideInterval.current);
+    containerRef.current?.scrollTo({ left: 0, behavior: "smooth" });
+  }, [activeCategory]);
 
-        slideInterval.current = setInterval(() => {
-          if (isScrollLayout) {
-            // Mobile auto-scroll logic
-            if (containerRef.current) {
-              const container = containerRef.current;
-              const slide = container.children[0];
-              if (slide) {
-                const slideWidth = slide.offsetWidth;
-                const gap = 12;
-                const currentScrollLeft = container.scrollLeft;
-                const newScrollLeft = currentScrollLeft + (slideWidth + gap) * 2.5;
-                const maxScrollLeft = container.scrollWidth - container.clientWidth;
-
-                if (newScrollLeft >= maxScrollLeft) {
-                  // Reset to start
-                  container.scrollTo({
-                    left: 0,
-                    behavior: 'smooth'
-                  });
-                  setCurrentSlide(0);
-                } else {
-                  container.scrollTo({
-                    left: newScrollLeft,
-                    behavior: 'smooth'
-                  });
-                  // Update current slide based on new scroll position
-                  const newIndex = Math.round(newScrollLeft / (slideWidth + gap));
-                  setCurrentSlide(newIndex);
-                }
-              }
-            }
-          } else {
-            // Desktop auto-scroll logic
-            const maxSlide = Math.max(0, items.length - Math.floor(visibleSlides));
-            setCurrentSlide(prev => prev >= maxSlide ? 0 : prev + 1);
-          }
-        }, 3000);
-      }
-    };
-
-    startAutoScroll();
-
-    // Cleanup interval when dependencies change
-    return () => {
-      if (slideInterval.current) clearInterval(slideInterval.current);
-    };
-  }, [autoScroll, items.length, activeCategory, visibleSlides, isScrollLayout]);
-
-  // Reset slide when category changes
-  useEffect(() => {
-    setCurrentSlide(0);
-    // Reset scroll position for mobile
-    if (containerRef.current && isScrollLayout) {
-      containerRef.current.scrollTo({
-        left: 0,
-        behavior: 'smooth'
-      });
-    }
-  }, [activeCategory, isScrollLayout]);
-
-  // Navigation handlers
-  const nextSlide = () => {
+  const nudge = (dir) => {
     setAutoScroll(false);
-
-    if (!isScrollLayout) {
-      const maxSlide = Math.max(0, items.length - Math.floor(visibleSlides));
-      setCurrentSlide(prev => prev >= maxSlide ? 0 : prev + 1);
-    } else {
-      // For mobile, scroll the container
-      if (containerRef.current) {
-        const container = containerRef.current;
-        const slide = container.children[0];
-        if (slide) {
-          const slideWidth = slide.offsetWidth;
-          const gap = 12;
-          const currentScrollLeft = container.scrollLeft;
-          const newScrollLeft = currentScrollLeft + (slideWidth + gap) * 2.5;
-          const maxScrollLeft = container.scrollWidth - container.clientWidth;
-
-          if (newScrollLeft >= maxScrollLeft) {
-            container.scrollTo({
-              left: 0,
-              behavior: 'smooth'
-            });
-            setCurrentSlide(0);
-          } else {
-            container.scrollTo({
-              left: newScrollLeft,
-              behavior: 'smooth'
-            });
-            const newIndex = Math.round(newScrollLeft / (slideWidth + gap));
-            setCurrentSlide(newIndex);
-          }
-        }
-      }
-    }
-
-    // Restart auto-scroll after manual interaction
-    setTimeout(() => setAutoScroll(true), 10000);
-  };
-
-  const prevSlide = () => {
-    setAutoScroll(false);
-
-    if (!isScrollLayout) {
-      const maxSlide = Math.max(0, items.length - Math.floor(visibleSlides));
-      setCurrentSlide(prev => prev <= 0 ? maxSlide : prev - 1);
-    } else {
-      // For mobile, scroll the container
-      if (containerRef.current) {
-        const container = containerRef.current;
-        const slide = container.children[0];
-        if (slide) {
-          const slideWidth = slide.offsetWidth;
-          const gap = 12;
-          const currentScrollLeft = container.scrollLeft;
-          const newScrollLeft = currentScrollLeft - (slideWidth + gap) * 2.5;
-
-          if (newScrollLeft <= 0) {
-            const maxScrollLeft = container.scrollWidth - container.clientWidth;
-            container.scrollTo({
-              left: maxScrollLeft,
-              behavior: 'smooth'
-            });
-            setCurrentSlide(Math.min(items.length - 1, 5));
-          } else {
-            container.scrollTo({
-              left: newScrollLeft,
-              behavior: 'smooth'
-            });
-            const newIndex = Math.round(newScrollLeft / (slideWidth + gap));
-            setCurrentSlide(newIndex);
-          }
-        }
-      }
-    }
-
-    // Restart auto-scroll after manual interaction
-    setTimeout(() => setAutoScroll(true), 10000);
-  };
-
-  // Calculate transform for desktop carousel
-  const getTransformValue = () => {
-    if (typeof window === 'undefined' || isScrollLayout) return 'translateX(0)';
-
-    let slideWidth, gap;
-    if (window.innerWidth >= 1280) {
-      slideWidth = 320; // w-80 = 80*4 = 320px
-      gap = 24;
-    } else if (window.innerWidth >= 1024) {
-      slideWidth = 288; // w-72 = 72*4 = 288px
-      gap = 20;
-    } else {
-      slideWidth = 256; // w-64 = 64*4 = 256px
-      gap = 16;
-    }
-
-    return `translateX(-${currentSlide * (slideWidth + gap)}px)`;
-  };
-
-  // Update current slide based on scroll position for mobile
-  const handleScroll = () => {
-    if (containerRef.current && isScrollLayout) {
-      const container = containerRef.current;
-      const scrollLeft = container.scrollLeft;
-      const slideWidth = container.children[0]?.offsetWidth || 0;
-      const gap = 12;
-      const newIndex = Math.round(scrollLeft / (slideWidth + gap));
-      if (newIndex !== currentSlide) {
-        setCurrentSlide(newIndex);
-      }
-    }
+    const c = containerRef.current;
+    if (!c) return;
+    c.scrollBy({ left: dir * 360, behavior: "smooth" });
+    setTimeout(() => setAutoScroll(true), 8000);
   };
 
   return (
-    <section className="py-6 md:py-10 bg-cream/50">
-      <div className={`mx-auto ${isScrollLayout ? 'w-full px-4' : 'w-[80%] max-w-7xl'}`}>
-        {/* Category Tabs - Moved to top */}
-        <div className="flex justify-center mb-6 md:mb-8">
-          <div className="flex gap-4 md:gap-8 px-4 md:px-0 w-full max-w-4xl justify-center overflow-x-auto pb-2">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className={`px-2 py-1 md:px-4 md:py-2 text-sm md:text-base font-medium transition-colors whitespace-nowrap flex-shrink-0 ${activeCategory === category
-                  ? "text-primary border-b-2 border-primary"
-                  : "text-gray-600 hover:text-gray-900"
-                  }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Carousel Container */}
+    <section className="bg-cream/40 py-12 md:py-20">
+      <div className="section-container">
+        {/* Catalog scroll */}
         <div className="relative">
-          {/* Mobile & Tablet - Scrollable Container */}
-          {isScrollLayout && (
-            <div className="relative">
-              <div
-                ref={containerRef}
-                className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-2 pl-4"
-                onScroll={handleScroll}
-                style={{
-                  scrollBehavior: 'smooth',
-                  scrollbarWidth: 'none',
-                  msOverflowStyle: 'none'
-                }}
+          <div
+            ref={containerRef}
+            className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {items.map((item) => (
+              <Link
+                to="/catalog"
+                key={`${activeCategory}-${item.id}`}
+                className="group shrink-0 snap-start h-[360px] md:h-[440px] rounded-2xl overflow-hidden shadow-card bg-white hover:shadow-elevated transition-shadow"
               >
-                {items.map((item, index) => (
-                  <div
-                    key={`${activeCategory}-${item.id}`}
-                    className="flex-shrink-0 w-[calc(40vw-20px)] sm:w-[calc(33vw-20px)] md:w-64 aspect-[3/4] rounded-xl md:rounded-2xl overflow-hidden shadow-lg snap-start flex flex-col"
-                  >
-                    {/* Image Container - Fixed height to prevent cropping */}
-                    <div className="flex-1 relative overflow-hidden bg-gray-50">
-                      <img
-                        src={item.src}
-                        alt={item.name}
-                        className="w-full h-full object-contain p-2 hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    {/* <div className="bg-white/95 p-3 md:p-4 border-t">
-                      <p className="text-gray-800 font-medium text-sm md:text-base text-center truncate">
-                        {item.name}
-                      </p>
-                    </div> */}
-                  </div>
-                ))}
-                {/* More items placeholder */}
-                <div className="flex-shrink-0 w-[calc(40vw-20px)] sm:w-[calc(33vw-20px)] md:w-64 aspect-[3/4] rounded-xl md:rounded-2xl overflow-hidden shadow-lg bg-gray-100 flex flex-col items-center justify-center snap-start mr-4">
-                  <div className="text-gray-500 text-sm md:text-lg mb-2">+{items.length}</div>
-                  <span className="text-gray-500 text-sm md:text-base">More items</span>
-                </div>
-              </div>
-
-              {/* Mobile Navigation Buttons */}
-              <button
-                onClick={prevSlide}
-                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all hover:scale-110 z-10"
-                aria-label="Previous slide"
-              >
-                <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
-              </button>
-              <button
-                onClick={nextSlide}
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all hover:scale-110 z-10"
-                aria-label="Next slide"
-              >
-                <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
-              </button>
-            </div>
-          )}
-
-          {/* Desktop Carousel */}
-          {!isScrollLayout && (
-            <div className="relative overflow-hidden">
-              <div
-                className="flex gap-6 transition-transform duration-500 ease-out"
-                style={{ transform: getTransformValue() }}
-              >
-                {items.map((item) => (
-                  <div
-                    key={`${activeCategory}-${item.id}`}
-                    className="flex-shrink-0 w-64 lg:w-72 xl:w-80 aspect-[3/4] rounded-2xl overflow-hidden shadow-lg flex flex-col"
-                  >
-                    {/* Image Container - Fixed height to prevent cropping */}
-                    <div className="flex-1 relative overflow-hidden bg-gray-50">
-                      <img
-                        src={item.src}
-                        alt={item.name}
-                        className="w-full h-full object-contain p-4 hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    {/* <div className="bg-white/95 p-4 border-t">
-                      <p className="text-gray-800 font-medium text-base lg:text-lg text-center">
-                        {item.name}
-                      </p>
-                    </div> */}
-                  </div>
-                ))}
-                {/* More items placeholder */}
-                <div className="flex-shrink-0 w-64 lg:w-72 xl:w-80 aspect-[3/4] rounded-2xl overflow-hidden shadow-lg bg-gray-100 flex flex-col items-center justify-center">
-                  <div className="text-gray-500 text-lg xl:text-xl mb-2">+{items.length}</div>
-                  <span className="text-gray-500 text-base">More items</span>
-                </div>
-              </div>
-
-              {/* Desktop Navigation Buttons */}
-              <button
-                onClick={prevSlide}
-                className="absolute -left-12 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-xl transition-all hover:scale-110 z-10"
-                aria-label="Previous slide"
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </button>
-              <button
-                onClick={nextSlide}
-                className="absolute -right-12 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-xl transition-all hover:scale-110 z-10"
-                aria-label="Next slide"
-              >
-                <ChevronRight className="w-6 h-6" />
-              </button>
-            </div>
-          )}
-
-          {/* Slide Indicators */}
-          <div className="flex justify-center gap-2 mt-6 md:mt-8">
-            {items.slice(0, Math.min(items.length, 6)).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  if (!isScrollLayout) {
-                    setCurrentSlide(index);
-                    setAutoScroll(false);
-                    setTimeout(() => setAutoScroll(true), 10000);
-                  } else {
-                    scrollToSlide(index);
-                    setAutoScroll(false);
-                    setTimeout(() => setAutoScroll(true), 10000);
-                  }
-                }}
-                className={`w-2 h-2 rounded-full transition-all ${currentSlide === index ? 'bg-primary w-6' : 'bg-gray-300'}`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
+                <img
+                  src={item.src}
+                  alt={item.name}
+                  className="h-full w-auto block max-w-none group-hover:scale-[1.02] transition-transform duration-500"
+                />
+              </Link>
             ))}
           </div>
+
+          {/* Scroll nudge buttons (desktop) */}
+          <button
+            onClick={() => nudge(-1)}
+            className="hidden md:flex absolute -left-4 lg:-left-6 top-1/2 -translate-y-1/2 bg-white hover:bg-cream w-11 h-11 rounded-full shadow-elevated items-center justify-center transition-all hover:scale-105 z-10"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="w-5 h-5 text-foreground" />
+          </button>
+          <button
+            onClick={() => nudge(1)}
+            className="hidden md:flex absolute -right-4 lg:-right-6 top-1/2 -translate-y-1/2 bg-white hover:bg-cream w-11 h-11 rounded-full shadow-elevated items-center justify-center transition-all hover:scale-105 z-10"
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="w-5 h-5 text-foreground" />
+          </button>
         </div>
       </div>
     </section>

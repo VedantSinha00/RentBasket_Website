@@ -10,20 +10,19 @@ const ProductCard = ({ product }) => {
   const navigate = useNavigate();
 
   const pricing = product.pricing_by_duration;
-  const lowestDaily = pricing["1_day"];
+  const lowestDaily = pricing["7_day"];
   const lowestMonthly = pricing["12_months"];
 
   // Duration chip preview (show 5 key durations)
-  const previewDurations = ["1_day", "1_month", "3_months", "6_months", "12_months"];
+  const previewDurations = ["7_day", "1_month", "3_months", "6_months", "12_months"];
   const previewChips = DURATION_OPTIONS.filter((d) =>
     previewDurations.includes(d.key)
   );
 
   // Pricing ladder for hover tooltip
   const pricingLadder = [
-    { label: "1 Day", price: pricing["1_day"], suffix: "" },
-    { label: "7 Days", price: pricing["7_days"], suffix: "" },
-    { label: "1 Month", price: pricing["1_month"], suffix: "/mo" },
+    { label: "7 Days", price: pricing["7_day"], suffix: "" },
+    { label: "3 Month", price: pricing["1_month"], suffix: "/mo" },
     { label: "6 Months", price: pricing["6_months"], suffix: "/mo" },
     { label: "12 Months", price: pricing["12_months"], suffix: "/mo" },
   ];
@@ -139,7 +138,7 @@ const ProductCard = ({ product }) => {
           <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider font-medium">
             Price varies by duration
           </p>
-          <div className="flex items-baseline gap-2">
+          <div className="flex items-baseline gap-2 md:group-hover:hidden">
             <span className="text-lg md:text-xl font-bold text-primary">
               ₹{lowestDaily.toLocaleString("en-IN")}
             </span>

@@ -1,5 +1,4 @@
 import { Truck, Wrench, Home, Package } from "lucide-react";
-import kuCloudsVideo from "@/assets/Ku Popping out of the Clouds.webm";
 import { useRef, useEffect, useState, useCallback } from "react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 
@@ -234,18 +233,6 @@ const WhatMakesDifferent = () => {
       </section>
 
       <div className="flex justify-center w-full pt-12 bg-gradient-to-t from-cream to-secondary/40 dark:from-secondary dark:to-transparent shadow-lg" />
-
-      <div className="flex justify-center w-full border-none bg-cream/50">
-        <video
-          className="block w-full h-auto"
-          src={kuCloudsVideo}
-          autoPlay
-          loop
-          muted
-          playsInline
-          aria-label="RentBasket mascot Ku popping out of the clouds"
-        />
-      </div>
     </>
   );
 };
