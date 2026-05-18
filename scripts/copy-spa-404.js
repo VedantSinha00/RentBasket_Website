@@ -15,5 +15,6 @@ if (!existsSync(indexPath)) {
   process.exit(1);
 }
 
+// Prefer full app shell (assets match index.html). public/404.html redirect is fallback if missing.
 copyFileSync(indexPath, notFoundPath);
-console.log("copy-spa-404: wrote dist/404.html for GitHub Pages SPA routing");
+console.log("copy-spa-404: wrote dist/404.html (SPA shell) for GitHub Pages");
