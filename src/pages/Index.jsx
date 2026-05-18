@@ -29,7 +29,7 @@ const Index = () => {
           activeCategory={activeCategory}
           onCategoryChange={handleCategoryChange}
         />
-        <div ref={galleryRef}>
+        <div ref={galleryRef} className="-mt-2">
           <FurnitureGallery activeCategory={activeCategory} />
         </div>
         <FreeServices />

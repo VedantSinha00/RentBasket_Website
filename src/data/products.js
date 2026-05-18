@@ -29,8 +29,10 @@ export const DURATION_OPTIONS = [
   { key: "1_month", label: "1 Month", short: "1M" },
   { key: "3_months", label: "3 Months", short: "3M" },
   { key: "6_months", label: "6 Months", short: "6M" },
-  { key: "9_months", label: "9 Months", short: "9M" },
+  { key: "11_months", label: "11 Months", short: "11M" }, // for 11 months instead of 9 months
   { key: "12_months", label: "12 Months", short: "12M" },
+  { key: "24_months", label: "24 Months", short: "24M" }, // for 24 months instead of 12 months as the final cost
+  { key: "36_months", label: "36 Months", short: "36M" }, // for 36 months instead of 12 months as the final cost
 ];
 
 export const CATEGORIES = [

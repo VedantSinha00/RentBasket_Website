@@ -18,7 +18,7 @@ const features = [
   },
   {
     icon: Home,
-    title: "Complete Home Setup",
+    title: "Complete Home Setup under ₹6,000/month ",
     description:
       "Set up your home under ₹6,000/month with smart combos and essentials.",
     bgColor: "bg-primary",
@@ -202,7 +202,7 @@ const WhatMakesDifferent = () => {
                   margin: "auto",
                 }}
               >
-                Browse Catalgue
+                Browse Catalogue
               </button>
             </a>
           </div>
@@ -225,7 +225,7 @@ const WhatMakesDifferent = () => {
                   margin: "auto",
                 }}
               >
-                Browse Catalgue
+                Browse Catalogue
               </button>
             </a>
           </div>

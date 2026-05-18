@@ -23,7 +23,7 @@ const benefits = [
   },
   {
     icon: Home,
-    title: "Complete Home Setup",
+    title: "Complete Home Setup under ₹6,000/month ",
     description: "Furnish your entire home under ₹6,000/month.",
   },
 ];

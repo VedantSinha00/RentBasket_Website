@@ -21,7 +21,7 @@ const EmptyCart = () => {
         to="/catalog"
         className="btn-gradient-coral py-3 px-8 text-sm md:text-base inline-flex items-center gap-2"
       >
-        Browse Catalgue
+        Browse Catalogue
         <ArrowRight className="w-4 h-4" />
       </Link>
       <p className="text-xs text-muted-foreground mt-4">

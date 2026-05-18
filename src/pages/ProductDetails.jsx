@@ -45,7 +45,7 @@ const ProductDetails = () => {
             onClick={() => navigate("/catalog")}
             className="btn-primary px-6 py-3"
           >
-            Browse Catalgue
+            Browse Catalogue
           </button>
         </div>
         <Footer />

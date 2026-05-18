@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CatalogHero from "@/components/catalog/CatalogHero";
@@ -7,9 +8,10 @@ import FilterBar from "@/components/catalog/FilterBar";
 import ProductGrid from "@/components/catalog/ProductGrid";
 import TrustBenefits from "@/components/catalog/TrustBenefits";
 import CatalogCTA from "@/components/catalog/CatalogCTA";
-import products from "@/data/products";
+import products, { CATEGORIES } from "@/data/products";
 
 const Catalog = () => {
+  const [searchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeSubcategory, setActiveSubcategory] = useState(null);
   const [filters, setFilters] = useState({
@@ -19,6 +21,14 @@ const Catalog = () => {
     bestFor: null,
   });
   const [sortBy, setSortBy] = useState("Popular");
+
+  useEffect(() => {
+    const fromUrl = searchParams.get("category");
+    if (fromUrl && CATEGORIES.includes(fromUrl)) {
+      setActiveCategory(fromUrl);
+      setActiveSubcategory(null);
+    }
+  }, [searchParams]);
 
   // Filtered and sorted products
   const filteredProducts = useMemo(() => {

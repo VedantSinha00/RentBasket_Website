@@ -69,6 +69,20 @@ const categoryData = {
   ],
 };
 
+/** Maps home hero tabs to catalog CategoryTabs values */
+const HOME_TO_CATALOG_CATEGORY = {
+  Furniture: "Furniture",
+  Appliances: "Appliances",
+  Combos: "Complete Home Setup",
+  Bestsellers: "Bestsellers",
+};
+
+const catalogHref = (homeCategory) => {
+  const catalogCategory =
+    HOME_TO_CATALOG_CATEGORY[homeCategory] ?? "Furniture";
+  return `/catalog?category=${encodeURIComponent(catalogCategory)}`;
+};
+
 const FurnitureGallery = ({ activeCategory = "Furniture" }) => {
   const [autoScroll, setAutoScroll] = useState(true);
   const containerRef = useRef(null);
@@ -103,7 +117,7 @@ const FurnitureGallery = ({ activeCategory = "Furniture" }) => {
   };
 
   return (
-    <section className="bg-cream/40 py-12 md:py-20">
+    <section className="bg-cream/40 pt-0 pb-8 md:pb-10 -mt-1">
       <div className="section-container">
         {/* Catalog scroll */}
         <div className="relative">
@@ -114,7 +128,7 @@ const FurnitureGallery = ({ activeCategory = "Furniture" }) => {
           >
             {items.map((item) => (
               <Link
-                to="/catalog"
+                to={catalogHref(activeCategory)}
                 key={`${activeCategory}-${item.id}`}
                 className="group shrink-0 snap-start h-[360px] md:h-[440px] rounded-2xl overflow-hidden shadow-card bg-white hover:shadow-elevated transition-shadow"
               >

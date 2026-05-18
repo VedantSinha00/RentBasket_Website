@@ -33,7 +33,7 @@ const Header = () => {
               to="/catalog"
               className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
             >
-              Browse Catalgue
+              Browse Catalogue
             </Link>
             <div className="relative">
               <input
