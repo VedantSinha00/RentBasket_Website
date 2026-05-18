@@ -2,7 +2,8 @@ import { DURATION_OPTIONS, DURATION_BADGES } from "@/data/products";
 
 const DurationSelector = ({ product, selectedDuration, onDurationChange }) => {
   const pricing = product.pricing_by_duration;
-  const isMonthly = (key) => ["1_month", "3_months", "6_months", "9_months", "12_months"].includes(key);
+  const isMonthly = (key) =>
+    ["1_month", "3_months", "6_months", "11_months", "12_months", "24_months", "36_months"].includes(key);
 
   const formatPrice = (key) => {
     const price = pricing[key];

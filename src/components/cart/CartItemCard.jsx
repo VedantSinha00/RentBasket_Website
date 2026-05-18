@@ -5,7 +5,15 @@ import { useCart } from "@/context/CartContext";
 import { DURATION_OPTIONS, getProductById } from "@/data/products";
 import { Link } from "react-router-dom";
 
-const MONTHLY_KEYS = new Set(["1_month", "3_months", "6_months", "9_months", "12_months"]);
+const MONTHLY_KEYS = new Set([
+  "1_month",
+  "3_months",
+  "6_months",
+  "11_months",
+  "12_months",
+  "24_months",
+  "36_months",
+]);
 const NEW_PRODUCT_SURCHARGE = 65;
 
 const CartItemCard = ({ item }) => {

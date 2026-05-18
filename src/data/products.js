@@ -81,9 +81,22 @@ export const DURATION_BADGES = {
   "1_month": null,
   "3_months": "Save More",
   "6_months": "Most Popular",
-  "9_months": "Long-Term Pick",
+  "11_months": "Long-Term Pick",
   "12_months": "Best Value",
+  "24_months": "Smarter Long Rent",
+  "36_months": "Maximum Savings",
 };
+
+/** Monthly plan keys — keep in sync with DURATION_OPTIONS */
+export const MONTHLY_DURATION_KEYS = [
+  "1_month",
+  "3_months",
+  "6_months",
+  "11_months",
+  "12_months",
+  "24_months",
+  "36_months",
+];
 
 // Default FAQ for all products
 export const DEFAULT_FAQ = [
@@ -114,6 +127,7 @@ export const DEFAULT_FAQ = [
 ];
 
 // ─── Product Data ─────────────────────────────────────────
+// New SKUs: add rows to products-catalog.csv + loadProductsFromCsv.js (not merged here yet).
 
 const products = [
   // ── Appliances: Washing Machines ──
@@ -131,7 +145,7 @@ const products = [
     review_count: 142,
     pricing_by_duration: {
       "1_day": 499, "3_days": 1199, "7_days": 2299, "15_days": 3999,
-      "1_month": 1499, "3_months": 1299, "6_months": 1099, "9_months": 999, "12_months": 899,
+      "1_month": 1499, "3_months": 1299, "6_months": 1099, "11_months": 999, "12_months": 899, "24_months": 836, "36_months": 782,
     },
     deposit: 2000,
     stock_status: "in_stock",
@@ -178,7 +192,7 @@ const products = [
     review_count: 87,
     pricing_by_duration: {
       "1_day": 349, "3_days": 899, "7_days": 1499, "15_days": 2199,
-      "1_month": 999, "3_months": 849, "6_months": 749, "9_months": 699, "12_months": 649,
+      "1_month": 999, "3_months": 849, "6_months": 749, "11_months": 699, "12_months": 649, "24_months": 604, "36_months": 565,
     },
     deposit: 1500,
     stock_status: "in_stock",
@@ -225,7 +239,7 @@ const products = [
     review_count: 63,
     pricing_by_duration: {
       "1_day": 699, "3_days": 1799, "7_days": 2799, "15_days": 3999,
-      "1_month": 1799, "3_months": 1499, "6_months": 1299, "9_months": 1199, "12_months": 1099,
+      "1_month": 1799, "3_months": 1499, "6_months": 1299, "11_months": 1199, "12_months": 1099, "24_months": 1022, "36_months": 956,
     },
     deposit: 3000,
     stock_status: "in_stock",
@@ -275,7 +289,7 @@ const products = [
     review_count: 198,
     pricing_by_duration: {
       "1_day": 399, "3_days": 999, "7_days": 1699, "15_days": 2499,
-      "1_month": 999, "3_months": 849, "6_months": 749, "9_months": 699, "12_months": 649,
+      "1_month": 999, "3_months": 849, "6_months": 749, "11_months": 699, "12_months": 649, "24_months": 604, "36_months": 565,
     },
     deposit: 2000,
     stock_status: "in_stock",
@@ -311,7 +325,7 @@ const products = [
     review_count: 114,
     pricing_by_duration: {
       "1_day": 599, "3_days": 1499, "7_days": 2499, "15_days": 3499,
-      "1_month": 1499, "3_months": 1249, "6_months": 1099, "9_months": 999, "12_months": 899,
+      "1_month": 1499, "3_months": 1249, "6_months": 1099, "11_months": 999, "12_months": 899, "24_months": 836, "36_months": 782,
     },
     deposit: 2500,
     stock_status: "in_stock",
@@ -345,7 +359,7 @@ const products = [
     tags: ["Bestseller", "Family pick"], rating: 4.8, review_count: 231,
     pricing_by_duration: {
       "1_day": 799, "3_days": 1999, "7_days": 3499, "15_days": 4999,
-      "1_month": 1999, "3_months": 1699, "6_months": 1499, "9_months": 1349, "12_months": 1199,
+      "1_month": 1999, "3_months": 1699, "6_months": 1499, "11_months": 1349, "12_months": 1199, "24_months": 1115, "36_months": 1043,
     },
     deposit: 3000, stock_status: "in_stock", best_for: ["Families", "Daily use"],
     specifications: { "Seating": "3-Seater", "Material": "Fabric Upholstery", "Frame": "Solid Wood", "Dimensions": "190 × 80 × 85 cm", "Color": "Grey / Blue" },
@@ -368,7 +382,7 @@ const products = [
     tags: ["Bestseller", "Complete setups"], rating: 4.9, review_count: 312,
     pricing_by_duration: {
       "1_day": 899, "3_days": 2299, "7_days": 3999, "15_days": 5499,
-      "1_month": 2499, "3_months": 2099, "6_months": 1799, "9_months": 1599, "12_months": 1399,
+      "1_month": 2499, "3_months": 2099, "6_months": 1799, "11_months": 1599, "12_months": 1399, "24_months": 1301, "36_months": 1217,
     },
     deposit: 3500, stock_status: "in_stock", best_for: ["Families", "Daily use", "Complete setups"],
     specifications: { "Size": "Queen (60 × 78 in)", "Material": "Engineered Wood", "Mattress": "6-inch Foam", "Dimensions": "200 × 160 × 45 cm", "Weight Capacity": "250 kg" },
@@ -391,7 +405,7 @@ const products = [
     tags: ["New arrival"], rating: 4.6, review_count: 56,
     pricing_by_duration: {
       "1_day": 399, "3_days": 999, "7_days": 1599, "15_days": 2199,
-      "1_month": 899, "3_months": 749, "6_months": 649, "9_months": 599, "12_months": 549,
+      "1_month": 899, "3_months": 749, "6_months": 649, "11_months": 599, "12_months": 549, "24_months": 511, "36_months": 478,
     },
     deposit: 1500, stock_status: "in_stock", best_for: ["Bachelors", "Events"],
     specifications: { "Material": "Velvet", "Frame": "Metal with Gold Tips", "Dimensions": "65 × 60 × 85 cm", "Color": "Charcoal" },
@@ -414,7 +428,7 @@ const products = [
     tags: ["Flexible plans"], rating: 4.5, review_count: 89,
     pricing_by_duration: {
       "1_day": 299, "3_days": 749, "7_days": 1199, "15_days": 1699,
-      "1_month": 699, "3_months": 599, "6_months": 499, "9_months": 449, "12_months": 399,
+      "1_month": 699, "3_months": 599, "6_months": 499, "11_months": 449, "12_months": 399, "24_months": 371, "36_months": 347,
     },
     deposit: 1000, stock_status: "in_stock", best_for: ["Bachelors", "Daily use"],
     specifications: { "Material": "Engineered Wood", "Dimensions": "100 × 50 × 75 cm", "Storage": "1 Drawer", "Color": "Walnut" },
@@ -437,7 +451,7 @@ const products = [
     tags: ["Family pick"], rating: 4.7, review_count: 145,
     pricing_by_duration: {
       "1_day": 499, "3_days": 1199, "7_days": 1999, "15_days": 2799,
-      "1_month": 1199, "3_months": 999, "6_months": 849, "9_months": 799, "12_months": 749,
+      "1_month": 1199, "3_months": 999, "6_months": 849, "11_months": 799, "12_months": 749, "24_months": 697, "36_months": 652,
     },
     deposit: 2000, stock_status: "in_stock", best_for: ["Families", "Complete setups"],
     specifications: { "Doors": "2-Door", "Material": "Engineered Wood", "Dimensions": "90 × 50 × 180 cm", "Mirror": "Yes", "Color": "Brown" },
@@ -460,7 +474,7 @@ const products = [
     tags: [], rating: 4.4, review_count: 42,
     pricing_by_duration: {
       "1_day": 249, "3_days": 649, "7_days": 999, "15_days": 1399,
-      "1_month": 599, "3_months": 499, "6_months": 449, "9_months": 399, "12_months": 349,
+      "1_month": 599, "3_months": 499, "6_months": 449, "11_months": 399, "12_months": 349, "24_months": 325, "36_months": 304,
     },
     deposit: 1000, stock_status: "in_stock", best_for: ["Bachelors", "Daily use"],
     specifications: { "Shelves": "5-Tier Open", "Material": "Engineered Wood", "Dimensions": "60 × 30 × 150 cm", "Color": "Walnut" },
@@ -483,7 +497,7 @@ const products = [
     tags: ["Family pick", "Bestseller"], rating: 4.8, review_count: 167,
     pricing_by_duration: {
       "1_day": 699, "3_days": 1799, "7_days": 2999, "15_days": 4299,
-      "1_month": 1799, "3_months": 1499, "6_months": 1299, "9_months": 1149, "12_months": 999,
+      "1_month": 1799, "3_months": 1499, "6_months": 1299, "11_months": 1149, "12_months": 999, "24_months": 929, "36_months": 869,
     },
     deposit: 2500, stock_status: "in_stock", best_for: ["Families", "Daily use"],
     specifications: { "Seating": "4-Seater", "Table Material": "Solid Wood", "Chair Material": "Wood + Cushion", "Table Size": "120 × 75 × 76 cm" },
@@ -506,7 +520,7 @@ const products = [
     tags: ["Bestseller", "Complete setups"], rating: 4.9, review_count: 278,
     pricing_by_duration: {
       "1_day": 1499, "3_days": 3999, "7_days": 6999, "15_days": 9999,
-      "1_month": 4499, "3_months": 3799, "6_months": 3299, "9_months": 2999, "12_months": 2699,
+      "1_month": 4499, "3_months": 3799, "6_months": 3299, "11_months": 2999, "12_months": 2699, "24_months": 2510, "36_months": 2348,
     },
     deposit: 5000, stock_status: "in_stock", best_for: ["Bachelors", "Complete setups"],
     specifications: { "Package": "4-piece Combo", "Includes": "Bed, Mattress, Wardrobe, Study Table", "Ideal For": "1BHK / Studio" },
@@ -529,7 +543,7 @@ const products = [
     tags: ["Flexible plans"], rating: 4.6, review_count: 93,
     pricing_by_duration: {
       "1_day": 299, "3_days": 749, "7_days": 1199, "15_days": 1699,
-      "1_month": 749, "3_months": 649, "6_months": 549, "9_months": 499, "12_months": 449,
+      "1_month": 749, "3_months": 649, "6_months": 549, "11_months": 499, "12_months": 449, "24_months": 418, "36_months": 391,
     },
     deposit: 1000, stock_status: "in_stock", best_for: ["Bachelors", "Daily use"],
     specifications: { "Type": "Ergonomic", "Material": "Mesh + Foam", "Adjustable Height": "Yes", "Lumbar Support": "Yes", "Wheels": "5 Castor" },
@@ -552,7 +566,7 @@ const products = [
     tags: ["Event-ready"], rating: 4.5, review_count: 76,
     pricing_by_duration: {
       "1_day": 599, "3_days": 1499, "7_days": 2499, "15_days": 3499,
-      "1_month": 1499, "3_months": 1249, "6_months": 1099, "9_months": 999, "12_months": 899,
+      "1_month": 1499, "3_months": 1249, "6_months": 1099, "11_months": 999, "12_months": 899, "24_months": 836, "36_months": 782,
     },
     deposit: 2000, stock_status: "in_stock", best_for: ["Bachelors", "Events", "Short stays"],
     specifications: { "Seating": "2-Seater", "Material": "Premium Fabric", "Frame": "Wood", "Dimensions": "140 × 75 × 80 cm" },

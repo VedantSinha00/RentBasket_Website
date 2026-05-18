@@ -2,7 +2,15 @@ import { ShieldCheck, Info, Tag, Bookmark, Truck, Wrench, CheckCircle } from "lu
 import { useCart } from "@/context/CartContext";
 import { Link } from "react-router-dom";
 
-const MONTHLY_KEYS = new Set(["1_month", "3_months", "6_months", "9_months", "12_months"]);
+const MONTHLY_KEYS = new Set([
+  "1_month",
+  "3_months",
+  "6_months",
+  "11_months",
+  "12_months",
+  "24_months",
+  "36_months",
+]);
 const COMBO_SURCHARGE = 50;
 
 const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {

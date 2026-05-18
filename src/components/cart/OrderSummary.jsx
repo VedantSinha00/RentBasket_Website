@@ -4,7 +4,15 @@ import { CheckCircle, Tag, ShieldCheck, Lock, Truck, Wrench, CreditCard, Bookmar
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 
-const MONTHLY_KEYS = new Set(["1_month", "3_months", "6_months", "9_months", "12_months"]);
+const MONTHLY_KEYS = new Set([
+  "1_month",
+  "3_months",
+  "6_months",
+  "11_months",
+  "12_months",
+  "24_months",
+  "36_months",
+]);
 
 const OrderSummary = () => {
   const { cartItems, getCartItemCount } = useCart();

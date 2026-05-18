@@ -5,7 +5,9 @@ const PricingSummary = ({ product, selectedDuration, quantity }) => {
   const pricing = product.pricing_by_duration;
   const price = pricing[selectedDuration] || 0;
   const deposit = product.deposit || 0;
-  const isMonthly = ["1_month", "3_months", "6_months", "9_months", "12_months"].includes(selectedDuration);
+  const isMonthly = ["1_month", "3_months", "6_months", "11_months", "12_months", "24_months", "36_months"].includes(
+    selectedDuration,
+  );
 
   const durationLabel =
     DURATION_OPTIONS.find((d) => d.key === selectedDuration)?.label || "";

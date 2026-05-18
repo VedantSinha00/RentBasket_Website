@@ -69,7 +69,7 @@ const Card = ({ belief, reality }) => {
         >
           <InnerBorder />
           {/* Responsive Heading */}
-          <h2 className="text-white text-4xl sm:text-5xl md:text-6xl font-serif font-bold mb-2 md:mb-4 tracking-tighter opacity-40 z-10 leading-none max-h-[120px]">
+          <h2 className="text-white text-4xl sm:text-5xl md:text-6xl font-serif font-bold mb-2 md:mb-4 tracking-tighter opacity-40 z-10 leading-none max-h-[100px]">
             REALITY
           </h2>
           {/* Responsive reality Text */}
