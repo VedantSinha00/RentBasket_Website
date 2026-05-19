@@ -1,28 +1,28 @@
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 import { Star, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { DURATION_OPTIONS } from "@/data/products";
 
-const ProductCard = ({ product }) => {
+const ProductCard = forwardRef(({ product }, ref) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [showPricingLadder, setShowPricingLadder] = useState(false);
   const navigate = useNavigate();
 
   const pricing = product.pricing_by_duration;
-  const lowestDaily = pricing["7_day"];
+  const lowestDaily = pricing["7_days"];
   const lowestMonthly = pricing["12_months"];
 
   // Duration chip preview (show 5 key durations)
-  const previewDurations = ["7_day", "1_month", "3_months", "6_months", "12_months"];
+  const previewDurations = ["7_days", "1_month", "3_months", "6_months", "12_months"];
   const previewChips = DURATION_OPTIONS.filter((d) =>
     previewDurations.includes(d.key)
   );
 
   // Pricing ladder for hover tooltip
   const pricingLadder = [
-    { label: "7 Days", price: pricing["7_day"], suffix: "" },
-    { label: "3 Month", price: pricing["1_month"], suffix: "/mo" },
+    { label: "7 Days", price: pricing["7_days"], suffix: "" },
+    { label: "1 Month", price: pricing["1_month"], suffix: "/mo" },
     { label: "6 Months", price: pricing["6_months"], suffix: "/mo" },
     { label: "12 Months", price: pricing["12_months"], suffix: "/mo" },
   ];
@@ -31,6 +31,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <motion.div
+      ref={ref}
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -174,6 +175,8 @@ const ProductCard = ({ product }) => {
       </div>
     </motion.div>
   );
-};
+});
+
+ProductCard.displayName = "ProductCard";
 
 export default ProductCard;

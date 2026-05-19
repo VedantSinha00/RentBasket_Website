@@ -14,6 +14,12 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+/** GitHub Pages serves route folders as /path/ — match both forms. */
+const routePair = (path, element) => [
+  <Route key={path} path={path} element={element} />,
+  <Route key={`${path}/`} path={`${path}/`} element={element} />,
+];
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <CartProvider>
@@ -25,12 +31,13 @@ const App = () => (
         >
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/catalog" element={<Catalog />} />
-            <Route path="/catalogue" element={<Navigate to="/catalog" replace />} />
-            <Route path="/product/:id" element={<ProductDetails />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/order-success" element={<OrderSuccess />} />
+            {routePair("/catalog", <Catalog />)}
+            <Route path="/catalogue" element={<Navigate to="/catalog/" replace />} />
+            <Route path="/catalogue/" element={<Navigate to="/catalog/" replace />} />
+            {routePair("/product/:id", <ProductDetails />)}
+            {routePair("/cart", <Cart />)}
+            {routePair("/checkout", <Checkout />)}
+            {routePair("/order-success", <OrderSuccess />)}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
