@@ -5,6 +5,13 @@ import reactRefresh from "eslint-plugin-react-refresh";
 
 export default [
   { ignores: ["dist"] },
+  // Node.js config files — need process, require, __dirname
+  {
+    files: ["vite.config.js", "tailwind.config.js", "postcss.config.js", "scripts/**/*.js"],
+    languageOptions: {
+      globals: { ...globals.node },
+    },
+  },
   {
     files: ["**/*.{js,jsx}"],
     languageOptions: {

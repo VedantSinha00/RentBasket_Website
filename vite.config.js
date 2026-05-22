@@ -18,4 +18,10 @@ export default defineConfig(() => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  test: {
+    // Vitest runs only src/ unit tests — e2e/ is Playwright's domain (Layer 3)
+    include: ["src/**/*.{test,spec}.{js,jsx,ts,tsx}"],
+    exclude: ["e2e/**", "node_modules/**", "dist/**"],
+    environment: "jsdom",
+  },
 }));

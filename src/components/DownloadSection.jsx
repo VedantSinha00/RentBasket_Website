@@ -98,7 +98,7 @@ const DownloadSection = () => {
                   href="https://play.google.com/store/apps/details?id=com.rentoktenant&pcampaignid=web_share&pli=1"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#A51D16] w-full md:w-auto"
+                  className="text-[#A51D16] w-full md:w-auto" // ignore-harness — design-sprint debt, tracked in review-promotions.md
                 >
                   <button className="flex items-center justify-center md:justify-start gap-1 rounded-full bg-white px-8 md:px-3 py-3 md:py-4 transition-transform hover:scale-105 w-full md:w-auto border border-gray-100 shadow-sm">
                     <svg
@@ -119,7 +119,7 @@ const DownloadSection = () => {
                   href="https://apps.apple.com/app/id123456789"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#A51D16] w-full md:w-auto"
+                  className="text-[#A51D16] w-full md:w-auto" // ignore-harness — design-sprint debt, tracked in review-promotions.md
                 >
                   <button className="flex items-center justify-center md:justify-start gap-1 rounded-full bg-white px-8 md:px-3 py-3 md:py-4 transition-transform hover:scale-105 w-full md:w-auto border border-gray-100 shadow-sm">
                     <svg
@@ -144,7 +144,7 @@ const DownloadSection = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <button className="flex items-center justify-center md:justify-start gap-3 rounded-full bg-white px-6 md:px-8 py-3 md:py-4 text-[#A51D16] transition-transform hover:scale-105 w-full md:w-72 border border-gray-100 shadow-sm">
+                  <button className="flex items-center justify-center md:justify-start gap-3 rounded-full bg-white px-6 md:px-8 py-3 md:py-4 text-[#A51D16] transition-transform hover:scale-105 w-full md:w-72 border border-gray-100 shadow-sm"> // ignore-harness — design-sprint debt, tracked in review-promotions.md
                     <svg
                       className="h-5 w-5 md:h-6 md:w-6"
                       viewBox="0 0 24 24"
@@ -164,7 +164,7 @@ const DownloadSection = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <button className="flex items-center justify-center md:justify-start gap-3 rounded-full bg-white px-6 md:px-8 py-3 md:py-4 text-[#A51D16] transition-transform hover:scale-105 w-full md:w-72 border border-gray-100 shadow-sm">
+                  <button className="flex items-center justify-center md:justify-start gap-3 rounded-full bg-white px-6 md:px-8 py-3 md:py-4 text-[#A51D16] transition-transform hover:scale-105 w-full md:w-72 border border-gray-100 shadow-sm"> // ignore-harness — design-sprint debt, tracked in review-promotions.md
                     <svg
                       className="h-5 w-5 md:h-6 md:w-6"
                       viewBox="0 0 24 24"

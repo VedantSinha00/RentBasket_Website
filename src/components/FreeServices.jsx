@@ -19,7 +19,7 @@ const FreeServices = () => {
               >
                 Free
               </span>
-              <ul className="list-disc pl-5 space-y-1 text-[#868585] font-sans font-semibold text-[20px] sm:text-[24px] md:text-[28px] tracking-tight">
+              <ul className="list-disc pl-5 space-y-1 text-muted-foreground font-sans font-semibold text-[20px] sm:text-[24px] md:text-[28px] tracking-tight">
                 <li>Delivery</li>
                 <li>Installation</li>
                 <li>Maintenance</li>

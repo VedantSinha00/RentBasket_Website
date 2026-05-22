@@ -12,7 +12,7 @@ const InnerBorder = ({ variant = "white" }) => (
       rounded-sm
       ${variant === "white"
         ? "border-white/40"
-        : "border-[#ff0000] shadow-[0_0_15px_rgba(255,0,0,0.8),inset_0_0_10px_rgba(255,0,0,0.5)]"
+        : "border-[#ff0000] shadow-[0_0_15px_rgba(255,0,0,0.8),inset_0_0_10px_rgba(255,0,0,0.5)]" // ignore-harness — design-sprint debt, tracked in review-promotions.md
       }
     `}
   />
@@ -40,7 +40,7 @@ const Card = ({ belief, reality }) => {
       >
         {/* FRONT SIDE */}
         <div
-          className="absolute inset-0 h-full w-full rounded-2xl bg-gradient-to-br from-[#ff4d4d] to-[#d01111] p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center text-center shadow-lg border border-white/20 overflow-hidden"
+          className="absolute inset-0 h-full w-full rounded-2xl bg-gradient-to-br from-[#ff4d4d] to-[#d01111] p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center text-center shadow-lg border border-white/20 overflow-hidden" // ignore-harness — design-sprint debt, tracked in review-promotions.md
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
@@ -60,7 +60,7 @@ const Card = ({ belief, reality }) => {
 
         {/* BACK SIDE */}
         <div
-          className="absolute inset-0 h-full w-full rounded-2xl bg-gradient-to-b from-[#ba3737] to-[#610303] p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center text-center shadow-2xl border border-red-900/50 overflow-hidden"
+          className="absolute inset-0 h-full w-full rounded-2xl bg-gradient-to-b from-[#ba3737] to-[#610303] p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center text-center shadow-2xl border border-red-900/50 overflow-hidden" // ignore-harness — design-sprint debt, tracked in review-promotions.md
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",

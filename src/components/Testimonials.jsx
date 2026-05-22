@@ -11,7 +11,7 @@ const TestimonialCard = ({ className, content, showHighlight = false }) => (
   >
     <div className="flex gap-1">
       {[...Array(5)].map((_, i) => (
-        <Star key={i} size={16} fill="#FBBF24" className="text-yellow-400" />
+        <Star key={i} size={16} fill="currentColor" className="text-yellow-400" />
       ))}
     </div>
     <p
