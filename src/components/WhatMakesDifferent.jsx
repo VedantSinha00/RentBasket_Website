@@ -118,8 +118,8 @@ const WhatMakesDifferent = () => {
 
   return (
     <>
-      <section className="section-container py-12 md:py-20 bg-cream/50">
-        <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-12">
+      <section className="section-container pt-10 md:pt-14 pb-6 md:pb-8 bg-cream/50">
+        <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-8">
           What makes RentBasket Different
         </h2>
 
@@ -185,7 +185,7 @@ const WhatMakesDifferent = () => {
           ))}
         </div>
 
-        <div className="flex flex-col lg:hidden text-center mt-12">
+        <div className="flex flex-col lg:hidden text-center mt-8">
           <h3 className="text-2xl md:text-3xl font-bold mb-6 font-sans">
             Get Started Today!
           </h3>
@@ -208,7 +208,7 @@ const WhatMakesDifferent = () => {
           </div>
         </div>
 
-        <div className="hidden lg:flex flex-col text-center mt-12">
+        <div className="hidden lg:flex flex-col text-center mt-8">
           <h3 className="text-2xl md:text-3xl font-sans font-bold mb-6">
             Get Started Today!
           </h3>
@@ -232,7 +232,7 @@ const WhatMakesDifferent = () => {
         </div>
       </section>
 
-      <div className="flex justify-center w-full pt-12 bg-gradient-to-t from-cream to-secondary/40 dark:from-secondary dark:to-transparent shadow-lg" />
+      <div className="flex justify-center w-full pt-4 bg-gradient-to-t from-cream to-secondary/40 dark:from-secondary dark:to-transparent" />
     </>
   );
 };

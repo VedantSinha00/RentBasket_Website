@@ -180,6 +180,13 @@
     color: hsl(var(--primary-foreground));
   }
 
+  .text-gradient-coral {
+    background: var(--gradient-coral);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
   .gradient-hero-text {
     background-image: var(--gradient-hero);
     -webkit-background-clip: text;

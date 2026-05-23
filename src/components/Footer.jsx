@@ -3,29 +3,19 @@ import logo from "@/assets/7 1.png";
 
 const Footer = () => {
   return (
-    <footer className="bg-background border-none">
+    <footer className="bg-background">
       {/* Wave decoration */}
-      <div className="h-24 bg-gradient-to-b from-secondary to-transparent"></div>
+      <div className="h-6 bg-gradient-to-b from-secondary to-transparent" />
 
-      <div className="section-container py-12">
+      <div className="section-container pt-2 pb-8">
         {/* Brand */}
-        <div className="gap-2 pl-12 lg:pl-28 mb-6">
-          <h3 className="font-bold text-lg mb-2 font-sans">RentBasket</h3>
-          <p className="text-sm text-muted-foreground pb-2 font-sans">
-            Comfort for your home
-          </p>
-          <p className="text-sm text-muted-foreground pb-2 font-sans">
-            without the hassle of ownership.
+        <div className="mb-10">
+          <h3 className="font-bold text-lg mb-1 font-sans">RentBasket</h3>
+          <p className="text-sm text-muted-foreground font-sans leading-relaxed">
+            Comfort for your home,<br />without the hassle of ownership.
           </p>
         </div>
-        <div
-          className="grid grid-cols-2 gap-3"
-          style={{
-            width: "90%",
-            margin: "auto",
-            paddingLeft: "5%",
-          }}
-        >
+        <div className="grid grid-cols-2 gap-8 max-w-lg">
           <div className="space-y-6">
             {/* Quick Links */}
             <div>
@@ -74,30 +64,54 @@ const Footer = () => {
               <h4 className="font-bold text-sm mb-2 font-sans">
                 Gurgaon Office
               </h4>
-              <div className="text-sm text-muted-foreground space-y-1">
-                <p className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 font-sans" />
-                  Sector 52, Ardee City
-                </p>
-                <p className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 font-sans" />
-                  +91 9958858473
-                </p>
+              <div className="text-sm text-muted-foreground space-y-2">
+                <a
+                  href="https://www.rentbasket.com/locations"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-2 hover:text-primary transition-colors group"
+                >
+                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 group-hover:text-primary" />
+                  <span className="text-left leading-snug font-sans">
+                    C9/2, Lower Ground Floor,<br />
+                    Ardee City, Sector 52,<br />
+                    Gurugram, Haryana 122003
+                  </span>
+                </a>
+                <a
+                  href="tel:+919958858473"
+                  className="flex items-center gap-2 hover:text-primary transition-colors"
+                >
+                  <Phone className="w-4 h-4 flex-shrink-0" />
+                  <span className="font-sans">+91 9958858473</span>
+                </a>
               </div>
             </div>
 
             {/* Noida */}
             <div>
               <h4 className="font-bold text-sm mb-2 font-sans">Noida Office</h4>
-              <div className="text-sm text-muted-foreground space-y-1">
-                <p className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 font-sans" />
-                  Sector 116
-                </p>
-                <p className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 font-sans" />
-                  +91 9958004438
-                </p>
+              <div className="text-sm text-muted-foreground space-y-2">
+                <a
+                  href="https://www.rentbasket.com/locations"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-2 hover:text-primary transition-colors group"
+                >
+                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 group-hover:text-primary" />
+                  <span className="text-left leading-snug font-sans">
+                    Plot No B.L.K 15, Basement,<br />
+                    Sector 116, Noida,<br />
+                    UP 201301
+                  </span>
+                </a>
+                <a
+                  href="tel:+919958004438"
+                  className="flex items-center gap-2 hover:text-primary transition-colors"
+                >
+                  <Phone className="w-4 h-4 flex-shrink-0" />
+                  <span className="font-sans">+91 9958004438</span>
+                </a>
               </div>
             </div>
           </div>
@@ -106,7 +120,7 @@ const Footer = () => {
         {/* Social Icons & Copyright */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pt-8 border-t border-border">
           <p className="text-sm text-muted-foreground text-center sm:text-left font-sans order-2 sm:order-1">
-            © 2025 RentBasket. All rights reserved.
+            © 2026 RentBasket. All rights reserved.
           </p>
           <div className="order-1 sm:order-2 shrink-0">
             <img

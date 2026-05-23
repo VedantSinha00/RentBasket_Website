@@ -68,7 +68,7 @@ const HeroSection = ({ activeCategory = "Furniture", onCategoryChange }) => {
 
         {/* Category tabs */}
         <motion.div
-          className="flex flex-wrap gap-x-5 gap-y-2 lg:gap-x-6"
+          className="flex flex-wrap gap-x-4 gap-y-2 lg:flex-nowrap lg:gap-x-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.2 }}
@@ -79,7 +79,7 @@ const HeroSection = ({ activeCategory = "Furniture", onCategoryChange }) => {
               <button
                 key={cat}
                 onClick={() => onCategoryChange?.(cat)}
-                className={`relative font-sans font-semibold text-[15px] sm:text-[17px] lg:text-[20px] xl:text-[22px] pb-1.5 tracking-tight transition-colors ${
+                className={`relative font-sans font-semibold text-[15px] sm:text-[17px] lg:text-[18px] xl:text-[20px] pb-1.5 tracking-tight transition-colors ${
                   isActive
                     ? "text-primary"
                     : "text-muted-foreground hover:text-foreground"

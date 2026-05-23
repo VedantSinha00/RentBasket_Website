@@ -1,22 +1,28 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import mascotsCouch from "@/assets/ChatGPT Image Jan 17, 2026, 02_58_19 AM 1.png";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+};
 
 const FreeServices = () => {
   return (
-    <section className="bg-background pt-16 md:pt-24 pb-6 md:pb-8">
+    <section className="bg-background pt-10 md:pt-14 pb-4 md:pb-6">
       <div className="section-container">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
           {/* Left: Free + list + CTAs */}
-          <div className="flex flex-col items-center lg:items-start">
+          <motion.div
+            className="flex flex-col items-center lg:items-start"
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+          >
             {/* Free + bullets */}
             <div className="flex items-center gap-4 sm:gap-6">
-              <span
-                className="font-display font-medium leading-none bg-clip-text text-transparent text-[64px] sm:text-[80px] md:text-[96px]"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(99.5deg, hsl(4, 73%, 51%) 3%, hsl(351, 88%, 53%) 35%, hsl(6, 100%, 77%) 73%)",
-                }}
-              >
+              <span className="font-display font-medium leading-none text-gradient-coral text-[64px] sm:text-[80px] md:text-[96px]">
                 Free
               </span>
               <ul className="list-disc pl-5 space-y-1 text-muted-foreground font-sans font-semibold text-[20px] sm:text-[24px] md:text-[28px] tracking-tight">
@@ -35,16 +41,23 @@ const FreeServices = () => {
                 Browse Catalogue
               </Link>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right: Mascots carrying couch */}
-          <div className="flex justify-center lg:justify-end">
+          <motion.div
+            className="flex justify-center lg:justify-end"
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ delay: 0.1 }}
+          >
             <img
               src={mascotsCouch}
               alt="RentBasket mascots carrying a couch"
               className="w-full max-w-[420px] sm:max-w-[520px] md:max-w-[600px] h-auto mix-blend-multiply"
             />
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

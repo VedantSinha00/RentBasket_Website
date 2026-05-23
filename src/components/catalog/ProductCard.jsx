@@ -37,7 +37,8 @@ const ProductCard = forwardRef(({ product }, ref) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.3 }}
-      className="group bg-card border border-border rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300"
+      whileHover={{ y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
+      className="group bg-card border border-border rounded-2xl overflow-hidden shadow-soft hover:shadow-elevated transition-shadow duration-200"
       onMouseEnter={() => setShowPricingLadder(true)}
       onMouseLeave={() => setShowPricingLadder(false)}
     >

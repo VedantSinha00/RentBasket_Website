@@ -1,21 +1,22 @@
 import React from "react";
 import { Star } from "lucide-react";
+import { motion } from "framer-motion";
 import turtleMascot from "@/assets/Untitled-22 1.png";
 
 const TestimonialCard = ({ className, content, showHighlight = false }) => (
   <div
     className={`
-    w-[290px] md:w-[350px] p-6 rounded-2xl bg-white shadow-[0_20px_50px_rgba(0,0,0,0.12)] 
-    border border-gray-100 flex flex-col gap-3 transition-all duration-500 ${className}
+    w-[290px] md:w-[350px] p-6 rounded-2xl bg-card shadow-elevated
+    border border-border flex flex-col gap-3 transition-all duration-500 ${className}
   `}
   >
     <div className="flex gap-1">
       {[...Array(5)].map((_, i) => (
-        <Star key={i} size={16} fill="currentColor" className="text-yellow-400" />
+        <Star key={i} size={16} fill="currentColor" className="text-gold" />
       ))}
     </div>
     <p
-      className={`text-[13px] md:text-sm leading-relaxed text-gray-600 font-medium ${
+      className={`text-[13px] md:text-sm leading-relaxed text-muted-foreground font-medium ${
         showHighlight
           ? "underline decoration-primary decoration-2 underline-offset-4"
           : ""
@@ -37,9 +38,15 @@ const Testimonials = () => {
   return (
     <section className="relative pb-6 lg:pb-28 px-6 bg-cream/50 overflow-hidden">
       <div className="max-w-7xl mx-auto flex flex-col items-center">
-        <h2 className="font-display text-4xl md:text-6xl font-bold text-center mb-0 lg:mb-12 text-black tracking-tight">
+        <motion.h2
+          className="font-display text-4xl md:text-6xl font-bold text-center mb-0 lg:mb-12 text-foreground tracking-tight"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
           Loved by Customers
-        </h2>
+        </motion.h2>
 
         {/* Parent container providing responsive boundary */}
         <div className="relative w-full flex flex-col items-center justify-top pt-28 md:pt-56 min-h-[720px] md:min-h-[500px]">

@@ -100,6 +100,14 @@ Priority order. Pick the top item at sprint start.
 |---|---|---|---|---|---|
 | 2026-05-23 | — | (Harness bootstrap — no design sprint this session) | — | — | 488a290 |
 | 2026-05-23 | SP-01 | Hero section — mobile (375 px) | Mobile: 1/5 (CTA hidden) | Mobile: 5/5 (CTA above fold, readable headline, mascot below) | next commit |
+| 2026-05-23 | Tab fix | Category tabs wrapping at 1280px+ | Hierarchy: 2/5 (Bestsellers on row 2) | Hierarchy: 5/5 (all 4 tabs on one line) | next commit |
+| 2026-05-23 | SP-02 | Product card hover state | Motion: 1/5 (no hover feedback) | Motion: 5/5 (4px lift + shadow-elevated, 200ms easeOut) | next commit |
+| 2026-05-23 | SP-03 | Page-transition fade (AnimatePresence) | Motion: 1/5 (hard flash on route change) | Motion: 4/5 (150ms opacity fade, mode=wait) | next commit |
+| 2026-05-23 | D04-partial | Testimonials raw colours → tokens | Colour coherence: 2/5 | Colour coherence: 4/5 | next commit |
+| 2026-05-23 | SP-07 | Footer breathing room + copyright year | Breathing room: 2/5, year stale | Breathing room: 4/5, inline styles removed | next commit |
+| 2026-05-23 | SP-04-partial | Scroll-reveal on FreeServices + Testimonials heading | Motion: 2/5 (no entrance animation) | Motion: 4/5 (whileInView fadeUp, once) | next commit |
+| 2026-05-23 | Whitespace pass | Trim desktop padding across 5 sections (FreeServices, MythOrFact, Testimonials, DownloadSection, WhatMakesDifferent) | Breathing: scattered, total main 5776px | Breathing: harmonious, total main 5284px (−492px / ~9%) | next commit |
+| 2026-05-23 | MythOrFact REALITY | REALITY card: text overflowed ("REALIT"), red glow border, `font-serif` | Hierarchy: 2/5, off-brand | Hierarchy: 5/5: Playfair font-display, opacity-50, 40px fits 163/205px, subtle white/25 border, text-white/90, 15px reality copy | next commit |
 
 ---
 

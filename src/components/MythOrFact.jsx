@@ -1,20 +1,9 @@
 import React, { useState } from "react";
 
-// Common Inner Border Style - Adjusted insets for mobile
-const InnerBorder = ({ variant = "white" }) => (
+// Subtle inset border — works for both BELIEF and REALITY faces.
+const InnerBorder = () => (
   <div
-    className={`
-      absolute 
-      inset-2 sm:inset-3 md:inset-4 
-      border-[3px] md:border-[2px] 
-      pointer-events-none 
-      z-0 
-      rounded-sm
-      ${variant === "white"
-        ? "border-white/40"
-        : "border-[#ff0000] shadow-[0_0_15px_rgba(255,0,0,0.8),inset_0_0_10px_rgba(255,0,0,0.5)]" // ignore-harness — design-sprint debt, tracked in review-promotions.md
-      }
-    `}
+    className="absolute inset-2 sm:inset-3 md:inset-4 border-[1.5px] border-white/25 pointer-events-none z-0 rounded-md"
   />
 );
 
@@ -60,20 +49,20 @@ const Card = ({ belief, reality }) => {
 
         {/* BACK SIDE */}
         <div
-          className="absolute inset-0 h-full w-full rounded-2xl bg-gradient-to-b from-[#ba3737] to-[#610303] p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center text-center shadow-2xl border border-red-900/50 overflow-hidden" // ignore-harness — design-sprint debt, tracked in review-promotions.md
+          className="absolute inset-0 h-full w-full rounded-2xl bg-gradient-to-b from-[#ba3737] to-[#610303] p-4 sm:p-6 md:p-7 flex flex-col items-center justify-start shadow-2xl border border-white/10 overflow-hidden" // ignore-harness — design-sprint debt, tracked in review-promotions.md
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
-            transform: "rotateY(180deg)" // Standard back face rotation
+            transform: "rotateY(180deg)"
           }}
         >
           <InnerBorder />
-          {/* Responsive Heading */}
-          <h2 className="text-white text-4xl sm:text-5xl md:text-6xl font-serif font-bold mb-2 md:mb-4 tracking-tighter opacity-40 z-10 leading-none max-h-[100px]">
+          {/* Watermark REALITY heading — left-aligned, sized to fit, brand display font, gentle ghost */}
+          <h2 className="text-white text-3xl sm:text-4xl md:text-[2.5rem] font-display font-bold mb-3 md:mb-4 tracking-tight opacity-50 z-10 leading-none self-start">
             REALITY
           </h2>
-          {/* Responsive reality Text */}
-          <p className="text-red-100 text-[11px] sm:text-sm md:text-sm leading-snug md:leading-relaxed font-medium z-10 px-1 font-sans">
+          {/* Reality copy — center-aligned body text on muted white for legibility */}
+          <p className="text-white/90 text-xs sm:text-sm md:text-[15px] leading-snug md:leading-relaxed font-sans font-medium z-10 text-center">
             {reality}
           </p>
         </div>
@@ -117,13 +106,13 @@ const MythOrFact = () => {
   ];
 
   return (
-    <section className="bg-background pt-4 md:pt-6 pb-12 md:pb-20 px-4 md:px-6">
-      <div className="text-center mb-8 md:mb-12">
+    <section className="bg-background pt-4 md:pt-6 pb-8 md:pb-10 px-4 md:px-6">
+      <div className="text-center mb-6 md:mb-8">
         {/* Responsive Section Header */}
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4">
           Belief or Reality?
         </h2>
-        <p className="text-gray-500 text-sm md:text-lg">
+        <p className="text-muted-foreground text-sm md:text-lg">
           Let's bust some Myths!
         </p>
       </div>

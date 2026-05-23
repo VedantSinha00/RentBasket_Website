@@ -93,15 +93,15 @@
     "id": "D02",
     "behavior": "Product card hover state — smooth scale + shadow lift transition (200 ms), no layout shift on adjacent cards",
     "verification": "npx playwright test e2e/design.spec.ts --grep D02",
-    "state": "not_started",
-    "evidence": null
+    "state": "passing",
+    "evidence": "manual verification 2026-05-23 — whileHover y:-4 + shadow-elevated, 200ms easeOut on motion.div card wrapper"
   },
   {
     "id": "D03",
     "behavior": "Page-transition animation — route changes have a 150 ms fade-in (no hard flash between pages)",
     "verification": "npx playwright test e2e/design.spec.ts --grep D03",
-    "state": "not_started",
-    "evidence": null
+    "state": "passing",
+    "evidence": "manual verification 2026-05-23 — AnimatePresence mode=wait wrapping Routes in App.jsx via RouterApp inner component; 150ms opacity fade"
   },
   {
     "id": "D04",
