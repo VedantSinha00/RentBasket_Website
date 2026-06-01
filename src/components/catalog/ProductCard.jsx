@@ -3,6 +3,7 @@ import { Star, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { DURATION_OPTIONS } from "@/data/products";
+import ProductImage from "@/components/ui/ProductImage";
 
 const ProductCard = forwardRef(({ product }, ref) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -44,7 +45,7 @@ const ProductCard = forwardRef(({ product }, ref) => {
     >
       {/* Image Area */}
       <div className="relative aspect-[4/3] bg-gray-50 overflow-hidden">
-        <img
+        <ProductImage
           src={product.image}
           alt={product.name}
           className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"

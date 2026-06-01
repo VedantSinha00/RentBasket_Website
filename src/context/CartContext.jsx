@@ -1,7 +1,10 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { syncCart, CART_SYNC_ENABLED } from "@/api/cart";
+import { getCartId } from "@/lib/cartId";
 
 const CartContext = createContext();
 const CART_STORAGE_KEY = "rentbasket_cart";
+const CART_SYNC_DEBOUNCE_MS = 3000;
 
 const loadCart = () => {
   try {
@@ -23,9 +26,21 @@ export const useCart = () => {
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(loadCart);
 
-  // Persist to localStorage on every change
+  // Persist to localStorage on every change (primary store)
   useEffect(() => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  // Periodically sync the cart to the backend (debounced — fires once activity
+  // settles, not on every click). No-op until VITE_API_BASE_URL is configured.
+  useEffect(() => {
+    if (!CART_SYNC_ENABLED) return;
+    const timer = setTimeout(() => {
+      syncCart(getCartId(), cartItems).catch((err) =>
+        console.warn("Cart sync failed:", err)
+      );
+    }, CART_SYNC_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
   }, [cartItems]);
 
   const addToCart = (item) => {
