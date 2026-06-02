@@ -17,63 +17,6 @@ const Footer = () => {
           </p>
         </div>
         <div className="grid grid-cols-2 gap-8 max-w-lg">
-          <div className="space-y-6">
-            {/* Quick Links & Policies */}
-            <div>
-              <h4 className="font-bold text-sm mb-4 font-sans">Quick Links</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <Link
-                    to="/catalog"
-                    className="hover:text-primary transition-colors font-sans"
-                  >
-                    Browse Products
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/about"
-                    className="hover:text-primary transition-colors font-sans"
-                  >
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/faqs"
-                    className="hover:text-primary transition-colors font-sans"
-                  >
-                    FAQs
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/terms-n-conditions"
-                    className="hover:text-primary transition-colors font-sans"
-                  >
-                    Terms &amp; Conditions
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/shipping-returns"
-                    className="hover:text-primary transition-colors font-sans"
-                  >
-                    Shipping &amp; Returns
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/contact"
-                    className="hover:text-primary transition-colors font-sans"
-                  >
-                    Contact Us
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-
           {/* Office Locations */}
           <div className="space-y-6">
             {/* Gurgaon */}
@@ -126,6 +69,63 @@ const Footer = () => {
                   <span className="font-sans">+91 9958004438</span>
                 </a>
               </div>
+            </div>
+          </div>
+
+          {/* Quick Links & Policies */}
+          <div className="space-y-6">
+            <div>
+              <h4 className="font-bold text-sm mb-4 font-sans">Quick Links</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <Link
+                    to="/catalog"
+                    className="hover:text-primary transition-colors font-sans"
+                  >
+                    Browse Products
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/about"
+                    className="hover:text-primary transition-colors font-sans"
+                  >
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/faqs"
+                    className="hover:text-primary transition-colors font-sans"
+                  >
+                    FAQs
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/terms-n-conditions"
+                    className="hover:text-primary transition-colors font-sans"
+                  >
+                    Terms &amp; Conditions
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/shipping-returns"
+                    className="hover:text-primary transition-colors font-sans"
+                  >
+                    Shipping &amp; Returns
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/contact"
+                    className="hover:text-primary transition-colors font-sans"
+                  >
+                    Contact Us
+                  </Link>
+                </li>
+              </ul>
             </div>
           </div>
         </div>

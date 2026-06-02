@@ -5,7 +5,7 @@
 
 ## Current State
 
-- **Latest commit:** `f0fff989` — feat: add static trust pages, locations contact page, footer SPA navigation, and E2E tests
+- **Latest commit:** `ca5ed193` — style: swap footer columns to align offices on the left and quick links on the right
 - **Test status:** unit: passing (vitest) | e2e: passing (playwright 9/9)
 - **Lint:** clean (ESLint + TypeScript strict)
 - **Build:** `npm run build` succeeds; deployed to GitHub Pages
