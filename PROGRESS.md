@@ -5,7 +5,7 @@
 
 ## Current State
 
-- **Latest commit:** `90b13009` — style: align office locations to the right edge on both mobile and desktop views
+- **Latest commit:** `603ff5fd` — style: keep footer grid as 2 columns on all viewports to avoid vertical cascading
 - **Test status:** unit: passing (vitest) | e2e: passing (playwright 9/9)
 - **Lint:** clean (ESLint + TypeScript strict)
 - **Build:** `npm run build` succeeds; deployed to GitHub Pages
