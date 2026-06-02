@@ -1,9 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { Lock } from "lucide-react";
 import { toast } from "sonner";
 
 const StickyCheckoutBar = () => {
   const { cartItems, getCartItemCount } = useCart();
+  const navigate = useNavigate();
 
   if (cartItems.length === 0) return null;
 
@@ -32,11 +34,10 @@ const StickyCheckoutBar = () => {
           </p>
         </div>
         <button
-          onClick={() =>
-            toast.success("Proceeding to checkout...", {
-              description: "Checkout page will be available soon",
-            })
-          }
+          onClick={() => {
+            toast.success("Proceeding to checkout...");
+            navigate("/checkout");
+          }}
           className="btn-gradient-coral px-6 py-2.5 text-sm font-semibold whitespace-nowrap flex-shrink-0 inline-flex items-center gap-1.5"
         >
           <Lock className="w-3.5 h-3.5" />

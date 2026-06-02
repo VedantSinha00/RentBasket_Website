@@ -2,8 +2,8 @@ import { useState, useMemo } from "react";
 import { Plus, PackagePlus, CheckSquare, Square, RefreshCcw, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
-import { DURATION_OPTIONS, getRelatedProducts } from "@/data/products";
-import products from "@/data/products";
+import { DURATION_OPTIONS } from "@/data/products";
+import { useProducts } from "@/hooks/useProducts";
 import { toast } from "sonner";
 
 const NEW_PRODUCT_SURCHARGE = 65; // ₹65/mo extra for Brand New
@@ -11,6 +11,7 @@ const COMBO_SURCHARGE = 49; // ₹49/mo combo bundle fee per product
 
 const CrossSellStrip = () => {
   const { cartItems, addToCart, isGlobalBrandNew, toggleGlobalBrandNew } = useCart();
+  const { data: products = [] } = useProducts();
   const [refreshKey, setRefreshKey] = useState(0);
 
   // 1. Build a pool of suggestions based on cart contents
@@ -34,7 +35,7 @@ const CrossSellStrip = () => {
       .filter(id => !cartProductIds.includes(id));
 
     return poolIds.map(id => products.find(p => p.id === id)).filter(Boolean);
-  }, [cartItems]);
+  }, [cartItems, products]);
 
   // 2. Pick 4 items from the pool, cycling based on refreshKey
   const suggestions = useMemo(() => {

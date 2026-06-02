@@ -2,7 +2,8 @@ import { Minus, Plus, Trash2, ChevronDown, CheckCircle, Calendar, Bookmark, Star
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
-import { DURATION_OPTIONS, getProductById } from "@/data/products";
+import { DURATION_OPTIONS } from "@/data/products";
+import { useProduct } from "@/hooks/useProducts";
 import { Link } from "react-router-dom";
 
 const MONTHLY_KEYS = new Set([
@@ -21,7 +22,7 @@ const CartItemCard = ({ item }) => {
   const [showDurationPicker, setShowDurationPicker] = useState(false);
   const pickerRef = useRef(null);
 
-  const product = getProductById(item.productId);
+  const { data: product } = useProduct(item.productId);
   const isMonthly = MONTHLY_KEYS.has(item.duration);
 
   // Close duration picker on outside click

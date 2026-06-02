@@ -1,8 +1,8 @@
-import { getRelatedProducts } from "@/data/products";
 import ProductCard from "@/components/catalog/ProductCard";
+import { useRelatedProducts } from "@/hooks/useProducts";
 
 const RelatedProducts = ({ productId }) => {
-  const related = getRelatedProducts(productId);
+  const { data: related = [] } = useRelatedProducts(productId);
   if (related.length === 0) return null;
 
   return (

@@ -6,10 +6,40 @@ const CartContext = createContext();
 const CART_STORAGE_KEY = "rentbasket_cart";
 const CART_SYNC_DEBOUNCE_MS = 3000;
 
+/**
+ * Unique id for a cart line item. Date.now() alone collides when several items
+ * are added in the same millisecond (e.g. the "Add all" combo button), which
+ * makes remove/update hit the wrong line. Mirrors the id strategy in lib/cartId.js.
+ */
+const makeCartItemId = () =>
+  typeof crypto !== "undefined" && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `ci_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+
+/**
+ * Normalise one stored cart item so the pricing math can never crash on it.
+ * A cart saved by an older build may be missing fields the UI now relies on
+ * (price/quantity/deposit must be numbers; every line needs an id). Returns
+ * null for anything that isn't a usable item, so it gets dropped on load.
+ */
+const normalizeCartItem = (raw) => {
+  if (!raw || typeof raw !== "object" || !raw.productId) return null;
+  const toNumber = (v, fallback) => (Number.isFinite(Number(v)) ? Number(v) : fallback);
+  return {
+    ...raw,
+    cartItemId: raw.cartItemId || makeCartItemId(),
+    price: toNumber(raw.price, 0),
+    quantity: Math.max(1, toNumber(raw.quantity, 1)),
+    deposit: toNumber(raw.deposit, 0),
+  };
+};
+
 const loadCart = () => {
   try {
     const stored = localStorage.getItem(CART_STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
+    const parsed = stored ? JSON.parse(stored) : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map(normalizeCartItem).filter(Boolean);
   } catch {
     return [];
   }
@@ -56,7 +86,7 @@ export const CartProvider = ({ children }) => {
         };
         return updated;
       }
-      return [...prev, { ...item, cartItemId: Date.now().toString() }];
+      return [...prev, { ...item, cartItemId: makeCartItemId() }];
     });
   };
 
