@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { DURATION_OPTIONS } from "@/data/products";
+import { discountedRent } from "@/lib/pricing";
 import { useProduct } from "@/hooks/useProducts";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
@@ -77,7 +78,7 @@ const ProductDetails = () => {
   }
 
   const pricing = product.pricing_by_duration;
-  const price = pricing[selectedDuration] || 0;
+  const price = discountedRent(pricing[selectedDuration] || 0, product.percent_discount);
   const durationLabel = DURATION_OPTIONS.find((d) => d.key === selectedDuration)?.label || "";
 
   const handleMobileAddToCart = () => {

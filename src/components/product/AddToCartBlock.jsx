@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Minus, Plus, Calendar, ShieldCheck, Clock, ArrowRightLeft, Headphones } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { DURATION_OPTIONS } from "@/data/products";
+import { discountedRent } from "@/lib/pricing";
 import { toast } from "sonner";
 
 const AddToCartBlock = ({ product, selectedDuration, quantity, onQuantityChange }) => {
@@ -9,7 +10,7 @@ const AddToCartBlock = ({ product, selectedDuration, quantity, onQuantityChange 
   const { addToCart } = useCart();
 
   const pricing = product.pricing_by_duration;
-  const price = pricing[selectedDuration] || 0;
+  const price = discountedRent(pricing[selectedDuration] || 0, product.percent_discount);
   const durationLabel = DURATION_OPTIONS.find((d) => d.key === selectedDuration)?.label || "";
 
   const handleAddToCart = () => {

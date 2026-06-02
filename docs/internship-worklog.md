@@ -86,11 +86,17 @@ Created `src/lib/pricing.js` — pure functions for the whole confirmed model (d
 
 This is the single source of truth every cart/proposal screen will call. Lint clean.
 
+## 2026-06-02 — Catalog migration, Phase 1 (durations, discount display, Mini stub)
+- **Durations trimmed to monthly only** (1/3/6/12 months) — day/sub-month tiers removed from the picker (they belong to RentBasket Mini).
+- **Products now carry `percent_discount` (30%) and `security_multiple` (2)** via a defaults map (live API overrides later).
+- **All shown prices are now the DISCOUNTED price**, not the list price — across catalog cards (with the list struck through), the product page (duration picker, pricing summary, sticky CTA), and the cart line items / cross-sell. Prices added to the cart are discounted too, so product → cart is consistent.
+- **RentBasket Mini stub added** — a "Need it for less than a month?" card in the duration picker with a "Coming soon" badge (taps show a coming-soon toast). Visible intent, no dead link.
+
+Lint clean, build passing, pricing tests green. (Phase 2 — the full cart breakdown with GST/security/50% — is still pending the user's sign-off on Phase 1.)
+
 ---
 
 ## Next up
-1. **Feed the module real-shaped data.** Decide how the catalog carries the live fields (`rent_3/6/9/12`, `percent_discount`, `security_multiple`) — the current mock uses an older shape. (See the data-shape decision under discussion.)
-2. **Point the cart / order summary at the module** so the site shows the full proposal breakdown (list→discounted, savings, GST, security, net first month, 50% split).
-3. Align durations to 3/6/9/12 months on the main site; sub-month tiers + the cross-link "RentBasket Mini" cards come with the Mini build.
-4. Remove the placeholder "Brand New" / "Combo" surcharges.
-5. Later: "RentBasket Mini" page (short-term rentals with delivery/installation charges); restore full self-serve checkout.
+1. **Phase 2 — wire the pricing module into the cart** (Order Summary, checkout summary, mobile bar, line items) so the site shows the full proposal breakdown (savings, 18% GST, security, net first month, 50% split), and remove the placeholder "Brand New" / "Combo" surcharges.
+2. Build the real **RentBasket Mini** site/section (short-term rentals with delivery/installation charges) and turn the stub card into a live cross-link.
+3. Later: restore full self-serve checkout (currently a WhatsApp handoff); wire the live API.

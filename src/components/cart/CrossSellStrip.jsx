@@ -3,6 +3,7 @@ import { Plus, PackagePlus, CheckSquare, Square, RefreshCcw, Sparkles } from "lu
 import { Link } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { DURATION_OPTIONS } from "@/data/products";
+import { discountedRent } from "@/lib/pricing";
 import { useProducts } from "@/hooks/useProducts";
 import { toast } from "sonner";
 
@@ -62,13 +63,13 @@ const CrossSellStrip = () => {
   };
 
   const getDisplayPrice = (product) => {
-    const base = product.pricing_by_duration["1_month"] ?? 0;
+    const base = discountedRent(product.pricing_by_duration["1_month"] ?? 0, product.percent_discount);
     return isGlobalBrandNew ? base + NEW_PRODUCT_SURCHARGE : base;
   };
 
   const handleQuickAdd = (product) => {
     const defaultDuration = "1_month";
-    const basePrice = product.pricing_by_duration[defaultDuration];
+    const basePrice = discountedRent(product.pricing_by_duration[defaultDuration], product.percent_discount);
     const finalPrice = isGlobalBrandNew ? basePrice + NEW_PRODUCT_SURCHARGE : basePrice;
     const label = DURATION_OPTIONS.find((d) => d.key === defaultDuration)?.label || "1 Month";
 
@@ -99,7 +100,7 @@ const CrossSellStrip = () => {
     const label = DURATION_OPTIONS.find((d) => d.key === defaultDuration)?.label || "1 Month";
 
     suggestions.forEach((product) => {
-      const basePrice = product.pricing_by_duration[defaultDuration];
+      const basePrice = discountedRent(product.pricing_by_duration[defaultDuration], product.percent_discount);
       const finalPrice = basePrice + COMBO_SURCHARGE;
       addToCart({
         productId: product.id,
@@ -174,7 +175,7 @@ const CrossSellStrip = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {suggestions.map((product) => {
           const displayPrice = getDisplayPrice(product);
-          const basePrice = product.pricing_by_duration["1_month"] ?? 0;
+          const basePrice = discountedRent(product.pricing_by_duration["1_month"] ?? 0, product.percent_discount);
 
           return (
             <div

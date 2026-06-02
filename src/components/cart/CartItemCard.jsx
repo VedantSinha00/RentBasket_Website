@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { DURATION_OPTIONS } from "@/data/products";
+import { discountedRent } from "@/lib/pricing";
 import { useProduct } from "@/hooks/useProducts";
 import { Link } from "react-router-dom";
 
@@ -40,7 +41,10 @@ const CartItemCard = ({ item }) => {
 
   const handleDurationChange = (newDurationKey) => {
     if (!product) return;
-    const basePrice = product.pricing_by_duration[newDurationKey];
+    const basePrice = discountedRent(
+      product.pricing_by_duration[newDurationKey],
+      product.percent_discount
+    );
     const finalPrice = item.isBrandNew ? basePrice + NEW_PRODUCT_SURCHARGE : basePrice;
     const newDeposit = item.isRecommendation ? 0 : product.deposit;
     const newLabel = DURATION_OPTIONS.find((d) => d.key === newDurationKey)?.label || "";
@@ -322,7 +326,10 @@ const CartItemCard = ({ item }) => {
                 </p>
                 <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-1.5">
                   {product && DURATION_OPTIONS.map((d) => {
-                    const dPrice = product.pricing_by_duration[d.key];
+                    const dPrice = discountedRent(
+                      product.pricing_by_duration[d.key],
+                      product.percent_discount
+                    );
                     const isDM = MONTHLY_KEYS.has(d.key);
                     const isSelected = item.duration === d.key;
                     const is12m = d.key === "12_months";

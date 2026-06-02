@@ -3,6 +3,7 @@ import { Star, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { DURATION_OPTIONS } from "@/data/products";
+import { discountedRent } from "@/lib/pricing";
 import ProductImage from "@/components/ui/ProductImage";
 
 const ProductCard = forwardRef(({ product }, ref) => {
@@ -11,21 +12,20 @@ const ProductCard = forwardRef(({ product }, ref) => {
   const navigate = useNavigate();
 
   const pricing = product.pricing_by_duration;
-  const lowestDaily = pricing["7_days"];
-  const lowestMonthly = pricing["12_months"];
+  const disc = (key) => discountedRent(pricing[key], product.percent_discount);
+  const startMonthly = disc("1_month"); // discounted price the customer actually pays
+  const startMonthlyList = pricing["1_month"]; // pre-discount, shown struck-through
+  const bestMonthly = disc("12_months");
 
-  // Duration chip preview (show 5 key durations)
-  const previewDurations = ["7_days", "1_month", "3_months", "6_months", "12_months"];
-  const previewChips = DURATION_OPTIONS.filter((d) =>
-    previewDurations.includes(d.key)
-  );
+  // Duration chips — the monthly plans on offer
+  const previewChips = DURATION_OPTIONS;
 
-  // Pricing ladder for hover tooltip
+  // Pricing ladder for hover tooltip (discounted prices)
   const pricingLadder = [
-    { label: "7 Days", price: pricing["7_days"], suffix: "" },
-    { label: "1 Month", price: pricing["1_month"], suffix: "/mo" },
-    { label: "6 Months", price: pricing["6_months"], suffix: "/mo" },
-    { label: "12 Months", price: pricing["12_months"], suffix: "/mo" },
+    { label: "1 Month", price: disc("1_month"), suffix: "/mo" },
+    { label: "3 Months", price: disc("3_months"), suffix: "/mo" },
+    { label: "6 Months", price: disc("6_months"), suffix: "/mo" },
+    { label: "12 Months", price: disc("12_months"), suffix: "/mo" },
   ];
 
   const primaryTag = product.tags?.[0];
@@ -85,7 +85,7 @@ const ProductCard = forwardRef(({ product }, ref) => {
               transition={{ duration: 0.2 }}
               className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-4 pt-8 hidden md:block"
             >
-              <div className="grid grid-cols-5 gap-1">
+              <div className="grid grid-cols-4 gap-1">
                 {pricingLadder.map((item) => (
                   <div key={item.label} className="text-center">
                     <div className="text-[10px] text-white/70 mb-0.5">
@@ -141,14 +141,26 @@ const ProductCard = forwardRef(({ product }, ref) => {
           <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider font-medium">
             Price varies by duration
           </p>
-          <div className="flex items-baseline gap-2 md:group-hover:hidden">
+          <div className="flex items-baseline flex-wrap gap-x-2 gap-y-1 md:group-hover:hidden">
             <span className="text-lg md:text-xl font-bold text-primary">
-              ₹{lowestDaily.toLocaleString("en-IN")}
+              ₹{startMonthly.toLocaleString("en-IN")}
             </span>
-            <span className="text-xs text-muted-foreground">/day</span>
+            <span className="text-xs text-muted-foreground">/month</span>
+            {startMonthlyList > startMonthly && (
+              <>
+                <span className="text-xs text-muted-foreground line-through">
+                  ₹{startMonthlyList.toLocaleString("en-IN")}
+                </span>
+                {product.percent_discount > 0 && (
+                  <span className="text-[10px] font-bold uppercase tracking-wide text-success bg-success-muted border border-success-border px-1.5 py-0.5 rounded">
+                    {product.percent_discount}% off
+                  </span>
+                )}
+              </>
+            )}
           </div>
           <p className="text-xs text-muted-foreground mt-0.5">
-            or ₹{lowestMonthly.toLocaleString("en-IN")}/month (12M plan)
+            or ₹{bestMonthly.toLocaleString("en-IN")}/month (12M plan)
           </p>
         </div>
 
