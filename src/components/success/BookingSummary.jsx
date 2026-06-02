@@ -35,7 +35,7 @@ const BookingSummary = ({ orderData }) => {
         <div className="space-y-4">
           {items.map((item, idx) => (
             <div key={idx} className="flex gap-4 pb-4 border-b border-border/30 last:border-0 last:pb-0">
-              <div className="w-16 h-16 bg-gray-50 rounded-xl border border-border/50 flex-shrink-0 p-1.5">
+              <div className="w-16 h-16 bg-white rounded-xl border border-border/50 flex-shrink-0 p-1.5">
                 <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
               </div>
               <div className="flex-1 min-w-0">

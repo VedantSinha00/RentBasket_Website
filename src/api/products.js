@@ -34,18 +34,38 @@ async function request(path) {
 
 /** All products, for the catalog grid. */
 export async function fetchProducts() {
-  if (USING_MOCK_DATA) return staticProducts;
+  if (USING_MOCK_DATA) {
+    return staticProducts.map((p) => ({
+      ...p,
+      percent_discount: p.percent_discount ?? 30,
+      security_multiple: p.security_multiple ?? 2,
+    }));
+  }
   return request("/products");
 }
 
 /** One product by id, for the detail page. Resolves to null if not found. */
 export async function fetchProductById(id) {
-  if (USING_MOCK_DATA) return getStaticProductById(id) ?? null;
+  if (USING_MOCK_DATA) {
+    const p = getStaticProductById(id);
+    if (!p) return null;
+    return {
+      ...p,
+      percent_discount: p.percent_discount ?? 30,
+      security_multiple: p.security_multiple ?? 2,
+    };
+  }
   return request(`/products/${encodeURIComponent(id)}`);
 }
 
 /** Related products, for the detail page / cross-sell strip. */
 export async function fetchRelatedProducts(id) {
-  if (USING_MOCK_DATA) return getStaticRelatedProducts(id);
+  if (USING_MOCK_DATA) {
+    return getStaticRelatedProducts(id).map((p) => ({
+      ...p,
+      percent_discount: p.percent_discount ?? 30,
+      security_multiple: p.security_multiple ?? 2,
+    }));
+  }
   return request(`/products/${encodeURIComponent(id)}/related`);
 }

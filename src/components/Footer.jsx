@@ -10,7 +10,7 @@ const Footer = () => {
 
       <div className="section-container pt-2 pb-8">
         {/* Brand */}
-        <div className="mb-10">
+        <div className="mb-10 text-center">
           <h3 className="font-bold text-lg mb-1 font-sans">RentBasket</h3>
           <p className="text-sm text-muted-foreground font-sans leading-relaxed">
             Comfort for your home,<br />without the hassle of ownership.

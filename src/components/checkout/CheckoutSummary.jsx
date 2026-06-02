@@ -49,7 +49,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
               const line = lineOf(item);
               return (
                 <div key={item.cartItemId} className="flex gap-3 pb-4 border-b border-border/30 last:border-0 last:pb-0">
-                  <div className="w-14 h-14 bg-gray-50 rounded-lg border border-border/50 flex-shrink-0">
+                  <div className="w-14 h-14 bg-white rounded-lg border border-border/50 flex-shrink-0">
                     <img src={item.image} alt={item.name} className="w-full h-full object-contain p-1.5" />
                   </div>
                   <div className="flex-1 min-w-0">

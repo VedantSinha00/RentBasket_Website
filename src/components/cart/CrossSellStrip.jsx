@@ -155,7 +155,7 @@ const CrossSellStrip = () => {
               {/* Thumbnail */}
               <Link
                 to={`/product/${product.id}`}
-                className="w-full aspect-square bg-gray-50/50 rounded-xl overflow-hidden mb-3 block group"
+                className="w-full aspect-square bg-white rounded-xl overflow-hidden mb-3 block group"
               >
                 <img
                   src={product.image}

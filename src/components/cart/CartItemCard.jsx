@@ -72,7 +72,7 @@ const CartItemCard = ({ item }) => {
             {/* Thumbnail */}
             <Link
               to={`/product/${item.productId}`}
-              className="w-20 h-20 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-border/50 block"
+              className="w-20 h-20 bg-white rounded-xl overflow-hidden flex-shrink-0 border border-border/50 block"
             >
               <img
                 src={resolvedImage}
@@ -177,7 +177,7 @@ const CartItemCard = ({ item }) => {
           {/* Thumbnail */}
           <Link
             to={`/product/${item.productId}`}
-            className="w-28 h-28 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-border/50 block hover:border-primary/30 transition-colors"
+            className="w-28 h-28 bg-white rounded-xl overflow-hidden flex-shrink-0 border border-border/50 block hover:border-primary/30 transition-colors"
           >
             <img
               src={resolvedImage}

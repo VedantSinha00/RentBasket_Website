@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -32,20 +33,32 @@ const pageVariants = {
   exit:    { opacity: 0, transition: { duration: 0.1, ease: "easeIn" } },
 };
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
+
 /** useLocation must live inside BrowserRouter — extracted here. */
 const RouterApp = () => {
   const location = useLocation();
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={location.pathname}
-        variants={pageVariants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-      >
-        <Routes location={location}>
-          <Route path="/" element={<Index />} />
+    <>
+      <ScrollToTop />
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={location.pathname}
+          variants={pageVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+        >
+          <Routes location={location}>
+            <Route path="/" element={<Index />} />
           {routePair("/catalog", <Catalog />)}
           <Route path="/catalogue" element={<Navigate to="/catalog/" replace />} />
           <Route path="/catalogue/" element={<Navigate to="/catalog/" replace />} />
@@ -63,6 +76,7 @@ const RouterApp = () => {
         </Routes>
       </motion.div>
     </AnimatePresence>
+    </>
   );
 };
 

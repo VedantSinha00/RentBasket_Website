@@ -11,14 +11,22 @@ const ProductCard = forwardRef(({ product }, ref) => {
   const [showPricingLadder, setShowPricingLadder] = useState(false);
   const navigate = useNavigate();
 
+  // Duration chips — the monthly plans on offer
+  const previewChips = DURATION_OPTIONS.filter(
+    (d) => product.pricing_by_duration?.[d.key] !== undefined
+  );
+
+  const defaultDuration = product.pricing_by_duration?.["12_months"] !== undefined
+    ? "12_months"
+    : (previewChips[0]?.key || "12_months");
+  const [selectedDuration, setSelectedDuration] = useState(defaultDuration);
+
   const pricing = product.pricing_by_duration;
   const disc = (key) => discountedRent(pricing[key], product.percent_discount);
   const startMonthly = disc("1_month"); // discounted price the customer actually pays
   const startMonthlyList = pricing["1_month"]; // pre-discount, shown struck-through
-  const bestMonthly = disc("12_months");
-
-  // Duration chips — the monthly plans on offer
-  const previewChips = DURATION_OPTIONS;
+  const currentPrice = disc(selectedDuration);
+  const currentPriceList = pricing[selectedDuration];
 
   // Pricing ladder for hover tooltip (discounted prices)
   const pricingLadder = [
@@ -39,12 +47,13 @@ const ProductCard = forwardRef(({ product }, ref) => {
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.3 }}
       whileHover={{ y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
-      className="group bg-card border border-border rounded-2xl overflow-hidden shadow-soft hover:shadow-elevated transition-shadow duration-200"
+      className="group bg-card border border-border rounded-2xl overflow-hidden shadow-soft hover:shadow-elevated transition-shadow duration-200 cursor-pointer"
       onMouseEnter={() => setShowPricingLadder(true)}
       onMouseLeave={() => setShowPricingLadder(false)}
+      onClick={() => navigate(`/product/${product.id}`)}
     >
       {/* Image Area */}
-      <div className="relative aspect-[4/3] bg-gray-50 overflow-hidden">
+      <div className="relative aspect-[4/3] bg-white overflow-hidden">
         <ProductImage
           src={product.image}
           alt={product.name}
@@ -138,54 +147,54 @@ const ProductCard = forwardRef(({ product }, ref) => {
 
         {/* Pricing Preview */}
         <div className="bg-secondary/60 rounded-xl p-3 mb-3">
-          <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider font-medium">
-            Price varies by duration
-          </p>
-          <div className="flex items-baseline flex-wrap gap-x-2 gap-y-1 md:group-hover:hidden">
+          <div className="flex items-baseline justify-end gap-x-2 flex-wrap">
+            {currentPriceList > currentPrice && (
+              <span className="text-xs text-muted-foreground line-through">
+                ₹{currentPriceList.toLocaleString("en-IN")}
+              </span>
+            )}
             <span className="text-lg md:text-xl font-bold text-primary">
-              ₹{startMonthly.toLocaleString("en-IN")}
+              ₹{currentPrice.toLocaleString("en-IN")}
             </span>
             <span className="text-xs text-muted-foreground">/month</span>
-            {startMonthlyList > startMonthly && (
-              <>
-                <span className="text-xs text-muted-foreground line-through">
-                  ₹{startMonthlyList.toLocaleString("en-IN")}
-                </span>
-                {product.percent_discount > 0 && (
-                  <span className="text-[10px] font-bold uppercase tracking-wide text-success bg-success-muted border border-success-border px-1.5 py-0.5 rounded">
-                    {product.percent_discount}% off
-                  </span>
-                )}
-              </>
-            )}
           </div>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            or ₹{bestMonthly.toLocaleString("en-IN")}/month (12M plan)
-          </p>
         </div>
 
         {/* Duration Chips */}
         <div
-          className="flex gap-1.5 mb-4 overflow-x-auto"
+          className="flex gap-1.5 mb-1 overflow-x-auto relative z-10"
           style={{ scrollbarWidth: "none" }}
         >
-          {previewChips.map((d) => (
-            <span
-              key={d.key}
-              className="text-[10px] md:text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground whitespace-nowrap flex-shrink-0"
-            >
-              {d.short}
-            </span>
-          ))}
+          {previewChips.map((d) => {
+            const isSelected = d.key === selectedDuration;
+            return (
+              <button
+                key={d.key}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedDuration(d.key);
+                }}
+                className={`text-[10px] md:text-xs px-2 py-0.5 rounded-full border whitespace-nowrap flex-shrink-0 transition-all ${
+                  isSelected
+                    ? "bg-primary/5 border-primary/20 text-primary font-semibold"
+                    : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
+                }`}
+              >
+                {d.short}
+              </button>
+            );
+          })}
         </div>
 
         {/* CTA */}
-        <button
-          onClick={() => navigate(`/product/${product.id}`)}
-          className="w-full btn-outline text-sm py-2.5 hover:bg-primary hover:text-primary-foreground"
-        >
-          View Details
-        </button>
+        <div className="max-h-0 opacity-0 overflow-hidden pointer-events-none group-hover:max-h-14 group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 ease-out mt-0 group-hover:mt-3">
+          <button
+            onClick={() => navigate(`/product/${product.id}`)}
+            className="w-full btn-outline text-sm py-2.5 hover:bg-primary hover:text-primary-foreground"
+          >
+            View Details
+          </button>
+        </div>
       </div>
     </motion.div>
   );
