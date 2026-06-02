@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { CheckCircle, Tag, ShieldCheck, Lock, Truck, Wrench, CreditCard, Bookmark, Sparkles } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
@@ -14,9 +14,8 @@ const MONTHLY_KEYS = new Set([
   "36_months",
 ]);
 
-const OrderSummary = () => {
+const OrderSummary = ({ onCheckout }) => {
   const { cartItems, getCartItemCount } = useCart();
-  const navigate = useNavigate();
   const [couponCode, setCouponCode] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
 
@@ -219,10 +218,7 @@ const OrderSummary = () => {
         <div className="space-y-2.5 pt-2">
           <button
             className="btn-gradient-coral w-full py-3.5 text-base font-semibold flex items-center justify-center gap-2"
-            onClick={() => {
-              toast.success("Proceeding to checkout...");
-              navigate("/checkout");
-            }}
+            onClick={onCheckout}
           >
             <Lock className="w-4 h-4" />
             Proceed to Checkout

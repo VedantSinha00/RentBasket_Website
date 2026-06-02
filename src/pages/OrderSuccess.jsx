@@ -68,11 +68,8 @@ const OrderSuccess = () => {
               </div>
             </Link>
             <div className="flex items-center gap-4 text-sm font-medium">
-              <Link to="/catalog" className="hidden sm:block text-muted-foreground hover:text-primary transition-colors">
+              <Link to="/catalog" className="text-primary font-bold hover:text-primary/80 transition-colors">
                 Browse More
-              </Link>
-              <Link to="/account/orders" className="text-primary font-bold hover:underline transition-all">
-                My Orders
               </Link>
             </div>
           </div>

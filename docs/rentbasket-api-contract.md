@@ -52,6 +52,31 @@ The cart is server-side, keyed by `lead_id` + `user_id`. Items are "amenity type
 { "user_id": "903000010001", "cart_items": [ { "cart_item_id": 10465, "coupon_list": [] }, { "cart_item_id": 10467, "coupon_list": [] } ], "lead_id": "4339" }
 ```
 
+## Confirmed live response — `get-proposal-cart-items-for-lead` (2026-06-02)
+
+Verified against the production site (`qr.rentbasket.com`, lead 5383). Production hosts: `api2.rentbasket.com` (JWT), `api.rentbasket.com` (cart/catalog). Each cart item:
+
+```jsonc
+{
+  "amenity_type_id": 17,
+  "amenity_type_name": "Double Bed King Non-Storage Basic",
+  "amenity_count": 1,            // quantity
+  "duration": 6,                  // months (cart offers 3/6/9/12)
+  "rent": 769,                    // list rent for the chosen duration (= rent_6)
+  "rent_3": 979, "rent_6": 769, "rent_9": 728, "rent_12": 699,
+  "percent_discount": 30,
+  "rent_with_discount": 538,      // rent × (1 − percent_discount/100)
+  "net_rent_with_discount": 538,  // after coupon (same here, no coupon)
+  "security": 1538,               // = rent × security_multiple  (deposit, per unit)
+  "security_multiple": 2,
+  "adv_security": 1600,           // separate field (not the charged deposit here)
+  "coupon_list": []
+}
+```
+Top level: `cart_value` = Σ `net_rent_with_discount` (monthly base rent, pre-GST); `coupons`, `coupon_terms`, `customer_details`, `delivery_address`.
+
+**Key takeaways for the build:** rent & security are **per unit** (×`amenity_count`); the **deposit is returned by the API** (`security` = list rent × `security_multiple`); GST (18%) and the first-month/50% totals are applied at proposal time (see the proposal bill).
+
 ## Notes / open questions
 - `duration` in cart payloads is an integer (`12`, `6`) — matches the `rent_3/6/9/12` monthly tiers and `rent_01d/08d/15d/30d/60d` day tiers in the product sample. Need to confirm exact encoding for day-based durations.
 - `rent` and `security` are sent from the client on add — confirm the server trusts these vs. recomputes them.
