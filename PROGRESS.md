@@ -5,15 +5,17 @@
 
 ## Current State
 
-- **Latest commit:** `488a290` — V 1.56 Catalog page fully functional — duration key fixes & framer-motion forwardRef
+- **Latest commit:** `ebbfe79d` — feat: wire pricing engine into cart and checkout flows (Phase 2)
 - **Test status:** unit: passing (vitest) | e2e: not yet wired (Layer 3 debt — see Known Issues)
 - **Lint:** clean (ESLint + TypeScript strict)
 - **Build:** `npm run build` succeeds; deployed to GitHub Pages
 - **Environment:** static SPA · GitHub Pages · no backend
-- **As of:** 2026-05-23
+- **As of:** 2026-06-02
 
 ## Completed (recent)
 
+- [x] Phase 2 — wired pricing engine (`src/lib/pricing.js`) into cart and checkout UI, resolved surcharges, lifted coupon state, and enriched WhatsApp order handoff — 2026-06-02
+- [x] Phase 2 planning and implementation plan refinement — aligned on zero-deposit recommendations, WhatsApp pricing details, and orphaned pages integration — 2026-06-02
 - [x] Category tab fix — `lg:flex-nowrap lg:gap-x-5`, `lg:text-[18px]`: all 4 tabs on one row — 2026-05-23
 - [x] SP-02 — Product card hover: `whileHover y:-4 + shadow-elevated`, 200ms easeOut — D02 `passing` — 2026-05-23
 - [x] SP-03 — Page transitions: `AnimatePresence mode=wait` wrapping Routes via `RouterApp` inner component — D03 `passing` — 2026-05-23

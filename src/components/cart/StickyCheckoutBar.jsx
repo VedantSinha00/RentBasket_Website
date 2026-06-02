@@ -1,20 +1,13 @@
 import { useCart } from "@/context/CartContext";
 import { Lock } from "lucide-react";
+import { cartBreakdown } from "@/lib/pricing";
 
 const StickyCheckoutBar = ({ onCheckout }) => {
-  const { cartItems, getCartItemCount } = useCart();
+  const { cartItems, getCartItemCount, coupon } = useCart();
 
   if (cartItems.length === 0) return null;
 
-  const subtotalRent = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-  const totalDeposit = cartItems.reduce(
-    (sum, item) => sum + item.deposit,
-    0
-  );
-  const grandTotal = subtotalRent + totalDeposit;
+  const b = cartBreakdown(cartItems, coupon);
   const itemCount = getCartItemCount();
 
   return (
@@ -23,11 +16,14 @@ const StickyCheckoutBar = ({ onCheckout }) => {
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline gap-1.5">
             <span className="text-lg font-bold text-primary">
-              ₹{grandTotal.toLocaleString("en-IN")}
+              ₹{b.upfront.toLocaleString("en-IN")}
+            </span>
+            <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
+              Pay 50% Now
             </span>
           </div>
           <p className="text-[10px] text-muted-foreground truncate">
-            {itemCount} {itemCount === 1 ? "item" : "items"} · Rent + Deposit
+            {itemCount} {itemCount === 1 ? "item" : "items"} · ₹{b.netFirstMonth.toLocaleString("en-IN")} first month total
           </p>
         </div>
         <button

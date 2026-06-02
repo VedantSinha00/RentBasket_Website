@@ -93,6 +93,9 @@ const ProductDetails = () => {
       deposit: product.deposit,
       image: product.image,
       category: product.category,
+      rent: product.pricing_by_duration[selectedDuration],
+      percent_discount: product.percent_discount,
+      security_multiple: product.security_multiple,
     });
     toast.success(`${product.name} added to cart`, {
       description: `${durationLabel} plan · ₹${price.toLocaleString("en-IN")}`,

@@ -31,6 +31,9 @@ const normalizeCartItem = (raw) => {
     price: toNumber(raw.price, 0),
     quantity: Math.max(1, toNumber(raw.quantity, 1)),
     deposit: toNumber(raw.deposit, 0),
+    rent: toNumber(raw.rent ?? raw.price, 0),
+    percent_discount: toNumber(raw.percent_discount ?? 0, 0),
+    security_multiple: toNumber(raw.security_multiple ?? (raw.isRecommendation ? 0 : 2), 2),
   };
 };
 
@@ -55,6 +58,7 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(loadCart);
+  const [coupon, setCoupon] = useState(null);
 
   // Persist to localStorage on every change (primary store)
   useEffect(() => {
@@ -104,21 +108,16 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = () => setCartItems([]);
 
-  const isGlobalBrandNew = cartItems.length > 0 && cartItems.every(i => i.isBrandNew);
-
-  const toggleGlobalBrandNew = (enabled) => {
-    setCartItems(prev => prev.map(item => {
-      // Avoid modifying items that are already in the requested state
-      if (item.isBrandNew === enabled) return item;
-      const newPrice = enabled ? item.price + 65 : item.price - 65;
-      return { ...item, isBrandNew: enabled, price: newPrice };
-    }));
+  const applyCoupon = (code) => {
+    if (code.trim().toUpperCase() === "RENTBASKET10") {
+      setCoupon({ type: "percent", value: 10, code: "RENTBASKET10" });
+      return true;
+    }
+    return false;
   };
 
-  const getCartTotal = () => {
-    return cartItems.reduce((total, item) => {
-      return total + item.price * item.quantity + item.deposit;
-    }, 0);
+  const removeCoupon = () => {
+    setCoupon(null);
   };
 
   const getCartItemCount = () => {
@@ -133,10 +132,10 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         updateItem,
         clearCart,
-        getCartTotal,
         getCartItemCount,
-        isGlobalBrandNew,
-        toggleGlobalBrandNew,
+        coupon,
+        applyCoupon,
+        removeCoupon,
       }}
     >
       {children}

@@ -39,6 +39,9 @@ Today `addToCart` stores `{ productId, name, duration, durationLabel, price (dis
 - `percent_discount`: `product.percent_discount`
 - `security_multiple`: `product.security_multiple`
 
+### Special Case: Recommended Items (Zero Deposit)
+For recommendation items added via `handleQuickAdd` in [CrossSellStrip.jsx](file:///g:/College/RentBasket/RentBasket_Website/src/components/cart/CrossSellStrip.jsx), set `security_multiple: 0` to preserve the zero-deposit incentive. This ensures the derived security deposit remains 0 even if the user updates the rental duration inside the cart.
+
 Keep `price` (= discounted) for now; `deposit` becomes unused (security is derived). Call sites:
 - `src/components/product/AddToCartBlock.jsx` — `handleAddToCart`
 - `src/pages/ProductDetails.jsx` — `handleMobileAddToCart`
@@ -68,9 +71,11 @@ Replace the hand-rolled reducers with one call. The breakdown object gives every
 - **`src/components/product/PricingSummary.jsx`** — build a single-item breakdown with `cartBreakdown([{ rent: pricing[selectedDuration], percent_discount, security_multiple, quantity }])` and show GST + security + net first month + 50%, mirroring the proposal.
 - **`src/pages/Checkout.jsx`** — `handlePlaceOrder`: build `orderPayload` from `cartBreakdown(cartItems, coupon)` (subtotalRent→`baseRent`, gst, security→`security`, grandTotal→`netFirstMonth`, upfront→`upfront`). Update `src/components/success/BookingSummary.jsx` + the OrderSuccess mock to the new field names.
 
-## 4. Coupon (carry-through)
+## 4. Coupon & WhatsApp Pricing Handoff
 
-Coupon discount applies to the **whole-cart base rent, before GST** (already implemented in `cartBreakdown`). Today coupon state lives only in `OrderSummary`. For consistency across the cart, **lift coupon state into `CartContext`** (`coupon`, `applyCoupon`, `removeCoupon`) so `OrderSummary`, `CheckoutSummary`, `StickyCheckoutBar`, and the WhatsApp message all use the same value. `RENTBASKET10` = 10% off base rent.
+Coupon discount applies to the **whole-cart base rent, before GST** (already implemented in `cartBreakdown`). Today coupon state lives only in `OrderSummary`. 
+* **Lifting Coupon State:** For consistency across the cart, **lift coupon state into `CartContext`** (`coupon`, `applyCoupon`, `removeCoupon`) so `OrderSummary`, `CheckoutSummary`, `StickyCheckoutBar`, and the WhatsApp message all use the same value. `RENTBASKET10` = 10% off base rent.
+* **WhatsApp Message Enrichment:** Update the pre-filled WhatsApp message in [CheckoutContactModal.jsx](file:///g:/College/RentBasket/RentBasket_Website/src/components/cart/CheckoutContactModal.jsx) to include the calculated totals (Base Rent, GST, Refundable Security, Coupon Applied, Total First Month, and the 50% Upfront Split) alongside the items.
 
 ## 5. Display spec — the breakdown rows (mirror proposal #2397)
 
@@ -96,3 +101,4 @@ Cart Order Summary should show, in order:
 - Live API wiring (auth/identity/proxy) — replaces the mock behind the data door; the cart item shape above already matches the live `get-proposal-cart-items-for-lead` fields.
 - The RentBasket Mini site (the duration-picker stub already links to a "coming soon" toast).
 - Restoring full self-serve checkout (currently a WhatsApp handoff — `CheckoutContactModal`).
+

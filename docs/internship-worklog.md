@@ -94,9 +94,18 @@ This is the single source of truth every cart/proposal screen will call. Lint cl
 
 Lint clean, build passing, pricing tests green. (Phase 2 — the full cart breakdown with GST/security/50% — is still pending the user's sign-off on Phase 1.)
 
+## 2026-06-02 — Phase 2: Implementation & Wiring
+Successfully completed Phase 2, wiring the new pricing breakdown engine across the app:
+- **Pricing inputs on addToCart:** Product detail page, mobile CTAs, and cross-sell quick-add items now populate `rent`, `percent_discount`, and `security_multiple`.
+- **Zero-Deposit Retention:** Hand-picked recommended items added via quick-add are configured with `security_multiple: 0` to preserve the ₹0 deposit promo even if lease durations are adjusted in the cart.
+- **Surcharges Removed:** Eliminated all placeholder ₹65 "Brand New" and ₹49/₹50 "Combo" surcharges from cart context, cross-sell cards, summaries, and checkout flows.
+- **Cart/Checkout Summary Upgrade:** Swapped manual price calculations with `cartBreakdown` from `src/lib/pricing.js`.
+- **Coupon State:** Lifted the coupon state to `CartContext` to unify checkout totals and sync the calculated discounts across order summaries and WhatsApp.
+- **WhatsApp Order Handoff:** Enriched the pre-filled text template with a complete rent breakdown (Base Rent, GST, Security, and 50% Upfront Split).
+- **Orphaned Checkout Pages:** Integrated `/checkout` and `/order-success` views with `cartBreakdown` to prevent future code drift.
+
 ---
 
 ## Next up
-1. **Phase 2 — wire the pricing module into the cart** (Order Summary, checkout summary, mobile bar, line items) so the site shows the full proposal breakdown (savings, 18% GST, security, net first month, 50% split), and remove the placeholder "Brand New" / "Combo" surcharges.
-2. Build the real **RentBasket Mini** site/section (short-term rentals with delivery/installation charges) and turn the stub card into a live cross-link.
-3. Later: restore full self-serve checkout (currently a WhatsApp handoff); wire the live API.
+1. Build the real **RentBasket Mini** site/section (short-term rentals with delivery/installation charges) and turn the stub card into a live cross-link.
+2. Later: restore full self-serve checkout (currently a WhatsApp handoff — `CheckoutContactModal`); wire the live API.

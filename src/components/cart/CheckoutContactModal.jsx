@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { cartBreakdown } from "@/lib/pricing";
 
 /**
  * Checkout handoff modal.
@@ -22,7 +23,7 @@ const WhatsAppIcon = ({ className }) => (
 );
 
 const CheckoutContactModal = ({ open, onClose }) => {
-  const { cartItems } = useCart();
+  const { cartItems, coupon } = useCart();
 
   // Close on Escape
   useEffect(() => {
@@ -36,9 +37,18 @@ const CheckoutContactModal = ({ open, onClose }) => {
     const lines = cartItems.map(
       (i) => `• ${i.name} — ${i.durationLabel || i.duration} × ${i.quantity}`
     );
+    const b = cartBreakdown(cartItems, coupon);
+    const pricingSummary =
+      `Monthly Rent: ₹${b.netMonthlyRent.toLocaleString("en-IN")}/mo (incl. GST)\n` +
+      `Refundable Security: ₹${b.security.toLocaleString("en-IN")}\n` +
+      (b.coupon > 0 ? `Coupon Discount: -₹${b.coupon.toLocaleString("en-IN")}/mo\n` : "") +
+      `Total First Month: ₹${b.netFirstMonth.toLocaleString("en-IN")}\n` +
+      `Upfront Payment (50%): ₹${b.upfront.toLocaleString("en-IN")}`;
+
     const message =
-      "Hi RentBasket! I'd like to confirm my rental order:\n" +
+      "Hi RentBasket! I'd like to confirm my rental order:\n\n" +
       (lines.length ? lines.join("\n") + "\n\n" : "") +
+      pricingSummary + "\n\n" +
       "Please help me complete the booking.";
     return `https://wa.me/91${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
   };

@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { DURATION_OPTIONS } from "@/data/products";
-import { discountedRent } from "@/lib/pricing";
+import { discountedRent, lineOf } from "@/lib/pricing";
 import { useProduct } from "@/hooks/useProducts";
 import { Link } from "react-router-dom";
 
@@ -16,8 +16,6 @@ const MONTHLY_KEYS = new Set([
   "24_months",
   "36_months",
 ]);
-const NEW_PRODUCT_SURCHARGE = 65;
-
 const CartItemCard = ({ item }) => {
   const { updateItem, removeFromCart } = useCart();
   const [showDurationPicker, setShowDurationPicker] = useState(false);
@@ -45,14 +43,12 @@ const CartItemCard = ({ item }) => {
       product.pricing_by_duration[newDurationKey],
       product.percent_discount
     );
-    const finalPrice = item.isBrandNew ? basePrice + NEW_PRODUCT_SURCHARGE : basePrice;
-    const newDeposit = item.isRecommendation ? 0 : product.deposit;
     const newLabel = DURATION_OPTIONS.find((d) => d.key === newDurationKey)?.label || "";
     updateItem(item.cartItemId, {
       duration: newDurationKey,
       durationLabel: newLabel,
-      price: finalPrice,
-      deposit: newDeposit,
+      rent: product.pricing_by_duration[newDurationKey],
+      price: basePrice,
     });
     setShowDurationPicker(false);
   };
@@ -64,25 +60,11 @@ const CartItemCard = ({ item }) => {
 
   // Resolve image: use product data as source of truth (handles Vite imports)
   const resolvedImage = product?.image || item.image;
-  const lineTotal = item.price * item.quantity + item.deposit;
-  const rentOnly = item.price * item.quantity;
-
-  // Calculate savings vs 1-day pricing
-  const savings = product && item.duration !== "1_day"
-    ? (product.pricing_by_duration["1_day"] * item.quantity) - rentOnly
-    : 0;
+  const line = lineOf(item);
+  const lineTotal = line.rentTotal + line.securityTotal;
 
   return (
     <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-shadow">
-      {/* Compact savings banner */}
-      {savings > 0 && (
-        <div className="bg-success-muted border-b border-success-border px-4 py-1.5 flex items-center gap-1.5">
-          <span className="text-[10px] md:text-xs text-success-muted-foreground font-medium">
-            You save ₹{savings.toLocaleString("en-IN")} vs daily pricing
-          </span>
-        </div>
-      )}
-
       <div className="p-4 md:p-5">
         {/* ── MOBILE LAYOUT ── */}
         <div className="md:hidden">
@@ -168,17 +150,16 @@ const CartItemCard = ({ item }) => {
           <div className="bg-secondary/40 rounded-xl px-3 py-2.5 space-y-1">
             <div className="flex justify-between text-xs font-medium">
               <span className="text-muted-foreground">Rent</span>
-              <span>₹{item.price.toLocaleString("en-IN")}{isMonthly ? "/mo" : ""} × {item.quantity}</span>
+              <span className="flex items-center gap-1">
+                {line.listRentTotal > line.rentTotal && (
+                  <span className="line-through text-muted-foreground text-[10px]">₹{line.listRentTotal.toLocaleString("en-IN")}</span>
+                )}
+                <span>₹{line.rentTotal.toLocaleString("en-IN")}{isMonthly ? "/mo" : ""}</span>
+              </span>
             </div>
-            {item.isBrandNew && (
-              <div className="flex justify-between text-[10px] text-primary/80 italic font-medium">
-                <span className="flex items-center gap-1.5"><Sparkles className="w-3 h-3"/> Brand New Upgrade</span>
-                <span>+₹{NEW_PRODUCT_SURCHARGE.toLocaleString("en-IN")}/mo</span>
-              </div>
-            )}
             <div className="flex justify-between text-xs">
               <span className="text-muted-foreground">Deposit</span>
-              <span className="font-medium">₹{item.deposit.toLocaleString("en-IN")} <span className="text-success text-[10px]">refundable</span></span>
+              <span className="font-medium">₹{line.securityTotal.toLocaleString("en-IN")} <span className="text-success text-[10px]">refundable</span></span>
             </div>
             <div className="flex justify-between text-xs text-success">
               <span>Delivery + Install + Maintenance</span>
@@ -287,17 +268,14 @@ const CartItemCard = ({ item }) => {
 
           {/* Right Pricing */}
           <div className="w-48 flex-shrink-0 text-right space-y-1">
-            <div className="text-lg font-bold text-foreground">
-              ₹{rentOnly.toLocaleString("en-IN")}{isMonthly ? <span className="text-sm font-normal text-muted-foreground">/mo</span> : ""}
+            <div className="text-lg font-bold text-foreground flex flex-col items-end">
+              {line.listRentTotal > line.rentTotal && (
+                <span className="line-through text-muted-foreground text-xs font-normal">₹{line.listRentTotal.toLocaleString("en-IN")}/mo</span>
+              )}
+              <span>₹{line.rentTotal.toLocaleString("en-IN")}{isMonthly ? <span className="text-sm font-normal text-muted-foreground">/mo</span> : ""}</span>
             </div>
-            {item.isBrandNew && (
-              <div className="text-[10px] text-primary font-semibold flex items-center justify-end gap-1">
-                <Sparkles className="w-2.5 h-2.5 fill-primary" />
-                Brand New Upgrade (+₹{NEW_PRODUCT_SURCHARGE}/mo)
-              </div>
-            )}
             <div className="text-xs text-muted-foreground">
-              + ₹{item.deposit.toLocaleString("en-IN")} deposit <span className="text-success">refundable</span>
+              + ₹{line.securityTotal.toLocaleString("en-IN")} deposit <span className="text-success">refundable</span>
             </div>
             <div className="flex items-center justify-end gap-1 text-[10px] text-success mt-1">
               <CheckCircle className="w-3 h-3" />

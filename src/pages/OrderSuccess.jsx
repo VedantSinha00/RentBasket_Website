@@ -39,14 +39,20 @@ const OrderSuccess = () => {
             image: "https://rentbasket.in/wp-content/uploads/2022/10/washing-machine-6.5kg-750x750.png",
             durationLabel: "6 Months",
             quantity: 1,
-            price: 1099,
-            hasSurcharge: false
+            price: 1099
           }
         ],
-        subtotalRent: 1099,
-        totalDeposit: 1500,
-        totalSurcharge: 0,
-        grandTotal: 2599
+        totalRent: 1499,
+        itemSavings: 400,
+        coupon: 0,
+        baseRent: 1099,
+        gst: 198,
+        netMonthlyRent: 1297,
+        security: 2000,
+        netFirstMonth: 3297,
+        upfront: 1649,
+        payOnDelivery: 1648,
+        grandTotal: 3297
       });
     }
     
