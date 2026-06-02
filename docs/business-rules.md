@@ -9,24 +9,14 @@ Furniture and appliance rental for young professionals relocating between Indian
 Target customer: 22–32, new city, doesn't want to buy furniture for a 6–18 month stay.
 Core promise: "Premium home, zero ownership headache."
 
-## ⚠️ Pricing model is under revision
+## 📋 Confirmed Pricing Model
 
-The site currently runs on a **bundled mock catalog** (`src/data/products.js`). The **real
-backend** has since been documented — see [`rentbasket-api-contract.md`](./rentbasket-api-contract.md)
-and the sample response in [`../src/data/products-api-sample.json`](../src/data/products-api-sample.json).
-The real model differs from the mock and will reshape the rules below:
-
-- Monthly tiers `rent_3 / rent_6 / rent_9 / rent_12` and day tiers
-  `rent_01d / rent_08d / rent_15d / rent_30d / rent_60d`.
-- Deposit comes from `security_short_term` / `adv_security` / `security_multiple`
-  (not a single `deposit` field).
-- A per-product `percent_discount`, and per-cart-item coupons at confirm time.
-
-**Open questions with the founder (gating the money math):** what is collected upfront at
-checkout; which security field is the deposit; whether deposit is per-unit or per-line;
-whether `percent_discount` is already baked into shown prices; and whether the "Brand New"
-/ combo surcharges are real. Until answered, do **not** change pricing *behaviour* — only
-structure.
+The website pricing engine is built on the confirmed backend contract in [`rentbasket-api-contract.md`](./rentbasket-api-contract.md):
+- **Durations:** Monthly tiers only (`3 / 6 / 9 / 12` months). Sub-month renting is routed to the future RentBasket Mini.
+- **Rent:** Derived from the base list price (`rent_3/6/9/12`) with a per-product `percent_discount` applied before tax.
+- **Security Deposit:** Calculated per-unit as list rent × `security_multiple` (or 0 for quick-added recommendations).
+- **GST:** 18% applied to the discounted, post-coupon Base Rent.
+- **Upfront Split:** Net first month payable is split 50% upfront to confirm, 50% on delivery.
 
 ## Data access
 
@@ -59,21 +49,19 @@ Complete Home Setup`. `Bestsellers`, `Short-Term Rental`, and `Complete Home Set
   future backend sync. There is no login yet, so there is no `lead_id`/`user_id` — see the
   identity open question in the API contract doc.
 - A cart line item is flat:
-  `{ cartItemId, productId, name, category, image, duration, durationLabel, price, quantity,
-  deposit, startDate, isBrandNew?, isRecommendation? }`.
+  `{ cartItemId, productId, name, category, image, duration, durationLabel, quantity, rent, percent_discount, security_multiple, startDate, isRecommendation? }`.
 - The same product can be added with different durations — they stack as separate lines.
 - Same product + same duration merges (quantities add).
 
-## Money math (current state)
+## Money math
 
-- Totals are being **consolidated into one pricing module** so every screen agrees. Until that
-  lands, treat the cart-page Order Summary as the reference calculation.
-- Coupon `RENTBASKET10` = 10% off the rental subtotal, applied on the **cart page only**.
-  Known gap (scheduled fix): it does **not** yet carry through to checkout / the final order.
-- "Brand New" (+₹65/mo) and combo/bundle fees are **provisional** placeholders pending founder
-  confirmation — do not treat as final.
-- Deposit is currently summed per line (not × quantity). Per-unit vs per-line is unconfirmed.
-- No GST/tax computed on the frontend (prices shown are treated as final for now).
+- **Consolidated Pricing Engine:** All screens (Cart, Checkout, Success page, WhatsApp Handoff modal, Product details) route their calculations through `cartBreakdown` inside `src/lib/pricing.js`.
+- **Discount & Savings:** Struck-out list price and a blended percentage/absolute savings are displayed on all views.
+- **Coupons:** Coupon code state (e.g., `RENTBASKET10` for 10% off the base rent total before GST) is lifted to `CartContext` and persists across checkout and handoff.
+- **GST:** 18% tax is calculated and displayed on the post-coupon Base Rent.
+- **Refundable Security Deposit:** Scales per unit with quantity (`list rent × security_multiple × quantity`). Added recommendations set `security_multiple: 0` to preserve the promo value through duration changes.
+- **No Surcharges:** Placeholder "Brand New" (+₹65/mo) and "Combo" (+₹49/₹50) surcharges are fully removed from the system.
+- **Split Payment:** Net Payable (First Month) = Net Monthly Rent + Security. Upfront payment is 50%; remaining 50% is pay-on-delivery.
 
 ## Checkout Rules (MVP)
 

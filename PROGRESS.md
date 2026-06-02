@@ -5,7 +5,7 @@
 
 ## Current State
 
-- **Latest commit:** `ebbfe79d` — feat: wire pricing engine into cart and checkout flows (Phase 2)
+- **Latest commit:** `47f9984c` — docs: update business-rules.md to align with Phase 2 pricing engine
 - **Test status:** unit: passing (vitest) | e2e: not yet wired (Layer 3 debt — see Known Issues)
 - **Lint:** clean (ESLint + TypeScript strict)
 - **Build:** `npm run build` succeeds; deployed to GitHub Pages
