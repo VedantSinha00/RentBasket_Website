@@ -5,7 +5,7 @@
 
 ## Current State
 
-- **Latest commit:** `19de32ed` — style: align office locations to the right edge of the footer
+- **Latest commit:** `c74ece63` — style: change footer grid to grid-cols-1 sm:grid-cols-2 for clean mobile stacking
 - **Test status:** unit: passing (vitest) | e2e: passing (playwright 9/9)
 - **Lint:** clean (ESLint + TypeScript strict)
 - **Build:** `npm run build` succeeds; deployed to GitHub Pages
