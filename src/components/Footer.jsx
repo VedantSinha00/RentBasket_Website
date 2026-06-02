@@ -75,7 +75,7 @@ const Footer = () => {
           </div>
 
           {/* Office Locations */}
-          <div className="space-y-6">
+          <div className="space-y-6 md:ml-auto md:w-fit">
             {/* Gurgaon */}
             <div>
               <h4 className="font-bold text-sm mb-2 font-sans">

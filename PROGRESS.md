@@ -5,7 +5,7 @@
 
 ## Current State
 
-- **Latest commit:** `e1bd6663` — style: expand footer grid to w-full and restore original column order
+- **Latest commit:** `19de32ed` — style: align office locations to the right edge of the footer
 - **Test status:** unit: passing (vitest) | e2e: passing (playwright 9/9)
 - **Lint:** clean (ESLint + TypeScript strict)
 - **Build:** `npm run build` succeeds; deployed to GitHub Pages
