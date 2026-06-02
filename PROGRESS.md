@@ -5,8 +5,8 @@
 
 ## Current State
 
-- **Latest commit:** `1664314d` — docs: resolve E2E verification debt and update PROGRESS.md
-- **Test status:** unit: passing (vitest) | e2e: passing (playwright 3/3)
+- **Latest commit:** `f0fff989` — feat: add static trust pages, locations contact page, footer SPA navigation, and E2E tests
+- **Test status:** unit: passing (vitest) | e2e: passing (playwright 9/9)
 - **Lint:** clean (ESLint + TypeScript strict)
 - **Build:** `npm run build` succeeds; deployed to GitHub Pages
 - **Environment:** static SPA · GitHub Pages · no backend
@@ -14,6 +14,7 @@
 
 ## Completed (recent)
 
+- [x] Trust & Policy pages — created Terms, Shipping, FAQs, About, Contact pages, wired router and copy-spa-404 config, and verified all 9 tests pass in Playwright — 2026-06-02
 - [x] Phase 2 — wired pricing engine (`src/lib/pricing.js`) into cart and checkout UI, resolved surcharges, lifted coupon state, and enriched WhatsApp order handoff — 2026-06-02
 - [x] Phase 2 planning and implementation plan refinement — aligned on zero-deposit recommendations, WhatsApp pricing details, and orphaned pages integration — 2026-06-02
 - [x] Category tab fix — `lg:flex-nowrap lg:gap-x-5`, `lg:text-[18px]`: all 4 tabs on one row — 2026-05-23

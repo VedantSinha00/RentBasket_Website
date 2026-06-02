@@ -11,6 +11,11 @@ import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
+import TermsConditions from "./pages/TermsConditions";
+import ShippingReturns from "./pages/ShippingReturns";
+import FAQs from "./pages/FAQs";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +53,11 @@ const RouterApp = () => {
           {routePair("/cart", <Cart />)}
           {routePair("/checkout", <Checkout />)}
           {routePair("/order-success", <OrderSuccess />)}
+          {routePair("/terms-n-conditions", <TermsConditions />)}
+          {routePair("/shipping-returns", <ShippingReturns />)}
+          {routePair("/faqs", <FAQs />)}
+          {routePair("/about", <About />)}
+          {routePair("/contact", <Contact />)}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -104,8 +104,15 @@ Successfully completed Phase 2, wiring the new pricing breakdown engine across t
 - **WhatsApp Order Handoff:** Enriched the pre-filled text template with a complete rent breakdown (Base Rent, GST, Security, and 50% Upfront Split).
 - **Orphaned Checkout Pages:** Integrated `/checkout` and `/order-success` views with `cartBreakdown` to prevent future code drift.
 
+## 2026-06-02 — Trust Pages & Navigation Alignment
+Wired up the static trust pages and unified office contacts across the application:
+- **Created Pages:** Terms & Conditions (`/terms-n-conditions`), Shipping & Returns Policy (`/shipping-returns`), FAQs (`/faqs`), About Us (`/about` - placeholder stub), and Contact & Locations (`/contact`).
+- **Footer Navigation:** Updated footer links to use SPA `<Link>` components instead of `#` placeholders, and redirected office location links to `/contact`.
+- **Header Navigation:** Added a direct menu item for FAQs to improve discoverability.
+- **Build System Integration:** Registered paths in `scripts/copy-spa-404.js` to ensure clean folder setups and prevent 404s on GitHub Pages.
+- **E2E Validation:** Created `e2e/trust-pages.spec.ts` in Playwright to verify relative navigation, accordion toggle behavior, and correct DOM rendering. All 9 tests passed.
+
 ---
 
 ## Next up
-1. Build the real **RentBasket Mini** site/section (short-term rentals with delivery/installation charges) and turn the stub card into a live cross-link.
-2. Later: restore full self-serve checkout (currently a WhatsApp handoff — `CheckoutContactModal`); wire the live API.
+1. Later: restore full self-serve checkout (currently a WhatsApp handoff — `CheckoutContactModal`); wire the live API.
