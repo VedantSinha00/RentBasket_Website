@@ -106,9 +106,10 @@ Successfully completed Phase 2, wiring the new pricing breakdown engine across t
 
 ## 2026-06-02 — Trust Pages & Navigation Alignment
 Wired up the static trust pages and unified office contacts across the application:
-- **Created Pages:** Terms & Conditions (`/terms-n-conditions`), Shipping & Returns Policy (`/shipping-returns`), FAQs (`/faqs`), About Us (`/about` - placeholder stub), and Contact & Locations (`/contact`).
+- **Created Pages:** Terms & Conditions (`/terms-n-conditions`), Shipping & Returns Policy (`/shipping-returns`), FAQs (`/faqs`), About Us (`/about` - rebuilt from SVG to responsive HTML/CSS), and Contact & Locations (`/contact`).
 - **Footer Navigation:** Updated footer links to use SPA `<Link>` components instead of `#` placeholders, and redirected office location links to `/contact`.
 - **Header Navigation:** Added a direct menu item for FAQs to improve discoverability.
+- **About Us Alignment:** Refined centering and layout of founder cards and story section; improved responsiveness on mobile.
 - **Build System Integration:** Registered paths in `scripts/copy-spa-404.js` to ensure clean folder setups and prevent 404s on GitHub Pages.
 - **E2E Validation:** Created `e2e/trust-pages.spec.ts` in Playwright to verify relative navigation, accordion toggle behavior, and correct DOM rendering. All 9 tests passed.
 

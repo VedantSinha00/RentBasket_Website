@@ -4,16 +4,20 @@ import { DURATION_OPTIONS, DURATION_BADGES, MONTHLY_DURATION_KEYS } from "@/data
 import { discountedRent } from "@/lib/pricing";
 
 const DurationSelector = ({ product, selectedDuration, onDurationChange }) => {
-  const pricing = product.pricing_by_duration;
+  const pricing = product.pricing_by_duration ?? {};
   const isMonthly = (key) => MONTHLY_DURATION_KEYS.includes(key);
 
   const formatPrice = (key) => {
-    const price = discountedRent(pricing[key], product.percent_discount);
+    const listRent = pricing[key];
+    if (!listRent) return "—";
+    const price = discountedRent(listRent, product.percent_discount);
     if (isMonthly(key)) {
       return `₹${price.toLocaleString("en-IN")}/mo`;
     }
     return `₹${price.toLocaleString("en-IN")}`;
   };
+
+  const availableOptions = DURATION_OPTIONS.filter((d) => (pricing[d.key] ?? 0) > 0);
 
   return (
     <div className="bg-card border border-border rounded-2xl p-5 md:p-6 shadow-soft">
@@ -23,7 +27,7 @@ const DurationSelector = ({ product, selectedDuration, onDurationChange }) => {
       </p>
 
       <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-2 md:gap-2.5">
-        {DURATION_OPTIONS.map((d) => {
+        {availableOptions.map((d) => {
           const isSelected = selectedDuration === d.key;
           const badge = DURATION_BADGES[d.key];
 

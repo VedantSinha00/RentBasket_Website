@@ -22,7 +22,7 @@ const AddToCartBlock = ({ product, selectedDuration, quantity, onQuantityChange 
       price,
       quantity,
       startDate: startDate || new Date().toISOString().split("T")[0],
-      deposit: product.deposit,
+      adv_security: product.adv_security,
       image: product.image,
       category: product.category,
       rent: product.pricing_by_duration[selectedDuration],

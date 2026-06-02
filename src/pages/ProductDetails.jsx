@@ -34,6 +34,19 @@ const ProductDetails = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
 
+  // Snap selectedDuration to the first available duration when product loads.
+  // Needed because the default "1_month" may not exist for every product.
+  useEffect(() => {
+    if (!product) return;
+    const p = product.pricing_by_duration ?? {};
+    const hasPrice = (key) => (p[key] ?? 0) > 0;
+    if (!hasPrice(selectedDuration)) {
+      const fallback = DURATION_OPTIONS.find((d) => hasPrice(d.key));
+      if (fallback) setSelectedDuration(fallback.key);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product]);
+
   // Loading placeholder — shown while the product is being fetched, so the page
   // doesn't flash "Not Found" before the data arrives.
   if (isLoading) {
@@ -90,7 +103,7 @@ const ProductDetails = () => {
       price,
       quantity,
       startDate: new Date().toISOString().split("T")[0],
-      deposit: product.deposit,
+      adv_security: product.adv_security,
       image: product.image,
       category: product.category,
       rent: product.pricing_by_duration[selectedDuration],

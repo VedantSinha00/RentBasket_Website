@@ -19,27 +19,38 @@ const round = (n) => Math.round(n);
 export const discountedRent = (listRent, percentDiscount = 0) =>
   round(listRent * (1 - percentDiscount / 100));
 
+export const DEFAULT_SECURITY_MULTIPLE = 2;
+
 /** Refundable security for one unit: list rent × security_multiple. */
-export const unitSecurity = (listRent, securityMultiple = 1) =>
+export const unitSecurity = (listRent, securityMultiple = DEFAULT_SECURITY_MULTIPLE) =>
   round(listRent * securityMultiple);
 
 /**
  * Normalise a cart item to the numbers the math needs. Accepts the live API
  * shape (`rent`, `percent_discount`, `security_multiple`, `amenity_count`) and
- * also honours server-precomputed fields (`rent_with_discount`, `security`) when
- * present — so the same module works for live data and the bundled mock.
+ * also honours server-precomputed fields (`adv_security`, `rent_with_discount`)
+ * when present — so the same module works for live data and the bundled mock.
+ *
+ * Security resolution order:
+ *   1. adv_security / security  — pre-computed amount from the API (preferred)
+ *   2. security_multiple × rent — if the multiplier is provided instead
+ *   3. DEFAULT_SECURITY_MULTIPLE × rent — fallback so the site never shows ₹0
+ *      deposit on items that simply have missing data
  */
 export const lineOf = (item) => {
   const qty = Math.max(1, Number(item.quantity ?? item.amenity_count ?? 1));
   const listRent = Number(item.rent ?? item.listRent ?? 0);
   const pd = Number(item.percent_discount ?? item.percentDiscount ?? 0);
-  const mult = Number(item.security_multiple ?? item.securityMultiple ?? 1);
+  const mult = item.security_multiple ?? item.securityMultiple;
   const disc =
     item.rent_with_discount != null
       ? Number(item.rent_with_discount)
       : discountedRent(listRent, pd);
+  const precomputedSec = item.adv_security ?? item.security;
   const sec =
-    item.security != null ? Number(item.security) : unitSecurity(listRent, mult);
+    precomputedSec != null
+      ? Number(precomputedSec)
+      : unitSecurity(listRent, mult != null ? Number(mult) : DEFAULT_SECURITY_MULTIPLE);
   return {
     qty,
     listRent,

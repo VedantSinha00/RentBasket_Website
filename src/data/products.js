@@ -574,11 +574,10 @@ const rawProducts = [
   },
 ];
 
-// Real-model pricing defaults applied to every product (override per-product as
-// needed). The live API supplies these per item; the mock catalog assumes the
-// common values (30% discount, 2× security multiple) until the API is wired.
-const PRODUCT_DEFAULTS = { percent_discount: 30, security_multiple: 2 };
-const products = rawProducts.map((p) => ({ ...PRODUCT_DEFAULTS, ...p }));
+// No defaults injected — percent_discount and security_multiple must be set
+// explicitly per product in rawProducts. The live API owns these values; the
+// mock must not silently manufacture financial figures.
+const products = rawProducts;
 
 // ─── Helpers ──────────────────────────────────────────────
 

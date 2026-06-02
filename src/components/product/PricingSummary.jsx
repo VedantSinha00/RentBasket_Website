@@ -16,7 +16,8 @@ const PricingSummary = ({ product, selectedDuration, quantity }) => {
     {
       rent: pricing[selectedDuration] || 0,
       percent_discount: product.percent_discount || 0,
-      security_multiple: product.security_multiple || 1,
+      security_multiple: product.security_multiple,
+      adv_security: product.adv_security,
       quantity,
     },
   ]);
