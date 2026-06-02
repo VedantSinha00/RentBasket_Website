@@ -5,8 +5,8 @@
 
 ## Current State
 
-- **Latest commit:** `47f9984c` — docs: update business-rules.md to align with Phase 2 pricing engine
-- **Test status:** unit: passing (vitest) | e2e: not yet wired (Layer 3 debt — see Known Issues)
+- **Latest commit:** `1664314d` — docs: resolve E2E verification debt and update PROGRESS.md
+- **Test status:** unit: passing (vitest) | e2e: passing (playwright 3/3)
 - **Lint:** clean (ESLint + TypeScript strict)
 - **Build:** `npm run build` succeeds; deployed to GitHub Pages
 - **Environment:** static SPA · GitHub Pages · no backend
@@ -41,9 +41,6 @@ _None._
 
 ## Known Issues
 
-- **No e2e layer (Layer 3 debt):** `e2e/` directory exists but no Playwright specs yet.
-  Every feature is in `passing` state with "manual verification" as evidence — verification debt.
-  Unblock by: install Playwright, write `e2e/landing.spec.ts` as the template.
 - **No `.env.local`** on a fresh clone until `make setup` is run (expected — documented in .env.example).
 - **`dist/` is checked in** — gh-pages workflow artifact. Not source — ignore in code review.
 - **26 uncommitted dist/* changes** — pending `make deploy` after harness is confirmed green.
