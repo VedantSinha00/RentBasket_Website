@@ -16,7 +16,7 @@ const Footer = () => {
             Comfort for your home,<br />without the hassle of ownership.
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-8 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full">
           {/* Quick Links & Policies */}
           <div className="space-y-6">
             <div>
