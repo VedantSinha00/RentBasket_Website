@@ -5,7 +5,7 @@
 
 ## Current State
 
-- **Latest commit:** `ca5ed193` — style: swap footer columns to align offices on the left and quick links on the right
+- **Latest commit:** `e1bd6663` — style: expand footer grid to w-full and restore original column order
 - **Test status:** unit: passing (vitest) | e2e: passing (playwright 9/9)
 - **Lint:** clean (ESLint + TypeScript strict)
 - **Build:** `npm run build` succeeds; deployed to GitHub Pages

@@ -16,62 +16,7 @@ const Footer = () => {
             Comfort for your home,<br />without the hassle of ownership.
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-8 max-w-lg">
-          {/* Office Locations */}
-          <div className="space-y-6">
-            {/* Gurgaon */}
-            <div>
-              <h4 className="font-bold text-sm mb-2 font-sans">
-                Gurgaon Office
-              </h4>
-              <div className="text-sm text-muted-foreground space-y-2">
-                <Link
-                  to="/contact"
-                  className="flex items-start gap-2 hover:text-primary transition-colors group"
-                >
-                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 group-hover:text-primary" />
-                  <span className="text-left leading-snug font-sans">
-                    C9/2, Lower Ground Floor,<br />
-                    Ardee City, Sector 52,<br />
-                    Gurugram, Haryana 122003
-                  </span>
-                </Link>
-                <a
-                  href="tel:+919958858473"
-                  className="flex items-center gap-2 hover:text-primary transition-colors"
-                >
-                  <Phone className="w-4 h-4 flex-shrink-0" />
-                  <span className="font-sans">+91 9958858473</span>
-                </a>
-              </div>
-            </div>
-
-            {/* Noida */}
-            <div>
-              <h4 className="font-bold text-sm mb-2 font-sans">Noida Office</h4>
-              <div className="text-sm text-muted-foreground space-y-2">
-                <Link
-                  to="/contact"
-                  className="flex items-start gap-2 hover:text-primary transition-colors group"
-                >
-                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 group-hover:text-primary" />
-                  <span className="text-left leading-snug font-sans">
-                    Plot No B.L.K 15, Basement,<br />
-                    Sector 116, Noida,<br />
-                    UP 201301
-                  </span>
-                </Link>
-                <a
-                  href="tel:+919958004438"
-                  className="flex items-center gap-2 hover:text-primary transition-colors"
-                >
-                  <Phone className="w-4 h-4 flex-shrink-0" />
-                  <span className="font-sans">+91 9958004438</span>
-                </a>
-              </div>
-            </div>
-          </div>
-
+        <div className="grid grid-cols-2 gap-8 w-full">
           {/* Quick Links & Policies */}
           <div className="space-y-6">
             <div>
@@ -126,6 +71,61 @@ const Footer = () => {
                   </Link>
                 </li>
               </ul>
+            </div>
+          </div>
+
+          {/* Office Locations */}
+          <div className="space-y-6">
+            {/* Gurgaon */}
+            <div>
+              <h4 className="font-bold text-sm mb-2 font-sans">
+                Gurgaon Office
+              </h4>
+              <div className="text-sm text-muted-foreground space-y-2">
+                <Link
+                  to="/contact"
+                  className="flex items-start gap-2 hover:text-primary transition-colors group"
+                >
+                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 group-hover:text-primary" />
+                  <span className="text-left leading-snug font-sans">
+                    C9/2, Lower Ground Floor,<br />
+                    Ardee City, Sector 52,<br />
+                    Gurugram, Haryana 122003
+                  </span>
+                </Link>
+                <a
+                  href="tel:+919958858473"
+                  className="flex items-center gap-2 hover:text-primary transition-colors"
+                >
+                  <Phone className="w-4 h-4 flex-shrink-0" />
+                  <span className="font-sans">+91 9958858473</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Noida */}
+            <div>
+              <h4 className="font-bold text-sm mb-2 font-sans">Noida Office</h4>
+              <div className="text-sm text-muted-foreground space-y-2">
+                <Link
+                  to="/contact"
+                  className="flex items-start gap-2 hover:text-primary transition-colors group"
+                >
+                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 group-hover:text-primary" />
+                  <span className="text-left leading-snug font-sans">
+                    Plot No B.L.K 15, Basement,<br />
+                    Sector 116, Noida,<br />
+                    UP 201301
+                  </span>
+                </Link>
+                <a
+                  href="tel:+919958004438"
+                  className="flex items-center gap-2 hover:text-primary transition-colors"
+                >
+                  <Phone className="w-4 h-4 flex-shrink-0" />
+                  <span className="font-sans">+91 9958004438</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
