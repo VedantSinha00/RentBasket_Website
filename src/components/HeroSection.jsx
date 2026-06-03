@@ -40,43 +40,36 @@ const HeroSection = ({ activeCategory = "Furniture", onCategoryChange }) => {
             aria-label="RentBasket mascot Ku waving hello"
           />
 
-          {/* Soft transition fade at the bottom edge */}
-          <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-background via-background/60 to-transparent pointer-events-none z-10" />
-
-          {/* Stats - Floating glassmorphic capsule overlay */}
+          {/* Stats - Positioned absolutely on top of the video */}
           <motion.div
-            className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center justify-center gap-6 px-6 py-2.5 bg-white/90 backdrop-blur-md rounded-full border border-border/50 shadow-card z-20 w-[88%] max-w-[320px]"
+            className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-12 w-full max-w-xs mx-auto z-10"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
           >
-            <div className="text-center flex-1">
-              <div className="font-sans font-extrabold italic text-primary leading-none text-[22px] tracking-[-0.04em]">
+            <div className="text-center">
+              <div className="font-sans font-extrabold italic text-primary leading-none text-[26px] sm:text-[30px] tracking-[-0.04em]">
                 1200+
               </div>
-              <div className="font-sans font-bold text-muted-foreground text-[10px] mt-0.5 tracking-tight uppercase">
-                Customers
+              <div className="font-sans font-bold text-muted-foreground text-[10px] sm:text-xs mt-1 tracking-tight">
+                Happy Customers
               </div>
             </div>
-
-            {/* Divider line */}
-            <div className="w-[1px] h-6 bg-border/80" />
-
             <a
               href="https://rentbasket.short.gy/reviews"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-center flex-1 block transition-opacity hover:opacity-80 focus-visible:outline-none"
+              className="text-center block rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none"
               aria-label="Read our 4.9 Google reviews"
             >
-              <div className="flex items-center justify-center gap-0.5 leading-none">
-                <span className="text-gold text-[18px] leading-none">★</span>
-                <span className="font-sans font-extrabold italic text-primary text-[22px] tracking-[-0.04em]">
+              <div className="flex items-center justify-center gap-1 leading-none">
+                <span className="text-gold text-[20px] leading-none">★</span>
+                <span className="font-sans font-extrabold italic text-primary text-[26px] sm:text-[30px] tracking-[-0.04em]">
                   4.9
                 </span>
               </div>
-              <div className="font-sans font-bold text-muted-foreground text-[10px] mt-0.5 tracking-tight uppercase">
-                Google Rating
+              <div className="font-sans font-bold text-muted-foreground text-[10px] sm:text-xs mt-1 tracking-tight">
+                Google Rating!
               </div>
             </a>
           </motion.div>
