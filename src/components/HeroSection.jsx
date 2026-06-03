@@ -75,33 +75,8 @@ const HeroSection = ({ activeCategory = "Furniture", onCategoryChange }) => {
           </motion.div>
         </div>
 
-        {/* Category tabs */}
-        <motion.div
-          className="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-        >
-          {categories.map((cat) => {
-            const isActive = cat === activeCategory;
-            return (
-              <button
-                key={cat}
-                onClick={() => onCategoryChange?.(cat)}
-                className={`relative font-sans font-semibold text-[15px] sm:text-[17px] pb-1.5 tracking-tight transition-colors ${
-                  isActive
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {cat}
-                {isActive && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary rounded-full" />
-                )}
-              </button>
-            );
-          })}
-        </motion.div>
+        {/* TODO: Once the backend supports category-based collection routing, restore the category tabs.
+            For now, since collection filtering is handled directly within the catalog, they are removed from the hero view. */}
 
         {/* CTA Button */}
         <motion.div
@@ -170,33 +145,7 @@ const HeroSection = ({ activeCategory = "Furniture", onCategoryChange }) => {
             </a>
           </motion.div>
 
-          {/* Category tabs */}
-          <motion.div
-            className="flex gap-x-5"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            {categories.map((cat) => {
-              const isActive = cat === activeCategory;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => onCategoryChange?.(cat)}
-                  className={`relative font-sans font-semibold lg:text-[18px] xl:text-[20px] pb-1.5 tracking-tight transition-colors ${
-                    isActive
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {cat}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary rounded-full" />
-                  )}
-                </button>
-              );
-            })}
-          </motion.div>
+          {/* TODO: Restore desktop category tabs once backend collections are built. */}
 
           {/* CTA */}
           <motion.div
