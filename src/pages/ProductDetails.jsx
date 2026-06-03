@@ -26,7 +26,7 @@ const ProductDetails = () => {
 
   const { data: product, isLoading } = useProduct(id);
 
-  const [selectedDuration, setSelectedDuration] = useState("3_months");
+  const [selectedDuration, setSelectedDuration] = useState("12_months");
   const [quantity, setQuantity] = useState(1);
 
   // Scroll to top when product changes

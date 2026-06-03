@@ -25,7 +25,7 @@ const Cart = () => {
           {hasItems ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Left: Cart Items */}
-              <div className="lg:col-span-2">
+              <div id="cart-items" className="lg:col-span-2">
                 <CartItemsList />
                 <CrossSellStrip />
               </div>
