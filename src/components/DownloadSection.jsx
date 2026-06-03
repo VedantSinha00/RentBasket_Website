@@ -21,7 +21,7 @@ const DownloadSection = () => {
       </div>
 
       {/* Red gradient platform — extends up behind mascot's lower half with top & bottom shadow */}
-      <section className="relative w-full bg-gradient-download pt-20 md:pt-24 lg:pt-28 pb-12 md:pb-16 shadow-[0_0_35px_rgba(0,0,0,0.25)] z-10">
+      <section className="relative w-full bg-gradient-download pt-14 md:pt-16 lg:pt-28 pb-12 md:pb-16 shadow-[0_0_35px_rgba(0,0,0,0.25)] z-10">
         <div className="container mx-auto px-6 relative z-10">
           {/* DOWNLOAD TODAY heading — now sits on the red platform, guiding down */}
           <div className="lg:max-w-[50%] lg:ml-0 mx-auto lg:mx-0 text-center lg:text-left mb-6 lg:mb-10 relative z-10">
