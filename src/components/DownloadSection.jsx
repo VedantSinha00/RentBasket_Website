@@ -25,7 +25,7 @@ const DownloadSection = () => {
         <div className="container mx-auto px-6 relative z-10">
           {/* DOWNLOAD TODAY heading — now sits on the red platform, guiding down */}
           <div className="lg:max-w-[50%] lg:ml-0 mx-auto lg:mx-0 text-center lg:text-left mb-6 lg:mb-10 relative z-10">
-            <h1 className="font-display text-3xl md:text-5xl lg:text-5xl font-bold tracking-tight text-white">
+            <h1 className="font-display text-4xl md:text-6xl lg:text-5xl font-bold tracking-tight text-white">
               DOWNLOAD TODAY
             </h1>
           </div>
@@ -39,7 +39,7 @@ const DownloadSection = () => {
               <p className="hidden lg:flex text-lg md:text-xl font-semibold text-white md:text-2xl">
                 Get exclusive Deals
               </p>
-              <p className="text-lg md:text-xl font-semibold text-white md:text-2xl">
+              <p className="text-xl md:text-2xl font-semibold text-white">
                 Track orders and renewals in one place.
               </p>
             </div>
