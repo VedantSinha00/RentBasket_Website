@@ -49,14 +49,14 @@ const Testimonials = () => {
         </motion.h2>
 
         {/* Parent container providing responsive boundary */}
-        <div className="relative w-full flex flex-col items-center justify-top pt-28 md:pt-56 min-h-[720px] md:min-h-[500px]">
+        <div className="relative w-full flex flex-col items-center justify-top pt-28 md:pt-56 min-h-[580px] md:min-h-[500px]">
           <div className="relative w-full flex justify-center items-center mt-0">
             {/* 1. LEFT CARD: MINIMUM CORNER BEHIND */}
             <TestimonialCard
               content={text1}
               className="
-                /* Mobile: Unchanged vertical stack */
-                absolute top-[180px] left-0 z-10 rotate-6
+                /* Mobile/Tablet: Tighter vertical step and tucked inward horizontally */
+                absolute top-[130px] left-[4%] sm:left-[12%] z-10 rotate-6
                 /* Desktop: Pushed out 340px so only 10px corner overlaps behind primary */
                 md:absolute md:top-44 md:left-1/2 md:-translate-x-[340px] md:z-10 md:-rotate-3 md:opacity-90
               "
@@ -88,8 +88,8 @@ const Testimonials = () => {
             <TestimonialCard
               content={text2}
               className="
-                /* Mobile: Unchanged vertical stack */
-                absolute top-[350px] right-0 z-10 -rotate-3
+                /* Mobile/Tablet: Tighter vertical step and tucked inward horizontally */
+                absolute top-[260px] right-[4%] sm:right-[12%] z-10 -rotate-3
                 /* Desktop: Pushed out 340px so only 10px corner overlaps on top of primary */
                 md:absolute md:top-40 md:right-1/2 md:translate-x-[340px] md:z-40 md:rotate-3
               "
