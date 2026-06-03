@@ -47,10 +47,6 @@ const ProductInfo = ({ product }) => {
         </p>
       </div>
 
-      {/* Short Description */}
-      <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-        {product.short_description}
-      </p>
     </div>
   );
 };
