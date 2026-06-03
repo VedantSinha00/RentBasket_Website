@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Plus, PackagePlus, CheckSquare, Square, RefreshCcw, Sparkles } from "lucide-react";
+import { Plus, RefreshCcw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { DURATION_OPTIONS } from "@/data/products";
@@ -7,51 +7,27 @@ import { discountedRent } from "@/lib/pricing";
 import { useProducts } from "@/hooks/useProducts";
 import { toast } from "sonner";
 
+function shuffled(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 const CrossSellStrip = () => {
   const { cartItems, addToCart } = useCart();
   const { data: products = [] } = useProducts();
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // 1. Build a pool of suggestions based on cart contents
-  const allSuggestions = useMemo(() => {
-    const cartProductIds = cartItems.map((i) => i.productId);
-    
-    // Get related products from all cart items
-    let relatedIds = [];
-    cartItems.forEach(item => {
-      const related = products.find(p => p.id === item.productId)?.related_product_ids || [];
-      relatedIds = [...relatedIds, ...related];
-    });
-
-    // Also get top rated products as fallback
-    const topRated = [...products]
-      .sort((a, b) => b.rating - a.rating)
-      .map(p => p.id);
-
-    // Combine, remove duplicates, and filter out items already in cart
-    const poolIds = [...new Set([...relatedIds, ...topRated])]
-      .filter(id => !cartProductIds.includes(id));
-
-    return poolIds.map(id => products.find(p => p.id === id)).filter(Boolean);
-  }, [cartItems, products]);
-
-  // 2. Pick 4 items from the pool, cycling based on refreshKey
+  // Pick 4 random products not already in cart; re-shuffles on each refresh
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const suggestions = useMemo(() => {
-    if (allSuggestions.length === 0) return [];
-    
-    // We use a simple modulo logic to "page" through the pool
-    const startIndex = (refreshKey * 4) % allSuggestions.length;
-    
-    // Fill up to 4 items, wrapping around if needed but usually just taking 4
-    let selected = allSuggestions.slice(startIndex, startIndex + 4);
-    
-    // If we have fewer than 4 and more than 4 exist, wrap around
-    if (selected.length < 4 && allSuggestions.length > 4) {
-      selected = [...selected, ...allSuggestions.slice(0, 4 - selected.length)];
-    }
-    
-    return selected;
-  }, [allSuggestions, refreshKey]);
+    const cartProductIds = new Set(cartItems.map((i) => i.productId));
+    const pool = products.filter((p) => !cartProductIds.has(p.id));
+    return shuffled(pool).slice(0, 4);
+  }, [cartItems, products, refreshKey]);
 
   if (suggestions.length === 0) return null;
 
@@ -128,10 +104,10 @@ const CrossSellStrip = () => {
             Complete your home setup
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Recommendations for you — pick what you need
+            Recommendations for you
           </p>
         </div>
-        {allSuggestions.length > 4 && (
+        {products.length - cartItems.length > 4 && (
           <button 
             onClick={handleRefresh}
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary bg-primary/5 hover:bg-primary/10 rounded-full transition-colors group"
@@ -183,10 +159,12 @@ const CrossSellStrip = () => {
                       ₹{basePrice.toLocaleString("en-IN")}/mo
                     </span>
                   </div>
-                  <div className="flex items-center gap-0.5">
-                    <span className="text-[10px] font-bold text-amber-500">★</span>
-                    <span className="text-[10px] font-semibold text-muted-foreground">{product.rating}</span>
-                  </div>
+                  {product.rating != null && (
+                    <div className="flex items-center gap-0.5">
+                      <span className="text-[10px] font-bold text-amber-500">★</span>
+                      <span className="text-[10px] font-semibold text-muted-foreground">{product.rating}</span>
+                    </div>
+                  )}
                 </div>
                 <div className="mt-2 text-[9px] text-success-muted-foreground font-bold bg-success-muted px-1.5 py-0.5 rounded inline-block border border-success-border">
                   <s className="text-muted-foreground font-medium mr-1 opacity-70">₹{product.deposit}</s> ₹0 Deposit

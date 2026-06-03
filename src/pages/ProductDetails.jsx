@@ -116,9 +116,9 @@ const ProductDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Header />
-      <main className="pb-20 md:pb-0">
+      <main>
         {/* Breadcrumb */}
         <Breadcrumb product={product} />
 

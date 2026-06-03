@@ -9,10 +9,7 @@ const categories = ["Furniture", "Appliances", "Combos", "Bestsellers"];
 // On mobile (375 px): content stacks vertically, CTA is always above the fold.
 // On desktop (lg+): original two-column layout with mascot video alongside.
 const HeroSection = ({ activeCategory = "Furniture", onCategoryChange }) => {
-  const catalogLink =
-    activeCategory === "Combos"
-      ? "/catalog?category=Complete%20Home%20Setup"
-      : `/catalog?category=${encodeURIComponent(activeCategory)}`;
+  const catalogLink = "/catalog";
 
   return (
     <section className="relative flex flex-col lg:flex-row bg-background overflow-hidden lg:min-h-[440px]">
