@@ -7,22 +7,24 @@ const DownloadSection = () => {
       id="download"
       className="relative mt-0 pt-0 bg-background"
     >
-      {/* White top area — just a sliver, mascot's right hand only overlaps red below and feet and tummy just touch the red below as a surface*/}
-      <div className="relative bg-background pt-8 md:pt-10 h-[100px] md:h-[120px] lg:h-[198px]">
-        <div className="absolute left-1/2 -translate-x-1/2 md:left-[8%] md:translate-x-0 lg:left-[12%] top-8 md:top-10 z-30">
-          <img
-            src={turtleMascot}
-            alt="RentBasket Turtle Mascot"
-            className="h-40 w-40 md:h-52 md:w-52 lg:h-60 lg:w-60 object-contain"
-          />
-        </div>
+      {/* Mascot is now a direct child of the outer section, ensuring it sits on top of all layers */}
+      <div className="absolute left-1/2 -translate-x-1/2 md:left-[8%] md:translate-x-0 lg:left-[12%] -top-4 md:-top-6 lg:top-10 z-30">
+        <img
+          src={turtleMascot}
+          alt="RentBasket Turtle Mascot"
+          className="h-40 w-40 md:h-52 md:w-52 lg:h-60 lg:w-60 object-contain"
+        />
       </div>
 
-      {/* Red gradient platform — extends up behind mascot's lower half */}
-      <section className="relative w-full bg-gradient-download pt-20 md:pt-24 lg:pt-28 pb-12 md:pb-16">
+      {/* White top area — just a sliver */}
+      <div className="relative bg-background pt-8 md:pt-10 h-[100px] md:h-[120px] lg:h-[198px]">
+      </div>
+
+      {/* Red gradient platform — extends up behind mascot's lower half with top & bottom shadow */}
+      <section className="relative w-full bg-gradient-download pt-20 md:pt-24 lg:pt-28 pb-12 md:pb-16 shadow-[0_0_35px_rgba(0,0,0,0.25)] z-10">
         <div className="container mx-auto px-6 relative z-10">
           {/* DOWNLOAD TODAY heading — now sits on the red platform, guiding down */}
-          <div className="lg:max-w-[50%] lg:ml-0 mx-auto lg:mx-0 text-center lg:text-left mb-6 lg:mb-10">
+          <div className="lg:max-w-[50%] lg:ml-0 mx-auto lg:mx-0 text-center lg:text-left mb-6 lg:mb-10 relative z-10">
             <h1 className="font-display text-3xl md:text-5xl lg:text-5xl font-bold tracking-tight text-white">
               DOWNLOAD TODAY
             </h1>
@@ -30,7 +32,7 @@ const DownloadSection = () => {
 
           <div className="flex flex-col items-center lg:items-start lg:max-w-md lg:ml-0 mx-auto lg:mx-0">
             {/* Feature Text */}
-            <div className="mb-6 md:mb-8 space-y-1 w-full lg:text-left text-center">
+            <div className="mb-6 md:mb-8 space-y-1 w-full lg:text-left text-center relative z-10">
               <p className="hidden lg:flex text-lg md:text-xl font-semibold text-white md:text-2xl">
                 Never Miss an Offer
               </p>
@@ -42,12 +44,12 @@ const DownloadSection = () => {
               </p>
             </div>
 
-            {/* Phone Mockup for Mobile/Tablet in-flow (centered, not overlapping) */}
-            <div className="lg:hidden w-full flex justify-center mb-8">
+            {/* Phone Mockup for Mobile/Tablet in-flow (centered, overlapping under the text) */}
+            <div className="lg:hidden w-full flex justify-center -mt-16 sm:-mt-24 md:-mt-28 mb-8 relative z-0">
               <img
                 src={phoneAppScreen}
                 alt="RentBasket App Interface"
-                className="h-[240px] sm:h-[300px] md:h-[360px] object-contain drop-shadow-2xl"
+                className="h-[360px] sm:h-[450px] md:h-[540px] object-contain drop-shadow-2xl"
               />
             </div>
 
