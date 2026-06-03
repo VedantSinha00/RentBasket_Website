@@ -152,7 +152,7 @@ const OrderSummary = ({ onCheckout }) => {
               ₹{b.netFirstMonth.toLocaleString("en-IN")}
             </span>
           </div>
-          <p className="text-[10px] md:text-xs text-muted-foreground mt-2 leading-relaxed">
+          <p className="text-sm md:text-base text-muted-foreground mt-2 leading-relaxed">
             Pay <strong className="text-foreground">₹{b.upfront.toLocaleString("en-IN")}</strong> now (50%), and <strong className="text-foreground">₹{b.payOnDelivery.toLocaleString("en-IN")}</strong> on delivery.
           </p>
         </div>

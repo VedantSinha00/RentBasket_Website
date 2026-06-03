@@ -169,9 +169,12 @@ const CrossSellStrip = () => {
                 </h4>
               </Link>
 
-              <div className="mb-2.5">
+              <div className="flex items-center gap-1.5 mb-2.5 flex-wrap">
                 <span className="text-[12px] font-extrabold text-primary">
                   ₹{displayPrice.toLocaleString("en-IN")}/mo
+                </span>
+                <span className="text-[10px] font-bold bg-success-muted text-success-muted-foreground border border-success-border px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                  0 deposit
                 </span>
               </div>
 

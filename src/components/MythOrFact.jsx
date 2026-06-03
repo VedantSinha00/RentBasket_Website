@@ -1,19 +1,68 @@
-import React, { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { HelpCircle, Check } from "lucide-react";
 
 const Card = ({ belief, reality }) => {
   const [isFlipped, setIsFlipped] = useState(false);
+  const cardRef = useRef(null);
+  const manuallyClosedRef = useRef(false);
+
+  // Mirror the lg breakpoint (1024px) used throughout the catalog
+  const [isMobileLayout, setIsMobileLayout] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 1024 : false
+  );
+  useEffect(() => {
+    const onResize = () => setIsMobileLayout(window.innerWidth < 1024);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // Mobile/tablet: flip when the card centre crosses the middle 40% of the viewport
+  useEffect(() => {
+    if (!isMobileLayout) return;
+    const el = cardRef.current;
+    if (!el) return;
+
+    const check = () => {
+      const { top, height } = el.getBoundingClientRect();
+      const cardCenter = top + height / 2;
+      const vh = window.innerHeight;
+      const inCenter = cardCenter > vh * 0.3 && cardCenter < vh * 0.7;
+
+      if (inCenter && !manuallyClosedRef.current) {
+        setIsFlipped(true);
+      } else if (!inCenter) {
+        // Reset manual flag so it auto-flips again on next scroll-in
+        manuallyClosedRef.current = false;
+      }
+    };
+
+    window.addEventListener("scroll", check, { passive: true });
+    check(); // run once on mount in case card is already centred
+    return () => window.removeEventListener("scroll", check);
+  }, [isMobileLayout]);
+
+  const handleInteraction = () => {
+    if (isFlipped) {
+      manuallyClosedRef.current = true;
+      setIsFlipped(false);
+    } else {
+      manuallyClosedRef.current = false;
+      setIsFlipped(true);
+    }
+  };
 
   return (
     <div
+      ref={cardRef}
       className="group h-[260px] sm:h-[300px] md:h-[320px] w-full [perspective:1000px] cursor-pointer"
-      onClick={() => setIsFlipped(!isFlipped)}
+      onMouseEnter={!isMobileLayout ? () => setIsFlipped(true) : undefined}
+      onClick={handleInteraction}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          setIsFlipped(!isFlipped);
+          handleInteraction();
         }
       }}
     >
@@ -47,7 +96,7 @@ const Card = ({ belief, reality }) => {
 
           {/* Flip Hint */}
           <p className="absolute bottom-4 text-[10px] font-sans font-bold text-white/70 tracking-wider uppercase">
-            Click to reveal truth ↗
+            {isMobileLayout ? "Tap to reveal truth ↗" : "Hover to reveal truth ↗"}
           </p>
         </div>
 

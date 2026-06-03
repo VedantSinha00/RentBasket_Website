@@ -67,6 +67,18 @@ async function catalogFetch(path) {
 // Normaliser — maps raw API item shape → UI shape
 // ---------------------------------------------------------------------------
 
+function buildSpecifications(item) {
+  const specs = {};
+  if (item.material)           specs["Material"]      = item.material;
+  if (item.color_display)      specs["Color"]         = item.color_display;
+  if (item.dimensions_display) specs["Dimensions"]    = item.dimensions_display;
+  if (item.configuration)      specs["Configuration"] = item.configuration;
+  if (item.assembly)           specs["Assembly"]      = item.assembly;
+  const cap = parseFloat(item.capacity_in_litres);
+  if (!isNaN(cap) && cap > 0)  specs["Capacity"]      = `${cap} L`;
+  return Object.keys(specs).length ? specs : null;
+}
+
 function normalizeProduct(item, meta = {}) {
   const pricing = {};
   if ((item.rent_3 ?? 0) > 0) pricing["3_months"] = item.rent_3;
@@ -77,9 +89,11 @@ function normalizeProduct(item, meta = {}) {
   return {
     id: String(item.amenity_type_id),
     name: item.amenity_type_name,
+    subtitle: item.prod_subtitle ?? null,
     // prod_description is being filled progressively — nullable until complete
     description: item.prod_description ?? null,
     short_description: item.prod_description ?? null,
+    specifications: buildSpecifications(item),
     image: item.small_image_path ?? null,
     images: [item.large_image_path].filter(Boolean),
     pricing_by_duration: pricing,

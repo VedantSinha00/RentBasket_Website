@@ -109,56 +109,28 @@ const ProductCard = forwardRef(({ product }, ref) => {
       {/* Card Content */}
       <div className="p-4">
         {/* Title */}
-        <h3 className="font-semibold text-sm md:text-base text-foreground leading-snug mb-1 line-clamp-1">
+        <h3 className="font-semibold text-sm md:text-base text-foreground leading-snug mb-2 line-clamp-1">
           {product.name}
         </h3>
 
-        {/* Description */}
-        {product.short_description && (
-          <p className="text-xs md:text-sm text-muted-foreground leading-relaxed mb-2.5 line-clamp-1">
-            {product.short_description}
-          </p>
-        )}
-
         {/* Pricing Preview */}
-        <div className="bg-secondary/60 rounded-xl p-3 mb-3">
-          <div className="flex items-baseline justify-end gap-x-2 flex-wrap">
+        <div className="mb-3">
+          <div className="flex items-center justify-center gap-1.5 flex-wrap">
             {currentPriceList > currentPrice && (
               <span className="text-xs text-muted-foreground line-through">
                 ₹{currentPriceList.toLocaleString("en-IN")}
               </span>
             )}
-            <span className="text-lg md:text-xl font-bold text-primary">
+            <span className="text-lg md:text-xl font-bold text-primary leading-none">
               ₹{currentPrice.toLocaleString("en-IN")}
             </span>
             <span className="text-xs text-muted-foreground">/month</span>
+            {currentPriceList > currentPrice && (
+              <span className="text-xs font-semibold text-success-muted-foreground bg-success-muted px-1.5 py-0.5 rounded-full">
+                {product.percent_discount}% off
+              </span>
+            )}
           </div>
-        </div>
-
-        {/* Duration Chips */}
-        <div
-          className="flex gap-1.5 mb-1 overflow-x-auto relative z-10"
-          style={{ scrollbarWidth: "none" }}
-        >
-          {previewChips.map((d) => {
-            const isSelected = d.key === selectedDuration;
-            return (
-              <button
-                key={d.key}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedDuration(d.key);
-                }}
-                className={`text-[10px] md:text-xs px-2 py-0.5 rounded-full border whitespace-nowrap flex-shrink-0 transition-all ${
-                  isSelected
-                    ? "bg-primary/5 border-primary/20 text-primary font-semibold"
-                    : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
-                }`}
-              >
-                {d.short}
-              </button>
-            );
-          })}
         </div>
 
         {/* CTA */}

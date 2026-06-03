@@ -16,7 +16,7 @@ import { useProducts } from "@/hooks/useProducts";
 /** Placeholder cards shown while the catalog is being fetched. */
 const CatalogGridSkeleton = () => (
   <section className="section-container py-8 md:py-12">
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6">
+    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
       {Array.from({ length: 8 }).map((_, i) => (
         <div
           key={i}
