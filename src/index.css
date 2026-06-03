@@ -135,10 +135,7 @@
   }
 
   body {
-    @apply text-foreground font-sans antialiased;
-    background-color: hsl(var(--background));
-    background-image: radial-gradient(circle, hsl(0 0% 75% / 0.8) 1px, transparent 1px);
-    background-size: 10px 10px;
+    @apply bg-background text-foreground font-sans antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -207,6 +204,11 @@
 }
 
 @layer utilities {
+  .dot-bg {
+    background-image: radial-gradient(circle, hsl(0 0% 75% / 0.8) 1px, transparent 1px);
+    background-size: 10px 10px;
+  }
+
   .font-display {
     font-family: 'Playfair Display', Georgia, serif;
   }
