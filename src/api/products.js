@@ -109,32 +109,13 @@ const CATEGORY_ID_TO_NAME = {
   3: "Rugs & Mattresses",
 };
 
-/** Fetches subcategory id→name map for all catalog categories. 3 parallel calls. */
-async function buildSubcategoryMap() {
-  const results = await Promise.all(
-    CATALOG_CATEGORY_IDS.map((catId) =>
-      apiFetch(`/get-subcategories-by-category?category_id=${catId}`)
-        .then((r) => r.data.items)
-    )
-  );
-  const map = {};
-  results.flat().forEach((sub) => {
-    map[sub.id] = sub.subcategory_name;
-  });
-  return map;
-}
-
-/** Single-call path: 1 bulk fetch + 3 subcategory name lookups in parallel = 4 total requests. */
+/** Single-call path: bulk endpoint now includes subcategory_label, so 1 request total. */
 async function loadAllProductsBulk() {
-  const [res, subcategoryMap] = await Promise.all([
-    catalogFetch("/get-amenity-types"),
-    buildSubcategoryMap(),
-  ]);
-
+  const res = await catalogFetch("/get-amenity-types");
   return res.data.items.map((item) =>
     normalizeProduct(item, {
       categoryName: CATEGORY_ID_TO_NAME[item.category_id] ?? null,
-      subcategoryName: subcategoryMap[item.subcategory_id] ?? null,
+      subcategoryName: item.subcategory_label ?? null,
       subcategoryId: item.subcategory_id ?? null,
     })
   );

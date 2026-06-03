@@ -117,19 +117,6 @@ Wired up the static trust pages and unified office contacts across the applicati
 Completed a series of UI polish tasks guided by design priorities:
 - **Footer Centering**: Centered the brand logo/text block in the footer for cleaner balance above the two columns.
 - **Catalog Navigation**: Swapped older external RentBasket catalog URLs with local SPA `<Link to="/catalog">` navigation in `WhatMakesDifferent.jsx`.
-# RentBasket Website — Work Log
-
-> A running record of work done, decisions made, and findings — for internship review.
-> Higher-level than `PROGRESS.md` (the terse technical clock-out journal): this captures
-> **what was accomplished and why**. Newest entries at the bottom. Update each session.
-
-## Project context
-- **RentBasket** — furniture & appliance rental for young professionals relocating between Indian cities.
-- **This phase** — harden the existing website foundation, then ship a **V1** = catalog browse + cart + **WhatsApp order handoff** (no accounts, no in-app payment yet). Full self-serve checkout returns in a later release.
-- **Stack** — React 18 + Vite, Tailwind, React Router, TanStack Query, Framer Motion. Static SPA on GitHub Pages.
-- **Repo** — fork `VedantSinha00/RentBasket_Website` (origin); upstream `hardik2704`. Work branch: `phase1-foundation`.
-
----
 
 ## 2026-06-02 — Foundation audit
 Reviewed the whole codebase for weak foundations before building further. Key findings:
@@ -252,6 +239,38 @@ Completed a series of UI polish tasks guided by design priorities:
 
 ---
 
+## 2026-06-03 — Live API integration layer
+
+Major rewrite of `src/api/products.js` to make the live Shivam API a first-class code path (rather than an afterthought stub). Still ships with mock data on by default — flipping `VITE_USE_MOCK_DATA=false` + providing the two env keys is all that's needed.
+
+- **Auth module** (`src/api/auth.js` — new file): JWT token fetch with in-memory cache and a shared inflight promise, so N parallel calls at startup don't each fire a separate `POST /get-jwt-token`. Auto-retry on 401 via `clearToken()`. Dev mode routes through Vite's `/api` proxy (avoids CORS); prod uses the full `api2.rentbasket.com` URL.
+- **Two catalog fetch paths in `products.js`**:
+  - **Bulk path** (`loadAllProductsBulk`) — uses the new `GET /get-amenity-types` endpoint with a static `Authorization-Key` header (`VITE_CATALOG_API_KEY`). Fires 4 parallel requests: 1 bulk product fetch + 3 subcategory name lookups. Most efficient.
+  - **Legacy path** (`loadAllProductsLegacy`) — 3-tier waterfall (categories → subcategories → products per subcategory). Fallback when `VITE_CATALOG_API_KEY` is not set.
+  - The `loadAllProducts()` function picks between them automatically.
+- **`normalizeProduct()` normaliser**: maps the raw API item shape (`amenity_type_id`, `rent_3/6/9/12`, `in_stock`, `is_trending`, etc.) onto the UI shape the rest of the app already understands (`id`, `pricing_by_duration`, `stock_status`, `is_trending`, `percent_discount`, `security_multiple`, etc.). `in_stock: 0` (DB error) is treated as in-stock. Durations with `rent = 0` are omitted from `pricing_by_duration` so they don't appear in the picker.
+- **API contract doc** (`docs/api-contract.md` — new file): documents the auth, catalog, and cart endpoint shapes with real payload examples.
+- **`.env.example` updated** with `VITE_API_APP_KEY`, `VITE_CATALOG_API_KEY`, and `VITE_API_BASE_URL` — everything needed to switch a dev environment from mock to live.
+
+## 2026-06-03 — useProducts hook: cache-sharing & stale config
+
+- `useProduct(id)` now reads `initialData` from the TanStack Query catalog cache (the `["products"]` key already populated by the catalog page). Navigating from catalog → product detail is now **instant** — no second network round-trip. Falls back to `fetchProductById` only on cold/direct URL loads.
+- `useProducts()` now sets `staleTime: 10min`, `refetchOnWindowFocus: false`, `retry: false` — prevents redundant background refetches during a session.
+
+## 2026-06-03 — Catalog UX improvements
+
+- **Infinite scroll / pagination** (`ProductGrid.jsx`): `IntersectionObserver` sentinel at the bottom of the grid loads the next 12 products as the user scrolls. Page resets to 12 whenever the filter/sort changes. Prevents a long DOM at initial load.
+- **Scroll-to-top button** (`Catalog.jsx`): Animated FAB (Framer Motion) appears after scrolling 400 px and returns the user to the top. Uses `AnimatePresence` for a smooth fade+slide in/out.
+- **Filter robustness**: All array accesses on product fields (`tags`, `best_for`) now use optional chaining (`?.`). Live API products don't carry these mock-only fields, so the filter no longer throws on real data.
+- **Sort fix**: Price sort now uses a `minPrice()` helper that picks the lowest available duration rent, instead of hardcoding `pricing_by_duration["1_month"]` — which doesn't exist for monthly-only (3/6/9/12) products.
+
+## 2026-06-03 — Vite proxy config
+
+Added a `/api` dev-proxy in `vite.config.js` that forwards requests to `https://api2.rentbasket.com`, rewriting the path. This means the auth module works in dev without CORS errors or needing a CORS-allowing backend header — no code change required when switching environments.
+
+---
+
 ## Next up
-1. Later: restore full self-serve checkout (currently a WhatsApp handoff — `CheckoutContactModal`); wire the live API.
-2. Investigate transparent image/SVG rendering issues on dark backgrounds.
+1. Wire live API end-to-end: set env keys, remove mock flag, verify catalog renders with real data.
+2. Later: restore full self-serve checkout (currently a WhatsApp handoff — `CheckoutContactModal`).
+3. Investigate transparent image/SVG rendering issues on dark backgrounds.

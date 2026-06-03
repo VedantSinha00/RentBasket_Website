@@ -89,6 +89,34 @@ const Catalog = () => {
     return vals.length ? Math.min(...vals) : Infinity;
   };
 
+  const nonEmptyCategories = useMemo(() => {
+    const set = new Set(["All"]);
+    for (const cat of CATEGORIES) {
+      if (cat === "All") continue;
+      let has;
+      if (cat === "Bestsellers") {
+        has = products.some((p) => p.tags?.includes("Bestseller"));
+      } else if (cat === "Short-Term Rental") {
+        has = products.some(
+          (p) =>
+            p.best_for?.includes("Short stays") ||
+            p.best_for?.includes("Events") ||
+            p.tags?.includes("Event-ready")
+        );
+      } else if (cat === "Complete Home Setup") {
+        has = products.some(
+          (p) =>
+            p.best_for?.includes("Complete setups") ||
+            p.tags?.includes("Complete setups")
+        );
+      } else {
+        has = products.some((p) => p.category === cat);
+      }
+      if (has) set.add(cat);
+    }
+    return set;
+  }, [products]);
+
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
@@ -169,6 +197,7 @@ const Catalog = () => {
           onCategoryChange={setActiveCategory}
           activeSubcategory={activeSubcategory}
           onSubcategoryChange={setActiveSubcategory}
+          nonEmptyCategories={isLoading ? null : nonEmptyCategories}
         />
         <FilterBar
           filters={filters}
