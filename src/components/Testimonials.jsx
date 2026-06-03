@@ -51,6 +51,33 @@ const Testimonials = () => {
         {/* Parent container providing responsive boundary */}
         <div className="relative w-full flex flex-col items-center justify-top pt-28 md:pt-56 min-h-[580px] md:min-h-[500px]">
           <div className="relative w-full flex justify-center items-center mt-0">
+            {/* ── BACKGROUND BLURRED CARDS (z-0) ─────────────────── */}
+            {/* Left Background Card */}
+            <TestimonialCard
+              content={text2}
+              className="
+                absolute top-[50px] -left-16 z-0 rotate-[12deg] opacity-20 blur-[3px] pointer-events-none select-none
+                md:absolute md:top-24 md:left-1/2 md:-translate-x-[480px] md:-rotate-[10deg] md:opacity-15 md:blur-[4px]
+              "
+            />
+            {/* Center Background Card */}
+            <TestimonialCard
+              content={text1}
+              className="
+                absolute top-[20px] left-12 z-0 -rotate-[6deg] opacity-20 blur-[3px] pointer-events-none select-none
+                md:absolute md:top-16 md:left-1/2 md:-translate-x-[150px] md:rotate-[8deg] md:opacity-15 md:blur-[4px]
+              "
+            />
+            {/* Right Background Card */}
+            <TestimonialCard
+              content={text}
+              className="
+                absolute top-[200px] -right-16 z-0 rotate-[-15deg] opacity-20 blur-[3px] pointer-events-none select-none
+                md:absolute md:top-20 md:right-1/2 md:translate-x-[480px] md:rotate-[12deg] md:opacity-15 md:blur-[4px]
+              "
+            />
+
+            {/* ── FOREGROUND SHARP CARDS (z-10+) ──────────────────── */}
             {/* 1. LEFT CARD: MINIMUM CORNER BEHIND */}
             <TestimonialCard
               content={text1}
