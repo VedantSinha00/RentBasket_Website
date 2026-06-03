@@ -8,7 +8,7 @@ const DownloadSection = () => {
       className="relative mt-0 pt-0 bg-background"
     >
       {/* Mascot is now a direct child of the outer section, ensuring it sits on top of all layers */}
-      <div className="absolute left-1/2 -translate-x-1/2 md:left-[8%] md:translate-x-0 lg:left-[12%] top-2 md:top-4 lg:top-10 z-30">
+      <div className="absolute left-1/2 -translate-x-1/2 md:left-[8%] md:translate-x-0 lg:left-[12%] -top-1 md:-top-1 lg:top-10 z-30">
         <img
           src={turtleMascot}
           alt="RentBasket Turtle Mascot"
