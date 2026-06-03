@@ -1,8 +1,24 @@
 import ProductCard from "@/components/catalog/ProductCard";
-import { useRelatedProducts } from "@/hooks/useProducts";
+import { useRecommendations } from "@/hooks/useProducts";
 
 const RelatedProducts = ({ productId }) => {
-  const { data: related = [] } = useRelatedProducts(productId);
+  const { data: related = [], isLoading } = useRecommendations(productId);
+
+  if (isLoading) {
+    return (
+      <section className="bg-secondary/30 py-10 md:py-14">
+        <div className="section-container">
+          <div className="h-7 w-44 bg-secondary rounded animate-pulse mb-6 md:mb-8" />
+          <div className="flex gap-5 md:gap-6 overflow-x-auto pb-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="w-[280px] sm:w-[320px] shrink-0 bg-card rounded-2xl h-[380px] animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   if (related.length === 0) return null;
 
   return (

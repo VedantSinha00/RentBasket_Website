@@ -9,6 +9,7 @@ import {
   fetchProducts,
   fetchProductById,
   fetchRelatedProducts,
+  fetchRecommendations,
 } from "@/api/products";
 
 export const productKeys = {
@@ -55,5 +56,17 @@ export function useRelatedProducts(id) {
     queryKey: productKeys.related(id),
     queryFn: () => fetchRelatedProducts(id),
     enabled: Boolean(id),
+  });
+}
+
+/** API-driven recommendations for a given amenity_type_id. */
+export function useRecommendations(amenityTypeId) {
+  return useQuery({
+    queryKey: ["recommendations", String(amenityTypeId)],
+    queryFn: () => fetchRecommendations(amenityTypeId),
+    enabled: Boolean(amenityTypeId),
+    staleTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    retry: false,
   });
 }

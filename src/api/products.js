@@ -186,3 +186,20 @@ export async function fetchRelatedProducts(id) {
   if (USING_MOCK_DATA) return getStaticRelated(id);
   return [];
 }
+
+/** Recommendations for a given product. Returns normalized products or [] on any failure. */
+export async function fetchRecommendations(amenityTypeId) {
+  if (USING_MOCK_DATA) return [];
+  const json = await apiFetch(`/get-product-recommendations?amenity_type_id=${amenityTypeId}`);
+  if (json.responseCode !== 200) return [];
+  return (json.data?.recommendations ?? []).map((item) => {
+    const base = normalizeProduct(item, {
+      categoryName: CATEGORY_ID_TO_NAME[item.category_id] ?? null,
+      subcategoryName: item.subcategory_label ?? null,
+      subcategoryId: item.subcategory_id ?? null,
+    });
+    let key_features = {};
+    try { key_features = JSON.parse(item.key_features || "{}"); } catch { /* malformed JSON — skip */ }
+    return { ...base, key_features };
+  });
+}
