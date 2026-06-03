@@ -3,12 +3,10 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import mascotVideo from "@/assets/kling_20260104_Image_to_Video_Just_Make__1408_0.mp4";
 
-const categories = ["Furniture", "Appliances", "Combos", "Bestsellers"];
-
 // SP-01: Mobile-first hero.
 // On mobile (375 px): content stacks vertically, CTA is always above the fold.
 // On desktop (lg+): original two-column layout with mascot video alongside.
-const HeroSection = ({ activeCategory = "Furniture", onCategoryChange }) => {
+const HeroSection = () => {
   const catalogLink = "/catalog";
 
   return (
@@ -26,11 +24,11 @@ const HeroSection = ({ activeCategory = "Furniture", onCategoryChange }) => {
           <span className="font-script font-normal text-primary text-[1.1em] mr-1">Comfort</span>{" "}
           <span className="text-primary">for your home</span>
           <br />
-          <span className="text-gradient-coral font-bold">without the hassle of ownership</span>
+          <span className="text-gradient-coral font-extrabold [filter:drop-shadow(0_0_10px_rgba(255,255,255,1))_drop-shadow(0_0_20px_rgba(255,255,255,0.9))_drop-shadow(0_2px_4px_rgba(255,255,255,0.8))]">without the hassle of ownership</span>
         </motion.h1>
 
         {/* Mascot video container - Chest up close-up */}
-        <div className="relative flex items-center justify-center w-full h-[260px] sm:h-[310px] overflow-hidden mx-auto -mt-6 sm:-mt-8 z-0">
+        <div className="relative flex items-center justify-center w-full h-[260px] sm:h-[310px] overflow-hidden mx-auto -mt-10 sm:-mt-12 z-0">
           <video
             src={mascotVideo}
             className="h-full w-full object-contain origin-top scale-[1.7]"
@@ -40,41 +38,41 @@ const HeroSection = ({ activeCategory = "Furniture", onCategoryChange }) => {
             playsInline
             aria-label="RentBasket mascot Ku waving hello"
           />
-
-          {/* Stats - Positioned absolutely on top of the video */}
-          <motion.div
-            className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-12 w-full max-w-xs mx-auto z-10"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
-          >
-            <div className="text-center">
-              <div className="font-sans font-extrabold italic text-primary leading-none text-[26px] sm:text-[30px] tracking-[-0.04em]">
-                1200+
-              </div>
-              <div className="font-sans font-bold text-muted-foreground text-[10px] sm:text-xs mt-1 tracking-tight">
-                Happy Customers
-              </div>
-            </div>
-            <a
-              href="https://rentbasket.short.gy/reviews"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-center block rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none"
-              aria-label="Read our 4.9 Google reviews"
-            >
-              <div className="flex items-center justify-center gap-1 leading-none">
-                <span className="text-gold text-[20px] leading-none">★</span>
-                <span className="font-sans font-extrabold italic text-primary text-[26px] sm:text-[30px] tracking-[-0.04em]">
-                  4.9
-                </span>
-              </div>
-              <div className="font-sans font-bold text-muted-foreground text-[10px] sm:text-xs mt-1 tracking-tight">
-                Google Rating!
-              </div>
-            </a>
-          </motion.div>
         </div>
+
+        {/* Stats - below the video in white space */}
+        <motion.div
+          className="flex items-center justify-center gap-14 w-full max-w-xs mx-auto pt-1"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
+        >
+          <div className="text-center">
+            <div className="font-sans font-extrabold italic text-primary leading-none text-[28px] sm:text-[32px] tracking-[-0.04em]">
+              1200+
+            </div>
+            <div className="font-sans font-semibold text-muted-foreground text-[11px] sm:text-xs mt-1.5 tracking-tight">
+              Happy Customers
+            </div>
+          </div>
+          <a
+            href="https://rentbasket.short.gy/reviews"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-center block rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none"
+            aria-label="Read our 4.9 Google reviews"
+          >
+            <div className="flex items-center justify-center gap-1 leading-none">
+              <span className="text-gold text-[22px] leading-none">★</span>
+              <span className="font-sans font-extrabold italic text-primary text-[28px] sm:text-[32px] tracking-[-0.04em]">
+                4.9
+              </span>
+            </div>
+            <div className="font-sans font-semibold text-muted-foreground text-[11px] sm:text-xs mt-1.5 tracking-tight">
+              Google Rating!
+            </div>
+          </a>
+        </motion.div>
 
         {/* TODO: Once the backend supports category-based collection routing, restore the category tabs.
             For now, since collection filtering is handled directly within the catalog, they are removed from the hero view. */}
