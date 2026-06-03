@@ -16,7 +16,7 @@ const KuMascotImage = ({ className = "" }) => (
 
 const CatalogHero = () => {
   return (
-    <section className="bg-cream/50 border-b border-border/50">
+    <section className="bg-background border-b border-border/50">
       <div className="section-container py-6 md:py-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6 lg:gap-10">
           <div className="min-w-0 flex-1 order-2 sm:order-1">

@@ -56,6 +56,7 @@ const RouterApp = () => {
           initial="initial"
           animate="animate"
           exit="exit"
+          className="bg-background"
         >
           <Routes location={location}>
             <Route path="/" element={<Index />} />
