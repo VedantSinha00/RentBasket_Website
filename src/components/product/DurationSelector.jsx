@@ -79,9 +79,7 @@ const DurationSelector = ({ product, selectedDuration, onDurationChange }) => {
       <button
         type="button"
         onClick={() =>
-          toast("RentBasket Mini is coming soon", {
-            description: "Short-term rentals (under a month) will live here.",
-          })
+          toast("RentBasket Mini is coming soon")
         }
         className="mt-4 w-full flex items-center justify-between gap-3 rounded-xl border border-dashed border-border bg-secondary/30 px-4 py-3 text-left transition-colors hover:bg-secondary/50"
       >

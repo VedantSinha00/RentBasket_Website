@@ -8,13 +8,10 @@ import { useProduct } from "@/hooks/useProducts";
 import { Link } from "react-router-dom";
 
 const MONTHLY_KEYS = new Set([
-  "1_month",
   "3_months",
   "6_months",
-  "11_months",
+  "9_months",
   "12_months",
-  "24_months",
-  "36_months",
 ]);
 const CartItemCard = ({ item }) => {
   const { updateItem, removeFromCart } = useCart();

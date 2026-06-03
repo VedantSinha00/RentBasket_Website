@@ -4,15 +4,7 @@ import { useCart } from "@/context/CartContext";
 import { Link } from "react-router-dom";
 import { cartBreakdown, lineOf } from "@/lib/pricing";
 
-const MONTHLY_KEYS = new Set([
-  "1_month",
-  "3_months",
-  "6_months",
-  "11_months",
-  "12_months",
-  "24_months",
-  "36_months",
-]);
+const MONTHLY_KEYS = new Set(["3_months", "6_months", "9_months", "12_months"]);
 const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
   const { cartItems, getCartItemCount, coupon, applyCoupon, removeCoupon } = useCart();
   const [couponCode, setCouponCode] = useState(coupon?.code || "");

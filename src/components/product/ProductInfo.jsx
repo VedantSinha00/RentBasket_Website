@@ -1,4 +1,4 @@
-import { Star, CheckCircle, XCircle, MapPin, Shield } from "lucide-react";
+import { CheckCircle, XCircle, MapPin, Shield } from "lucide-react";
 
 const STOCK_STATUS = {
   in_stock: { label: "In Stock", Icon: CheckCircle, className: "text-success" },
@@ -20,28 +20,6 @@ const ProductInfo = ({ product }) => {
           {product.subtitle}
         </p>
       )}
-
-      {/* Rating & Reviews */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <div className="flex items-center gap-1">
-          {[...Array(5)].map((_, i) => (
-            <Star
-              key={i}
-              className={`w-4 h-4 ${
-                i < Math.floor(product.rating)
-                  ? "fill-gold text-gold"
-                  : "text-gray-200"
-              }`}
-            />
-          ))}
-        </div>
-        <span className="text-sm font-semibold text-foreground">
-          {product.rating}
-        </span>
-        <span className="text-sm text-muted-foreground">
-          ({product.review_count || 0} reviews)
-        </span>
-      </div>
 
       {/* Availability & Location */}
       <div className="flex items-center gap-4 flex-wrap">

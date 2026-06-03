@@ -59,14 +59,18 @@ const CrossSellStrip = () => {
     setRefreshKey(prev => prev + 1);
   };
 
+  const firstDuration = (product) =>
+    DURATION_OPTIONS.find((d) => (product.pricing_by_duration?.[d.key] ?? 0) > 0)?.key ?? "3_months";
+
   const getDisplayPrice = (product) => {
-    return discountedRent(product.pricing_by_duration["1_month"] ?? 0, product.percent_discount);
+    const key = firstDuration(product);
+    return discountedRent(product.pricing_by_duration[key] ?? 0, product.percent_discount);
   };
 
   const handleQuickAdd = (product) => {
-    const defaultDuration = "1_month";
+    const defaultDuration = firstDuration(product);
     const basePrice = discountedRent(product.pricing_by_duration[defaultDuration], product.percent_discount);
-    const label = DURATION_OPTIONS.find((d) => d.key === defaultDuration)?.label || "1 Month";
+    const label = DURATION_OPTIONS.find((d) => d.key === defaultDuration)?.label || "3 Months";
 
     addToCart({
       productId: product.id,
@@ -91,10 +95,9 @@ const CrossSellStrip = () => {
   };
 
   const handleAddAll = () => {
-    const defaultDuration = "1_month";
-    const label = DURATION_OPTIONS.find((d) => d.key === defaultDuration)?.label || "1 Month";
-
     suggestions.forEach((product) => {
+      const defaultDuration = firstDuration(product);
+      const label = DURATION_OPTIONS.find((d) => d.key === defaultDuration)?.label || "3 Months";
       const basePrice = discountedRent(product.pricing_by_duration[defaultDuration], product.percent_discount);
       addToCart({
         productId: product.id,
@@ -104,7 +107,7 @@ const CrossSellStrip = () => {
         price: basePrice,
         quantity: 1,
         startDate: new Date().toISOString().split("T")[0],
-        deposit: product.deposit,
+        adv_security: product.adv_security,
         image: product.image,
         category: product.category,
         rent: product.pricing_by_duration[defaultDuration],
@@ -145,7 +148,7 @@ const CrossSellStrip = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {suggestions.map((product) => {
           const displayPrice = getDisplayPrice(product);
-          const basePrice = discountedRent(product.pricing_by_duration["1_month"] ?? 0, product.percent_discount);
+          const basePrice = getDisplayPrice(product);
 
           return (
             <div

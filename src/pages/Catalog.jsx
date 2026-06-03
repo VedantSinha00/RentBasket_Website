@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { AlertCircle, RotateCw } from "lucide-react";
+import { AlertCircle, RotateCw, ArrowUp } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CatalogHero from "@/components/catalog/CatalogHero";
@@ -66,6 +67,13 @@ const Catalog = () => {
     bestFor: null,
   });
   const [sortBy, setSortBy] = useState("Popular");
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const fromUrl = searchParams.get("category");
@@ -76,26 +84,30 @@ const Catalog = () => {
   }, [searchParams]);
 
   // Filtered and sorted products
+  const minPrice = (p) => {
+    const vals = Object.values(p.pricing_by_duration ?? {}).filter((v) => v > 0);
+    return vals.length ? Math.min(...vals) : Infinity;
+  };
+
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
     // Category filter
     if (activeCategory !== "All") {
       if (activeCategory === "Bestsellers") {
-        result = result.filter((p) => p.tags.includes("Bestseller"));
+        result = result.filter((p) => p.tags?.includes("Bestseller"));
       } else if (activeCategory === "Short-Term Rental") {
-        // Products ideal for short-term stays
         result = result.filter(
           (p) =>
-            p.best_for.includes("Short stays") ||
-            p.best_for.includes("Events") ||
-            p.tags.includes("Event-ready")
+            p.best_for?.includes("Short stays") ||
+            p.best_for?.includes("Events") ||
+            p.tags?.includes("Event-ready")
         );
       } else if (activeCategory === "Complete Home Setup") {
         result = result.filter(
           (p) =>
-            p.best_for.includes("Complete setups") ||
-            p.tags.includes("Complete setups")
+            p.best_for?.includes("Complete setups") ||
+            p.tags?.includes("Complete setups")
         );
       } else {
         result = result.filter((p) => p.category === activeCategory);
@@ -114,39 +126,33 @@ const Catalog = () => {
 
     // Best for filter
     if (filters.bestFor) {
-      result = result.filter((p) => p.best_for.includes(filters.bestFor));
+      result = result.filter((p) => p.best_for?.includes(filters.bestFor));
     }
 
     // Sorting
     switch (sortBy) {
       case "Price: Low → High":
-        result.sort(
-          (a, b) =>
-            a.pricing_by_duration["1_month"] - b.pricing_by_duration["1_month"]
-        );
+        result.sort((a, b) => minPrice(a) - minPrice(b));
         break;
       case "Price: High → Low":
-        result.sort(
-          (a, b) =>
-            b.pricing_by_duration["1_month"] - a.pricing_by_duration["1_month"]
-        );
+        result.sort((a, b) => minPrice(b) - minPrice(a));
         break;
       case "Top Rated":
-        result.sort((a, b) => b.rating - a.rating);
+        result.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
         break;
       case "Newest":
         result.sort((a, b) => {
-          const aNew = a.tags.includes("New arrival") ? 1 : 0;
-          const bNew = b.tags.includes("New arrival") ? 1 : 0;
+          const aNew = a.tags?.includes("New arrival") ? 1 : 0;
+          const bNew = b.tags?.includes("New arrival") ? 1 : 0;
           return bNew - aNew;
         });
         break;
-      default: // Popular — bestsellers first, then by rating
+      default: // Popular — trending first, then by name
         result.sort((a, b) => {
-          const aBest = a.tags.includes("Bestseller") ? 1 : 0;
-          const bBest = b.tags.includes("Bestseller") ? 1 : 0;
+          const aBest = a.tags?.includes("Bestseller") || a.is_trending ? 1 : 0;
+          const bBest = b.tags?.includes("Bestseller") || b.is_trending ? 1 : 0;
           if (bBest !== aBest) return bBest - aBest;
-          return b.rating - a.rating;
+          return (a.name ?? "").localeCompare(b.name ?? "");
         });
     }
 
@@ -181,6 +187,24 @@ const Catalog = () => {
         <CatalogCTA />
       </main>
       <Footer />
+
+      {/* Back to top */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 16 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            aria-label="Back to top"
+            className="fixed bottom-6 left-0 right-0 mx-auto w-fit z-40 flex items-center gap-1.5 px-4 py-2 rounded-full bg-foreground/15 text-foreground text-sm font-semibold backdrop-blur-sm hover:bg-foreground/30 transition-colors"
+          >
+            <ArrowUp className="w-3.5 h-3.5" />
+            Back to top
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { forwardRef, useState } from "react";
-import { Star, Heart } from "lucide-react";
+// import { Heart } from "lucide-react"; // wishlist disabled — requires auth backend
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { DURATION_OPTIONS } from "@/data/products";
@@ -7,36 +7,30 @@ import { discountedRent } from "@/lib/pricing";
 import ProductImage from "@/components/ui/ProductImage";
 
 const ProductCard = forwardRef(({ product }, ref) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+  // const [isFavorite, setIsFavorite] = useState(false); // wishlist disabled
   const [showPricingLadder, setShowPricingLadder] = useState(false);
   const navigate = useNavigate();
 
-  // Duration chips — the monthly plans on offer
-  const previewChips = DURATION_OPTIONS.filter(
-    (d) => product.pricing_by_duration?.[d.key] !== undefined
-  );
+  const pricing = product.pricing_by_duration ?? {};
 
-  const defaultDuration = product.pricing_by_duration?.["12_months"] !== undefined
+  // Duration chips — only durations with a real price
+  const previewChips = DURATION_OPTIONS.filter((d) => (pricing[d.key] ?? 0) > 0);
+
+  const defaultDuration = (pricing["12_months"] ?? 0) > 0
     ? "12_months"
     : (previewChips[0]?.key || "12_months");
   const [selectedDuration, setSelectedDuration] = useState(defaultDuration);
 
-  const pricing = product.pricing_by_duration;
   const disc = (key) => discountedRent(pricing[key], product.percent_discount);
-  const startMonthly = disc("1_month"); // discounted price the customer actually pays
-  const startMonthlyList = pricing["1_month"]; // pre-discount, shown struck-through
   const currentPrice = disc(selectedDuration);
   const currentPriceList = pricing[selectedDuration];
 
-  // Pricing ladder for hover tooltip (discounted prices)
-  const pricingLadder = [
-    { label: "1 Month", price: disc("1_month"), suffix: "/mo" },
-    { label: "3 Months", price: disc("3_months"), suffix: "/mo" },
-    { label: "6 Months", price: disc("6_months"), suffix: "/mo" },
-    { label: "12 Months", price: disc("12_months"), suffix: "/mo" },
-  ];
-
-  const primaryTag = product.tags?.[0];
+  // Pricing ladder for hover tooltip — only available durations
+  const pricingLadder = previewChips.map((d) => ({
+    label: d.label,
+    price: disc(d.key),
+    suffix: "/mo",
+  }));
 
   return (
     <motion.div
@@ -61,14 +55,14 @@ const ProductCard = forwardRef(({ product }, ref) => {
         />
 
         {/* Badge */}
-        {primaryTag && (
+        {product.is_trending ? (
           <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] md:text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
-            {primaryTag}
+            Trending
           </span>
-        )}
+        ) : null}
 
-        {/* Favorite Icon */}
-        <button
+        {/* Favorite Icon — disabled until auth backend is ready */}
+        {/* <button
           onClick={(e) => {
             e.stopPropagation();
             setIsFavorite(!isFavorite);
@@ -77,12 +71,10 @@ const ProductCard = forwardRef(({ product }, ref) => {
         >
           <Heart
             className={`w-4 h-4 transition-colors ${
-              isFavorite
-                ? "fill-primary text-primary"
-                : "text-muted-foreground"
+              isFavorite ? "fill-primary text-primary" : "text-muted-foreground"
             }`}
           />
-        </button>
+        </button> */}
 
         {/* Hover Pricing Ladder */}
         <AnimatePresence>
@@ -122,28 +114,11 @@ const ProductCard = forwardRef(({ product }, ref) => {
         </h3>
 
         {/* Description */}
-        <p className="text-xs md:text-sm text-muted-foreground leading-relaxed mb-2.5 line-clamp-1">
-          {product.short_description}
-        </p>
-
-        {/* Rating */}
-        <div className="flex items-center gap-1.5 mb-3">
-          <div className="flex items-center gap-0.5">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-3 h-3 ${
-                  i < Math.floor(product.rating)
-                    ? "fill-gold text-gold"
-                    : "text-gray-200"
-                }`}
-              />
-            ))}
-          </div>
-          <span className="text-xs text-muted-foreground font-medium">
-            {product.rating}
-          </span>
-        </div>
+        {product.short_description && (
+          <p className="text-xs md:text-sm text-muted-foreground leading-relaxed mb-2.5 line-clamp-1">
+            {product.short_description}
+          </p>
+        )}
 
         {/* Pricing Preview */}
         <div className="bg-secondary/60 rounded-xl p-3 mb-3">

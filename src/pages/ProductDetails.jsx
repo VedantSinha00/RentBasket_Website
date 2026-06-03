@@ -26,7 +26,7 @@ const ProductDetails = () => {
 
   const { data: product, isLoading } = useProduct(id);
 
-  const [selectedDuration, setSelectedDuration] = useState("1_month");
+  const [selectedDuration, setSelectedDuration] = useState("3_months");
   const [quantity, setQuantity] = useState(1);
 
   // Scroll to top when product changes
@@ -44,8 +44,7 @@ const ProductDetails = () => {
       const fallback = DURATION_OPTIONS.find((d) => hasPrice(d.key));
       if (fallback) setSelectedDuration(fallback.key);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product]);
+  }, [product]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Loading placeholder — shown while the product is being fetched, so the page
   // doesn't flash "Not Found" before the data arrives.
