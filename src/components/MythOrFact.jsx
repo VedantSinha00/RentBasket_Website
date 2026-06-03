@@ -120,7 +120,7 @@ const MythOrFact = () => {
   ];
 
   return (
-    <section className="bg-background py-12 md:py-16 px-4 sm:px-6 lg:px-8">
+    <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-8 md:mb-12">
         {/* Responsive Section Header */}
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display mb-3 md:mb-4 tracking-tight">

@@ -188,7 +188,7 @@ const Catalog = () => {
   }, [products, activeCategory, activeSubcategory, filters, sortBy]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       <main>
         <CatalogHero />

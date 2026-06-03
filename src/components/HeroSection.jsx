@@ -14,7 +14,8 @@ const HeroSection = ({ activeCategory = "Furniture", onCategoryChange }) => {
   return (
     <>
       {/* ── Mobile/Tablet View (Dual Layout) ─────────────────────── */}
-      <section className="lg:hidden relative bg-background px-5 py-8 sm:px-8 flex flex-col items-center text-center gap-6 overflow-hidden">
+      <section className="lg:hidden relative px-5 pt-8 sm:px-8 flex flex-col items-center text-center gap-6 overflow-hidden">
+        <div className="bg-background -mx-5 sm:-mx-8 px-5 sm:px-8 w-[calc(100%+2.5rem)] sm:w-[calc(100%+4rem)] flex flex-col items-center text-center gap-6 pb-6">
         {/* Centered Headline */}
         <motion.h1
           className="font-display font-semibold leading-[1.2] tracking-tight text-foreground text-[24px] sm:text-[32px] max-w-sm sm:max-w-md mx-auto z-10 relative"
@@ -77,10 +78,11 @@ const HeroSection = ({ activeCategory = "Furniture", onCategoryChange }) => {
 
         {/* TODO: Once the backend supports category-based collection routing, restore the category tabs.
             For now, since collection filtering is handled directly within the catalog, they are removed from the hero view. */}
+        </div>
 
         {/* CTA Button */}
         <motion.div
-          className="w-full max-w-xs"
+          className="w-full max-w-xs pb-8"
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.3 }}
