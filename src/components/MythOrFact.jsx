@@ -1,69 +1,83 @@
 import React, { useState } from "react";
-
-// Subtle inset border — works for both BELIEF and REALITY faces.
-const InnerBorder = () => (
-  <div
-    className="absolute inset-2 sm:inset-3 md:inset-4 border-[1.5px] border-white/25 pointer-events-none z-0 rounded-md"
-  />
-);
+import { HelpCircle, Check } from "lucide-react";
 
 const Card = ({ belief, reality }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
     <div
-      className="group h-[280px] sm:h-[320px] md:h-[350px] w-full [perspective:1000px] cursor-pointer"
+      className="group h-[260px] sm:h-[300px] md:h-[320px] w-full [perspective:1000px] cursor-pointer"
       onClick={() => setIsFlipped(!isFlipped)}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           setIsFlipped(!isFlipped);
         }
       }}
     >
       <div
-        className={`relative h-full w-full rounded-2xl transition-all duration-700 [transform-style:preserve-3d] ${isFlipped ? "[transform:rotateY(180deg)]" : ""
-          }`}
+        className={`relative h-full w-full rounded-2xl transition-all duration-700 [transform-style:preserve-3d] shadow-soft group-hover:shadow-card ${
+          isFlipped ? "[transform:rotateY(180deg)]" : ""
+        }`}
       >
-        {/* FRONT SIDE */}
+        {/* FRONT SIDE (BELIEF - RED GRADIENT) */}
         <div
-          className="absolute inset-0 h-full w-full rounded-2xl bg-gradient-to-br from-[#ff4d4d] to-[#d01111] p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center text-center shadow-lg border border-white/20 overflow-hidden" // ignore-harness — design-sprint debt, tracked in review-promotions.md
+          className="absolute inset-0 h-full w-full rounded-2xl bg-gradient-to-br from-[#DF252F] via-[#E61E2A] to-[#B51019] p-6 sm:p-8 flex flex-col items-center justify-center text-center overflow-hidden border border-primary/20"
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
-            transform: "rotateY(0deg)" // Explicitly set front face rotation
+            transform: "rotateY(0deg)",
           }}
         >
-          <InnerBorder />
-          {/* Responsive Label */}
-          <p className="text-white/90 text-[10px] sm:text-xs md:text-sm font-medium mb-2 md:mb-6 italic z-10">
-            BELIEF
-          </p>
-          {/* Responsive Question Text */}
-          <h3 className="text-white text-sm sm:text-lg md:text-xl lg:text-lg font-bold leading-tight px-1 sm:px-2 z-10 font-sans">
+          {/* Decorative faint background icon */}
+          <HelpCircle className="absolute -right-4 -bottom-4 w-24 h-24 text-white/[0.04] stroke-[1] pointer-events-none" />
+
+          {/* Belief Label - Absolutely positioned to sit exactly in the top gap */}
+          <div className="absolute top-6 sm:top-8 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 text-white rounded-full font-sans font-extrabold tracking-widest text-[11px] sm:text-xs uppercase border border-white/20 shadow-sm z-20">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+            Belief
+          </div>
+
+          {/* Belief Text */}
+          <h3 className="text-white text-base sm:text-lg md:text-xl font-sans font-extrabold leading-snug px-2 sm:px-4 z-10 text-balance">
             "{belief}"
           </h3>
+
+          {/* Flip Hint */}
+          <p className="absolute bottom-4 text-[10px] font-sans font-bold text-white/70 tracking-wider uppercase">
+            Click to reveal truth ↗
+          </p>
         </div>
 
-        {/* BACK SIDE */}
+        {/* BACK SIDE (REALITY - WARM CREAM) */}
         <div
-          className="absolute inset-0 h-full w-full rounded-2xl bg-gradient-to-b from-[#ba3737] to-[#610303] p-4 sm:p-6 md:p-7 flex flex-col items-center justify-start shadow-2xl border border-white/10 overflow-hidden" // ignore-harness — design-sprint debt, tracked in review-promotions.md
+          className="absolute inset-0 h-full w-full rounded-2xl bg-[#FCFAF7] border border-border/80 p-6 sm:p-8 flex flex-col items-center justify-center text-center overflow-hidden transition-colors group-hover:border-primary/20"
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
-            transform: "rotateY(180deg)"
+            transform: "rotateY(180deg)",
           }}
         >
-          <InnerBorder />
-          {/* Watermark REALITY heading — left-aligned, sized to fit, brand display font, gentle ghost */}
-          <h2 className="text-white text-3xl sm:text-4xl md:text-[2.5rem] font-display font-bold mb-3 md:mb-4 tracking-tight opacity-50 z-10 leading-none self-start">
-            REALITY
-          </h2>
-          {/* Reality copy — center-aligned body text on muted white for legibility */}
-          <p className="text-white/90 text-xs sm:text-sm md:text-[15px] leading-snug md:leading-relaxed font-sans font-medium z-10 text-center">
+          {/* Decorative faint background check */}
+          <div className="absolute -right-6 -bottom-6 w-28 h-28 bg-primary/[0.02] rounded-full flex items-center justify-center pointer-events-none">
+            <Check className="w-16 h-16 text-primary stroke-[3]" />
+          </div>
+
+          {/* Reality Label - Symmetrical absolute positioning */}
+          <div className="absolute top-6 sm:top-8 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-3 py-1 bg-red-100/80 text-primary rounded-full font-sans font-extrabold tracking-widest text-[11px] sm:text-xs uppercase border border-primary/15 shadow-sm z-20">
+            ★ Reality
+          </div>
+
+          {/* Reality Text */}
+          <p className="text-neutral-900 text-sm sm:text-base md:text-[16px] leading-relaxed font-sans font-semibold z-10 px-2 text-balance">
             {reality}
+          </p>
+
+          {/* Flip Hint */}
+          <p className="absolute bottom-4 text-[10px] font-sans font-bold text-muted-foreground/60 tracking-wider uppercase flex items-center gap-1 group-hover:text-primary transition-colors">
+            Click to flip back ↺
           </p>
         </div>
       </div>
@@ -106,18 +120,18 @@ const MythOrFact = () => {
   ];
 
   return (
-    <section className="bg-background pt-4 md:pt-6 pb-8 md:pb-10 px-4 md:px-6">
-      <div className="text-center mb-6 md:mb-8">
+    <section className="bg-background py-12 md:py-16 px-4 sm:px-6 lg:px-8">
+      <div className="text-center mb-8 md:mb-12">
         {/* Responsive Section Header */}
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display mb-3 md:mb-4 tracking-tight">
           Belief or Reality?
         </h2>
-        <p className="text-muted-foreground text-sm md:text-lg">
-          Let's bust some Myths!
+        <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-xl mx-auto">
+          Let's bust the most common myths about renting home furniture and appliances.
         </p>
       </div>
-      <div className="w-full lg:w-1/2 m-auto">
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 md:gap-10">
+      <div className="w-full max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {data.map((item, index) => (
             <Card key={index} belief={item.belief} reality={item.reality} />
           ))}

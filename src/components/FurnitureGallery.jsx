@@ -130,12 +130,12 @@ const FurnitureGallery = ({ activeCategory = "Furniture" }) => {
               <Link
                 to={catalogHref(activeCategory)}
                 key={`${activeCategory}-${item.id}`}
-                className="group shrink-0 snap-start h-[360px] md:h-[440px] rounded-2xl overflow-hidden shadow-elevated bg-white hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.18)] hover:-translate-y-1 transition-all duration-300"
+                className="group shrink-0 snap-start w-[220px] md:w-[260px] h-[360px] md:h-[440px] rounded-2xl overflow-hidden shadow-elevated bg-white hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.18)] hover:-translate-y-1 transition-all duration-300"
               >
                 <img
                   src={item.src}
                   alt={item.name}
-                  className="h-full w-auto block max-w-none group-hover:scale-[1.02] transition-transform duration-500"
+                  className="h-full w-full object-contain block group-hover:scale-[1.02] transition-transform duration-500"
                 />
               </Link>
             ))}
