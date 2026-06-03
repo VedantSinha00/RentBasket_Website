@@ -25,7 +25,7 @@ const DownloadSection = () => {
         <div className="container mx-auto px-6 relative z-10">
           {/* DOWNLOAD TODAY heading — now sits on the red platform, guiding down */}
           <div className="lg:max-w-[50%] lg:ml-0 mx-auto lg:mx-0 text-center lg:text-left mb-6 lg:mb-10 relative z-10">
-            <h1 className="font-display text-4xl md:text-6xl lg:text-5xl font-bold tracking-tight text-white">
+            <h1 className="font-display text-4xl md:text-6xl lg:text-5xl font-bold tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
               DOWNLOAD TODAY
             </h1>
           </div>
@@ -39,13 +39,13 @@ const DownloadSection = () => {
               <p className="hidden lg:flex text-lg md:text-xl font-semibold text-white md:text-2xl">
                 Get exclusive Deals
               </p>
-              <p className="text-xl md:text-2xl font-semibold text-white">
+              <p className="text-xl md:text-2xl font-semibold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
                 Track orders and renewals in one place.
               </p>
             </div>
 
             {/* Phone Mockup for Mobile/Tablet in-flow (centered, overlapping under the text) */}
-            <div className="lg:hidden w-full flex justify-center -mt-16 sm:-mt-24 md:-mt-28 mb-8 relative z-0">
+            <div className="lg:hidden w-full flex justify-center -mt-8 sm:-mt-12 md:-mt-16 mb-8 relative z-0">
               <img
                 src={phoneAppScreen}
                 alt="RentBasket App Interface"
