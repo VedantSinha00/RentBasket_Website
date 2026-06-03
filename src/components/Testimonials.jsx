@@ -39,7 +39,7 @@ const Testimonials = () => {
     <section className="relative pb-6 lg:pb-28 px-6 bg-cream/50 overflow-hidden">
       <div className="max-w-7xl mx-auto flex flex-col items-center">
         <motion.h2
-          className="font-display text-4xl md:text-6xl font-bold text-center mb-0 lg:mb-12 text-foreground tracking-tight"
+          className="font-display text-5xl md:text-7xl font-bold text-center mb-0 lg:mb-12 text-foreground tracking-tight"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
