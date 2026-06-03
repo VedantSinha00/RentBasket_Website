@@ -54,7 +54,7 @@ const DownloadSection = () => {
             </div>
 
             {/* Mobile/Tablet Buttons */}
-            <div className="flex lg:hidden flex-row gap-3 w-full items-center justify-center">
+            <div className="flex lg:hidden flex-row gap-3 w-full items-center justify-center -mt-12 sm:-mt-16 md:-mt-20 relative z-20">
               <a
                 href="https://play.google.com/store/apps/details?id=com.rentoktenant&pcampaignid=web_share&pli=1"
                 target="_blank"
