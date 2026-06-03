@@ -19,13 +19,9 @@ const OrderSummary = ({ onCheckout }) => {
     if (!couponCode.trim()) return;
     const success = applyCoupon(couponCode);
     if (success) {
-      toast.success("Coupon applied!", {
-        description: "10% discount on rental subtotal",
-      });
+      toast.success("Coupon applied!");
     } else {
-      toast.error("Invalid coupon code", {
-        description: "Try RENTBASKET10 for 10% off",
-      });
+      toast.error("Invalid coupon code");
     }
   };
 

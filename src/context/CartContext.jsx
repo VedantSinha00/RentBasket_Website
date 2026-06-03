@@ -108,11 +108,7 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = () => setCartItems([]);
 
-  const applyCoupon = (code) => {
-    if (code.trim().toUpperCase() === "RENTBASKET10") {
-      setCoupon({ type: "percent", value: 10, code: "RENTBASKET10" });
-      return true;
-    }
+  const applyCoupon = (_code) => {
     return false;
   };
 
