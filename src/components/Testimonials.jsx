@@ -49,10 +49,18 @@ const Testimonials = () => {
         </motion.h2>
 
         {/* Parent container providing responsive boundary */}
-        <div className="relative w-full flex flex-col items-center justify-top pt-28 md:pt-56 min-h-[580px] md:min-h-[500px]">
+        <div className="relative w-full flex flex-col items-center justify-top pt-28 md:pt-56 min-h-[660px] md:min-h-[500px]">
           <div className="relative w-full flex justify-center items-center mt-0">
             {/* ── BACKGROUND BLURRED CARDS (z-0) ─────────────────── */}
-            {/* Left Background Card */}
+            {/* 1. Left Deep High Card */}
+            <TestimonialCard
+              content={text}
+              className="
+                absolute top-[-40px] -left-24 z-0 rotate-[-12deg] opacity-10 blur-[5px] pointer-events-none select-none
+                md:absolute md:top-[-40px] md:left-1/2 md:-translate-x-[580px] md:-rotate-[15deg] md:opacity-10 md:blur-[6px]
+              "
+            />
+            {/* 2. Left Background Card (Existing) */}
             <TestimonialCard
               content={text2}
               className="
@@ -60,7 +68,23 @@ const Testimonials = () => {
                 md:absolute md:top-24 md:left-1/2 md:-translate-x-[480px] md:-rotate-[10deg] md:opacity-15 md:blur-[4px]
               "
             />
-            {/* Center Background Card */}
+            {/* 3. Left Mid Low Card */}
+            <TestimonialCard
+              content={text1}
+              className="
+                absolute top-[320px] -left-20 z-0 rotate-[6deg] opacity-15 blur-[4px] pointer-events-none select-none
+                md:absolute md:top-[280px] md:left-1/2 md:-translate-x-[450px] md:rotate-[8deg] md:opacity-15 md:blur-[4px]
+              "
+            />
+            {/* 4. Center Top Deep Card */}
+            <TestimonialCard
+              content={text}
+              className="
+                absolute top-[-60px] left-1/4 z-0 -rotate-[2deg] opacity-10 blur-[6px] pointer-events-none select-none
+                md:absolute md:top-[-80px] md:left-1/2 md:-translate-x-[80px] md:-rotate-[3deg] md:opacity-10 md:blur-[8px]
+              "
+            />
+            {/* 5. Center Background Card (Existing) */}
             <TestimonialCard
               content={text1}
               className="
@@ -68,12 +92,36 @@ const Testimonials = () => {
                 md:absolute md:top-16 md:left-1/2 md:-translate-x-[150px] md:rotate-[8deg] md:opacity-15 md:blur-[4px]
               "
             />
-            {/* Right Background Card */}
+            {/* 6. Center Bottom Deep Card */}
+            <TestimonialCard
+              content={text2}
+              className="
+                absolute top-[440px] left-6 z-0 rotate-[10deg] opacity-15 blur-[5px] pointer-events-none select-none
+                md:absolute md:top-[240px] md:left-1/2 md:-translate-x-[180px] md:rotate-[12deg] md:opacity-15 md:blur-[5px]
+              "
+            />
+            {/* 7. Right Background Card (Existing) */}
             <TestimonialCard
               content={text}
               className="
                 absolute top-[200px] -right-16 z-0 rotate-[-15deg] opacity-20 blur-[3px] pointer-events-none select-none
                 md:absolute md:top-20 md:right-1/2 md:translate-x-[480px] md:rotate-[12deg] md:opacity-15 md:blur-[4px]
+              "
+            />
+            {/* 8. Right Mid Low Card */}
+            <TestimonialCard
+              content={text1}
+              className="
+                absolute top-[360px] -right-20 z-0 rotate-[-8deg] opacity-15 blur-[4px] pointer-events-none select-none
+                md:absolute md:top-[300px] md:right-1/2 md:translate-x-[450px] md:-rotate-[8deg] md:opacity-15 md:blur-[4px]
+              "
+            />
+            {/* 9. Right Deep High Card */}
+            <TestimonialCard
+              content={text2}
+              className="
+                absolute top-[-20px] -right-24 z-0 rotate-[15deg] opacity-10 blur-[5px] pointer-events-none select-none
+                md:absolute md:top-[-30px] md:right-1/2 md:translate-x-[580px] md:rotate-[15deg] md:opacity-10 md:blur-[6px]
               "
             />
 
