@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProductById, DURATION_OPTIONS } from "@/data/products";
+import { DURATION_OPTIONS } from "@/data/products";
+import { discountedRent } from "@/lib/pricing";
+import { useProduct } from "@/hooks/useProducts";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 import Header from "@/components/Header";
@@ -22,15 +24,49 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
 
-  const product = getProductById(id);
+  const { data: product, isLoading } = useProduct(id);
 
-  const [selectedDuration, setSelectedDuration] = useState("1_month");
+  const [selectedDuration, setSelectedDuration] = useState("12_months");
   const [quantity, setQuantity] = useState(1);
 
   // Scroll to top when product changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
+
+  // Snap selectedDuration to the first available duration when product loads.
+  // Needed because the default "1_month" may not exist for every product.
+  useEffect(() => {
+    if (!product) return;
+    const p = product.pricing_by_duration ?? {};
+    const hasPrice = (key) => (p[key] ?? 0) > 0;
+    if (!hasPrice(selectedDuration)) {
+      const fallback = DURATION_OPTIONS.find((d) => hasPrice(d.key));
+      if (fallback) setSelectedDuration(fallback.key);
+    }
+  }, [product]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Loading placeholder — shown while the product is being fetched, so the page
+  // doesn't flash "Not Found" before the data arrives.
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="section-container py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            <div className="aspect-square bg-secondary rounded-2xl animate-pulse" />
+            <div className="space-y-4">
+              <div className="h-8 w-3/4 bg-secondary rounded animate-pulse" />
+              <div className="h-4 w-1/2 bg-secondary rounded animate-pulse" />
+              <div className="h-24 bg-secondary rounded-xl animate-pulse" />
+              <div className="h-12 bg-secondary rounded-xl animate-pulse" />
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -54,7 +90,7 @@ const ProductDetails = () => {
   }
 
   const pricing = product.pricing_by_duration;
-  const price = pricing[selectedDuration] || 0;
+  const price = discountedRent(pricing[selectedDuration] || 0, product.percent_discount);
   const durationLabel = DURATION_OPTIONS.find((d) => d.key === selectedDuration)?.label || "";
 
   const handleMobileAddToCart = () => {
@@ -66,19 +102,24 @@ const ProductDetails = () => {
       price,
       quantity,
       startDate: new Date().toISOString().split("T")[0],
-      deposit: product.deposit,
+      adv_security: product.adv_security,
       image: product.image,
       category: product.category,
+      subcategory_id: product.subcategory_id,
+      rent: product.pricing_by_duration[selectedDuration],
+      percent_discount: product.percent_discount,
+      security_multiple: product.security_multiple,
     });
     toast.success(`${product.name} added to cart`, {
       description: `${durationLabel} plan · ₹${price.toLocaleString("en-IN")}`,
     });
+    navigate("/cart");
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Header />
-      <main className="pb-20 md:pb-0">
+      <main>
         {/* Breadcrumb */}
         <Breadcrumb product={product} />
 

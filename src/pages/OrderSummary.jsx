@@ -3,12 +3,13 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ChevronLeft, MapPin, Calendar, User, Phone, Pencil } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
+import { cartBreakdown } from "@/lib/pricing";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutSummary from "@/components/checkout/CheckoutSummary";
 
 const OrderSummary = () => {
-  const { cartItems, clearCart } = useCart();
+  const { cartItems, clearCart, coupon } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   const verifiedPhone = location.state?.verifiedPhone || "";
@@ -35,9 +36,7 @@ const OrderSummary = () => {
     setTimeout(() => {
       setIsProcessing(false);
 
-      const subtotalRent = cartItems.reduce((sum, item) => sum + (item.price - (item.isBrandNew ? 65 : 0)) * item.quantity, 0);
-      const totalDeposit = cartItems.reduce((sum, item) => sum + item.deposit, 0);
-      const totalSurcharge = cartItems.reduce((sum, item) => sum + (item.isBrandNew ? 65 * item.quantity : 0), 0);
+      const b = cartBreakdown(cartItems, coupon);
 
       const orderPayload = {
         orderId: `RB-${Math.floor(Math.random() * 90000) + 10000}`,
@@ -56,10 +55,17 @@ const OrderSummary = () => {
           status: "Successful",
         },
         items: cartItems,
-        subtotalRent,
-        totalDeposit,
-        totalSurcharge,
-        grandTotal: subtotalRent + totalDeposit + totalSurcharge,
+        totalRent: b.totalRent,
+        itemSavings: b.itemSavings,
+        coupon: b.coupon,
+        baseRent: b.netBaseRent,
+        gst: b.gst,
+        netMonthlyRent: b.netMonthlyRent,
+        security: b.security,
+        netFirstMonth: b.netFirstMonth,
+        upfront: b.upfront,
+        payOnDelivery: b.payOnDelivery,
+        grandTotal: b.netFirstMonth, // legacy fallback
       };
 
       setOrderPlaced(true);

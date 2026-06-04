@@ -1,231 +1,183 @@
-import { useState, useMemo } from "react";
-import { Plus, PackagePlus, CheckSquare, Square, RefreshCcw, Sparkles } from "lucide-react";
+import { useMemo } from "react";
+import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
-import { DURATION_OPTIONS, getRelatedProducts } from "@/data/products";
-import products from "@/data/products";
+import { DURATION_OPTIONS } from "@/data/products";
+import { discountedRent } from "@/lib/pricing";
+import { useProducts, useRecommendations } from "@/hooks/useProducts";
 import { toast } from "sonner";
 
-const NEW_PRODUCT_SURCHARGE = 65; // ₹65/mo extra for Brand New
-const COMBO_SURCHARGE = 49; // ₹49/mo combo bundle fee per product
+// From a group of enriched cart items, return the productId with the highest rent_12.
+function anchorId(items) {
+  return items.reduce((best, cur) => (cur.rent12 > best.rent12 ? cur : best), items[0]).productId;
+}
+
+// Derive winner and runner-up productIds from the cart.
+// Groups by subcategory_id → picks the two largest groups →
+// selects the highest-rent_12 item from each as the anchor.
+function pickAnchors(cartItems, products) {
+  if (cartItems.length === 0) return [null, null];
+
+  const enriched = cartItems.map((item) => {
+    const cat = products.find((p) => p.id === item.productId);
+    return {
+      productId: item.productId,
+      // subcategory_id may be absent on cart items saved before this field was added
+      subcategoryId: item.subcategory_id ?? cat?.subcategory_id ?? null,
+      rent12: cat?.pricing_by_duration?.["12_months"] ?? 0,
+    };
+  }).filter((i) => i.subcategoryId !== null);
+
+  if (enriched.length === 0) return [cartItems[0]?.productId ?? null, null];
+
+  const groups = {};
+  for (const item of enriched) {
+    (groups[item.subcategoryId] ??= []).push(item);
+  }
+
+  // Sort: count desc → max rent_12 in group desc → subcategory_id asc (deterministic tie-break)
+  const sorted = Object.entries(groups).sort(([aId, aItems], [bId, bItems]) => {
+    if (bItems.length !== aItems.length) return bItems.length - aItems.length;
+    const aMax = Math.max(...aItems.map((i) => i.rent12));
+    const bMax = Math.max(...bItems.map((i) => i.rent12));
+    if (bMax !== aMax) return bMax - aMax;
+    return Number(aId) - Number(bId);
+  });
+
+  return [
+    sorted[0] ? anchorId(sorted[0][1]) : null,
+    sorted[1] ? anchorId(sorted[1][1]) : null,
+  ];
+}
 
 const CrossSellStrip = () => {
-  const { cartItems, addToCart, isGlobalBrandNew, toggleGlobalBrandNew } = useCart();
-  const [refreshKey, setRefreshKey] = useState(0);
+  const { cartItems, addToCart } = useCart();
+  const { data: products = [] } = useProducts();
 
-  // 1. Build a pool of suggestions based on cart contents
-  const allSuggestions = useMemo(() => {
-    const cartProductIds = cartItems.map((i) => i.productId);
-    
-    // Get related products from all cart items
-    let relatedIds = [];
-    cartItems.forEach(item => {
-      const related = products.find(p => p.id === item.productId)?.related_product_ids || [];
-      relatedIds = [...relatedIds, ...related];
-    });
+  const [winnerProductId, runnerUpProductId] = useMemo(
+    () => pickAnchors(cartItems, products),
+    [cartItems, products]
+  );
 
-    // Also get top rated products as fallback
-    const topRated = [...products]
-      .sort((a, b) => b.rating - a.rating)
-      .map(p => p.id);
+  const { data: winnerRecs = [], isLoading: loadingWinner } = useRecommendations(winnerProductId);
+  const { data: runnerRecs = [], isLoading: loadingRunner } = useRecommendations(runnerUpProductId);
 
-    // Combine, remove duplicates, and filter out items already in cart
-    const poolIds = [...new Set([...relatedIds, ...topRated])]
-      .filter(id => !cartProductIds.includes(id));
+  const cartProductIds = useMemo(
+    () => new Set(cartItems.map((i) => i.productId)),
+    [cartItems]
+  );
 
-    return poolIds.map(id => products.find(p => p.id === id)).filter(Boolean);
-  }, [cartItems]);
-
-  // 2. Pick 4 items from the pool, cycling based on refreshKey
+  // Merge winner + runner-up, deduplicate, strip cart items, cap at 6.
   const suggestions = useMemo(() => {
-    if (allSuggestions.length === 0) return [];
-    
-    // We use a simple modulo logic to "page" through the pool
-    const startIndex = (refreshKey * 4) % allSuggestions.length;
-    
-    // Fill up to 4 items, wrapping around if needed but usually just taking 4
-    let selected = allSuggestions.slice(startIndex, startIndex + 4);
-    
-    // If we have fewer than 4 and more than 4 exist, wrap around
-    if (selected.length < 4 && allSuggestions.length > 4) {
-      selected = [...selected, ...allSuggestions.slice(0, 4 - selected.length)];
+    const seen = new Set();
+    const merged = [];
+    for (const item of [...winnerRecs, ...runnerRecs]) {
+      if (!seen.has(item.id) && !cartProductIds.has(item.id)) {
+        seen.add(item.id);
+        merged.push(item);
+      }
+      if (merged.length >= 6) break;
     }
-    
-    return selected;
-  }, [allSuggestions, refreshKey]);
+    return merged;
+  }, [winnerRecs, runnerRecs, cartProductIds]);
+
+  const isLoading = loadingWinner || (!!runnerUpProductId && loadingRunner);
+
+  if (isLoading) {
+    return (
+      <section className="mt-8 md:mt-10">
+        <div className="h-6 w-52 bg-secondary rounded animate-pulse mb-1" />
+        <div className="h-4 w-36 bg-secondary rounded animate-pulse mb-5" />
+        <div className="flex gap-4 overflow-x-auto pb-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="w-[180px] shrink-0 bg-secondary rounded-2xl h-[260px] animate-pulse" />
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   if (suggestions.length === 0) return null;
 
-  const handleRefresh = () => {
-    setRefreshKey(prev => prev + 1);
-  };
-
-  const getDisplayPrice = (product) => {
-    const base = product.pricing_by_duration["1_month"] ?? 0;
-    return isGlobalBrandNew ? base + NEW_PRODUCT_SURCHARGE : base;
-  };
+  const firstDuration = (product) =>
+    DURATION_OPTIONS.find((d) => (product.pricing_by_duration?.[d.key] ?? 0) > 0)?.key ?? "3_months";
 
   const handleQuickAdd = (product) => {
-    const defaultDuration = "1_month";
-    const basePrice = product.pricing_by_duration[defaultDuration];
-    const finalPrice = isGlobalBrandNew ? basePrice + NEW_PRODUCT_SURCHARGE : basePrice;
-    const label = DURATION_OPTIONS.find((d) => d.key === defaultDuration)?.label || "1 Month";
+    const defaultDuration = firstDuration(product);
+    const basePrice = discountedRent(product.pricing_by_duration[defaultDuration], product.percent_discount);
+    const label = DURATION_OPTIONS.find((d) => d.key === defaultDuration)?.label || "3 Months";
 
     addToCart({
       productId: product.id,
       name: product.name,
       duration: defaultDuration,
       durationLabel: label,
-      price: finalPrice,
+      price: basePrice,
       quantity: 1,
       startDate: new Date().toISOString().split("T")[0],
-      deposit: 0, // Zero deposit incentive for recommendations
+      deposit: 0,
       image: product.image,
       category: product.category,
-      isBrandNew: isGlobalBrandNew,
+      subcategory_id: product.subcategory_id,
+      rent: product.pricing_by_duration[defaultDuration],
+      percent_discount: product.percent_discount,
+      security_multiple: 0,
       isRecommendation: true,
     });
 
     toast.success(`${product.name} added to cart`, {
-      description: isGlobalBrandNew
-        ? `${label} plan · ₹${finalPrice.toLocaleString("en-IN")}/mo (incl. ₹${NEW_PRODUCT_SURCHARGE} Brand New Upgrade)`
-        : `${label} plan · ₹${finalPrice.toLocaleString("en-IN")}/mo (Zero Deposit)`,
-    });
-  };
-
-  const handleAddAll = () => {
-    const defaultDuration = "1_month";
-    const label = DURATION_OPTIONS.find((d) => d.key === defaultDuration)?.label || "1 Month";
-
-    suggestions.forEach((product) => {
-      const basePrice = product.pricing_by_duration[defaultDuration];
-      const finalPrice = basePrice + COMBO_SURCHARGE;
-      addToCart({
-        productId: product.id,
-        name: product.name,
-        duration: defaultDuration,
-        durationLabel: label,
-        price: finalPrice,
-        quantity: 1,
-        startDate: new Date().toISOString().split("T")[0],
-        deposit: product.deposit,
-        image: product.image,
-        category: product.category,
-      });
-    });
-
-    toast.success(`${suggestions.length} products added to cart!`, {
-      description: `Combo plan · ₹${COMBO_SURCHARGE}/mo combo fee applied per product`,
+      description: `${label} plan · ₹${basePrice.toLocaleString("en-IN")}/mo`,
     });
   };
 
   return (
     <section className="mt-8 md:mt-10">
-      {/* Header row */}
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="text-lg md:text-xl font-display font-bold text-foreground">
-            Complete your home setup
-          </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Recommendations for you — pick what you need
-          </p>
-        </div>
-        {allSuggestions.length > 4 && (
-          <button 
-            onClick={handleRefresh}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary bg-primary/5 hover:bg-primary/10 rounded-full transition-colors group"
-          >
-            <RefreshCcw className="w-3.5 h-3.5 group-active:rotate-180 transition-transform duration-500" />
-            Shuffle
-          </button>
-        )}
+      <div className="mb-4">
+        <h3 className="text-lg md:text-xl font-display font-bold text-foreground">
+          Complete your home setup
+        </h3>
+        <p className="text-xs text-muted-foreground mt-0.5">Recommendations for you</p>
       </div>
 
-      {/* "Brand New Upgrade" checkbox bar */}
-      <div 
-        onClick={() => toggleGlobalBrandNew(!isGlobalBrandNew)}
-        className={`flex items-center gap-4 border rounded-2xl px-5 py-4 mb-5 shadow-sm transition-all cursor-pointer select-none group ${
-          isGlobalBrandNew 
-            ? 'bg-[#FDF6F5] border-[#F2D7D5]'  // ignore-harness — design-sprint debt, tracked in review-promotions.md
-            : 'bg-[#FDF6F5] border-[#F2D7D5]' // Keeping the same fain pink tint based on user design // ignore-harness — design-sprint debt, tracked in review-promotions.md
-        }`}
-      >
-        <div className="flex-shrink-0 relative flex items-center justify-center">
-          <div className="w-10 h-10 rounded-xl bg-[#E53935] flex items-center justify-center transition-transform hover:scale-105"> // ignore-harness — design-sprint debt, tracked in review-promotions.md
-             <Sparkles className="w-5 h-5 text-white/90 fill-transparent" strokeWidth={2.5} />
-          </div>
-        </div>
-        <div className="flex-1">
-          <h4 className="text-base font-bold text-[#202020] flex items-center gap-2"> // ignore-harness — design-sprint debt, tracked in review-promotions.md
-            Upgrade to Brand New Products?
-            <span className="text-[10px] px-2 py-0.5 rounded uppercase tracking-wider font-extrabold bg-[#FCECEB] text-[#E53935]"> // ignore-harness — design-sprint debt, tracked in review-promotions.md
-              RECOMMENDED
-            </span>
-          </h4>
-          <p className="text-sm text-[#505050] leading-relaxed mt-0.5"> // ignore-harness — design-sprint debt, tracked in review-promotions.md
-            Get factory-fresh, untouched items for just ₹{NEW_PRODUCT_SURCHARGE}/mo extra per product.
-          </p>
-        </div>
-      </div>
-
-      {/* Product cards - Grid instead of scroll */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar -mx-1 px-1">
         {suggestions.map((product) => {
-          const displayPrice = getDisplayPrice(product);
-          const basePrice = product.pricing_by_duration["1_month"] ?? 0;
+          const displayPrice = discountedRent(
+            product.pricing_by_duration[firstDuration(product)] ?? 0,
+            product.percent_discount
+          );
 
           return (
             <div
               key={product.id}
-              className={`bg-card border rounded-2xl p-3.5 flex flex-col shadow-soft hover:shadow-card transition-all hover:-translate-y-1 ${
-                isGlobalBrandNew ? "border-primary/30 bg-primary/[0.02]" : "border-border"
-              }`}
+              className="w-[180px] shrink-0 bg-card border border-border rounded-2xl p-3 flex flex-col shadow-soft hover:shadow-card transition-all hover:-translate-y-1"
             >
-              {/* Thumbnail */}
               <Link
                 to={`/product/${product.id}`}
-                className="w-full aspect-square bg-gray-50/50 rounded-xl overflow-hidden mb-3 block group"
+                className="w-full aspect-square bg-white rounded-xl overflow-hidden mb-3 block group"
               >
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-full object-contain p-3 transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-contain p-2 transition-transform duration-500 group-hover:scale-110"
                   onError={(e) => { e.target.style.display = "none"; }}
                 />
               </Link>
 
-              {/* Name */}
               <Link to={`/product/${product.id}`} className="flex-1">
                 <h4 className="text-[12px] font-bold text-foreground line-clamp-2 mb-1.5 hover:text-primary transition-colors leading-tight">
                   {product.name}
                 </h4>
               </Link>
 
-              {/* Price & Rating */}
-              <div className="mb-2">
-                <div className="flex items-end justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-[12px] font-extrabold text-primary">
-                      ₹{displayPrice.toLocaleString("en-IN")}/mo
-                    </span>
-                    {isGlobalBrandNew && (
-                      <span className="text-[9px] text-muted-foreground line-through">
-                        ₹{basePrice.toLocaleString("en-IN")}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-0.5">
-                    <span className="text-[10px] font-bold text-amber-500">★</span>
-                    <span className="text-[10px] font-semibold text-muted-foreground">{product.rating}</span>
-                  </div>
-                </div>
-                <div className="mt-2 text-[9px] text-success-muted-foreground font-bold bg-success-muted px-1.5 py-0.5 rounded inline-block border border-success-border">
-                  <s className="text-muted-foreground font-medium mr-1 opacity-70">₹{product.deposit}</s> ₹0 Deposit
-                </div>
+              <div className="flex items-center gap-1.5 mb-2.5 flex-wrap">
+                <span className="text-[12px] font-extrabold text-primary">
+                  ₹{displayPrice.toLocaleString("en-IN")}/mo
+                </span>
+                <span className="text-[10px] font-bold bg-success-muted text-success-muted-foreground border border-success-border px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                  0 deposit
+                </span>
               </div>
 
-              {/* Add button */}
               <button
                 onClick={() => handleQuickAdd(product)}
                 className="w-full flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl border-2 border-primary/20 text-primary text-[11px] font-bold hover:bg-primary hover:text-white hover:border-primary transition-all active:scale-95"

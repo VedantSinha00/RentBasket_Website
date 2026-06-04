@@ -7,43 +7,54 @@ const DownloadSection = () => {
       id="download"
       className="relative mt-0 pt-0 bg-background"
     >
-      {/* White top area — just a sliver, mascot's right hand only overlaps red below and feet and tummy just touch the red below as a surface*/}
-      <div className="relative bg-background pt-8 md:pt-10 h-[100px] md:h-[120px] lg:h-[198px]">
-        <div className="absolute left-1/2 -translate-x-1/2 md:left-[8%] md:translate-x-0 lg:left-[12%] top-8 md:top-10 z-30">
-          <img
-            src={turtleMascot}
-            alt="RentBasket Turtle Mascot"
-            className="h-40 w-40 md:h-52 md:w-52 lg:h-60 lg:w-60 object-contain"
-          />
-        </div>
+      {/* Mascot is now a direct child of the outer section, ensuring it sits on top of all layers */}
+      <div className="absolute left-1/2 -translate-x-1/2 md:left-[8%] md:translate-x-0 lg:left-[12%] -top-14 md:-top-22 lg:top-10 z-30">
+        <img
+          src={turtleMascot}
+          alt="RentBasket Turtle Mascot"
+          className="h-60 w-60 md:h-80 md:w-80 lg:h-60 lg:w-60 object-contain"
+        />
       </div>
 
-      {/* Red gradient platform — extends up behind mascot's lower half */}
-      <section className="relative w-full bg-gradient-download pt-20 md:pt-24 lg:pt-28 pb-12 md:pb-16">
+      {/* White top area — just a sliver */}
+      <div className="relative bg-background pt-8 md:pt-10 h-[100px] md:h-[120px] lg:h-[198px]">
+      </div>
+
+      {/* Red gradient platform — extends up behind mascot's lower half with top & bottom shadow */}
+      <section className="relative w-full bg-gradient-download pt-14 md:pt-16 lg:pt-28 pb-12 md:pb-16 shadow-[0_0_35px_rgba(0,0,0,0.25)] z-10">
         <div className="container mx-auto px-6 relative z-10">
           {/* DOWNLOAD TODAY heading — now sits on the red platform, guiding down */}
-          <div className="md:max-w-[50%] md:ml-0 mx-auto md:mx-0 text-center md:text-left mb-6 md:mb-10">
-            <h1 className="font-display text-3xl md:text-5xl lg:text-5xl font-bold tracking-tight text-white">
+          <div className="lg:max-w-[50%] lg:ml-0 mx-auto lg:mx-0 text-center lg:text-left mb-6 lg:mb-10 relative z-10">
+            <h1 className="font-display text-4xl md:text-6xl lg:text-5xl font-bold tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
               DOWNLOAD TODAY
             </h1>
           </div>
 
-          <div className="flex flex-col items-start md:max-w-md md:ml-0 mx-auto md:mx-0">
+          <div className="flex flex-col items-center lg:items-start lg:max-w-md lg:ml-0 mx-auto lg:mx-0">
             {/* Feature Text */}
-            <div className="mb-6 md:mb-8 space-y-1 w-full md:text-left text-center">
+            <div className="mb-6 md:mb-8 space-y-1 w-full lg:text-left text-center relative z-10">
               <p className="hidden lg:flex text-lg md:text-xl font-semibold text-white md:text-2xl">
                 Never Miss an Offer
               </p>
               <p className="hidden lg:flex text-lg md:text-xl font-semibold text-white md:text-2xl">
                 Get exclusive Deals
               </p>
-              <p className="text-lg md:text-xl font-semibold text-white md:text-2xl">
+              <p className="text-xl md:text-2xl font-semibold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
                 Track orders and renewals in one place.
               </p>
             </div>
 
-            {/* Mobile Buttons */}
-            <div className="flex lg:hidden flex-row gap-3 w-full items-center justify-center">
+            {/* Phone Mockup for Mobile/Tablet in-flow (centered, overlapping under the text) */}
+            <div className="lg:hidden w-full flex justify-center -mt-8 sm:-mt-12 md:-mt-16 mb-8 relative z-0">
+              <img
+                src={phoneAppScreen}
+                alt="RentBasket App Interface"
+                className="h-[360px] sm:h-[450px] md:h-[540px] object-contain drop-shadow-2xl"
+              />
+            </div>
+
+            {/* Mobile/Tablet Buttons */}
+            <div className="flex lg:hidden flex-row gap-3 w-full items-center justify-center -mt-12 sm:-mt-16 md:-mt-20 relative z-20">
               <a
                 href="https://play.google.com/store/apps/details?id=com.rentoktenant&pcampaignid=web_share&pli=1"
                 target="_blank"
@@ -113,23 +124,7 @@ const DownloadSection = () => {
           />
         </div>
 
-        {/* Tablet Phone Mockup */}
-        <div className="hidden md:block lg:hidden absolute right-4 -top-16 z-20">
-          <img
-            src={phoneAppScreen}
-            alt="RentBasket App Interface"
-            className="h-[420px] -rotate-8 transform object-contain drop-shadow-2xl"
-          />
-        </div>
 
-        {/* Mobile Phone Mockup */}
-        <div className="flex md:hidden absolute right-2 -top-12 z-20 opacity-95">
-          <img
-            src={phoneAppScreen}
-            alt="RentBasket App Interface"
-            className="h-[220px] -rotate-6 transform object-contain drop-shadow-2xl"
-          />
-        </div>
       </section>
     </section>
   );

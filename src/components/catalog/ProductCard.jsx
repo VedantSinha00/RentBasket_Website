@@ -1,33 +1,36 @@
 import { forwardRef, useState } from "react";
-import { Star, Heart } from "lucide-react";
+// import { Heart } from "lucide-react"; // wishlist disabled — requires auth backend
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { DURATION_OPTIONS } from "@/data/products";
+import { discountedRent } from "@/lib/pricing";
+import ProductImage from "@/components/ui/ProductImage";
 
 const ProductCard = forwardRef(({ product }, ref) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+  // const [isFavorite, setIsFavorite] = useState(false); // wishlist disabled
   const [showPricingLadder, setShowPricingLadder] = useState(false);
   const navigate = useNavigate();
 
-  const pricing = product.pricing_by_duration;
-  const lowestDaily = pricing["7_days"];
-  const lowestMonthly = pricing["12_months"];
+  const pricing = product.pricing_by_duration ?? {};
 
-  // Duration chip preview (show 5 key durations)
-  const previewDurations = ["7_days", "1_month", "3_months", "6_months", "12_months"];
-  const previewChips = DURATION_OPTIONS.filter((d) =>
-    previewDurations.includes(d.key)
-  );
+  // Duration chips — only durations with a real price
+  const previewChips = DURATION_OPTIONS.filter((d) => (pricing[d.key] ?? 0) > 0);
 
-  // Pricing ladder for hover tooltip
-  const pricingLadder = [
-    { label: "7 Days", price: pricing["7_days"], suffix: "" },
-    { label: "1 Month", price: pricing["1_month"], suffix: "/mo" },
-    { label: "6 Months", price: pricing["6_months"], suffix: "/mo" },
-    { label: "12 Months", price: pricing["12_months"], suffix: "/mo" },
-  ];
+  const defaultDuration = (pricing["12_months"] ?? 0) > 0
+    ? "12_months"
+    : (previewChips[0]?.key || "12_months");
+  const [selectedDuration, setSelectedDuration] = useState(defaultDuration);
 
-  const primaryTag = product.tags?.[0];
+  const disc = (key) => discountedRent(pricing[key], product.percent_discount);
+  const currentPrice = disc(selectedDuration);
+  const currentPriceList = pricing[selectedDuration];
+
+  // Pricing ladder for hover tooltip — only available durations
+  const pricingLadder = previewChips.map((d) => ({
+    label: d.label,
+    price: disc(d.key),
+    suffix: "/mo",
+  }));
 
   return (
     <motion.div
@@ -38,27 +41,28 @@ const ProductCard = forwardRef(({ product }, ref) => {
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.3 }}
       whileHover={{ y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
-      className="group bg-card border border-border rounded-2xl overflow-hidden shadow-soft hover:shadow-elevated transition-shadow duration-200"
+      className="group bg-card border border-border rounded-2xl overflow-hidden shadow-soft hover:shadow-elevated transition-shadow duration-200 cursor-pointer"
       onMouseEnter={() => setShowPricingLadder(true)}
       onMouseLeave={() => setShowPricingLadder(false)}
+      onClick={() => navigate(`/product/${product.id}`)}
     >
       {/* Image Area */}
-      <div className="relative aspect-[4/3] bg-gray-50 overflow-hidden">
-        <img
+      <div className="relative aspect-[4/3] bg-white overflow-hidden">
+        <ProductImage
           src={product.image}
           alt={product.name}
           className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
         />
 
         {/* Badge */}
-        {primaryTag && (
+        {product.is_trending ? (
           <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] md:text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
-            {primaryTag}
+            Trending
           </span>
-        )}
+        ) : null}
 
-        {/* Favorite Icon */}
-        <button
+        {/* Favorite Icon — disabled until auth backend is ready */}
+        {/* <button
           onClick={(e) => {
             e.stopPropagation();
             setIsFavorite(!isFavorite);
@@ -67,12 +71,10 @@ const ProductCard = forwardRef(({ product }, ref) => {
         >
           <Heart
             className={`w-4 h-4 transition-colors ${
-              isFavorite
-                ? "fill-primary text-primary"
-                : "text-muted-foreground"
+              isFavorite ? "fill-primary text-primary" : "text-muted-foreground"
             }`}
           />
-        </button>
+        </button> */}
 
         {/* Hover Pricing Ladder */}
         <AnimatePresence>
@@ -84,7 +86,7 @@ const ProductCard = forwardRef(({ product }, ref) => {
               transition={{ duration: 0.2 }}
               className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-4 pt-8 hidden md:block"
             >
-              <div className="grid grid-cols-5 gap-1">
+              <div className="grid grid-cols-4 gap-1">
                 {pricingLadder.map((item) => (
                   <div key={item.label} className="text-center">
                     <div className="text-[10px] text-white/70 mb-0.5">
@@ -107,72 +109,39 @@ const ProductCard = forwardRef(({ product }, ref) => {
       {/* Card Content */}
       <div className="p-4">
         {/* Title */}
-        <h3 className="font-semibold text-sm md:text-base text-foreground leading-snug mb-1 line-clamp-1">
+        <h3 className="font-semibold text-sm md:text-base text-foreground leading-snug mb-2 line-clamp-1">
           {product.name}
         </h3>
 
-        {/* Description */}
-        <p className="text-xs md:text-sm text-muted-foreground leading-relaxed mb-2.5 line-clamp-1">
-          {product.short_description}
-        </p>
-
-        {/* Rating */}
-        <div className="flex items-center gap-1.5 mb-3">
-          <div className="flex items-center gap-0.5">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-3 h-3 ${
-                  i < Math.floor(product.rating)
-                    ? "fill-gold text-gold"
-                    : "text-gray-200"
-                }`}
-              />
-            ))}
-          </div>
-          <span className="text-xs text-muted-foreground font-medium">
-            {product.rating}
-          </span>
-        </div>
-
         {/* Pricing Preview */}
-        <div className="bg-secondary/60 rounded-xl p-3 mb-3">
-          <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider font-medium">
-            Price varies by duration
-          </p>
-          <div className="flex items-baseline gap-2 md:group-hover:hidden">
-            <span className="text-lg md:text-xl font-bold text-primary">
-              ₹{lowestDaily.toLocaleString("en-IN")}
+        <div className="mb-3">
+          <div className="flex items-center justify-center gap-1.5 flex-wrap">
+            {currentPriceList > currentPrice && (
+              <span className="text-xs text-muted-foreground line-through">
+                ₹{currentPriceList.toLocaleString("en-IN")}
+              </span>
+            )}
+            <span className="text-lg md:text-xl font-bold text-primary leading-none">
+              ₹{currentPrice.toLocaleString("en-IN")}
             </span>
-            <span className="text-xs text-muted-foreground">/day</span>
+            <span className="text-xs text-muted-foreground">/month</span>
+            {currentPriceList > currentPrice && (
+              <span className="text-xs font-semibold text-success-muted-foreground bg-success-muted px-1.5 py-0.5 rounded-full">
+                {product.percent_discount}% off
+              </span>
+            )}
           </div>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            or ₹{lowestMonthly.toLocaleString("en-IN")}/month (12M plan)
-          </p>
-        </div>
-
-        {/* Duration Chips */}
-        <div
-          className="flex gap-1.5 mb-4 overflow-x-auto"
-          style={{ scrollbarWidth: "none" }}
-        >
-          {previewChips.map((d) => (
-            <span
-              key={d.key}
-              className="text-[10px] md:text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground whitespace-nowrap flex-shrink-0"
-            >
-              {d.short}
-            </span>
-          ))}
         </div>
 
         {/* CTA */}
-        <button
-          onClick={() => navigate(`/product/${product.id}`)}
-          className="w-full btn-outline text-sm py-2.5 hover:bg-primary hover:text-primary-foreground"
-        >
-          View Details
-        </button>
+        <div className="max-h-0 opacity-0 overflow-hidden pointer-events-none group-hover:max-h-14 group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 ease-out mt-0 group-hover:mt-3">
+          <button
+            onClick={() => navigate(`/product/${product.id}`)}
+            className="w-full btn-outline text-sm py-2.5 hover:bg-primary hover:text-primary-foreground"
+          >
+            View Details
+          </button>
+        </div>
       </div>
     </motion.div>
   );

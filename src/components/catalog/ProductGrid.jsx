@@ -1,8 +1,38 @@
+import { useState, useEffect, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
 import ProductCard from "@/components/catalog/ProductCard";
 import { Package } from "lucide-react";
 
+const PAGE_SIZE = 12;
+
 const ProductGrid = ({ products }) => {
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const sentinelRef = useRef(null);
+
+  // Reset to first page whenever the filtered list changes
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [products]);
+
+  // Load next page when sentinel scrolls into view
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisibleCount((c) => Math.min(c + PAGE_SIZE, products.length));
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [products.length]);
+
+  const visible = products.slice(0, visibleCount);
+  const hasMore = visibleCount < products.length;
+
   return (
     <section className="section-container py-8 md:py-12">
       {products.length === 0 ? (
@@ -22,19 +52,30 @@ const ProductGrid = ({ products }) => {
             <p className="text-sm text-muted-foreground">
               Showing{" "}
               <span className="font-semibold text-foreground">
-                {products.length}
-              </span>{" "}
+                {visible.length}
+              </span>
+              {hasMore && (
+                <>
+                  {" of "}
+                  <span className="font-semibold text-foreground">
+                    {products.length}
+                  </span>
+                </>
+              )}{" "}
               {products.length === 1 ? "product" : "products"}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
             <AnimatePresence mode="popLayout">
-              {products.map((product) => (
+              {visible.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </AnimatePresence>
           </div>
+
+          {/* Invisible sentinel — triggers next page load before user hits bottom */}
+          {hasMore && <div ref={sentinelRef} className="h-1 mt-8" />}
         </>
       )}
     </section>

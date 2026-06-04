@@ -26,3 +26,7 @@ Drop this file in the root of your RentBasket project. Claude Code reads it auto
 2. Keeps layout and typography consistent with the homepage and catalog flows.
 3. Every interactive element has hover + focus-visible + sensible active states (`btn-*` classes include active scale where applicable).
 4. Mobile layout reviewed at 375px width.
+
+## Git Conventions
+- **DO NOT run `git push`** unless explicitly requested by the user. Keep all commits local.
+

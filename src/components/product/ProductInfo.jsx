@@ -1,4 +1,10 @@
-import { Star, CheckCircle, MapPin, Shield } from "lucide-react";
+import { CheckCircle, XCircle, MapPin, Shield } from "lucide-react";
+
+const STOCK_STATUS = {
+  in_stock: { label: "In Stock", Icon: CheckCircle, className: "text-success" },
+  limited: { label: "Limited Stock", Icon: CheckCircle, className: "text-amber-500" },
+  out_of_stock: { label: "Out of Stock", Icon: XCircle, className: "text-muted-foreground" },
+};
 
 const ProductInfo = ({ product }) => {
   return (
@@ -15,34 +21,18 @@ const ProductInfo = ({ product }) => {
         </p>
       )}
 
-      {/* Rating & Reviews */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <div className="flex items-center gap-1">
-          {[...Array(5)].map((_, i) => (
-            <Star
-              key={i}
-              className={`w-4 h-4 ${
-                i < Math.floor(product.rating)
-                  ? "fill-gold text-gold"
-                  : "text-gray-200"
-              }`}
-            />
-          ))}
-        </div>
-        <span className="text-sm font-semibold text-foreground">
-          {product.rating}
-        </span>
-        <span className="text-sm text-muted-foreground">
-          ({product.review_count || 0} reviews)
-        </span>
-      </div>
-
       {/* Availability & Location */}
       <div className="flex items-center gap-4 flex-wrap">
-        <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success">
-          <CheckCircle className="w-4 h-4" />
-          In Stock
-        </span>
+        {(() => {
+          const { label, Icon, className } =
+            STOCK_STATUS[product.stock_status] ?? STOCK_STATUS.in_stock;
+          return (
+            <span className={`inline-flex items-center gap-1.5 text-sm font-medium ${className}`}>
+              <Icon className="w-4 h-4" />
+              {label}
+            </span>
+          );
+        })()}
         <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
           <MapPin className="w-3.5 h-3.5 text-primary" />
           Available in Delhi NCR
@@ -57,10 +47,6 @@ const ProductInfo = ({ product }) => {
         </p>
       </div>
 
-      {/* Short Description */}
-      <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-        {product.short_description}
-      </p>
     </div>
   );
 };

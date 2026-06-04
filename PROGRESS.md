@@ -5,15 +5,18 @@
 
 ## Current State
 
-- **Latest commit:** `488a290` — V 1.56 Catalog page fully functional — duration key fixes & framer-motion forwardRef
-- **Test status:** unit: passing (vitest) | e2e: not yet wired (Layer 3 debt — see Known Issues)
+- **Latest commit:** `603ff5fd` — style: keep footer grid as 2 columns on all viewports to avoid vertical cascading
+- **Test status:** unit: passing (vitest) | e2e: passing (playwright 9/9)
 - **Lint:** clean (ESLint + TypeScript strict)
 - **Build:** `npm run build` succeeds; deployed to GitHub Pages
 - **Environment:** static SPA · GitHub Pages · no backend
-- **As of:** 2026-05-23
+- **As of:** 2026-06-02
 
 ## Completed (recent)
 
+- [x] Trust & Policy pages — created Terms, Shipping, FAQs, About, Contact pages, wired router and copy-spa-404 config, and verified all 9 tests pass in Playwright — 2026-06-02
+- [x] Phase 2 — wired pricing engine (`src/lib/pricing.js`) into cart and checkout UI, resolved surcharges, lifted coupon state, and enriched WhatsApp order handoff — 2026-06-02
+- [x] Phase 2 planning and implementation plan refinement — aligned on zero-deposit recommendations, WhatsApp pricing details, and orphaned pages integration — 2026-06-02
 - [x] Category tab fix — `lg:flex-nowrap lg:gap-x-5`, `lg:text-[18px]`: all 4 tabs on one row — 2026-05-23
 - [x] SP-02 — Product card hover: `whileHover y:-4 + shadow-elevated`, 200ms easeOut — D02 `passing` — 2026-05-23
 - [x] SP-03 — Page transitions: `AnimatePresence mode=wait` wrapping Routes via `RouterApp` inner component — D03 `passing` — 2026-05-23
@@ -39,9 +42,6 @@ _None._
 
 ## Known Issues
 
-- **No e2e layer (Layer 3 debt):** `e2e/` directory exists but no Playwright specs yet.
-  Every feature is in `passing` state with "manual verification" as evidence — verification debt.
-  Unblock by: install Playwright, write `e2e/landing.spec.ts` as the template.
 - **No `.env.local`** on a fresh clone until `make setup` is run (expected — documented in .env.example).
 - **`dist/` is checked in** — gh-pages workflow artifact. Not source — ignore in code review.
 - **26 uncommitted dist/* changes** — pending `make deploy` after harness is confirmed green.

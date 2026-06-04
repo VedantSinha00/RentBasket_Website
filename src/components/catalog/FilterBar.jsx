@@ -105,7 +105,7 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
   return (
     <>
       {/* Desktop Filter Bar */}
-      <div className="hidden md:block bg-background border-b border-border">
+      <div className="bg-background border-b border-border">
         <div className="section-container py-3">
           <div className="flex items-center justify-between gap-4">
             {/* Left Filters */}
@@ -199,8 +199,8 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
         </div>
       </div>
 
-      {/* Mobile Filter Button */}
-      <div className="md:hidden bg-background border-b border-border">
+      {/* Mobile Filter Button — hidden, desktop bar shown on all screen sizes */}
+      <div className="hidden bg-background border-b border-border">
         <div className="section-container py-3 flex items-center justify-between">
           <button
             onClick={() => setMobileOpen(true)}
