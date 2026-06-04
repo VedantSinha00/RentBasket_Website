@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import logo from "@/assets/7 1.png";
@@ -13,6 +13,16 @@ const CustomerValidation = () => {
   const [step, setStep] = useState("phone"); // "phone" | "otp"
   const [isLoading, setIsLoading] = useState(false);
   const [resendIn, setResendIn] = useState(0); // seconds until resend is allowed
+
+  // Track pending timers so they can be cancelled if the component unmounts
+  // (prevents state updates / navigation firing after unmount).
+  const timers = useRef([]);
+  const schedule = (fn, ms) => {
+    const id = setTimeout(fn, ms);
+    timers.current.push(id);
+    return id;
+  };
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
   // Countdown for the Resend OTP cooldown
   useEffect(() => {
@@ -29,7 +39,7 @@ const CustomerValidation = () => {
 
     setIsLoading(true);
     // Simulate OTP generation
-    setTimeout(() => {
+    schedule(() => {
       setIsLoading(false);
       setStep("otp");
       setResendIn(RESEND_COOLDOWN);
@@ -52,19 +62,19 @@ const CustomerValidation = () => {
 
     setIsLoading(true);
     // Simulate OTP verification
-    setTimeout(() => {
+    schedule(() => {
       setIsLoading(false);
       toast.success("Mobile verified!", {
         description: "Let's complete your order details.",
       });
       // Proceed to checkout, carrying the verified mobile number forward
-      setTimeout(() => {
+      schedule(() => {
         navigate("/checkout", { state: { verifiedPhone: phoneNumber } });
       }, 800);
     }, 1500);
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       if (step === "phone") handlePhoneSubmit();
       else handleOtpSubmit();
@@ -118,7 +128,7 @@ const CustomerValidation = () => {
                       placeholder="Enter 10-digit number"
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
-                      onKeyPress={handleKeyPress}
+                      onKeyDown={handleKeyDown}
                       disabled={isLoading}
                       maxLength="10"
                       className="w-full px-4 py-3.5 border-2 border-primary/30 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/50 font-semibold tracking-wider"
@@ -147,7 +157,7 @@ const CustomerValidation = () => {
                       placeholder="Enter 4-digit OTP"
                       value={otp}
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 4))}
-                      onKeyPress={handleKeyPress}
+                      onKeyDown={handleKeyDown}
                       disabled={isLoading}
                       maxLength="4"
                       className="w-full px-4 py-3.5 border-2 border-primary/30 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/50 font-semibold tracking-widest text-center"

@@ -12,7 +12,7 @@ const MONTHLY_KEYS = new Set([
   "24_months",
   "36_months",
 ]);
-const COMBO_SURCHARGE = 50;
+const NEW_PRODUCT_SURCHARGE = 65; // ₹65/mo Brand New upgrade — matches the rest of the checkout pipeline
 
 const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
   const { cartItems, getCartItemCount } = useCart();
@@ -22,12 +22,14 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
   if (cartItems.length === 0) return null;
 
   const itemCount = getCartItemCount();
-  const subtotalRent = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  // item.price already includes the Brand New surcharge when isBrandNew, so split it back out
+  // to show base rent and the surcharge separately — consistent with cart & order payload.
+  const subtotalRent = cartItems.reduce((sum, item) => sum + (item.price - (item.isBrandNew ? NEW_PRODUCT_SURCHARGE : 0)) * item.quantity, 0);
   const totalDeposit = cartItems.reduce((sum, item) => sum + item.deposit, 0);
-  const totalSurcharge = cartItems.reduce((sum, item) => sum + (item.hasSurcharge ? COMBO_SURCHARGE * item.quantity : 0), 0);
+  const totalSurcharge = cartItems.reduce((sum, item) => sum + (item.isBrandNew ? NEW_PRODUCT_SURCHARGE * item.quantity : 0), 0);
 
   const discount = couponApplied ? Math.round(subtotalRent * 0.1) : 0;
-  const grandTotal = subtotalRent + totalDeposit - discount;
+  const grandTotal = subtotalRent + totalSurcharge + totalDeposit - discount;
   const hasMonthlyItems = cartItems.some((item) => MONTHLY_KEYS.has(item.duration));
 
   const handleApplyCoupon = () => {
@@ -68,9 +70,9 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
                   </p>
                   <div className="flex items-center justify-between mt-1">
                     <span className="text-[11px] font-bold text-primary">₹{item.price.toLocaleString("en-IN")}/mo</span>
-                    {item.hasSurcharge && (
+                    {item.isBrandNew && (
                       <span className="text-[9px] text-primary/70 bg-primary/5 px-1.5 py-0.5 rounded-full font-bold border border-primary/10">
-                        Combo Deal
+                        Brand New
                       </span>
                     )}
                   </div>
@@ -95,7 +97,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
               <div className="flex items-center justify-between text-sm text-primary/80 italic font-medium">
                 <span className="flex items-center gap-1.5">
                   <Bookmark className="w-3.5 h-3.5" />
-                  Bundle Setup Fees
+                  Brand New Upgrade
                 </span>
                 <span>+₹{totalSurcharge.toLocaleString("en-IN")}/mo</span>
               </div>
