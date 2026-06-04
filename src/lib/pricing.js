@@ -32,10 +32,9 @@ export const unitSecurity = (listRent, securityMultiple = DEFAULT_SECURITY_MULTI
  * when present — so the same module works for live data and the bundled mock.
  *
  * Security resolution order:
- *   1. adv_security / security  — pre-computed amount from the API (preferred)
- *   2. security_multiple × rent — if the multiplier is provided instead
- *   3. DEFAULT_SECURITY_MULTIPLE × rent — fallback so the site never shows ₹0
- *      deposit on items that simply have missing data
+ *   1. security_multiple × list rent — preferred; uses the per-product multiplier from the API
+ *   2. adv_security / security      — pre-computed API value, used when security_multiple is absent
+ *   3. DEFAULT_SECURITY_MULTIPLE × rent — last resort so the site never shows ₹0
  */
 export const lineOf = (item) => {
   const qty = Math.max(1, Number(item.quantity ?? item.amenity_count ?? 1));
@@ -47,10 +46,15 @@ export const lineOf = (item) => {
       ? Number(item.rent_with_discount)
       : discountedRent(listRent, pd);
   const precomputedSec = item.adv_security ?? item.security;
-  const sec =
-    precomputedSec != null
-      ? Number(precomputedSec)
-      : unitSecurity(listRent, mult != null ? Number(mult) : DEFAULT_SECURITY_MULTIPLE);
+  const secFromApi = precomputedSec != null ? Number(precomputedSec) : null;
+  let sec;
+  if (mult != null) {
+    sec = unitSecurity(listRent, Number(mult));
+  } else if (secFromApi != null) {
+    sec = secFromApi;
+  } else {
+    sec = unitSecurity(listRent, DEFAULT_SECURITY_MULTIPLE);
+  }
   return {
     qty,
     listRent,

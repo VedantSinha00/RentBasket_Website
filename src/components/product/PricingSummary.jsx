@@ -4,9 +4,7 @@ import { CheckCircle, ShieldCheck } from "lucide-react";
 
 const PricingSummary = ({ product, selectedDuration, quantity }) => {
   const pricing = product.pricing_by_duration;
-  const isMonthly = ["1_month", "3_months", "6_months", "11_months", "12_months", "24_months", "36_months"].includes(
-    selectedDuration,
-  );
+  const isMonthly = ["3_months", "6_months", "9_months", "12_months"].includes(selectedDuration);
 
   const durationLabel =
     DURATION_OPTIONS.find((d) => d.key === selectedDuration)?.label || "";
@@ -101,9 +99,6 @@ const PricingSummary = ({ product, selectedDuration, quantity }) => {
               ₹{b.netFirstMonth.toLocaleString("en-IN")}
             </span>
           </div>
-          <p className="text-[10px] md:text-xs text-muted-foreground mt-2 leading-relaxed">
-            Pay <strong className="text-foreground">₹{b.upfront.toLocaleString("en-IN")}</strong> now (50%) to book, and <strong className="text-foreground">₹{b.payOnDelivery.toLocaleString("en-IN")}</strong> on delivery.
-          </p>
         </div>
       </div>
     </div>

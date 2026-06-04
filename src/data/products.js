@@ -25,9 +25,9 @@ import best5 from "@/assets/Bestsellers/5.png";
 // to the future "RentBasket Mini" site. The live API supplies the real monthly
 // tiers (rent_3/6/9/12) once wired; the mock keeps 1/3/6/12 which it already has.
 export const DURATION_OPTIONS = [
-  { key: "1_month", label: "1 Month", short: "1M" },
   { key: "3_months", label: "3 Months", short: "3M" },
   { key: "6_months", label: "6 Months", short: "6M" },
+  { key: "9_months", label: "9 Months", short: "9M" },
   { key: "12_months", label: "12 Months", short: "12M" },
 ];
 
@@ -70,24 +70,17 @@ export const SORT_OPTIONS = [
 
 // Duration savings badge mapping
 export const DURATION_BADGES = {
-  "1_day": null,
-  "3_days": null,
-  "7_days": null,
-  "15_days": null,
-  "1_month": null,
-  "3_months": "Save More",
+  "3_months": null,
   "6_months": "Most Popular",
-  "11_months": "Long-Term Pick",
+  "9_months": null,
   "12_months": "Best Value",
-  "24_months": "Smarter Long Rent",
-  "36_months": "Maximum Savings",
 };
 
 /** Monthly plan keys — keep in sync with DURATION_OPTIONS */
 export const MONTHLY_DURATION_KEYS = [
-  "1_month",
   "3_months",
   "6_months",
+  "9_months",
   "12_months",
 ];
 

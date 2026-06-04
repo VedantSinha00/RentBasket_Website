@@ -6,6 +6,7 @@ const CategoryTabs = ({
   onCategoryChange,
   activeSubcategory,
   onSubcategoryChange,
+  nonEmptyCategories,
 }) => {
   const tabsRef = useRef(null);
   const chipsRef = useRef(null);
@@ -35,7 +36,7 @@ const CategoryTabs = ({
           className="flex gap-1 md:gap-2 py-3 overflow-x-auto scrollbar-hide"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {CATEGORIES.map((category) => (
+          {CATEGORIES.filter((cat) => !nonEmptyCategories || nonEmptyCategories.has(cat)).map((category) => (
             <button
               key={category}
               data-active={activeCategory === category}

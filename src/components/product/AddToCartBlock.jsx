@@ -25,6 +25,7 @@ const AddToCartBlock = ({ product, selectedDuration, quantity, onQuantityChange 
       adv_security: product.adv_security,
       image: product.image,
       category: product.category,
+      subcategory_id: product.subcategory_id,
       rent: product.pricing_by_duration[selectedDuration],
       percent_discount: product.percent_discount,
       security_multiple: product.security_multiple,

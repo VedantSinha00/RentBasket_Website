@@ -35,7 +35,7 @@ const WhatMakesDifferent = () => {
   return (
     <>
       <section className="section-container pt-10 md:pt-14 pb-6 md:pb-8 bg-cream/50">
-        <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-8">
+        <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-8">
           What makes RentBasket Different
         </h2>
 

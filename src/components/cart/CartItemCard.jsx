@@ -1,4 +1,4 @@
-import { Minus, Plus, Trash2, ChevronDown, CheckCircle, Calendar, Bookmark, Star, Sparkles } from "lucide-react";
+import { Minus, Plus, Trash2, ChevronDown, CheckCircle, Calendar } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
@@ -8,13 +8,10 @@ import { useProduct } from "@/hooks/useProducts";
 import { Link } from "react-router-dom";
 
 const MONTHLY_KEYS = new Set([
-  "1_month",
   "3_months",
   "6_months",
-  "11_months",
+  "9_months",
   "12_months",
-  "24_months",
-  "36_months",
 ]);
 const CartItemCard = ({ item }) => {
   const { updateItem, removeFromCart } = useCart();
@@ -93,12 +90,6 @@ const CartItemCard = ({ item }) => {
                 {item.name}
               </Link>
               <p className="text-xs text-muted-foreground mt-0.5">{item.category}</p>
-              {product && (
-                <div className="flex items-center gap-1 mt-0.5">
-                  <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                  <span className="text-[10px] text-muted-foreground">{product.rating}</span>
-                </div>
-              )}
             </div>
 
             {/* Remove */}
@@ -201,12 +192,6 @@ const CartItemCard = ({ item }) => {
                 </Link>
                 <p className="text-sm text-muted-foreground mt-0.5 flex items-center gap-2 flex-wrap">
                   <span>{item.category}</span>
-                  {product && (
-                    <span className="inline-flex items-center gap-0.5">
-                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                      {product.rating} ({product.review_count})
-                    </span>
-                  )}
                   {item.startDate && (
                     <span className="inline-flex items-center gap-0.5">
                       <Calendar className="w-3 h-3" />

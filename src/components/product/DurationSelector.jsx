@@ -26,7 +26,7 @@ const DurationSelector = ({ product, selectedDuration, onDurationChange }) => {
         Longer durations give better monthly value
       </p>
 
-      <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-2 md:gap-2.5">
+      <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-2 md:gap-2.5 mt-4">
         {availableOptions.map((d) => {
           const isSelected = selectedDuration === d.key;
           const badge = DURATION_BADGES[d.key];
@@ -41,14 +41,14 @@ const DurationSelector = ({ product, selectedDuration, onDurationChange }) => {
                   : "border-border hover:border-primary/40 bg-background"
               }`}
             >
-              {/* Badge */}
+              {/* Badge — floats above the top border of the box */}
               {badge && (
                 <span
-                  className={`absolute -top-2.5 left-1/2 -translate-x-1/2 text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${
+                  className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap z-10 ${
                     badge === "Best Value"
                       ? "bg-primary text-primary-foreground"
                       : badge === "Most Popular"
-                      ? "bg-gold text-white"
+                      ? "bg-amber-500 text-white"
                       : "bg-primary text-primary-foreground"
                   }`}
                 >
@@ -79,9 +79,7 @@ const DurationSelector = ({ product, selectedDuration, onDurationChange }) => {
       <button
         type="button"
         onClick={() =>
-          toast("RentBasket Mini is coming soon", {
-            description: "Short-term rentals (under a month) will live here.",
-          })
+          toast("RentBasket Mini is coming soon")
         }
         className="mt-4 w-full flex items-center justify-between gap-3 rounded-xl border border-dashed border-border bg-secondary/30 px-4 py-3 text-left transition-colors hover:bg-secondary/50"
       >

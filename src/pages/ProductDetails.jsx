@@ -26,7 +26,7 @@ const ProductDetails = () => {
 
   const { data: product, isLoading } = useProduct(id);
 
-  const [selectedDuration, setSelectedDuration] = useState("1_month");
+  const [selectedDuration, setSelectedDuration] = useState("12_months");
   const [quantity, setQuantity] = useState(1);
 
   // Scroll to top when product changes
@@ -44,8 +44,7 @@ const ProductDetails = () => {
       const fallback = DURATION_OPTIONS.find((d) => hasPrice(d.key));
       if (fallback) setSelectedDuration(fallback.key);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product]);
+  }, [product]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Loading placeholder — shown while the product is being fetched, so the page
   // doesn't flash "Not Found" before the data arrives.
@@ -106,6 +105,7 @@ const ProductDetails = () => {
       adv_security: product.adv_security,
       image: product.image,
       category: product.category,
+      subcategory_id: product.subcategory_id,
       rent: product.pricing_by_duration[selectedDuration],
       percent_discount: product.percent_discount,
       security_multiple: product.security_multiple,
@@ -117,9 +117,9 @@ const ProductDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Header />
-      <main className="pb-20 md:pb-0">
+      <main>
         {/* Breadcrumb */}
         <Breadcrumb product={product} />
 

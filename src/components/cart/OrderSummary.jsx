@@ -5,15 +5,7 @@ import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 import { cartBreakdown, lineOf } from "@/lib/pricing";
 
-const MONTHLY_KEYS = new Set([
-  "1_month",
-  "3_months",
-  "6_months",
-  "11_months",
-  "12_months",
-  "24_months",
-  "36_months",
-]);
+const MONTHLY_KEYS = new Set(["3_months", "6_months", "9_months", "12_months"]);
 
 const OrderSummary = ({ onCheckout }) => {
   const { cartItems, getCartItemCount, coupon, applyCoupon, removeCoupon } = useCart();
@@ -27,13 +19,9 @@ const OrderSummary = ({ onCheckout }) => {
     if (!couponCode.trim()) return;
     const success = applyCoupon(couponCode);
     if (success) {
-      toast.success("Coupon applied!", {
-        description: "10% discount on rental subtotal",
-      });
+      toast.success("Coupon applied!");
     } else {
-      toast.error("Invalid coupon code", {
-        description: "Try RENTBASKET10 for 10% off",
-      });
+      toast.error("Invalid coupon code");
     }
   };
 
@@ -164,7 +152,7 @@ const OrderSummary = ({ onCheckout }) => {
               ₹{b.netFirstMonth.toLocaleString("en-IN")}
             </span>
           </div>
-          <p className="text-[10px] md:text-xs text-muted-foreground mt-2 leading-relaxed">
+          <p className="text-sm md:text-base text-muted-foreground mt-2 leading-relaxed">
             Pay <strong className="text-foreground">₹{b.upfront.toLocaleString("en-IN")}</strong> now (50%), and <strong className="text-foreground">₹{b.payOnDelivery.toLocaleString("en-IN")}</strong> on delivery.
           </p>
         </div>

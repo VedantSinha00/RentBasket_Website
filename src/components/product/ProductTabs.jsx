@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -8,7 +9,7 @@ const ProductTabs = ({ product }) => {
   const tabs = [
     { key: "description", label: "Description" },
     { key: "specifications", label: "Specifications" },
-    { key: "included", label: "What's Included" },
+    // { key: "included", label: "What's Included" },
     { key: "terms", label: "Rental Terms" },
     { key: "support", label: "Care & Support" },
   ];
@@ -60,9 +61,17 @@ const ProductTabs = ({ product }) => {
         );
       case "terms":
         return (
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            {product.rental_terms || "Flexible rental terms apply. Contact us for details."}
-          </p>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {product.rental_terms || "Flexible rental terms apply. Contact us for details."}
+            </p>
+            <Link
+              to="/terms-n-conditions"
+              className="inline-block text-sm text-primary underline underline-offset-2 hover:opacity-75 transition-opacity"
+            >
+              View full Terms & Conditions →
+            </Link>
+          </div>
         );
       case "support":
         return (
