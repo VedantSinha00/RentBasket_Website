@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ChevronLeft,
   Package,
@@ -10,14 +10,17 @@ import {
   MapPin,
   RotateCcw,
   Headset,
-  FileText,
   ShoppingBag,
 } from "lucide-react";
 import logo from "@/assets/7 1.png";
-import products from "@/data/products";
+import { toast } from "sonner";
+import products, { DURATION_OPTIONS } from "@/data/products";
+import { useCart } from "@/context/CartContext";
 
 /** Pull a real product by id for realistic mock orders. */
 const p = (id) => products.find((x) => x.id === id) || {};
+
+const SUPPORT_WHATSAPP = "https://wa.me/919958858473";
 
 /**
  * Mock order history. No backend exists yet — this is static sample data
@@ -104,6 +107,30 @@ const FILTERS = [
 const OrderCard = ({ order }) => {
   const cfg = STATUS_CONFIG[order.status] || STATUS_CONFIG.completed;
   const StatusIcon = cfg.icon;
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
+
+  const handleRentAgain = () => {
+    order.items.forEach((item) => {
+      const product = p(item.ref);
+      const durationKey =
+        DURATION_OPTIONS.find((d) => d.label === item.durationLabel)?.key || "1_month";
+      addToCart({
+        productId: item.ref,
+        name: product.name || item.ref,
+        duration: durationKey,
+        durationLabel: item.durationLabel,
+        price: item.price,
+        quantity: item.quantity,
+        startDate: new Date().toISOString().split("T")[0],
+        deposit: product.deposit || 0,
+        image: product.image,
+        category: product.category,
+      });
+    });
+    toast.success("Added to cart", { description: "Your previous items are ready to rent again." });
+    navigate("/cart");
+  };
 
   return (
     <div className="bg-card border border-border rounded-2xl shadow-soft overflow-hidden">
@@ -224,20 +251,24 @@ const OrderCard = ({ order }) => {
 
         {/* Actions */}
         <div className="flex flex-wrap gap-2.5 pt-1">
-          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-border text-xs font-bold text-foreground hover:bg-secondary/30 transition-colors active:scale-95">
-            <FileText className="w-3.5 h-3.5" />
-            View Invoice
-          </button>
           {order.status === "completed" ? (
-            <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-primary/30 text-xs font-bold text-primary hover:bg-primary/5 transition-colors active:scale-95">
+            <button
+              onClick={handleRentAgain}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-primary/30 text-xs font-bold text-primary hover:bg-primary/5 transition-colors active:scale-95"
+            >
               <RotateCcw className="w-3.5 h-3.5" />
               Rent Again
             </button>
           ) : order.status === "upcoming" ? (
-            <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-primary/30 text-xs font-bold text-primary hover:bg-primary/5 transition-colors active:scale-95">
+            <a
+              href={SUPPORT_WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-primary/30 text-xs font-bold text-primary hover:bg-primary/5 transition-colors active:scale-95"
+            >
               <Truck className="w-3.5 h-3.5" />
               Track Delivery
-            </button>
+            </a>
           ) : (
             <a
               href="tel:+919958858473"

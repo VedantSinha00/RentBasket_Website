@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import logo from "@/assets/7 1.png";
 import { toast } from "sonner";
+
+const RESEND_COOLDOWN = 30; // seconds
 
 const CustomerValidation = () => {
   const navigate = useNavigate();
@@ -10,6 +12,14 @@ const CustomerValidation = () => {
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState("phone"); // "phone" | "otp"
   const [isLoading, setIsLoading] = useState(false);
+  const [resendIn, setResendIn] = useState(0); // seconds until resend is allowed
+
+  // Countdown for the Resend OTP cooldown
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const id = setInterval(() => setResendIn((s) => (s <= 1 ? 0 : s - 1)), 1000);
+    return () => clearInterval(id);
+  }, [resendIn]);
 
   const handlePhoneSubmit = async () => {
     if (!phoneNumber.trim() || phoneNumber.length < 10) {
@@ -22,8 +32,16 @@ const CustomerValidation = () => {
     setTimeout(() => {
       setIsLoading(false);
       setStep("otp");
+      setResendIn(RESEND_COOLDOWN);
       toast.success("OTP sent to your mobile number");
     }, 1500);
+  };
+
+  const handleResend = () => {
+    if (resendIn > 0 || isLoading) return;
+    setOtp("");
+    setResendIn(RESEND_COOLDOWN);
+    toast.success("OTP resent to your mobile number");
   };
 
   const handleOtpSubmit = async () => {
@@ -146,12 +164,34 @@ const CustomerValidation = () => {
                     {!isLoading && <ArrowRight className="w-5 h-5" />}
                   </button>
 
+                  {/* Resend OTP */}
+                  <div className="text-center text-sm">
+                    {resendIn > 0 ? (
+                      <span className="text-muted-foreground">
+                        Didn't get it? Resend in{" "}
+                        <span className="font-bold text-foreground tabular-nums">0:{String(resendIn).padStart(2, "0")}</span>
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">
+                        Didn't get the code?{" "}
+                        <button
+                          onClick={handleResend}
+                          disabled={isLoading}
+                          className="font-bold text-primary hover:underline disabled:opacity-60"
+                        >
+                          Resend OTP
+                        </button>
+                      </span>
+                    )}
+                  </div>
+
                   {/* Change Number Link */}
                   <button
                     onClick={() => {
                       setStep("phone");
                       setOtp("");
                       setPhoneNumber("");
+                      setResendIn(0);
                     }}
                     disabled={isLoading}
                     className="w-full py-2 text-sm text-muted-foreground hover:text-primary transition-colors underline disabled:opacity-60"

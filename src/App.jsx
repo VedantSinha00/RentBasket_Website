@@ -9,6 +9,7 @@ import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import CustomerValidation from "./pages/CustomerValidation";
+import OrderSummary from "./pages/OrderSummary";
 import OrderSuccess from "./pages/OrderSuccess";
 import MyOrders from "./pages/MyOrders";
 import NotFound from "./pages/NotFound";
@@ -48,6 +49,7 @@ const RouterApp = () => {
           {routePair("/cart", <Cart />)}
           {routePair("/checkout", <Checkout />)}
           {routePair("/customer-validation", <CustomerValidation />)}
+          {routePair("/order-summary", <OrderSummary />)}
           {routePair("/order-success", <OrderSuccess />)}
           {routePair("/account/orders", <MyOrders />)}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

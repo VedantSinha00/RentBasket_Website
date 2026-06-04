@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { ShieldCheck, Info, Tag, Bookmark, Truck, Wrench, CheckCircle } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 const MONTHLY_KEYS = new Set([
   "1_month",
@@ -15,19 +16,28 @@ const COMBO_SURCHARGE = 50;
 
 const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
   const { cartItems, getCartItemCount } = useCart();
-  
+  const [couponCode, setCouponCode] = useState("");
+  const [couponApplied, setCouponApplied] = useState(false);
+
   if (cartItems.length === 0) return null;
 
   const itemCount = getCartItemCount();
   const subtotalRent = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalDeposit = cartItems.reduce((sum, item) => sum + item.deposit, 0);
   const totalSurcharge = cartItems.reduce((sum, item) => sum + (item.hasSurcharge ? COMBO_SURCHARGE * item.quantity : 0), 0);
-  
-  // For checkout, we'll assume a fixed 10% discount if they reached this far as a "Checkout Special" 
-  // or just use the same logic as Cart if we want to be strict.
-  // I'll stick to basic totals for now.
-  const grandTotal = subtotalRent + totalDeposit;
+
+  const discount = couponApplied ? Math.round(subtotalRent * 0.1) : 0;
+  const grandTotal = subtotalRent + totalDeposit - discount;
   const hasMonthlyItems = cartItems.some((item) => MONTHLY_KEYS.has(item.duration));
+
+  const handleApplyCoupon = () => {
+    if (couponCode.trim().toUpperCase() === "RENTBASKET10") {
+      setCouponApplied(true);
+      toast.success("Coupon applied!", { description: "10% off your rental subtotal" });
+    } else if (couponCode.trim()) {
+      toast.error("Invalid coupon code", { description: "Try RENTBASKET10 for 10% off" });
+    }
+  };
 
   return (
     <div className="lg:sticky lg:top-24 space-y-5">
@@ -91,6 +101,16 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
               </div>
             )}
 
+            {couponApplied && (
+              <div className="flex items-center justify-between text-sm text-success font-medium">
+                <span className="flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5" />
+                  Coupon (RENTBASKET10)
+                </span>
+                <span>−₹{discount.toLocaleString("en-IN")}</span>
+              </div>
+            )}
+
             <div className="pt-2 space-y-2 border-t border-border/50">
               {[
                 { label: "Delivery", icon: Truck },
@@ -135,17 +155,38 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
 
           {/* Coupon */}
           <div className="pt-4 border-t border-border/50">
-            <div className="relative group">
-              <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-              <input 
-                type="text" 
-                placeholder="PROMO10" 
-                className="w-full pl-10 pr-20 py-3 bg-secondary/40 border border-border rounded-xl text-sm font-bold placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all"
-              />
-              <button className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 text-xs font-bold text-primary bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors border border-primary/10">
-                Apply
-              </button>
-            </div>
+            {couponApplied ? (
+              <div className="flex items-center justify-between bg-success-muted border border-success-border rounded-xl px-4 py-3">
+                <span className="inline-flex items-center gap-2 text-success-muted-foreground text-sm font-bold">
+                  <Tag className="w-4 h-4" />
+                  RENTBASKET10 applied
+                </span>
+                <button
+                  onClick={() => { setCouponApplied(false); setCouponCode(""); }}
+                  className="text-xs font-bold text-primary hover:underline"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <div className="relative group">
+                <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <input
+                  type="text"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
+                  placeholder="RENTBASKET10"
+                  className="w-full pl-10 pr-20 py-3 bg-secondary/40 border border-border rounded-xl text-sm font-bold placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all"
+                />
+                <button
+                  onClick={handleApplyCoupon}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 text-xs font-bold text-primary bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors border border-primary/10"
+                >
+                  Apply
+                </button>
+              </div>
+            )}
           </div>
 
           {/* CTA */}
