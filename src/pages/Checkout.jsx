@@ -14,9 +14,12 @@ const Checkout = () => {
   const location = useLocation();
   const verifiedPhone = location.state?.verifiedPhone || "";
   const [isProcessing, setIsProcessing] = useState(false);
+  const [orderPlaced, setOrderPlaced] = useState(false);
 
   // Enforce flow order: cart must have items, and mobile must be verified first.
+  // Skip once the order is placed — clearing the cart then must not bounce to /cart.
   useEffect(() => {
+    if (orderPlaced) return;
     if (cartItems.length === 0) {
       navigate("/cart");
       toast.error("Your cart is empty", {
@@ -25,7 +28,7 @@ const Checkout = () => {
     } else if (!verifiedPhone) {
       navigate("/customer-validation");
     }
-  }, [cartItems, navigate, verifiedPhone]);
+  }, [cartItems, navigate, verifiedPhone, orderPlaced]);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -85,16 +88,17 @@ const Checkout = () => {
         grandTotal: subtotalRent + totalDeposit + totalSurcharge
       };
 
-      clearCart();
+      setOrderPlaced(true);
       toast.success("Order placed successfully!", {
-        description: "Your rental order has been confirmed. Redirecting...",
+        description: "Your rental order has been confirmed.",
       });
-
-      setTimeout(() => navigate("/order-success", { state: { orderData: orderPayload } }), 1000);
+      // Navigate first, then clear — same tick, so the empty cart never renders.
+      navigate("/order-success", { state: { orderData: orderPayload } });
+      clearCart();
     }, 2500);
   };
 
-  if (cartItems.length === 0 || !verifiedPhone) return null;
+  if (!orderPlaced && (cartItems.length === 0 || !verifiedPhone)) return null;
 
   return (
     <div className="min-h-screen bg-background pb-20">
