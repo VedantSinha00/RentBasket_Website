@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutForm from "@/components/checkout/CheckoutForm";
-import CheckoutPayment from "@/components/checkout/CheckoutPayment";
 import CheckoutSummary from "@/components/checkout/CheckoutSummary";
 
 const Checkout = () => {
@@ -146,11 +145,6 @@ const Checkout = () => {
             </div>
 
             <CheckoutForm formData={formData} setFormData={setFormData} phoneVerified={Boolean(verifiedPhone)} />
-            
-            <CheckoutPayment 
-              selectedMethod={formData.paymentMethod} 
-              onSelect={(method) => setFormData(prev => ({ ...prev, paymentMethod: method }))} 
-            />
 
             {/* Bottom Note */}
             <p className="text-xs text-muted-foreground text-center py-4 bg-secondary/20 rounded-2xl border border-dashed border-border/50 font-medium">
