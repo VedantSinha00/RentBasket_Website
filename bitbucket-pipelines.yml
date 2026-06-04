@@ -13,6 +13,8 @@ pipelines:
             - DEPLOY_PATH=/var/www/homeui
 
             - cd $BITBUCKET_CLONE_DIR
+            - echo "Creating .env file"
+            - echo "$homeui" > .env
             - npm i
             - npm run build
             - sudo rsync -av --delete --exclude='.git' $BITBUCKET_CLONE_DIR/ $DEPLOY_PATH/
