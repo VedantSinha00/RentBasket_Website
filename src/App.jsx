@@ -1,5 +1,3 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
@@ -10,6 +8,7 @@ import Catalog from "./pages/Catalog";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import CustomerValidation from "./pages/CustomerValidation";
 import OrderSuccess from "./pages/OrderSuccess";
 import NotFound from "./pages/NotFound";
 
@@ -47,6 +46,7 @@ const RouterApp = () => {
           {routePair("/product/:id", <ProductDetails />)}
           {routePair("/cart", <Cart />)}
           {routePair("/checkout", <Checkout />)}
+          {routePair("/customer-validation", <CustomerValidation />)}
           {routePair("/order-success", <OrderSuccess />)}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
@@ -60,8 +60,6 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <CartProvider>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
         <BrowserRouter
           basename={import.meta.env.BASE_URL.replace(/\/$/, "") || "/"}
         >

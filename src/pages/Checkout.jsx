@@ -86,8 +86,8 @@ const Checkout = () => {
       toast.success("Order placed successfully!", {
         description: "Your rental order has been confirmed. Redirecting...",
       });
-      
-      setTimeout(() => navigate("/order-success", { state: { orderData: orderPayload } }), 1000);
+
+      setTimeout(() => navigate("/customer-validation", { state: { orderData: orderPayload } }), 1000);
     }, 2500);
   };
 
