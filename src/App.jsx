@@ -13,6 +13,7 @@ import Checkout from "./pages/Checkout";
 import CustomerValidation from "./pages/CustomerValidation";
 import OrderSummary from "./pages/OrderSummary";
 import OrderSuccess from "./pages/OrderSuccess";
+import Kyc from "./pages/Kyc";
 import MyOrders from "./pages/MyOrders";
 import NotFound from "./pages/NotFound";
 
@@ -53,6 +54,7 @@ const RouterApp = () => {
           {routePair("/customer-validation", <CustomerValidation />)}
           {routePair("/order-summary", <OrderSummary />)}
           {routePair("/order-success", <OrderSuccess />)}
+          {routePair("/kyc", <Kyc />)}
           {routePair("/account/orders", <MyOrders />)}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

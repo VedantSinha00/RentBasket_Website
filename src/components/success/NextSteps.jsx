@@ -1,7 +1,7 @@
-import { CheckCircle2, PackageSearch, Truck, CalendarCheck, Wrench, Check } from "lucide-react";
+import { CheckCircle2, FileCheck2, PackageSearch, Truck, CalendarCheck, Wrench, Check } from "lucide-react";
 
 // status: "done" | "current" | "upcoming"
-const STEPS = [
+const buildSteps = (kycComplete) => [
   {
     id: "received",
     title: "Order Received",
@@ -10,11 +10,21 @@ const STEPS = [
     status: "done",
   },
   {
+    id: "kyc",
+    title: "Complete KYC",
+    description: kycComplete
+      ? "Documents verified — your identity is confirmed."
+      : "Upload Aadhaar (front & back), a selfie, and your rent agreement to verify your identity.",
+    icon: FileCheck2,
+    status: kycComplete ? "done" : "current",
+    currentBadge: "Action Needed",
+  },
+  {
     id: "confirmed",
     title: "Team Confirmation",
-    description: "Our team is reviewing your booking and will call to confirm your delivery slot within 24 hours.",
+    description: "Our team reviews your booking and confirms your delivery slot within 24 hours.",
     icon: PackageSearch,
-    status: "current",
+    status: kycComplete ? "current" : "upcoming",
   },
   {
     id: "delivery",
@@ -39,7 +49,9 @@ const STEPS = [
   },
 ];
 
-const NextSteps = () => {
+const NextSteps = ({ kycComplete = false }) => {
+  const steps = buildSteps(kycComplete);
+
   return (
     <div className="w-full bg-card border border-border rounded-2xl p-6 md:p-8 shadow-soft my-8">
       <h3 className="text-lg font-bold text-foreground mb-6">What happens next?</h3>
@@ -49,7 +61,7 @@ const NextSteps = () => {
         <div className="absolute left-[27px] top-4 bottom-4 w-0.5 bg-border md:left-4 md:right-4 md:top-[27px] md:bottom-auto md:h-0.5 md:w-auto" />
 
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 md:gap-4 relative z-10">
-          {STEPS.map((step) => {
+          {steps.map((step) => {
             const Icon = step.icon;
             const isDone = step.status === "done";
             const isCurrent = step.status === "current";
@@ -82,7 +94,7 @@ const NextSteps = () => {
                 <div className={`md:text-center mt-1 md:mt-0 ${isCurrent ? "md:max-w-[220px]" : "md:max-w-[140px]"} md:mx-auto`}>
                   {isCurrent && (
                     <span className="inline-block mb-1.5 text-[9px] font-black uppercase tracking-widest text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full">
-                      In Progress
+                      {step.currentBadge || "In Progress"}
                     </span>
                   )}
                   <h4
