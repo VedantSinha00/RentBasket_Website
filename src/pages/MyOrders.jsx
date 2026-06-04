@@ -42,9 +42,9 @@ const MOCK_ORDERS = [
   },
   {
     orderId: "RB-39654",
-    status: "delivered",
-    bookingDate: "12 Mar 2026",
-    deliveryDate: "14 Mar 2026",
+    status: "upcoming",
+    bookingDate: "02 Jun 2026",
+    deliveryDate: "08 Jun 2026",
     deliverySlot: "Evening (4 PM – 8 PM)",
     address: "C-12, DLF Phase 3, Gurgaon, Haryana 122002",
     items: [
@@ -54,7 +54,7 @@ const MOCK_ORDERS = [
     monthlyRent: 2698,
     deposit: 6500,
     paidToday: 9198,
-    renewsOn: "14 Apr 2026",
+    startsOn: "08 Jun 2026",
   },
   {
     orderId: "RB-21088",
@@ -80,8 +80,8 @@ const STATUS_CONFIG = {
     badgeClass: "bg-success-muted text-success-muted-foreground border-success-border",
     dot: "bg-success",
   },
-  delivered: {
-    label: "Delivered",
+  upcoming: {
+    label: "Arriving Soon",
     icon: Truck,
     badgeClass: "bg-coral-surface text-primary border-coral-border",
     dot: "bg-primary",
@@ -96,8 +96,8 @@ const STATUS_CONFIG = {
 
 const FILTERS = [
   { key: "all", label: "All Orders" },
+  { key: "upcoming", label: "Upcoming" },
   { key: "active", label: "Active" },
-  { key: "delivered", label: "Delivered" },
   { key: "completed", label: "Completed" },
 ];
 
@@ -178,11 +178,15 @@ const OrderCard = ({ order }) => {
           <div className="rounded-xl border border-border/50 bg-background p-3.5">
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 mb-2">
               <MapPin className="w-3.5 h-3.5 text-primary" />
-              {order.status === "completed" ? "Was Delivered To" : "Delivery"}
+              {order.status === "completed"
+                ? "Was Delivered To"
+                : order.status === "upcoming"
+                ? "Delivering To"
+                : "Delivery"}
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed">{order.address}</p>
             <p className="text-[11px] font-medium text-foreground mt-1.5">
-              {order.deliveryDate} · {order.deliverySlot}
+              {order.status === "upcoming" ? "Scheduled: " : ""}{order.deliveryDate} · {order.deliverySlot}
             </p>
           </div>
           <div className="rounded-xl border border-border/50 bg-background p-3.5">
@@ -206,12 +210,12 @@ const OrderCard = ({ order }) => {
                 <span className="text-muted-foreground font-medium">
                   {order.status === "completed"
                     ? "Returned On"
-                    : order.status === "active"
-                    ? "Renews On"
-                    : "Next Renewal"}
+                    : order.status === "upcoming"
+                    ? "Starts On"
+                    : "Renews On"}
                 </span>
                 <span className="font-bold text-foreground">
-                  {order.returnedOn || order.renewsOn}
+                  {order.returnedOn || order.startsOn || order.renewsOn}
                 </span>
               </div>
             </div>
@@ -228,6 +232,11 @@ const OrderCard = ({ order }) => {
             <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-primary/30 text-xs font-bold text-primary hover:bg-primary/5 transition-colors active:scale-95">
               <RotateCcw className="w-3.5 h-3.5" />
               Rent Again
+            </button>
+          ) : order.status === "upcoming" ? (
+            <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-primary/30 text-xs font-bold text-primary hover:bg-primary/5 transition-colors active:scale-95">
+              <Truck className="w-3.5 h-3.5" />
+              Track Delivery
             </button>
           ) : (
             <a
