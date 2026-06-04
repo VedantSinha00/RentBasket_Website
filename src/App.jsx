@@ -10,6 +10,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import CustomerValidation from "./pages/CustomerValidation";
 import OrderSuccess from "./pages/OrderSuccess";
+import MyOrders from "./pages/MyOrders";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,7 @@ const RouterApp = () => {
           {routePair("/checkout", <Checkout />)}
           {routePair("/customer-validation", <CustomerValidation />)}
           {routePair("/order-success", <OrderSuccess />)}
+          {routePair("/account/orders", <MyOrders />)}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
