@@ -220,8 +220,8 @@ const OrderSummary = () => {
           <button
             className="btn-gradient-coral w-full py-3.5 text-base font-semibold flex items-center justify-center gap-2"
             onClick={() => {
-              toast.success("Proceeding to checkout...");
-              navigate("/checkout");
+              toast.success("Let's verify your mobile to continue");
+              navigate("/customer-validation");
             }}
           >
             <Lock className="w-4 h-4" />

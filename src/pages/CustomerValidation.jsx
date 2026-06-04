@@ -1,17 +1,15 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import logo from "@/assets/7 1.png";
 import { toast } from "sonner";
 
 const CustomerValidation = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState("phone"); // "phone" | "otp"
   const [isLoading, setIsLoading] = useState(false);
-  const [orderData] = useState(location.state?.orderData || null);
 
   const handlePhoneSubmit = async () => {
     if (!phoneNumber.trim() || phoneNumber.length < 10) {
@@ -38,10 +36,12 @@ const CustomerValidation = () => {
     // Simulate OTP verification
     setTimeout(() => {
       setIsLoading(false);
-      toast.success("Mobile number verified successfully!");
-      // Navigate to order success with the order data
+      toast.success("Mobile verified!", {
+        description: "Let's complete your order details.",
+      });
+      // Proceed to checkout, carrying the verified mobile number forward
       setTimeout(() => {
-        navigate("/order-success", { state: { orderData } });
+        navigate("/checkout", { state: { verifiedPhone: phoneNumber } });
       }, 800);
     }, 1500);
   };

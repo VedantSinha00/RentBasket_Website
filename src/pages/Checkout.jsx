@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ChevronLeft, ShieldCheck, Truck, Clock } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
@@ -12,21 +12,25 @@ import CheckoutSummary from "@/components/checkout/CheckoutSummary";
 const Checkout = () => {
   const { cartItems, clearCart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
+  const verifiedPhone = location.state?.verifiedPhone || "";
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Redirect if cart is empty
+  // Enforce flow order: cart must have items, and mobile must be verified first.
   useEffect(() => {
     if (cartItems.length === 0) {
       navigate("/cart");
       toast.error("Your cart is empty", {
         description: "Add some items before checking out.",
       });
+    } else if (!verifiedPhone) {
+      navigate("/customer-validation");
     }
-  }, [cartItems, navigate]);
+  }, [cartItems, navigate, verifiedPhone]);
 
   const [formData, setFormData] = useState({
     fullName: "",
-    phone: "",
+    phone: verifiedPhone,
     email: "",
     addressLine1: "",
     addressLine2: "",
@@ -87,11 +91,11 @@ const Checkout = () => {
         description: "Your rental order has been confirmed. Redirecting...",
       });
 
-      setTimeout(() => navigate("/customer-validation", { state: { orderData: orderPayload } }), 1000);
+      setTimeout(() => navigate("/order-success", { state: { orderData: orderPayload } }), 1000);
     }, 2500);
   };
 
-  if (cartItems.length === 0) return null;
+  if (cartItems.length === 0 || !verifiedPhone) return null;
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -141,7 +145,7 @@ const Checkout = () => {
               </div>
             </div>
 
-            <CheckoutForm formData={formData} setFormData={setFormData} />
+            <CheckoutForm formData={formData} setFormData={setFormData} phoneVerified={Boolean(verifiedPhone)} />
             
             <CheckoutPayment 
               selectedMethod={formData.paymentMethod} 
