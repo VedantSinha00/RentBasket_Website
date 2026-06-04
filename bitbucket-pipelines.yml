@@ -1,0 +1,23 @@
+pipelines:
+  branches:
+    main:
+      - step:
+          name: 'Deploy to Production'
+          deployment: production
+          runs-on:
+            - awsui
+            - self.hosted
+            - linux.shell
+          script:
+            # Already on server as root, just deploy!
+            - DEPLOY_PATH=/var/www/homeui
+
+            - cd $BITBUCKET_CLONE_DIR
+            - npm i
+            - npm run build
+            - sudo rsync -av --delete --exclude='.git' $BITBUCKET_CLONE_DIR/ $DEPLOY_PATH/
+
+
+            - sudo chown -R ubuntu:www-data $DEPLOY_PATH
+            - sudo chmod -R 775 $DEPLOY_PATH
+            - sudo nginx -s reload
