@@ -5,7 +5,7 @@ pipelines:
           name: 'Deploy to Production'
           deployment: production
           runs-on:
-            - awsui
+            - homeui
             - self.hosted
             - linux.shell
           script:
