@@ -9,7 +9,6 @@ pipelines:
             - self.hosted
             - linux.shell
           script:
-            # Already on server as root, just deploy!
             - DEPLOY_PATH=/var/www/homeui
 
             - cd $BITBUCKET_CLONE_DIR
