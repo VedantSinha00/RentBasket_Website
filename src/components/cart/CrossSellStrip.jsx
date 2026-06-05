@@ -67,6 +67,12 @@ const CrossSellStrip = () => {
     [cartItems]
   );
 
+  // Highest monthly price among items currently in the cart.
+  const maxCartPrice = useMemo(
+    () => cartItems.reduce((max, i) => Math.max(max, i.price ?? 0), 0),
+    [cartItems]
+  );
+
   // Merge winner + runner-up, deduplicate, strip cart items, cap at 6.
   const suggestions = useMemo(() => {
     const seen = new Set();
@@ -106,6 +112,7 @@ const CrossSellStrip = () => {
     const defaultDuration = firstDuration(product);
     const basePrice = discountedRent(product.pricing_by_duration[defaultDuration], product.percent_discount);
     const label = DURATION_OPTIONS.find((d) => d.key === defaultDuration)?.label || "3 Months";
+    const depositWaived = basePrice < maxCartPrice;
 
     addToCart({
       productId: product.id,
@@ -115,13 +122,17 @@ const CrossSellStrip = () => {
       price: basePrice,
       quantity: 1,
       startDate: new Date().toISOString().split("T")[0],
-      deposit: 0,
       image: product.image,
       category: product.category,
       subcategory_id: product.subcategory_id,
       rent: product.pricing_by_duration[defaultDuration],
       percent_discount: product.percent_discount,
-      security_multiple: 0,
+      // Real security stored always so CartContext can restore it when needed
+      _realSecurityMultiple: product.security_multiple ?? null,
+      _realAdvSecurity: product.adv_security ?? null,
+      depositWaived,
+      security_multiple: depositWaived ? 0 : (product.security_multiple ?? null),
+      adv_security: depositWaived ? 0 : (product.adv_security ?? null),
       isRecommendation: true,
     });
 
@@ -173,9 +184,11 @@ const CrossSellStrip = () => {
                 <span className="text-[12px] font-extrabold text-primary">
                   ₹{displayPrice.toLocaleString("en-IN")}/mo
                 </span>
-                <span className="text-[10px] font-bold bg-success-muted text-success-muted-foreground border border-success-border px-1.5 py-0.5 rounded-full whitespace-nowrap">
-                  0 deposit
-                </span>
+                {displayPrice < maxCartPrice && (
+                  <span className="text-[10px] font-bold bg-success-muted text-success-muted-foreground border border-success-border px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                    0 deposit
+                  </span>
+                )}
               </div>
 
               <button

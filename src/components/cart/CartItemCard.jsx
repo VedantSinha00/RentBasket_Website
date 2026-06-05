@@ -51,7 +51,11 @@ const CartItemCard = ({ item }) => {
   };
 
   const handleQuantityChange = (delta) => {
-    const newQty = Math.max(1, Math.min(10, item.quantity + delta));
+    if (delta < 0 && item.quantity <= 1) {
+      removeFromCart(item.cartItemId);
+      return;
+    }
+    const newQty = Math.min(10, item.quantity + delta);
     updateItem(item.cartItemId, { quantity: newQty });
   };
 
@@ -124,7 +128,6 @@ const CartItemCard = ({ item }) => {
               <button
                 onClick={() => handleQuantityChange(-1)}
                 className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:bg-secondary disabled:opacity-30"
-                disabled={item.quantity <= 1}
               >
                 <Minus className="w-3 h-3" />
               </button>
@@ -230,8 +233,7 @@ const CartItemCard = ({ item }) => {
                   <button
                     onClick={() => handleQuantityChange(-1)}
                     className="w-9 h-9 flex items-center justify-center text-muted-foreground hover:bg-secondary transition-colors disabled:opacity-30"
-                    disabled={item.quantity <= 1}
-                  >
+                      >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
                   <span className="w-10 text-center text-sm font-semibold select-none">{item.quantity}</span>

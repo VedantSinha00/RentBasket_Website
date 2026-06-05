@@ -33,7 +33,12 @@ const normalizeCartItem = (raw) => {
     deposit: toNumber(raw.deposit, 0),
     rent: toNumber(raw.rent ?? raw.price, 0),
     percent_discount: toNumber(raw.percent_discount ?? 0, 0),
-    security_multiple: toNumber(raw.security_multiple ?? (raw.isRecommendation ? 0 : 2), 2),
+    security_multiple: raw.isRecommendation
+      ? toNumber(raw.security_multiple, 0)
+      : toNumber(raw.security_multiple ?? 2, 2),
+    depositWaived: raw.isRecommendation ? (raw.depositWaived ?? false) : undefined,
+    _realSecurityMultiple: raw._realSecurityMultiple ?? null,
+    _realAdvSecurity: raw._realAdvSecurity ?? null,
   };
 };
 
@@ -63,6 +68,37 @@ export const CartProvider = ({ children }) => {
   // Persist to localStorage on every change (primary store)
   useEffect(() => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  // Recalculate deposit waiver for recommendation items whenever the cart changes.
+  // A recommendation gets 0 deposit only if its price is less than the highest-priced
+  // OTHER item in the cart. Runs after every cart mutation; terminates after one pass
+  // because the second run finds depositWaived already matches shouldWaive for all items.
+  useEffect(() => {
+    const hasRecs = cartItems.some((i) => i.isRecommendation);
+    if (!hasRecs) return;
+
+    let changed = false;
+    const next = cartItems.map((item) => {
+      if (!item.isRecommendation) return item;
+
+      const maxOtherPrice = cartItems
+        .filter((o) => o.cartItemId !== item.cartItemId)
+        .reduce((max, o) => Math.max(max, o.price ?? 0), 0);
+
+      const shouldWaive = (item.price ?? 0) < maxOtherPrice;
+      if (shouldWaive === (item.depositWaived ?? false)) return item;
+
+      changed = true;
+      return {
+        ...item,
+        depositWaived: shouldWaive,
+        security_multiple: shouldWaive ? 0 : (item._realSecurityMultiple ?? null),
+        adv_security: shouldWaive ? 0 : (item._realAdvSecurity ?? null),
+      };
+    });
+
+    if (changed) setCartItems(next);
   }, [cartItems]);
 
   // Periodically sync the cart to the backend (debounced — fires once activity
