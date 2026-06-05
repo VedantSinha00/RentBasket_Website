@@ -1,11 +1,62 @@
 import logo from "@/assets/7 1.png";
-import { ShoppingBag, Package } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ShoppingBag, Package, Search } from "lucide-react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/context/CartContext";
 
 const Header = () => {
   const { getCartItemCount } = useCart();
   const cartCount = getCartItemCount();
+  const navigate = useNavigate();
+  const { pathname, search } = useLocation();
+  const onCatalog = pathname === "/catalog";
+
+  const urlQ = onCatalog ? (new URLSearchParams(search).get("q") || "") : "";
+  const [query, setQuery] = useState(urlQ);
+  const lastUrlQ = useRef(urlQ);
+
+  useEffect(() => {
+    if (urlQ !== lastUrlQ.current) {
+      lastUrlQ.current = urlQ;
+      setQuery(urlQ);
+    }
+  }, [urlQ]);
+
+  useEffect(() => {
+    if (!onCatalog) setQuery("");
+  }, [onCatalog]);
+
+  const handleChange = (e) => {
+    const val = e.target.value;
+    setQuery(val);
+    if (onCatalog) {
+      const params = new URLSearchParams(search);
+      if (val.trim()) params.set("q", val.trim());
+      else params.delete("q");
+      navigate(`/catalog?${params.toString()}`, { replace: true });
+    }
+  };
+
+  const scrollToResults = () => {
+    document
+      .getElementById("catalog-results")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const trimmed = query.trim();
+    const params = new URLSearchParams(onCatalog ? search : "");
+    if (trimmed) params.set("q", trimmed);
+    else params.delete("q");
+    const qs = params.toString();
+    navigate(`/catalog${qs ? `?${qs}` : ""}`, { replace: onCatalog });
+    if (onCatalog) {
+      scrollToResults();
+    } else {
+      setTimeout(scrollToResults, 150);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -41,13 +92,16 @@ const Header = () => {
             >
               FAQs
             </Link>
-            <div className="relative">
+            <form onSubmit={handleSubmit} className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
               <input
                 type="text"
+                value={query}
+                onChange={handleChange}
                 placeholder="Search furniture, appliances..."
-                className="w-80 px-4 py-2 border border-border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-80 pl-9 pr-4 py-2 border border-border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
-            </div>
+            </form>
           </nav>
 
           {/* Cart + CTA */}

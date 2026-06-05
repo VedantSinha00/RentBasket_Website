@@ -12,6 +12,7 @@ import TrustBenefits from "@/components/catalog/TrustBenefits";
 import CatalogCTA from "@/components/catalog/CatalogCTA";
 import { CATEGORIES } from "@/data/products";
 import { useProducts } from "@/hooks/useProducts";
+import { searchProducts } from "@/lib/search";
 
 /** Placeholder cards shown while the catalog is being fetched. */
 const CatalogGridSkeleton = () => (
@@ -83,6 +84,8 @@ const Catalog = () => {
     }
   }, [searchParams]);
 
+  const searchQuery = searchParams.get("q") || "";
+
   // Filtered and sorted products
   const minPrice = (p) => {
     const vals = Object.values(p.pricing_by_duration ?? {}).filter((v) => v > 0);
@@ -147,6 +150,11 @@ const Catalog = () => {
       result = result.filter((p) => p.subcategory === activeSubcategory);
     }
 
+    // Search query filter (fuzzy + synonyms via Fuse.js)
+    if (searchQuery.trim()) {
+      result = searchProducts(result, searchQuery);
+    }
+
     // Availability filter
     if (filters.availability) {
       result = result.filter((p) => p.stock_status === "in_stock");
@@ -156,6 +164,9 @@ const Catalog = () => {
     if (filters.bestFor) {
       result = result.filter((p) => p.best_for?.includes(filters.bestFor));
     }
+
+    // Skip sort when search is active — results are already ranked by relevance
+    if (searchQuery.trim()) return result;
 
     // Sorting
     switch (sortBy) {
@@ -185,7 +196,7 @@ const Catalog = () => {
     }
 
     return result;
-  }, [products, activeCategory, activeSubcategory, filters, sortBy]);
+  }, [products, activeCategory, activeSubcategory, filters, sortBy, searchQuery]);
 
   return (
     <div className="min-h-screen dot-bg">
@@ -199,6 +210,7 @@ const Catalog = () => {
           onSubcategoryChange={setActiveSubcategory}
           nonEmptyCategories={isLoading ? null : nonEmptyCategories}
         />
+        <div id="catalog-results" />
         <FilterBar
           filters={filters}
           onFilterChange={setFilters}

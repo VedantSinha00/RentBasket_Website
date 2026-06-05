@@ -34,7 +34,7 @@ const CatalogHero = () => {
             </p>
           </div>
 
-          <div className="shrink-0 w-[248px] sm:w-[360px] lg:w-[567px]">
+          <div className="shrink-0 w-[165px] sm:w-[240px] lg:w-[378px]">
             <KuMascotImage className="w-full" />
           </div>
         </div>
