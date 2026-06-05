@@ -1,5 +1,5 @@
 import { MapPin } from "lucide-react";
-import kuMascot from "@/assets/ChatGPT Image Jan 26, 2026 at 02_25_22 AM.png";
+import kuMascot from "@/assets/Ku_standing_proud.png";
 
 /** Compact Ku — native square aspect, keeps catalog above the fold */
 const KuMascotImage = ({ className = "" }) => (
@@ -15,7 +15,7 @@ const KuMascotImage = ({ className = "" }) => (
 const CatalogHero = () => {
   return (
     <section className="bg-background border-b border-border/50">
-      <div className="section-container py-6 md:py-8">
+      <div className="section-container py-2 md:py-3">
         <div className="flex flex-row items-center justify-between gap-4 lg:gap-10">
           <div className="min-w-0 flex-1">
             <span className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full mb-3 lg:mb-4">
@@ -34,7 +34,7 @@ const CatalogHero = () => {
             </p>
           </div>
 
-          <div className="shrink-0 w-[165px] sm:w-[240px] lg:w-[378px]">
+          <div className="shrink-0 w-[110px] sm:w-[160px] lg:w-[252px]">
             <KuMascotImage className="w-full" />
           </div>
         </div>
