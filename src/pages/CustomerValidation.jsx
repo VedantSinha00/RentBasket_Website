@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import logo from "@/assets/7 1.png";
 import { toast } from "sonner";
+import { setAuth } from "@/lib/auth";
 
 const RESEND_COOLDOWN = 30; // seconds
 
 const CustomerValidation = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = location.state?.returnTo || "/checkout";
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState("phone"); // "phone" | "otp"
@@ -67,9 +70,13 @@ const CustomerValidation = () => {
       toast.success("Mobile verified!", {
         description: "Let's complete your order details.",
       });
-      // Proceed to checkout, carrying the verified mobile number forward
+      setAuth({ phone: phoneNumber, token: "mock_token" });
       schedule(() => {
-        navigate("/checkout", { state: { verifiedPhone: phoneNumber } });
+        if (returnTo && returnTo !== "/checkout") {
+          navigate(returnTo);
+        } else {
+          navigate("/checkout", { state: { verifiedPhone: phoneNumber } });
+        }
       }, 800);
     }, 1500);
   };

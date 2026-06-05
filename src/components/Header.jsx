@@ -1,12 +1,15 @@
 import logo from "@/assets/7 1.png";
-import { ShoppingBag, Package, Search } from "lucide-react";
+import { ShoppingBag, Package, Search, Heart } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 
 const Header = () => {
   const { getCartItemCount } = useCart();
   const cartCount = getCartItemCount();
+  const { getWishlistCount } = useWishlist();
+  const wishlistCount = getWishlistCount();
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const onCatalog = pathname === "/catalog";
@@ -112,6 +115,18 @@ const Header = () => {
               title="My Orders"
             >
               <Package className="w-5 h-5 text-muted-foreground" />
+            </Link>
+            <Link
+              to="/wishlist"
+              className="relative p-2 rounded-xl hover:bg-secondary transition-colors"
+              title="My Wishlist"
+            >
+              <Heart className="w-5 h-5 text-muted-foreground" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
+                  {wishlistCount > 9 ? "9+" : wishlistCount}
+                </span>
+              )}
             </Link>
             <Link
               to="/cart"
