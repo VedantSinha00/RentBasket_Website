@@ -1,3 +1,6 @@
+import { safeSet } from "@/lib/safeStorage";
+import { makeId } from "@/lib/utils";
+
 const KEY = "rentbasket_addresses";
 
 export const getAddresses = () => {
@@ -9,11 +12,11 @@ export const getAddresses = () => {
 };
 
 export const saveAddresses = (addresses) =>
-  localStorage.setItem(KEY, JSON.stringify(addresses));
+  safeSet(KEY, JSON.stringify(addresses));
 
 export const addAddress = (address) => {
   const list = getAddresses();
-  const newEntry = { ...address, id: crypto.randomUUID() };
+  const newEntry = { ...address, id: makeId("addr") };
   if (address.isDefault || list.length === 0) {
     newEntry.isDefault = true;
     list.forEach((a) => (a.isDefault = false));

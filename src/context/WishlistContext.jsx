@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { safeSet } from "@/lib/safeStorage";
 
 const WishlistContext = createContext(null);
 const STORAGE_KEY = "rentbasket_wishlist";
@@ -13,7 +14,7 @@ export const WishlistProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    safeSet(STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
   const isInWishlist = (productId) => items.some((p) => p.id === productId);

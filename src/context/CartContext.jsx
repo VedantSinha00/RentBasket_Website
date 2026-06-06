@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { syncCart, CART_SYNC_ENABLED } from "@/api/cart";
 import { getCartId } from "@/lib/cartId";
+import { safeSet } from "@/lib/safeStorage";
+import { makeId } from "@/lib/utils";
 
 const CartContext = createContext();
 const CART_STORAGE_KEY = "rentbasket_cart";
@@ -9,12 +11,9 @@ const CART_SYNC_DEBOUNCE_MS = 3000;
 /**
  * Unique id for a cart line item. Date.now() alone collides when several items
  * are added in the same millisecond (e.g. the "Add all" combo button), which
- * makes remove/update hit the wrong line. Mirrors the id strategy in lib/cartId.js.
+ * makes remove/update hit the wrong line. Delegates to the shared makeId helper.
  */
-const makeCartItemId = () =>
-  typeof crypto !== "undefined" && crypto.randomUUID
-    ? crypto.randomUUID()
-    : `ci_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+const makeCartItemId = () => makeId("ci");
 
 /**
  * Normalise one stored cart item so the pricing math can never crash on it.
@@ -65,9 +64,11 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(loadCart);
   const [coupon, setCoupon] = useState(null);
 
-  // Persist to localStorage on every change (primary store)
+  // Persist to localStorage on every change (primary store).
+  // Uses safeSet so a write failure (private mode, quota exceeded) swallows
+  // the error instead of escaping to the global ErrorBoundary.
   useEffect(() => {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    safeSet(CART_STORAGE_KEY, JSON.stringify(cartItems));
   }, [cartItems]);
 
   // Recalculate deposit waiver for recommendation items whenever the cart changes.

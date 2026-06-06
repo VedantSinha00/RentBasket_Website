@@ -9,6 +9,7 @@ import { useCart } from "@/context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { isAuthenticated, getAuth } from "@/lib/auth";
+import { safeSet } from "@/lib/safeStorage";
 
 const Cart = () => {
   const { cartItems } = useCart();
@@ -16,7 +17,7 @@ const Cart = () => {
   const navigate = useNavigate();
 
   const handleProceedToCheckout = () => {
-    sessionStorage.setItem("rb_cart_proceed", "1");
+    safeSet("rb_cart_proceed", "1", sessionStorage);
     if (isAuthenticated()) {
       navigate("/checkout", { state: { verifiedPhone: getAuth()?.phone || "" } });
     } else {

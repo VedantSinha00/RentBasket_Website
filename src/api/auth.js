@@ -26,8 +26,10 @@ async function _refresh() {
     body: JSON.stringify({ app_key: APP_KEY }),
   });
   if (!res.ok) throw new Error(`Auth: token fetch failed (${res.status})`);
-  const json = await res.json();
-  _token = json.data.jwt_token;
+  const json = await res.json().catch(() => null);
+  const token = json?.data?.jwt_token;
+  if (!token) throw new Error("Auth: token missing from response");
+  _token = token;
   return _token;
 }
 

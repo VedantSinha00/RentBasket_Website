@@ -64,7 +64,9 @@ async function apiFetch(path) {
   }
 
   if (!res.ok) throw new Error(`API ${path} failed: ${res.status}`);
-  return res.json();
+  const json = await res.json().catch(() => null);
+  if (!json) throw new Error(`API ${path} returned non-JSON response`);
+  return json;
 }
 
 /** Catalog-specific fetch — uses the static Authorization-Key header. */
@@ -73,7 +75,9 @@ async function catalogFetch(path) {
     headers: { "Authorization-Key": CATALOG_API_KEY },
   });
   if (!res.ok) throw new Error(`API ${path} failed: ${res.status}`);
-  return res.json();
+  const json = await res.json().catch(() => null);
+  if (!json) throw new Error(`API ${path} returned non-JSON response`);
+  return json;
 }
 
 // ---------------------------------------------------------------------------
@@ -139,6 +143,9 @@ const CATEGORY_ID_TO_NAME = {
 /** Single-call path: bulk endpoint now includes subcategory_label, so 1 request total. */
 async function loadAllProductsBulk() {
   const res = await catalogFetch("/get-amenity-types");
+  if (!Array.isArray(res?.data?.items)) {
+    throw new Error("Bulk catalog response missing data.items array");
+  }
   return res.data.items.map((item) =>
     normalizeProduct(item, {
       categoryName: CATEGORY_ID_TO_NAME[item.category_id] ?? null,
@@ -151,6 +158,9 @@ async function loadAllProductsBulk() {
 /** Fallback 3-tier path when VITE_CATALOG_API_KEY is not set. */
 async function loadAllProductsLegacy() {
   const catRes = await apiFetch("/get-amenity-category");
+  if (!Array.isArray(catRes?.data?.categories)) {
+    throw new Error("Category response missing data.categories array");
+  }
   const cats = catRes.data.categories.filter((c) =>
     CATALOG_CATEGORY_IDS.includes(c.category_type)
   );
@@ -158,9 +168,10 @@ async function loadAllProductsLegacy() {
   const subResults = await Promise.all(
     cats.map((cat) =>
       apiFetch(`/get-subcategories-by-category?category_id=${cat.category_type}`)
-        .then((r) =>
-          r.data.items.map((sub) => ({ ...sub, categoryName: cat.category_name }))
-        )
+        .then((r) => {
+          if (!Array.isArray(r?.data?.items)) return [];
+          return r.data.items.map((sub) => ({ ...sub, categoryName: cat.category_name }));
+        })
     )
   );
   const subs = subResults.flat();
@@ -168,15 +179,16 @@ async function loadAllProductsLegacy() {
   const prodResults = await Promise.all(
     subs.map((sub) =>
       apiFetch(`/get-amenity-types-by-subcategory?subcategory_id=${sub.id}`)
-        .then((r) =>
-          r.data.items.map((item) =>
+        .then((r) => {
+          if (!Array.isArray(r?.data?.items)) return [];
+          return r.data.items.map((item) =>
             normalizeProduct(item, {
               categoryName: sub.categoryName,
               subcategoryName: sub.subcategory_name,
               subcategoryId: sub.id,
             })
-          )
-        )
+          );
+        })
     )
   );
 

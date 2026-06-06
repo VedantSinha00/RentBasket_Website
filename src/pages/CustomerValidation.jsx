@@ -23,10 +23,15 @@ const CustomerValidation = () => {
   const [cities, setCities] = useState([]);
   const [cityId, setCityId] = useState("");
   const [cityError, setCityError] = useState("");
+  const [citiesError, setCitiesError] = useState(false);
 
   // Prefetch cities so the list is ready if the user turns out to be new
+  const fetchCities = () => {
+    setCitiesError(false);
+    getCities().then(setCities).catch(() => setCitiesError(true));
+  };
   useEffect(() => {
-    getCities().then(setCities).catch(() => {});
+    fetchCities();
   }, []);
 
   // Countdown for the Resend OTP cooldown
@@ -204,17 +209,33 @@ const CustomerValidation = () => {
                       <label className="text-sm font-semibold text-foreground block mb-2">
                         Select City
                       </label>
-                      <select
-                        value={cityId}
-                        onChange={(e) => { setCityId(e.target.value); setCityError(""); }}
-                        disabled={isLoading}
-                        className="w-full px-3.5 py-2.5 border border-primary/30 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-60 disabled:cursor-not-allowed bg-background text-foreground"
-                      >
-                        <option value="">Select your city</option>
-                        {cities.map((c) => (
-                          <option key={c.city_id} value={c.city_id}>{c.city}</option>
-                        ))}
-                      </select>
+                      {citiesError ? (
+                        <div className="flex items-center justify-between rounded-lg border border-destructive/40 bg-destructive/5 px-3.5 py-2.5">
+                          <p className="text-xs text-destructive font-medium">
+                            Couldn't load cities. Please retry.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={fetchCities}
+                            disabled={isLoading}
+                            className="text-xs font-semibold text-primary hover:underline disabled:opacity-60 ml-2 flex-shrink-0"
+                          >
+                            Retry
+                          </button>
+                        </div>
+                      ) : (
+                        <select
+                          value={cityId}
+                          onChange={(e) => { setCityId(e.target.value); setCityError(""); }}
+                          disabled={isLoading}
+                          className="w-full px-3.5 py-2.5 border border-primary/30 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-60 disabled:cursor-not-allowed bg-background text-foreground"
+                        >
+                          <option value="">Select your city</option>
+                          {cities.map((c) => (
+                            <option key={c.city_id} value={c.city_id}>{c.city}</option>
+                          ))}
+                        </select>
+                      )}
                       {cityError && (
                         <p className="text-xs text-destructive mt-1">{cityError}</p>
                       )}

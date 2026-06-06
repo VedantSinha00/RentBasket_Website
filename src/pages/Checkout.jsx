@@ -4,6 +4,7 @@ import { ChevronLeft, ShieldCheck, Truck, Clock, ArrowRight } from "lucide-react
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 import { getAuth } from "@/lib/auth";
+import { safeSet } from "@/lib/safeStorage";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutForm from "@/components/checkout/CheckoutForm";
@@ -33,7 +34,7 @@ const Checkout = () => {
   // Persist verifiedPhone so navigating to address book and back doesn't lose it.
   useEffect(() => {
     if (location.state?.verifiedPhone) {
-      sessionStorage.setItem("rb_verified_phone", location.state.verifiedPhone);
+      safeSet("rb_verified_phone", location.state.verifiedPhone, sessionStorage);
     }
   }, []);
 

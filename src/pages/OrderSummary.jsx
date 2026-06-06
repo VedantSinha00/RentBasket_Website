@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ChevronLeft, MapPin, Calendar, User, Phone, Pencil } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 import { cartBreakdown } from "@/lib/pricing";
 import { getAuth } from "@/lib/auth";
+import { addItemsToProposal, confirmProposal } from "@/api/proposal";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutSummary from "@/components/checkout/CheckoutSummary";
@@ -18,6 +19,11 @@ const OrderSummary = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
 
+  // Accumulator for resume-on-retry: survives across handlePlaceOrder calls
+  // while this page stays mounted.  Keyed by the line's stable cartItemId.
+  // Passed into addItemsToProposal so already-POSTed items are skipped on retry.
+  const addedItemsRef = useRef(new Map());
+
   // Guard: must have a cart, a verified mobile, and submitted details.
   useEffect(() => {
     if (orderPlaced) return;
@@ -30,53 +36,92 @@ const OrderSummary = () => {
     }
   }, [cartItems, navigate, verifiedPhone, formData, orderPlaced]);
 
-  const handlePlaceOrder = () => {
+  const buildOrderPayload = (b, orderId) => ({
+    orderId,
+    bookingDate: new Date().toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }),
+    deliveryDate: new Date(formData.startDate).toLocaleDateString("en-IN", { day: "numeric", month: "short" }),
+    deliverySlot: formData.timeSlot,
+    customerDetails: {
+      name: formData.fullName,
+      phone: formData.phone,
+      email: formData.email,
+    },
+    deliveryAddress: `${formData.addressLine1}, ${formData.addressLine2}, ${formData.city}, ${formData.state}, ${formData.pincode}`,
+    paymentDetails: {
+      method: formData.paymentMethod.toUpperCase(),
+      transactionId: `TXN${Math.floor(Math.random() * 900000) + 100000}`,
+      status: "Successful",
+    },
+    items: cartItems,
+    totalRent: b.totalRent,
+    itemSavings: b.itemSavings,
+    coupon: b.coupon,
+    baseRent: b.netBaseRent,
+    gst: b.gst,
+    netMonthlyRent: b.netMonthlyRent,
+    security: b.security,
+    netFirstMonth: b.netFirstMonth,
+    upfront: b.upfront,
+    payOnDelivery: b.payOnDelivery,
+    grandTotal: b.netFirstMonth, // legacy fallback
+  });
+
+  const handlePlaceOrder = async () => {
     setIsProcessing(true);
 
-    // Simulate payment + order creation
-    setTimeout(() => {
-      setIsProcessing(false);
+    const auth = getAuth();
+
+    // Guard: fall back to mock if userId/leadId haven't propagated yet
+    if (!auth?.userId || !auth?.leadId) {
+      console.warn("[OrderSummary] userId or leadId missing from auth — using mock order flow");
+      setTimeout(() => {
+        setIsProcessing(false);
+        const b = cartBreakdown(cartItems, coupon);
+        const orderPayload = buildOrderPayload(b, `RB-${Math.floor(Math.random() * 90000) + 10000}`);
+        setOrderPlaced(true);
+        toast.success("Order placed successfully!", { description: "Your rental order has been confirmed." });
+        navigate("/order-success", { state: { orderData: orderPayload } });
+        clearCart();
+      }, 2500);
+      return;
+    }
+
+    try {
+      // Pass the persistent accumulator Map so that any items already POSTed on a
+      // previous attempt are skipped (dedupe by productId|duration key).
+      // addItemsToProposal mutates the Map in place and returns the full id list.
+      const cartItemIds = await addItemsToProposal(
+        auth.userId,
+        auth.leadId,
+        cartItems,
+        addedItemsRef.current,
+      );
+      const apiResponse = await confirmProposal(auth.userId, auth.leadId, cartItemIds, coupon?.code);
 
       const b = cartBreakdown(cartItems, coupon);
-
-      const orderPayload = {
-        orderId: `RB-${Math.floor(Math.random() * 90000) + 10000}`,
-        bookingDate: new Date().toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }),
-        deliveryDate: new Date(formData.startDate).toLocaleDateString("en-IN", { day: "numeric", month: "short" }),
-        deliverySlot: formData.timeSlot,
-        customerDetails: {
-          name: formData.fullName,
-          phone: formData.phone,
-          email: formData.email,
-        },
-        deliveryAddress: `${formData.addressLine1}, ${formData.addressLine2}, ${formData.city}, ${formData.state}, ${formData.pincode}`,
-        paymentDetails: {
-          method: formData.paymentMethod.toUpperCase(),
-          transactionId: `TXN${Math.floor(Math.random() * 900000) + 100000}`,
-          status: "Successful",
-        },
-        items: cartItems,
-        totalRent: b.totalRent,
-        itemSavings: b.itemSavings,
-        coupon: b.coupon,
-        baseRent: b.netBaseRent,
-        gst: b.gst,
-        netMonthlyRent: b.netMonthlyRent,
-        security: b.security,
-        netFirstMonth: b.netFirstMonth,
-        upfront: b.upfront,
-        payOnDelivery: b.payOnDelivery,
-        grandTotal: b.netFirstMonth, // legacy fallback
-      };
+      const rawOrderId = apiResponse?.data?.order_id ?? apiResponse?.data?.orderId;
+      // Warn when the backend omits order_id — makes contract drift visible in logs.
+      if (rawOrderId == null) {
+        console.warn(
+          "[OrderSummary] confirmProposal response missing order_id / orderId — " +
+          "falling back to RB-{leadId}. Check backend contract with Shivam.",
+          apiResponse?.data,
+        );
+      }
+      const orderId = rawOrderId ?? `RB-${auth.leadId}`;
+      const orderPayload = buildOrderPayload(b, String(orderId));
 
       setOrderPlaced(true);
-      toast.success("Order placed successfully!", {
-        description: "Your rental order has been confirmed.",
-      });
+      toast.success("Order placed successfully!", { description: "Your rental order has been confirmed." });
       // Navigate first, then clear — same tick, so the empty cart never renders.
       navigate("/order-success", { state: { orderData: orderPayload } });
       clearCart();
-    }, 2500);
+    } catch (err) {
+      // err.cartItemIds is set by addItemsToProposal when it fails mid-loop;
+      // those ids are already in addedItemsRef.current so a retry will skip them.
+      toast.error(err.message);
+      setIsProcessing(false);
+    }
   };
 
   if (!orderPlaced && (cartItems.length === 0 || !verifiedPhone || !formData)) return null;

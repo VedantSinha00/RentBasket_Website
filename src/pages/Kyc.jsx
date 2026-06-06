@@ -129,6 +129,11 @@ const Kyc = () => {
   const handleSubmit = async () => {
     if (!allUploaded || isSubmitting) return;
     const mobile = getAuth()?.phone;
+    if (!mobile) {
+      toast.error("Session expired. Please sign in again.");
+      navigate("/customer-validation", { state: { returnTo: "/kyc" } });
+      return;
+    }
     setIsSubmitting(true);
     try {
       for (const doc of docs) {
