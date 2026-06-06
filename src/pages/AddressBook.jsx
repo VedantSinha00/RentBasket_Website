@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Plus, Pencil, Trash2, ChevronLeft, Star } from "lucide-react";
+import { MapPin, Plus, Pencil, Trash2, ChevronLeft, Star, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
@@ -21,6 +21,8 @@ const EMPTY_FORM = {
   city: "",
   state: "",
   isDefault: false,
+  lat: null,
+  lng: null,
 };
 
 const Field = ({ label, required, ...props }) => (
@@ -38,6 +40,42 @@ const Field = ({ label, required, ...props }) => (
 const AddressForm = ({ initial = EMPTY_FORM, onSave, onCancel }) => {
   const [form, setForm] = useState(initial);
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+  const [geoState, setGeoState] = useState(initial?.lat ? "done" : "idle"); // "idle" | "loading" | "done" | "denied"
+
+  const handleUseLocation = () => {
+    if (!navigator.geolocation) { setGeoState("denied"); return; }
+    setGeoState("loading");
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
+            { headers: { "User-Agent": "RentBasket/1.0 (rentbasket.com)" } }
+          );
+          if (!res.ok) throw new Error("geocode failed");
+          const data = await res.json();
+          const a = data.address || {};
+          setForm((f) => ({
+            ...f,
+            lat: latitude,
+            lng: longitude,
+            addressLine1: f.addressLine1 || [a.house_number, a.road].filter(Boolean).join(", "),
+            addressLine2: f.addressLine2 || (a.suburb || a.neighbourhood || a.quarter || ""),
+            city: f.city || (a.city || a.town || a.village || a.county || ""),
+            state: f.state || (a.state || ""),
+            pincode: f.pincode || (a.postcode || ""),
+          }));
+        } catch {
+          // Reverse geocode failed — still save raw coords
+          setForm((f) => ({ ...f, lat: latitude, lng: longitude }));
+        }
+        setGeoState("done");
+      },
+      () => setGeoState("denied"),
+      { timeout: 8000 }
+    );
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -58,6 +96,28 @@ const AddressForm = ({ initial = EMPTY_FORM, onSave, onCancel }) => {
         <Field label="Full Name" required placeholder="e.g. Rahul Sharma" value={form.fullName} onChange={set("fullName")} />
         <Field label="Mobile Number" required placeholder="10-digit number" value={form.phone} onChange={set("phone")} maxLength={10} />
       </div>
+      <button
+        type="button"
+        onClick={handleUseLocation}
+        disabled={geoState === "loading" || geoState === "done"}
+        className={`w-full flex items-center justify-center gap-2 py-2 border rounded-lg text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+          geoState === "done"
+            ? "border-success/40 text-success bg-success/5"
+            : geoState === "denied"
+            ? "border-orange-300 text-orange-600 hover:border-orange-400 bg-orange-50/40"
+            : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
+        }`}
+      >
+        {geoState === "loading" ? (
+          <><Loader2 className="w-4 h-4 animate-spin" /> Getting location…</>
+        ) : geoState === "done" ? (
+          <><MapPin className="w-4 h-4" /> Location captured ✓</>
+        ) : geoState === "denied" ? (
+          <><MapPin className="w-4 h-4" /> Retry location</>
+        ) : (
+          <><MapPin className="w-4 h-4" /> Use my location</>
+        )}
+      </button>
       <Field label="Address Line 1" required placeholder="House / Flat / Block No." value={form.addressLine1} onChange={set("addressLine1")} />
       <Field label="Address Line 2" placeholder="Street, Colony, Area" value={form.addressLine2} onChange={set("addressLine2")} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -144,6 +204,12 @@ const AddressBook = () => {
                 {addr.city}, {addr.state} {addr.pincode}
               </p>
               <p className="text-sm text-muted-foreground">Mob: +91 {addr.phone}</p>
+              {addr.lat && addr.lng && (
+                <p className="text-[10px] text-muted-foreground/60 flex items-center gap-1 mt-1">
+                  <MapPin className="w-3 h-3" />
+                  {Number(addr.lat).toFixed(4)}, {Number(addr.lng).toFixed(4)}
+                </p>
+              )}
             </div>
             {addr.isDefault && (
               <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wide">

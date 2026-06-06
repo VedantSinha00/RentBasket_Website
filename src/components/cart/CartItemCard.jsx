@@ -29,8 +29,8 @@ const CartItemCard = ({ item }) => {
       }
     };
     if (showDurationPicker) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
     }
   }, [showDurationPicker]);
 
@@ -68,7 +68,7 @@ const CartItemCard = ({ item }) => {
 
   return (
     <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-shadow">
-      <div className="p-4 md:p-5">
+      <div className="p-4 md:p-5" ref={pickerRef}>
         {/* ── MOBILE LAYOUT ── */}
         <div className="md:hidden">
           <div className="flex gap-3 mb-3">
@@ -109,7 +109,7 @@ const CartItemCard = ({ item }) => {
           </div>
 
           {/* Controls Row */}
-          <div className="flex items-center gap-2 mb-3" ref={pickerRef}>
+          <div className="flex items-center gap-2 mb-3">
             {/* Duration Picker */}
             <div className="relative flex-1">
               <button
@@ -212,7 +212,7 @@ const CartItemCard = ({ item }) => {
             </div>
 
             {/* Controls Row */}
-            <div className="flex items-center gap-4 mt-3" ref={pickerRef}>
+            <div className="flex items-center gap-4 mt-3">
               {/* Duration Picker */}
               <div className="relative">
                 <button
