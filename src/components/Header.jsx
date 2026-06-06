@@ -1,5 +1,5 @@
 import logo from "@/assets/7 1.png";
-import { ShoppingBag, Package, Search, Heart } from "lucide-react";
+import { ShoppingBag, Search, Heart, User } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/context/CartContext";
@@ -110,11 +110,11 @@ const Header = () => {
           {/* Cart + CTA */}
           <div className="flex items-center gap-3">
             <Link
-              to="/account/orders"
+              to="/profile"
               className="relative p-2 rounded-xl hover:bg-secondary transition-colors"
-              title="My Orders"
+              title="My Profile"
             >
-              <Package className="w-5 h-5 text-muted-foreground" />
+              <User className="w-5 h-5 text-muted-foreground" />
             </Link>
             <Link
               to="/wishlist"

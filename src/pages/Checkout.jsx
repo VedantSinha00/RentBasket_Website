@@ -27,7 +27,14 @@ const Checkout = () => {
   const { cartItems } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
-  const verifiedPhone = location.state?.verifiedPhone || "";
+  const verifiedPhone = location.state?.verifiedPhone || sessionStorage.getItem("rb_verified_phone") || "";
+
+  // Persist verifiedPhone so navigating to address book and back doesn't lose it.
+  useEffect(() => {
+    if (location.state?.verifiedPhone) {
+      sessionStorage.setItem("rb_verified_phone", location.state.verifiedPhone);
+    }
+  }, []);
 
   // Enforce flow order: cart must have items, and mobile must be verified first.
   useEffect(() => {
@@ -36,13 +43,14 @@ const Checkout = () => {
       toast.error("Your cart is empty", {
         description: "Add some items before checking out.",
       });
+    } else if (!sessionStorage.getItem("rb_cart_proceed")) {
+      navigate("/cart");
     } else if (!verifiedPhone) {
-      navigate("/customer-validation");
+      navigate("/customer-validation", { state: { returnTo: "/checkout" } });
     }
   }, [cartItems, navigate, verifiedPhone]);
 
-  // Prefill from a previous visit (when navigating back from the summary page),
-  // otherwise start fresh with the verified phone filled in.
+  // Prefill from back-navigation (order summary → back), otherwise start fresh.
   const [formData, setFormData] = useState(() => ({
     ...DEFAULT_FORM,
     ...(location.state?.formData || {}),

@@ -18,6 +18,9 @@ import OrderSummary from "./pages/OrderSummary";
 import OrderSuccess from "./pages/OrderSuccess";
 import Kyc from "./pages/Kyc";
 import MyOrders from "./pages/MyOrders";
+import Profile from "./pages/Profile";
+import AddressBook from "./pages/AddressBook";
+import AccountDetails from "./pages/AccountDetails";
 import Wishlist from "./pages/Wishlist";
 import TermsConditions from "./pages/TermsConditions";
 import ShippingReturns from "./pages/ShippingReturns";
@@ -76,6 +79,9 @@ const RouterApp = () => {
           {routePair("/order-summary", <OrderSummary />)}
           {routePair("/order-success", <OrderSuccess />)}
           {routePair("/kyc", <Kyc />)}
+          {routePair("/profile", <Profile />)}
+          {routePair("/account/details", <ProtectedRoute><AccountDetails /></ProtectedRoute>)}
+          {routePair("/address-book", <ProtectedRoute><AddressBook /></ProtectedRoute>)}
           {routePair("/account/orders", <ProtectedRoute><MyOrders /></ProtectedRoute>)}
           {routePair("/wishlist", <Wishlist />)}
           {routePair("/terms-n-conditions", <TermsConditions />)}

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import logo from "@/assets/7 1.png";
 import { toast } from "sonner";
@@ -10,9 +10,11 @@ const RESEND_COOLDOWN = 30; // seconds
 const CustomerValidation = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const returnTo = location.state?.returnTo || "/checkout";
+  const returnTo = location.state?.returnTo || "/profile";
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
+
+  useEffect(() => { document.title = "Sign Up or Login | RentBasket"; }, []);
   const [step, setStep] = useState("phone"); // "phone" | "otp"
   const [isLoading, setIsLoading] = useState(false);
   const [resendIn, setResendIn] = useState(0); // seconds until resend is allowed
@@ -72,11 +74,7 @@ const CustomerValidation = () => {
       });
       setAuth({ phone: phoneNumber, token: "mock_token" });
       schedule(() => {
-        if (returnTo && returnTo !== "/checkout") {
-          navigate(returnTo);
-        } else {
-          navigate("/checkout", { state: { verifiedPhone: phoneNumber } });
-        }
+        navigate(returnTo, { state: { verifiedPhone: phoneNumber } });
       }, 800);
     }, 1500);
   };
@@ -98,9 +96,9 @@ const CustomerValidation = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
       {/* Header */}
-      <header className="bg-background/80 backdrop-blur-sm border-b border-border/50 py-4 sticky top-0 z-50">
+      <header className="bg-background/80 backdrop-blur-sm border-b border-border/50 py-2 sticky top-0 z-50">
         <div className="section-container">
-          <img src={logo} alt="RentBasket" className="w-24 md:w-28" />
+          <img src={logo} alt="RentBasket" className="w-10 md:w-28" />
         </div>
       </header>
 
@@ -112,10 +110,10 @@ const CustomerValidation = () => {
 
             {/* Heading */}
             <h1 className="text-3xl md:text-4xl font-bold font-display text-foreground text-center mb-2">
-              {step === "phone" ? "Customer Validation" : "Verify OTP"}
+              {step === "phone" ? "Sign Up or Login" : "Verify OTP"}
             </h1>
 
-            <p className="text-center text-muted-foreground text-base md:text-lg mb-8">
+            <p className="text-center text-muted-foreground text-sm md:text-base mb-8">
               {step === "phone"
                 ? "Enter your mobile number to get started"
                 : `Enter the OTP sent to ${phoneNumber}`}
@@ -138,7 +136,7 @@ const CustomerValidation = () => {
                       onKeyDown={handleKeyDown}
                       disabled={isLoading}
                       maxLength="10"
-                      className="w-full px-4 py-3.5 border-2 border-primary/30 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/50 font-semibold tracking-wider"
+                      className="w-full px-3.5 py-2.5 border border-primary/30 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/40 font-medium tracking-normal"
                     />
                   </div>
 
@@ -146,7 +144,7 @@ const CustomerValidation = () => {
                   <button
                     onClick={handlePhoneSubmit}
                     disabled={isLoading || !phoneNumber}
-                    className="w-full py-3.5 bg-gradient-to-r from-primary to-primary/90 text-white text-base font-bold rounded-2xl hover:shadow-lg hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white text-sm font-semibold rounded-xl hover:shadow-md hover:shadow-primary/25 transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {isLoading ? "Sending..." : "Generate OTP"}
                     {!isLoading && <ArrowRight className="w-5 h-5" />}
@@ -167,7 +165,7 @@ const CustomerValidation = () => {
                       onKeyDown={handleKeyDown}
                       disabled={isLoading}
                       maxLength="4"
-                      className="w-full px-4 py-3.5 border-2 border-primary/30 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/50 font-semibold tracking-widest text-center"
+                      className="w-full px-3.5 py-2.5 border border-primary/30 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/40 font-medium tracking-widest text-center"
                     />
                   </div>
 
@@ -175,53 +173,50 @@ const CustomerValidation = () => {
                   <button
                     onClick={handleOtpSubmit}
                     disabled={isLoading || !otp}
-                    className="w-full py-3.5 bg-gradient-to-r from-primary to-primary/90 text-white text-base font-bold rounded-2xl hover:shadow-lg hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white text-sm font-semibold rounded-xl hover:shadow-md hover:shadow-primary/25 transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {isLoading ? "Verifying..." : "Verify & Continue"}
                     {!isLoading && <ArrowRight className="w-5 h-5" />}
                   </button>
 
-                  {/* Resend OTP */}
-                  <div className="text-center text-sm">
-                    {resendIn > 0 ? (
-                      <span className="text-muted-foreground">
-                        Didn't get it? Resend in{" "}
-                        <span className="font-bold text-foreground tabular-nums">0:{String(resendIn).padStart(2, "0")}</span>
-                      </span>
-                    ) : (
-                      <span className="text-muted-foreground">
-                        Didn't get the code?{" "}
+                  {/* Secondary actions */}
+                  <div className="pt-3 border-t border-border/30 flex items-center justify-between text-sm">
+                    <div className="text-muted-foreground">
+                      {resendIn > 0 ? (
+                        <span>Resend in <span className="font-semibold text-foreground tabular-nums">0:{String(resendIn).padStart(2, "0")}</span></span>
+                      ) : (
                         <button
                           onClick={handleResend}
                           disabled={isLoading}
-                          className="font-bold text-primary hover:underline disabled:opacity-60"
+                          className="text-primary font-semibold hover:underline disabled:opacity-60"
                         >
                           Resend OTP
                         </button>
-                      </span>
-                    )}
+                      )}
+                    </div>
+                    <button
+                      onClick={() => {
+                        setStep("phone");
+                        setOtp("");
+                        setPhoneNumber("");
+                        setResendIn(0);
+                      }}
+                      disabled={isLoading}
+                      className="text-muted-foreground hover:text-primary transition-colors underline disabled:opacity-60"
+                    >
+                      Change number
+                    </button>
                   </div>
-
-                  {/* Change Number Link */}
-                  <button
-                    onClick={() => {
-                      setStep("phone");
-                      setOtp("");
-                      setPhoneNumber("");
-                      setResendIn(0);
-                    }}
-                    disabled={isLoading}
-                    className="w-full py-2 text-sm text-muted-foreground hover:text-primary transition-colors underline disabled:opacity-60"
-                  >
-                    Change mobile number
-                  </button>
                 </>
               )}
             </div>
 
             {/* Verification Message */}
             <div className="text-center text-xs md:text-sm text-muted-foreground pb-6 border-b border-border/30">
-              By continuing, you verify that you are a registered customer of RentBasket.
+              By continuing, I agree to the{" "}
+              <Link to="/terms-n-conditions" className="text-primary font-semibold hover:underline">
+                Terms & Conditions
+              </Link>.
             </div>
 
             {/* Benefits Section */}

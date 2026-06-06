@@ -16,8 +16,9 @@ const Cart = () => {
 
   // Entry point into the digital checkout funnel: verify mobile first.
   const handleProceedToCheckout = () => {
+    sessionStorage.setItem("rb_cart_proceed", "1");
     toast.success("Let's verify your mobile to continue");
-    navigate("/customer-validation");
+    navigate("/customer-validation", { state: { returnTo: "/checkout" } });
   };
 
   return (
