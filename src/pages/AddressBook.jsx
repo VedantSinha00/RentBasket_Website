@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Plus, Pencil, Trash2, ChevronLeft, Star, Loader2 } from "lucide-react";
+import { MapPin, Plus, Pencil, Trash2, ChevronLeft, Star, Loader2, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
@@ -41,6 +41,31 @@ const AddressForm = ({ initial = EMPTY_FORM, onSave, onCancel }) => {
   const [form, setForm] = useState(initial);
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const [geoState, setGeoState] = useState(initial?.lat ? "done" : "idle"); // "idle" | "loading" | "done" | "denied"
+  const [pincodeState, setPincodeState] = useState("idle"); // "idle" | "loading" | "done" | "error"
+
+  const handlePincodeChange = async (e) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
+    setForm((f) => ({ ...f, pincode: value }));
+    if (value.length !== 6) { setPincodeState("idle"); return; }
+    setPincodeState("loading");
+    try {
+      const res = await fetch(`https://api.postalpincode.in/pincode/${value}`);
+      const data = await res.json();
+      const po = data?.[0]?.PostOffice?.[0];
+      if (data?.[0]?.Status === "Success" && po) {
+        setForm((f) => ({
+          ...f,
+          city: f.city || po.District || po.Block || "",
+          state: f.state || po.State || "",
+        }));
+        setPincodeState("done");
+      } else {
+        setPincodeState("error");
+      }
+    } catch {
+      setPincodeState("error");
+    }
+  };
 
   const handleUseLocation = () => {
     if (!navigator.geolocation) { setGeoState("denied"); return; }
@@ -122,7 +147,22 @@ const AddressForm = ({ initial = EMPTY_FORM, onSave, onCancel }) => {
       <Field label="Address Line 2" placeholder="Street, Colony, Area" value={form.addressLine2} onChange={set("addressLine2")} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Field label="Landmark" placeholder="Near metro, school, etc." value={form.landmark} onChange={set("landmark")} />
-        <Field label="Pincode" required placeholder="6-digit pincode" value={form.pincode} onChange={set("pincode")} maxLength={6} />
+        <div>
+          <Field label="Pincode" required placeholder="6-digit pincode" value={form.pincode} onChange={handlePincodeChange} maxLength={6} inputMode="numeric" />
+          {pincodeState === "loading" && (
+            <p className="text-[10px] text-muted-foreground flex items-center gap-1 mt-1">
+              <Loader2 className="w-3 h-3 animate-spin" /> Looking up pincode…
+            </p>
+          )}
+          {pincodeState === "done" && (
+            <p className="text-[10px] text-success flex items-center gap-1 mt-1">
+              <CheckCircle2 className="w-3 h-3" /> City &amp; state filled automatically
+            </p>
+          )}
+          {pincodeState === "error" && (
+            <p className="text-[10px] text-muted-foreground mt-1">Pincode not found — enter city and state manually</p>
+          )}
+        </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Field label="City" required placeholder="City" value={form.city} onChange={set("city")} />

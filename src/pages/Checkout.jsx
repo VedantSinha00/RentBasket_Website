@@ -66,6 +66,13 @@ const Checkout = () => {
       });
       return;
     }
+    const minDate = new Date(Date.now() + 86400000 * 2).toISOString().split("T")[0];
+    if (!formData.startDate || formData.startDate < minDate) {
+      toast.error("Please pick a later start date", {
+        description: "We need at least 2 days to prepare your delivery.",
+      });
+      return;
+    }
     navigate("/order-summary", { state: { verifiedPhone, formData } });
   };
 

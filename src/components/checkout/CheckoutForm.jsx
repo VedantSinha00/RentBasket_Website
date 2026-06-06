@@ -252,7 +252,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
             type="date"
             value={formData.startDate}
             onChange={handleChange}
-            min={new Date().toISOString().split("T")[0]}
+            min={new Date(Date.now() + 86400000 * 2).toISOString().split("T")[0]}
           />
           
           <div className="space-y-1.5">
