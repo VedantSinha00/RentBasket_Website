@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import logo from "@/assets/7 1.png";
 import { toast } from "sonner";
 import { setAuth } from "@/lib/auth";
+import { generateOtp, loginWithOtp, signUpWithOtp, getCities } from "@/api/otp";
 
 const RESEND_COOLDOWN = 30; // seconds
 
@@ -18,16 +19,15 @@ const CustomerValidation = () => {
   const [step, setStep] = useState("phone"); // "phone" | "otp"
   const [isLoading, setIsLoading] = useState(false);
   const [resendIn, setResendIn] = useState(0); // seconds until resend is allowed
+  const [isRegistered, setIsRegistered] = useState(null); // null | true | false
+  const [cities, setCities] = useState([]);
+  const [cityId, setCityId] = useState("");
+  const [cityError, setCityError] = useState("");
 
-  // Track pending timers so they can be cancelled if the component unmounts
-  // (prevents state updates / navigation firing after unmount).
-  const timers = useRef([]);
-  const schedule = (fn, ms) => {
-    const id = setTimeout(fn, ms);
-    timers.current.push(id);
-    return id;
-  };
-  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+  // Prefetch cities so the list is ready if the user turns out to be new
+  useEffect(() => {
+    getCities().then(setCities).catch(() => {});
+  }, []);
 
   // Countdown for the Resend OTP cooldown
   useEffect(() => {
@@ -41,22 +41,33 @@ const CustomerValidation = () => {
       toast.error("Please enter a valid 10-digit mobile number");
       return;
     }
-
     setIsLoading(true);
-    // Simulate OTP generation
-    schedule(() => {
-      setIsLoading(false);
+    try {
+      const { IsRegistered } = await generateOtp(phoneNumber);
+      setIsRegistered(IsRegistered);
       setStep("otp");
       setResendIn(RESEND_COOLDOWN);
       toast.success("OTP sent to your mobile number");
-    }, 1500);
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     if (resendIn > 0 || isLoading) return;
     setOtp("");
-    setResendIn(RESEND_COOLDOWN);
-    toast.success("OTP resent to your mobile number");
+    setIsLoading(true);
+    try {
+      await generateOtp(phoneNumber);
+      setResendIn(RESEND_COOLDOWN);
+      toast.success("OTP resent to your mobile number");
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleOtpSubmit = async () => {
@@ -64,19 +75,37 @@ const CustomerValidation = () => {
       toast.error("Please enter a valid OTP");
       return;
     }
+    if (!isRegistered && !cityId) {
+      setCityError("Please select your city");
+      return;
+    }
 
     setIsLoading(true);
-    // Simulate OTP verification
-    schedule(() => {
-      setIsLoading(false);
+    try {
+      let userData;
+      if (isRegistered) {
+        userData = await loginWithOtp(phoneNumber, otp);
+      } else {
+        await signUpWithOtp(phoneNumber, otp, cityId);
+        userData = await loginWithOtp(phoneNumber, otp);
+      }
+      setAuth({
+        phone: userData.mobile_no,
+        token: userData.token,
+        userId: userData.user_id,
+        leadId: userData.lead_id,
+        name: userData.first_name ? `${userData.first_name} ${userData.last_name}`.trim() : "",
+        email: userData.email || "",
+      });
       toast.success("Mobile verified!", {
         description: "Let's complete your order details.",
       });
-      setAuth({ phone: phoneNumber, token: "mock_token" });
-      schedule(() => {
-        navigate(returnTo, { state: { verifiedPhone: phoneNumber } });
-      }, 800);
-    }, 1500);
+      navigate(returnTo, { state: { verifiedPhone: phoneNumber } });
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -169,6 +198,29 @@ const CustomerValidation = () => {
                     />
                   </div>
 
+                  {/* City Picker — only for new users */}
+                  {isRegistered === false && (
+                    <div>
+                      <label className="text-sm font-semibold text-foreground block mb-2">
+                        Select City
+                      </label>
+                      <select
+                        value={cityId}
+                        onChange={(e) => { setCityId(e.target.value); setCityError(""); }}
+                        disabled={isLoading}
+                        className="w-full px-3.5 py-2.5 border border-primary/30 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-60 disabled:cursor-not-allowed bg-background text-foreground"
+                      >
+                        <option value="">Select your city</option>
+                        {cities.map((c) => (
+                          <option key={c.city_id} value={c.city_id}>{c.city}</option>
+                        ))}
+                      </select>
+                      {cityError && (
+                        <p className="text-xs text-destructive mt-1">{cityError}</p>
+                      )}
+                    </div>
+                  )}
+
                   {/* Verify OTP Button */}
                   <button
                     onClick={handleOtpSubmit}
@@ -200,6 +252,9 @@ const CustomerValidation = () => {
                         setOtp("");
                         setPhoneNumber("");
                         setResendIn(0);
+                        setIsRegistered(null);
+                        setCityId("");
+                        setCityError("");
                       }}
                       disabled={isLoading}
                       className="text-muted-foreground hover:text-primary transition-colors underline disabled:opacity-60"

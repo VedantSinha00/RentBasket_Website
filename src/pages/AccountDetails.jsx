@@ -4,6 +4,7 @@ import { ChevronLeft, User, Phone, Mail, LogOut } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getAuth, setAuth, clearAuth } from "@/lib/auth";
+import { updateUserProfile } from "@/api/profile";
 import { toast } from "sonner";
 
 const AccountDetails = () => {
@@ -11,15 +12,67 @@ const AccountDetails = () => {
   const auth = getAuth();
   const [name, setName] = useState(auth?.name ?? "");
   const [email, setEmail] = useState(auth?.email ?? "");
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleNameBlur = () => {
-    setAuth({ ...auth, name: name.trim() });
-    if (name.trim()) toast.success("Name saved");
+  const buildProfilePayload = (overrides) => {
+    const current = getAuth();
+    const fullName = overrides.name ?? current?.name ?? "";
+    const parts = fullName.trim().split(" ");
+    const firstName = parts[0] || "";
+    const lastName = parts.slice(1).join(" ");
+    return {
+      user_id: current?.userId ?? "",
+      first_name: firstName,
+      last_name: lastName,
+      email: overrides.email ?? current?.email ?? "",
+      address: "",
+      org_name: "",
+      about_me: "",
+      social_media_link: "",
+      reg_mobile_num: current?.phone ?? "",
+    };
   };
 
-  const handleEmailBlur = () => {
-    setAuth({ ...auth, email: email.trim() });
-    if (email.trim()) toast.success("Email saved");
+  const handleNameBlur = async () => {
+    const trimmed = name.trim();
+    const current = getAuth();
+    if (!current?.userId) {
+      console.warn("AccountDetails: userId missing from auth — falling back to localStorage save");
+      setAuth({ ...current, name: trimmed });
+      if (trimmed) toast.success("Name saved");
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await updateUserProfile(buildProfilePayload({ name: trimmed }));
+      setAuth({ ...getAuth(), name: trimmed });
+      if (trimmed) toast.success("Name saved");
+    } catch (err) {
+      toast.error(err.message || "Failed to save name");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleEmailBlur = async () => {
+    const trimmed = email.trim();
+    const current = getAuth();
+    if (!current?.userId) {
+      console.warn("AccountDetails: userId missing from auth — falling back to localStorage save");
+      setAuth({ ...current, email: trimmed });
+      if (trimmed) toast.success("Email saved");
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await updateUserProfile(buildProfilePayload({ email: trimmed }));
+      setAuth({ ...getAuth(), email: trimmed });
+      if (trimmed) toast.success("Email saved");
+    } catch (err) {
+      toast.error(err.message || "Failed to save email");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleSignOut = () => {
@@ -58,7 +111,8 @@ const AccountDetails = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               onBlur={handleNameBlur}
-              className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background placeholder-muted-foreground/40"
+              disabled={isSaving}
+              className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background placeholder-muted-foreground/40 disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -75,7 +129,8 @@ const AccountDetails = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={handleEmailBlur}
-                className="w-full pl-9 pr-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background placeholder-muted-foreground/40"
+                disabled={isSaving}
+                className="w-full pl-9 pr-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background placeholder-muted-foreground/40 disabled:opacity-60 disabled:cursor-not-allowed"
               />
             </div>
           </div>

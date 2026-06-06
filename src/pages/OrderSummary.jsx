@@ -4,6 +4,7 @@ import { ChevronLeft, MapPin, Calendar, User, Phone, Pencil } from "lucide-react
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 import { cartBreakdown } from "@/lib/pricing";
+import { getAuth } from "@/lib/auth";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutSummary from "@/components/checkout/CheckoutSummary";
@@ -12,7 +13,7 @@ const OrderSummary = () => {
   const { cartItems, clearCart, coupon } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
-  const verifiedPhone = location.state?.verifiedPhone || "";
+  const verifiedPhone = location.state?.verifiedPhone || getAuth()?.phone || "";
   const formData = location.state?.formData || null;
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);

@@ -8,17 +8,21 @@ import StickyCheckoutBar from "@/components/cart/StickyCheckoutBar";
 import { useCart } from "@/context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { isAuthenticated, getAuth } from "@/lib/auth";
 
 const Cart = () => {
   const { cartItems } = useCart();
   const hasItems = cartItems.length > 0;
   const navigate = useNavigate();
 
-  // Entry point into the digital checkout funnel: verify mobile first.
   const handleProceedToCheckout = () => {
     sessionStorage.setItem("rb_cart_proceed", "1");
-    toast.success("Let's verify your mobile to continue");
-    navigate("/customer-validation", { state: { returnTo: "/checkout" } });
+    if (isAuthenticated()) {
+      navigate("/checkout", { state: { verifiedPhone: getAuth()?.phone || "" } });
+    } else {
+      toast.success("Let's verify your mobile to continue");
+      navigate("/customer-validation", { state: { returnTo: "/checkout" } });
+    }
   };
 
   return (

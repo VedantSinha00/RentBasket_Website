@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ChevronLeft, ShieldCheck, Truck, Clock, ArrowRight } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
+import { getAuth } from "@/lib/auth";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutForm from "@/components/checkout/CheckoutForm";
@@ -27,7 +28,7 @@ const Checkout = () => {
   const { cartItems } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
-  const verifiedPhone = location.state?.verifiedPhone || sessionStorage.getItem("rb_verified_phone") || "";
+  const verifiedPhone = location.state?.verifiedPhone || sessionStorage.getItem("rb_verified_phone") || getAuth()?.phone || "";
 
   // Persist verifiedPhone so navigating to address book and back doesn't lose it.
   useEffect(() => {
