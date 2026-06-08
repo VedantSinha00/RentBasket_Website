@@ -1,13 +1,9 @@
 // TODO: confirm auth header with Shivam — currently assuming Bearer JWT
-import { getToken } from "./auth";
-
-const BASE = import.meta.env.DEV ? "/api" : import.meta.env.VITE_API_BASE_URL?.trim();
+import { authFetch } from "./client";
 
 async function otpFetch(path) {
-  const token = await getToken();
-  const res = await fetch(`${BASE}${path}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  // Original otpFetch did not retry on 401 — preserve that.
+  const res = await authFetch(path, { retry: false });
   const json = await res.json().catch(() => null);
   if (!res.ok || !json || json.responseCode !== 200) {
     throw new Error(json?.data?.messageDescription || `OTP API failed (${res.status})`);

@@ -4,11 +4,10 @@
  * Any 401 from the API should call clearToken() then getToken() to retry.
  */
 
-const APP_KEY = import.meta.env.VITE_API_APP_KEY?.trim();
-// JWT token endpoint only works on testaws — testapi returns 401.
-// All other API calls use the standard BASE (proxied in dev, direct in prod).
-const JWT_BASE = "https://testaws.rentbasket.com";
-const BASE = import.meta.env.DEV ? "/api" : import.meta.env.VITE_API_BASE_URL?.trim();
+import { APP_KEY, AWS_BASE } from "./config";
+
+// JWT token endpoint only works on testaws (AWS_BASE) — testapi returns 401.
+// All other API calls use API_BASE (proxied in dev, direct in prod).
 
 let _token = null;
 let _inflight = null; // shared promise so parallel callers don't each fire a separate POST
@@ -21,7 +20,7 @@ export async function getToken() {
 }
 
 async function _refresh() {
-  const res = await fetch(`${JWT_BASE}/get-jwt-token`, {
+  const res = await fetch(`${AWS_BASE}/get-jwt-token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ app_key: APP_KEY }),

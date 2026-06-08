@@ -1,25 +1,8 @@
 // TODO: confirm auth header with Shivam — currently assuming Bearer JWT
-import { getToken, clearToken } from "./auth";
-
-const BASE = import.meta.env.DEV ? "/api" : import.meta.env.VITE_API_BASE_URL?.trim();
+import { authFetch } from "./client";
 
 async function proposalFetch(path, body) {
-  const doFetch = (token) =>
-    fetch(`${BASE}${path}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify(body),
-    });
-
-  let token = await getToken();
-  let res = await doFetch(token);
-
-  if (res.status === 401) {
-    clearToken();
-    token = await getToken();
-    res = await doFetch(token);
-  }
-
+  const res = await authFetch(path, { method: "POST", body });
   const json = await res.json().catch(() => null);
   if (!res.ok || !json || json.responseCode !== 200) {
     throw new Error(json?.data?.messageDescription || json?.message || `Proposal API failed (${res.status})`);

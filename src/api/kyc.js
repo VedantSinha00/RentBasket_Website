@@ -1,21 +1,9 @@
 // TODO: confirm auth header with Shivam — currently assuming Bearer JWT
-import { getToken, clearToken } from "./auth";
-
-const BASE = import.meta.env.DEV ? "/api" : import.meta.env.VITE_API_BASE_URL?.trim();
-const AWS_BASE = "https://testaws.rentbasket.com"; // update-kyc lives here
+import { AWS_BASE } from "./config"; // update-kyc lives here
+import { authFetch } from "./client";
 
 async function apiFetch(path) {
-  const token = await getToken();
-  let res = await fetch(`${BASE}${path}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (res.status === 401) {
-    clearToken();
-    const fresh = await getToken();
-    res = await fetch(`${BASE}${path}`, {
-      headers: { Authorization: `Bearer ${fresh}` },
-    });
-  }
+  const res = await authFetch(path);
   if (!res.ok) {
     const body = await res.json().catch(() => null);
     throw new Error(body?.data?.messageDescription || `KYC API failed (${res.status})`);
@@ -34,15 +22,16 @@ export async function getKycDocList(mobile) {
 }
 
 export async function submitKycDoc(mobile, docType, file) {
-  const token = await getToken();
   const form = new FormData();
   form.append("mobile", mobile);
   form.append("doc_type", docType);
   form.append("kyc_pic", file);
-  const res = await fetch(`${AWS_BASE}/update-kyc`, {
+  // Upload lives on AWS_BASE; original did not retry on 401 — preserve that.
+  const res = await authFetch("/update-kyc", {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
     body: form,
+    base: AWS_BASE,
+    retry: false,
   });
   if (!res.ok) {
     const body = await res.json().catch(() => null);

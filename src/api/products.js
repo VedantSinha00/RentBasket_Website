@@ -16,12 +16,12 @@ import staticProducts, {
   getProductById as getStaticById,
   getRelatedProducts as getStaticRelated,
 } from "@/data/products";
-import { getToken, clearToken } from "./auth";
+import { API_BASE, CATALOG_API_KEY, USING_MOCK_DATA } from "./config";
+import { authFetch } from "./client";
 
-const VITE_BASE = import.meta.env.VITE_API_BASE_URL?.trim();
-
-/** True when no API base URL is configured — falls back to bundled mock data. */
-export const USING_MOCK_DATA = !VITE_BASE;
+// USING_MOCK_DATA / API_BASE / CATALOG_API_KEY now come from the config seam
+// (src/api/config.js). Re-export so existing `@/api/products` imports keep working.
+export { USING_MOCK_DATA };
 
 // Guard against a silent misconfiguration: a *production* build with no API URL
 // means the deploy environment never set VITE_API_BASE_URL, so the site quietly
@@ -36,33 +36,13 @@ if (USING_MOCK_DATA && import.meta.env.PROD) {
   );
 }
 
-// In dev the Vite proxy forwards /api/* to the real server (avoids CORS).
-// In production the full URL is used directly.
-const API_BASE = import.meta.env.DEV ? "/api" : VITE_BASE;
-
-// Static API key for the bulk catalog endpoint — uses Authorization-Key header
-// instead of the Bearer JWT used by all other endpoints.
-const CATALOG_API_KEY = import.meta.env.VITE_CATALOG_API_KEY?.trim();
-
 // ---------------------------------------------------------------------------
 // Low-level fetch helpers
 // ---------------------------------------------------------------------------
 
 /** Standard fetch — attaches Bearer JWT, retries once on 401. */
 async function apiFetch(path) {
-  const token = await getToken();
-  let res = await fetch(`${API_BASE}${path}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  if (res.status === 401) {
-    clearToken();
-    const fresh = await getToken();
-    res = await fetch(`${API_BASE}${path}`, {
-      headers: { Authorization: `Bearer ${fresh}` },
-    });
-  }
-
+  const res = await authFetch(path);
   if (!res.ok) throw new Error(`API ${path} failed: ${res.status}`);
   const json = await res.json().catch(() => null);
   if (!json) throw new Error(`API ${path} returned non-JSON response`);
