@@ -13,10 +13,14 @@ const Header = () => {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const onCatalog = pathname === "/catalog";
+  const showMobileSearch =
+    pathname === "/" || pathname === "/catalog" || pathname.startsWith("/product");
 
   const urlQ = onCatalog ? (new URLSearchParams(search).get("q") || "") : "";
   const [query, setQuery] = useState(urlQ);
+  const [searchFocused, setSearchFocused] = useState(false);
   const lastUrlQ = useRef(urlQ);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     if (urlQ !== lastUrlQ.current) {
@@ -59,19 +63,26 @@ const Header = () => {
     } else {
       setTimeout(scrollToResults, 150);
     }
+    inputRef.current?.blur();
   };
+
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="section-container" style={{ width: "100%" }}>
         <div
-          className="flex items-center justify-between h-16 md:h-20"
-          style={{
-            width: "100%",
-          }}
+          className="flex items-center h-16 md:h-20 gap-2"
+          style={{ width: "100%" }}
         >
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link
+            to="/"
+            className={`flex items-center gap-2 shrink-0 transition-opacity duration-200 ${
+              searchFocused
+                ? "opacity-20 pointer-events-none md:opacity-100 md:pointer-events-auto"
+                : "opacity-100"
+            }`}
+          >
             <div className="w-10 h-10 flex items-center justify-center">
               <img
                 src={logo}
@@ -81,8 +92,31 @@ const Header = () => {
             </div>
           </Link>
 
+          {/* Mobile search — flex-1 fills the centre; inner div is always w-full */}
+          {showMobileSearch && (
+            <form
+              onSubmit={handleSubmit}
+              className="md:hidden flex-1 min-w-0 relative mx-1"
+            >
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"
+                aria-hidden
+              />
+              <input
+                ref={inputRef}
+                type="search"
+                value={query}
+                onChange={handleChange}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setSearchFocused(false)}
+                placeholder={searchFocused ? "Search furniture, appliances..." : "Search..."}
+                className="w-full pl-9 pr-3 py-2 border border-border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background"
+              />
+            </form>
+          )}
+
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex flex-1 items-center justify-center gap-8">
             <Link
               to="/catalog"
               className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
@@ -107,18 +141,24 @@ const Header = () => {
             </form>
           </nav>
 
-          {/* Cart + CTA */}
-          <div className="flex items-center gap-3">
+          {/* Icons */}
+          <div
+            className={`flex items-center gap-1 md:gap-3 shrink-0 transition-opacity duration-200 ${
+              searchFocused
+                ? "opacity-20 pointer-events-none md:opacity-100 md:pointer-events-auto"
+                : "opacity-100"
+            }`}
+          >
             <Link
               to="/profile"
-              className="relative p-2 rounded-xl hover:bg-secondary transition-colors"
+              className="relative p-1.5 md:p-2 rounded-xl hover:bg-secondary transition-colors"
               title="My Profile"
             >
               <User className="w-5 h-5 text-muted-foreground" />
             </Link>
             <Link
               to="/wishlist"
-              className="relative p-2 rounded-xl hover:bg-secondary transition-colors"
+              className="relative p-1.5 md:p-2 rounded-xl hover:bg-secondary transition-colors"
               title="My Wishlist"
             >
               <Heart className="w-5 h-5 text-muted-foreground" />
@@ -130,7 +170,7 @@ const Header = () => {
             </Link>
             <Link
               to="/cart"
-              className="relative p-2 rounded-xl hover:bg-secondary transition-colors"
+              className="relative p-1.5 md:p-2 rounded-xl hover:bg-secondary transition-colors"
               title="View Cart"
             >
               <ShoppingBag className="w-5 h-5 text-muted-foreground" />

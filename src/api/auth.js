@@ -5,8 +5,9 @@
  */
 
 const APP_KEY = import.meta.env.VITE_API_APP_KEY?.trim();
-// In dev the Vite proxy forwards /api/* to the real server (avoids CORS).
-// In production the full URL is used directly (requires CORS headers from Shivam).
+// JWT token endpoint only works on testaws — testapi returns 401.
+// All other API calls use the standard BASE (proxied in dev, direct in prod).
+const JWT_BASE = "https://testaws.rentbasket.com";
 const BASE = import.meta.env.DEV ? "/api" : import.meta.env.VITE_API_BASE_URL?.trim();
 
 let _token = null;
@@ -20,7 +21,7 @@ export async function getToken() {
 }
 
 async function _refresh() {
-  const res = await fetch(`${BASE}/get-jwt-token`, {
+  const res = await fetch(`${JWT_BASE}/get-jwt-token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ app_key: APP_KEY }),
