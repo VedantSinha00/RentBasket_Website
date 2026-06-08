@@ -1,4 +1,3 @@
-// TODO: confirm auth header with Shivam — currently assuming Bearer JWT
 import { authFetch } from "./client";
 
 async function proposalFetch(path, body) {
@@ -70,13 +69,38 @@ export async function addItemsToProposal(userId, leadId, cartItems, added = new 
   return [...added.values()];
 }
 
-export async function confirmProposal(userId, leadId, cartItemIds, couponCode) {
+export async function confirmProposal(userId, leadId, cartItemIds, couponId) {
   return proposalFetch("/confirm-proposal-for-tenant", {
     user_id: String(userId),
     lead_id: String(leadId),
     cart_items: cartItemIds.map((id) => ({
       cart_item_id: id,
-      coupon_list: couponCode ? [couponCode] : [],
+      coupon_list: couponId != null ? [couponId] : [],
     })),
+  });
+}
+
+/**
+ * Fetch the backend proposal cart for a lead — used to read any pre-attached
+ * coupons. Returns the `data` payload or null on error.
+ */
+export async function fetchProposalCart(userId, leadId) {
+  const res = await authFetch(
+    `/get-proposal-cart-items-for-lead?user_id=${encodeURIComponent(userId)}&lead_id=${encodeURIComponent(leadId)}`
+  );
+  const json = await res.json().catch(() => null);
+  if (!res.ok || !json || json.responseCode !== 200) return null;
+  return json.data ?? null;
+}
+
+/**
+ * Apply a coupon to the proposal server-side before confirmation.
+ * Call this after addItemsToProposal if a coupon is available.
+ */
+export async function applyGlobalCoupon(userId, leadId, couponId) {
+  return proposalFetch("/apply-global-coupon", {
+    user_id: String(userId),
+    lead_id: String(leadId),
+    coupon_id: couponId,
   });
 }

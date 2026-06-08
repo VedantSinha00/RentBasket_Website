@@ -145,8 +145,8 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = () => setCartItems([]);
 
-  const applyCoupon = (_code) => {
-    return false;
+  const setAvailableCoupon = (couponData) => {
+    setCoupon(couponData);
   };
 
   const removeCoupon = () => {
@@ -167,7 +167,7 @@ export const CartProvider = ({ children }) => {
         clearCart,
         getCartItemCount,
         coupon,
-        applyCoupon,
+        setAvailableCoupon,
         removeCoupon,
       }}
     >

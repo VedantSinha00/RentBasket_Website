@@ -7,7 +7,7 @@ import { cartBreakdown } from "@/lib/pricing";
 import { getAuth } from "@/lib/auth";
 import { safeRemove } from "@/lib/safeStorage";
 import { recordOrder } from "@/lib/recentOrders";
-import { addItemsToProposal, confirmProposal } from "@/api/proposal";
+import { addItemsToProposal, confirmProposal, fetchProposalCart, applyGlobalCoupon } from "@/api/proposal";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutSummary from "@/components/checkout/CheckoutSummary";
@@ -20,13 +20,30 @@ const clearCheckoutSession = () => {
 };
 
 const OrderSummary = () => {
-  const { cartItems, clearCart, coupon } = useCart();
+  const { cartItems, clearCart, coupon, setAvailableCoupon } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   const verifiedPhone = location.state?.verifiedPhone || getAuth()?.phone || "";
   const formData = location.state?.formData || null;
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+
+  // On mount, try to read any coupon the backend has pre-attached to this lead's
+  // proposal and auto-apply it so the user sees the discount before confirming.
+  useEffect(() => {
+    const auth = getAuth();
+    if (!auth?.userId || !auth?.leadId) return;
+    fetchProposalCart(auth.userId, auth.leadId)
+      .then((data) => {
+        const c = data?.coupons;
+        if (!c?.id) return;
+        const type = c.discount_type === 1 ? "percent" : "flat";
+        const value = c.discount_type === 1 ? c.discount_in_percent : c.absolute_discount;
+        if (!value) return;
+        setAvailableCoupon({ id: c.id, code: c.coupon_name, type, value });
+      })
+      .catch(() => {});
+  }, []);
 
   // Accumulator for resume-on-retry: survives across handlePlaceOrder calls
   // while this page stays mounted.  Keyed by the line's stable cartItemId.
@@ -107,7 +124,13 @@ const OrderSummary = () => {
         cartItems,
         addedItemsRef.current,
       );
-      const apiResponse = await confirmProposal(auth.userId, auth.leadId, cartItemIds, coupon?.code);
+
+      // Apply the backend-attached coupon (if any) before confirming.
+      if (coupon?.id) {
+        await applyGlobalCoupon(auth.userId, auth.leadId, coupon.id).catch(() => {});
+      }
+
+      const apiResponse = await confirmProposal(auth.userId, auth.leadId, cartItemIds, coupon?.id ?? null);
 
       const b = cartBreakdown(cartItems, coupon);
       const rawOrderId = apiResponse?.data?.order_id ?? apiResponse?.data?.orderId;

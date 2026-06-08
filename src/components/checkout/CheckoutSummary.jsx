@@ -1,24 +1,15 @@
-import { useState } from "react";
-import { ShieldCheck, Info, Tag, Bookmark, Truck, Wrench, CheckCircle } from "lucide-react";
+import { ShieldCheck, Info, Tag, Truck, Wrench, CheckCircle } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { Link } from "react-router-dom";
 import { cartBreakdown, lineOf } from "@/lib/pricing";
 
-const MONTHLY_KEYS = new Set(["3_months", "6_months", "9_months", "12_months"]);
 const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
-  const { cartItems, getCartItemCount, coupon, applyCoupon, removeCoupon } = useCart();
-  const [couponCode, setCouponCode] = useState(coupon?.code || "");
-  
+  const { cartItems, getCartItemCount, coupon, removeCoupon } = useCart();
+
   if (cartItems.length === 0) return null;
 
   const itemCount = getCartItemCount();
   const b = cartBreakdown(cartItems, coupon);
-  const hasMonthlyItems = cartItems.some((item) => MONTHLY_KEYS.has(item.duration));
-
-  const handleApplyCoupon = () => {
-    if (!couponCode.trim()) return;
-    applyCoupon(couponCode);
-  };
 
   return (
     <div className="lg:sticky lg:top-24 space-y-5">
@@ -148,43 +139,23 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
             </div>
           </div>
 
-          {/* Coupon */}
-          <div className="pt-4 border-t border-border/50">
-            {coupon ? (
+          {/* Coupon — auto-surfaced from backend, no manual entry */}
+          {coupon && (
+            <div className="pt-4 border-t border-border/50">
               <div className="flex items-center justify-between bg-success-muted border border-success-border rounded-xl px-4 py-2.5">
                 <div className="flex items-center gap-2 text-success-muted-foreground text-sm font-medium">
                   <Tag className="w-4 h-4" />
-                  {coupon.code} applied
+                  {coupon.code} — save {coupon.type === "percent" ? `${coupon.value}%` : `₹${coupon.value}`}
                 </div>
                 <button
-                  onClick={() => {
-                    removeCoupon();
-                    setCouponCode("");
-                  }}
+                  onClick={removeCoupon}
                   className="text-xs text-red-500 hover:underline font-medium"
                 >
                   Remove
                 </button>
               </div>
-            ) : (
-              <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                  placeholder="Enter coupon code" 
-                  className="flex-1 px-3 py-2.5 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background"
-                  onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
-                />
-                <button 
-                  onClick={handleApplyCoupon}
-                  className="px-4 py-2.5 rounded-xl border border-primary text-primary text-sm font-medium hover:bg-primary/5 transition-colors"
-                >
-                  Apply
-                </button>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* CTA */}
           <button
