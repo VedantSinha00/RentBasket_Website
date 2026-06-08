@@ -74,12 +74,12 @@ const Profile = () => {
                 subtitle="View and track your rentals"
               />
               <MenuItem
-                to="/address-book"
+                to="/account/address"
                 icon={MapPin}
                 iconBg="bg-emerald-50"
                 iconColor="text-emerald-600"
-                title="Address Book"
-                subtitle="Manage your saved addresses"
+                title="My Address"
+                subtitle="Your saved delivery address"
               />
             </>
           )}

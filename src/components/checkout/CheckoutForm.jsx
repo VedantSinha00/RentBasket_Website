@@ -1,11 +1,6 @@
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { User, Phone, Mail, MapPin, Calendar, Info, CheckCircle2, Plus } from "lucide-react";
-import { getAddresses } from "@/lib/addresses";
+import { useState } from "react";
+import { User, Phone, Mail, MapPin, Calendar, Info, CheckCircle2, Loader2 } from "lucide-react";
 
-/**
- * Reusable Card for Checkout Sections
- */
 const CheckoutCard = ({ title, icon: Icon, children, subtitle }) => (
   <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-soft mb-6">
     <div className="px-5 py-4 border-b border-border/50 flex items-center justify-between bg-secondary/10">
@@ -25,10 +20,7 @@ const CheckoutCard = ({ title, icon: Icon, children, subtitle }) => (
   </div>
 );
 
-/**
- * Standard Input Field
- */
-const InputField = ({ label, icon: Icon, placeholder, type = "text", ...props }) => (
+const InputField = ({ label, icon: Icon, placeholder, type = "text", hint, ...props }) => (
   <div className="space-y-1.5">
     <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
       {label}
@@ -44,130 +36,12 @@ const InputField = ({ label, icon: Icon, placeholder, type = "text", ...props })
         {...props}
       />
     </div>
+    {hint && <div className="ml-1 text-[10px] mt-0.5">{hint}</div>}
   </div>
 );
 
-// Links that leave checkout for the address book carry returnTo so the user
-// lands back on checkout (not Profile) and their typed details are restored.
-const ADDR_BOOK_STATE = { returnTo: "/checkout" };
-
-const AddressSelector = ({ formData, setFormData }) => {
-  const addresses = getAddresses();
-
-  // Resolve the selected address: the one already chosen on this order (if it
-  // still exists), otherwise the default, otherwise the first saved address.
-  const selectedId =
-    (formData.addressId && addresses.some((a) => a.id === formData.addressId) && formData.addressId) ||
-    addresses.find((a) => a.isDefault)?.id ||
-    addresses[0]?.id ||
-    null;
-
-  const applyAddress = (addr) => {
-    setFormData((prev) => ({
-      ...prev,
-      addressId: addr.id,
-      addressLine1: addr.addressLine1,
-      addressLine2: addr.addressLine2 || "",
-      landmark: addr.landmark || "",
-      pincode: addr.pincode,
-      city: addr.city,
-      state: addr.state,
-    }));
-  };
-
-  // Keep formData in sync with the resolved selection. Covers first mount and
-  // the case where a previously-chosen address was deleted or the default
-  // changed in the address book. Keyed on selectedId so it can't loop.
-  useEffect(() => {
-    if (selectedId && selectedId !== formData.addressId) {
-      const addr = addresses.find((a) => a.id === selectedId);
-      if (addr) applyAddress(addr);
-    }
-  }, [selectedId]);
-
-  if (addresses.length === 0) {
-    return (
-      <div className="space-y-4">
-        <p className="text-sm text-muted-foreground">No saved address yet. Add one to continue.</p>
-        <Link
-          to="/address-book"
-          state={ADDR_BOOK_STATE}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-primary/30 text-primary text-sm font-semibold hover:bg-primary/5 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Add Address
-        </Link>
-        <ServiceabilityNote />
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-3">
-      {/* Selectable saved addresses */}
-      <div className="space-y-2.5">
-        {addresses.map((addr) => {
-          const isSelected = addr.id === selectedId;
-          const lines = [addr.addressLine1, addr.addressLine2, addr.landmark].filter(Boolean).join(", ");
-          return (
-            <button
-              key={addr.id}
-              type="button"
-              onClick={() => applyAddress(addr)}
-              className={`w-full text-left rounded-xl border p-4 transition-all ${
-                isSelected
-                  ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                  : "border-border bg-secondary/30 hover:border-primary/30"
-              }`}
-            >
-              <div className="flex items-start gap-3">
-                {/* Radio indicator */}
-                <span
-                  className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                    isSelected ? "border-primary" : "border-border"
-                  }`}
-                >
-                  {isSelected && <span className="w-2 h-2 rounded-full bg-primary" />}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-bold text-foreground">{addr.fullName}</p>
-                    {addr.isDefault && (
-                      <span className="text-[9px] font-bold text-success uppercase tracking-wider bg-success-muted border border-success-border rounded-full px-1.5 py-0.5">
-                        Default
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">{lines}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {addr.city}, {addr.state} {addr.pincode}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Mob: +91 {addr.phone}</p>
-                </div>
-                {isSelected && <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />}
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Add / edit address — round-trips back to checkout */}
-      <Link
-        to="/address-book"
-        state={ADDR_BOOK_STATE}
-        className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-primary transition-colors"
-      >
-        <Plus className="w-3.5 h-3.5" />
-        Add or edit addresses
-      </Link>
-
-      <ServiceabilityNote />
-    </div>
-  );
-};
-
 const ServiceabilityNote = () => (
-  <div className="p-3 bg-primary/5 border border-primary/10 rounded-xl flex gap-3">
+  <div className="p-3 bg-primary/5 border border-primary/10 rounded-xl flex gap-3 mt-2">
     <Info className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
     <p className="text-[11px] text-muted-foreground leading-relaxed">
       <span className="font-bold text-primary">Serviceability Note:</span> If your pincode is outside our primary zone, our team will coordinate for a custom delivery quote.
@@ -176,14 +50,71 @@ const ServiceabilityNote = () => (
 );
 
 const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
+  const [geoState, setGeoState] = useState("idle"); // idle | loading | done | denied
+  const [pincodeState, setPincodeState] = useState("idle"); // idle | loading | done | error
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handlePincodeChange = async (e) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
+    setFormData((prev) => ({ ...prev, pincode: value }));
+    if (value.length !== 6) { setPincodeState("idle"); return; }
+    setPincodeState("loading");
+    try {
+      const res = await fetch(`https://api.postalpincode.in/pincode/${value}`);
+      const data = await res.json();
+      const po = data?.[0]?.PostOffice?.[0];
+      if (data?.[0]?.Status === "Success" && po) {
+        setFormData((prev) => ({
+          ...prev,
+          city: prev.city || po.District || po.Block || "",
+          state: prev.state || po.State || "",
+        }));
+        setPincodeState("done");
+      } else {
+        setPincodeState("error");
+      }
+    } catch {
+      setPincodeState("error");
+    }
+  };
+
+  const handleUseLocation = () => {
+    if (!navigator.geolocation) { setGeoState("denied"); return; }
+    setGeoState("loading");
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
+            { headers: { "User-Agent": "RentBasket/1.0 (rentbasket.com)" } }
+          );
+          if (!res.ok) throw new Error();
+          const data = await res.json();
+          const a = data.address || {};
+          setFormData((prev) => ({
+            ...prev,
+            addressLine1: prev.addressLine1 || [a.house_number, a.road].filter(Boolean).join(", "),
+            addressLine2: prev.addressLine2 || (a.suburb || a.neighbourhood || a.quarter || ""),
+            city: prev.city || (a.city || a.town || a.village || a.county || ""),
+            state: prev.state || (a.state || ""),
+            pincode: prev.pincode || (a.postcode || ""),
+          }));
+        } catch {}
+        setGeoState("done");
+      },
+      () => setGeoState("denied"),
+      { timeout: 8000 }
+    );
+  };
+
   return (
     <div className="w-full">
-      {/* 1. Your Details (mobile already verified at login/signup) */}
+      {/* 1. Your Details */}
       <CheckoutCard
         title="Your Details"
         icon={User}
@@ -240,26 +171,118 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
         icon={MapPin}
         subtitle="Currently serving Gurgaon, Noida, and select areas across Delhi NCR."
       >
-        <AddressSelector formData={formData} setFormData={setFormData} />
+        <div className="space-y-4">
+          {/* Use my location */}
+          <button
+            type="button"
+            onClick={handleUseLocation}
+            disabled={geoState === "loading" || geoState === "done"}
+            className={`w-full flex items-center justify-center gap-2 py-2.5 border rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+              geoState === "done"
+                ? "border-success/40 text-success bg-success/5"
+                : geoState === "denied"
+                ? "border-orange-300 text-orange-600 hover:border-orange-400 bg-orange-50/40"
+                : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
+            }`}
+          >
+            {geoState === "loading" ? (
+              <><Loader2 className="w-4 h-4 animate-spin" /> Getting location…</>
+            ) : geoState === "done" ? (
+              <><MapPin className="w-4 h-4" /> Location captured ✓</>
+            ) : geoState === "denied" ? (
+              <><MapPin className="w-4 h-4" /> Retry location</>
+            ) : (
+              <><MapPin className="w-4 h-4" /> Use my location</>
+            )}
+          </button>
+
+          <InputField
+            label="Address Line 1"
+            icon={MapPin}
+            name="addressLine1"
+            placeholder="House / Flat / Block No."
+            value={formData.addressLine1}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Address Line 2"
+            icon={MapPin}
+            name="addressLine2"
+            placeholder="Street, Colony, Area"
+            value={formData.addressLine2}
+            onChange={handleChange}
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <InputField
+              label="Landmark"
+              icon={MapPin}
+              name="landmark"
+              placeholder="Near metro, school, etc."
+              value={formData.landmark}
+              onChange={handleChange}
+            />
+            <InputField
+              label="Pincode"
+              icon={MapPin}
+              name="pincode"
+              placeholder="6-digit pincode"
+              value={formData.pincode}
+              onChange={handlePincodeChange}
+              maxLength={6}
+              inputMode="numeric"
+              hint={
+                pincodeState === "loading" ? (
+                  <span className="text-muted-foreground flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Looking up…</span>
+                ) : pincodeState === "done" ? (
+                  <span className="text-success flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> City &amp; state filled</span>
+                ) : pincodeState === "error" ? (
+                  <span className="text-muted-foreground">Not found — enter manually</span>
+                ) : null
+              }
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <InputField
+              label="City"
+              icon={MapPin}
+              name="city"
+              placeholder="City"
+              value={formData.city}
+              onChange={handleChange}
+            />
+            <InputField
+              label="State"
+              icon={MapPin}
+              name="state"
+              placeholder="State"
+              value={formData.state}
+              onChange={handleChange}
+            />
+          </div>
+
+          <ServiceabilityNote />
+        </div>
       </CheckoutCard>
 
       {/* 3. Rental Start Details */}
-      <CheckoutCard 
-        title="Rental Start Details" 
+      <CheckoutCard
+        title="Rental Start Details"
         icon={Calendar}
         subtitle="When would you like your items delivered and set up?"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <InputField 
-            label="Preferred Start Date" 
-            icon={Calendar} 
+          <InputField
+            label="Preferred Start Date"
+            icon={Calendar}
             name="startDate"
             type="date"
             value={formData.startDate}
             onChange={handleChange}
             min={new Date(Date.now() + 86400000 * 2).toISOString().split("T")[0]}
           />
-          
+
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
               Time Slot
@@ -269,7 +292,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
                 <button
                   key={slot}
                   type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, timeSlot: slot }))}
+                  onClick={() => setFormData((prev) => ({ ...prev, timeSlot: slot }))}
                   className={`py-2.5 px-1 rounded-xl border text-[10px] md:text-xs font-bold transition-all ${
                     formData.timeSlot === slot
                       ? "bg-primary border-primary text-white shadow-md shadow-primary/20"
@@ -298,7 +321,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
         </div>
       </CheckoutCard>
 
-      {/* 4. Included Benefits Trust Card */}
+      {/* 4. Included Benefits */}
       <div className="bg-success rounded-2xl p-5 md:p-6 text-white shadow-lg shadow-success/25 mb-8 relative overflow-hidden">
         <div className="relative z-10">
           <h4 className="text-base font-bold mb-4 flex items-center gap-2">
@@ -321,7 +344,6 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
             ))}
           </div>
         </div>
-        {/* Abstract background element */}
         <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
       </div>
     </div>

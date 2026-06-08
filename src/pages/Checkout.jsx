@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ChevronLeft, ShieldCheck, Truck, Clock, ArrowRight } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 import { getAuth } from "@/lib/auth";
 import { safeSet, safeGet } from "@/lib/safeStorage";
+import { getUserAddress, saveUserAddress } from "@/api/address";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutForm from "@/components/checkout/CheckoutForm";
@@ -42,12 +43,37 @@ const Checkout = () => {
   const location = useLocation();
   const verifiedPhone = location.state?.verifiedPhone || sessionStorage.getItem("rb_verified_phone") || getAuth()?.phone || "";
 
-  // Persist verifiedPhone so navigating to address book and back doesn't lose it.
+  // Persist verifiedPhone so navigating back to checkout doesn't lose it.
   useEffect(() => {
     if (location.state?.verifiedPhone) {
       safeSet("rb_verified_phone", location.state.verifiedPhone, sessionStorage);
     }
   }, []);
+
+  // Pre-fill address fields from the user's saved address if the form doesn't
+  // already have address data (i.e. no draft). Fire-and-forget — a failure here
+  // just means the user fills in the fields manually.
+  const addressPrefilled = useRef(false);
+  useEffect(() => {
+    if (!verifiedPhone || addressPrefilled.current) return;
+    addressPrefilled.current = true;
+    getUserAddress(verifiedPhone).then((addr) => {
+      if (!addr) return;
+      setFormData((prev) => {
+        if (prev.addressLine1) return prev; // draft already has address — don't overwrite
+        return {
+          ...prev,
+          fullName: prev.fullName || addr.contact_name || "",
+          addressLine1: addr.address_line_1 || "",
+          addressLine2: addr.address_line_2 || "",
+          landmark: addr.landmark || "",
+          pincode: addr.pincode || "",
+          city: addr.city || "",
+          state: addr.state || "",
+        };
+      });
+    }).catch(() => {});
+  }, [verifiedPhone]);
 
   // Enforce flow order: cart must have items, and mobile must be verified first.
   useEffect(() => {
@@ -63,7 +89,7 @@ const Checkout = () => {
     }
   }, [cartItems, navigate, verifiedPhone]);
 
-  // Prefill order: defaults < persisted draft (survives the address-book trip)
+  // Prefill order: defaults < persisted draft < API address < explicit state from "Edit Details"
   // < explicit state from "Edit Details" on the order summary.
   const [formData, setFormData] = useState(() => {
     const draft = loadCheckoutDraft() || {};
@@ -94,6 +120,19 @@ const Checkout = () => {
         description: "We need at least 2 days to prepare your delivery.",
       });
       return;
+    }
+    // Silently sync the address back so it pre-fills on the next order.
+    if (formData.addressLine1) {
+      saveUserAddress(formData.phone || verifiedPhone, {
+        address_line_1: formData.addressLine1,
+        address_line_2: formData.addressLine2 || "",
+        landmark: formData.landmark || "",
+        pincode: formData.pincode,
+        city: formData.city,
+        state: formData.state,
+        contact_name: formData.fullName,
+        contact_phone: formData.phone || verifiedPhone,
+      }).catch(() => {});
     }
     navigate("/order-summary", { state: { verifiedPhone, formData } });
   };

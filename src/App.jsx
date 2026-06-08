@@ -19,7 +19,7 @@ import OrderSuccess from "./pages/OrderSuccess";
 import Kyc from "./pages/Kyc";
 import MyOrders from "./pages/MyOrders";
 import Profile from "./pages/Profile";
-import AddressBook from "./pages/AddressBook";
+import EditAddress from "./pages/EditAddress";
 import AccountDetails from "./pages/AccountDetails";
 import Wishlist from "./pages/Wishlist";
 import TermsConditions from "./pages/TermsConditions";
@@ -81,7 +81,7 @@ const RouterApp = () => {
           {routePair("/kyc", <ProtectedRoute><Kyc /></ProtectedRoute>)}
           {routePair("/profile", <Profile />)}
           {routePair("/account/details", <ProtectedRoute><AccountDetails /></ProtectedRoute>)}
-          {routePair("/address-book", <ProtectedRoute><AddressBook /></ProtectedRoute>)}
+          {routePair("/account/address", <ProtectedRoute><EditAddress /></ProtectedRoute>)}
           {routePair("/account/orders", <ProtectedRoute><MyOrders /></ProtectedRoute>)}
           {routePair("/wishlist", <Wishlist />)}
           {routePair("/terms-n-conditions", <TermsConditions />)}
