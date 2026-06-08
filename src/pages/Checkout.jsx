@@ -4,7 +4,18 @@ import { ChevronLeft, ShieldCheck, Truck, Clock, ArrowRight } from "lucide-react
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 import { getAuth } from "@/lib/auth";
-import { safeSet } from "@/lib/safeStorage";
+import { safeSet, safeGet } from "@/lib/safeStorage";
+
+const CHECKOUT_FORM_KEY = "rb_checkout_form";
+
+/** Read a persisted checkout draft from sessionStorage, or null. */
+const loadCheckoutDraft = () => {
+  try {
+    return JSON.parse(safeGet(CHECKOUT_FORM_KEY, sessionStorage)) || null;
+  } catch {
+    return null;
+  }
+};
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutForm from "@/components/checkout/CheckoutForm";
@@ -52,12 +63,23 @@ const Checkout = () => {
     }
   }, [cartItems, navigate, verifiedPhone]);
 
-  // Prefill from back-navigation (order summary → back), otherwise start fresh.
-  const [formData, setFormData] = useState(() => ({
-    ...DEFAULT_FORM,
-    ...(location.state?.formData || {}),
-    phone: verifiedPhone || location.state?.formData?.phone || "",
-  }));
+  // Prefill order: defaults < persisted draft (survives the address-book trip)
+  // < explicit state from "Edit Details" on the order summary.
+  const [formData, setFormData] = useState(() => {
+    const draft = loadCheckoutDraft() || {};
+    return {
+      ...DEFAULT_FORM,
+      ...draft,
+      ...(location.state?.formData || {}),
+      phone: verifiedPhone || location.state?.formData?.phone || draft.phone || "",
+    };
+  });
+
+  // Persist the draft so navigating to the address book and back never loses
+  // the name / email / date / instructions the user already typed.
+  useEffect(() => {
+    safeSet(CHECKOUT_FORM_KEY, JSON.stringify(formData), sessionStorage);
+  }, [formData]);
 
   const handleReviewSummary = () => {
     if (!formData.fullName || !formData.phone || !formData.addressLine1 || !formData.pincode) {

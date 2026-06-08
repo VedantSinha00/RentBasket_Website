@@ -5,7 +5,16 @@ import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 import { cartBreakdown } from "@/lib/pricing";
 import { getAuth } from "@/lib/auth";
+import { safeRemove } from "@/lib/safeStorage";
+import { recordOrder } from "@/lib/recentOrders";
 import { addItemsToProposal, confirmProposal } from "@/api/proposal";
+
+/** Tear down the per-checkout session state once an order is placed. */
+const clearCheckoutSession = () => {
+  safeRemove("rb_checkout_form", sessionStorage);
+  safeRemove("rb_verified_phone", sessionStorage);
+  safeRemove("rb_cart_proceed", sessionStorage);
+};
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutSummary from "@/components/checkout/CheckoutSummary";
@@ -79,9 +88,11 @@ const OrderSummary = () => {
         const b = cartBreakdown(cartItems, coupon);
         const orderPayload = buildOrderPayload(b, `RB-${Math.floor(Math.random() * 90000) + 10000}`);
         setOrderPlaced(true);
+        recordOrder(orderPayload);
         toast.success("Order placed successfully!", { description: "Your rental order has been confirmed." });
         navigate("/order-success", { state: { orderData: orderPayload } });
         clearCart();
+        clearCheckoutSession();
       }, 2500);
       return;
     }
@@ -112,10 +123,12 @@ const OrderSummary = () => {
       const orderPayload = buildOrderPayload(b, String(orderId));
 
       setOrderPlaced(true);
+      recordOrder(orderPayload);
       toast.success("Order placed successfully!", { description: "Your rental order has been confirmed." });
       // Navigate first, then clear — same tick, so the empty cart never renders.
       navigate("/order-success", { state: { orderData: orderPayload } });
       clearCart();
+      clearCheckoutSession();
     } catch (err) {
       // err.cartItemIds is set by addItemsToProposal when it fails mid-loop;
       // those ids are already in addedItemsRef.current so a retry will skip them.

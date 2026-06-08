@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
-import { User, Phone, Mail, MapPin, Calendar, Clock, Info, CheckCircle2, ChevronDown, Plus } from "lucide-react";
+import { User, Phone, Mail, MapPin, Calendar, Info, CheckCircle2, Plus } from "lucide-react";
 import { getAddresses } from "@/lib/addresses";
 
 /**
@@ -48,32 +47,51 @@ const InputField = ({ label, icon: Icon, placeholder, type = "text", ...props })
   </div>
 );
 
-const AddressSelector = ({ setFormData }) => {
-  const [expanded, setExpanded] = useState(false);
-  const [addresses, setAddresses] = useState(getAddresses);
-  const defaultAddr = addresses.find((a) => a.isDefault);
+// Links that leave checkout for the address book carry returnTo so the user
+// lands back on checkout (not Profile) and their typed details are restored.
+const ADDR_BOOK_STATE = { returnTo: "/checkout" };
 
-  // Sync default address fields into formData whenever the default address changes.
+const AddressSelector = ({ formData, setFormData }) => {
+  const addresses = getAddresses();
+
+  // Resolve the selected address: the one already chosen on this order (if it
+  // still exists), otherwise the default, otherwise the first saved address.
+  const selectedId =
+    (formData.addressId && addresses.some((a) => a.id === formData.addressId) && formData.addressId) ||
+    addresses.find((a) => a.isDefault)?.id ||
+    addresses[0]?.id ||
+    null;
+
+  const applyAddress = (addr) => {
+    setFormData((prev) => ({
+      ...prev,
+      addressId: addr.id,
+      addressLine1: addr.addressLine1,
+      addressLine2: addr.addressLine2 || "",
+      landmark: addr.landmark || "",
+      pincode: addr.pincode,
+      city: addr.city,
+      state: addr.state,
+    }));
+  };
+
+  // Keep formData in sync with the resolved selection. Covers first mount and
+  // the case where a previously-chosen address was deleted or the default
+  // changed in the address book. Keyed on selectedId so it can't loop.
   useEffect(() => {
-    if (defaultAddr) {
-      setFormData((prev) => ({
-        ...prev,
-        addressLine1: defaultAddr.addressLine1,
-        addressLine2: defaultAddr.addressLine2 || "",
-        landmark: defaultAddr.landmark || "",
-        pincode: defaultAddr.pincode,
-        city: defaultAddr.city,
-        state: defaultAddr.state,
-      }));
+    if (selectedId && selectedId !== formData.addressId) {
+      const addr = addresses.find((a) => a.id === selectedId);
+      if (addr) applyAddress(addr);
     }
-  }, [defaultAddr?.id]);
+  }, [selectedId]);
 
-  if (!defaultAddr) {
+  if (addresses.length === 0) {
     return (
       <div className="space-y-4">
         <p className="text-sm text-muted-foreground">No saved address yet. Add one to continue.</p>
         <Link
           to="/address-book"
+          state={ADDR_BOOK_STATE}
           className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-primary/30 text-primary text-sm font-semibold hover:bg-primary/5 transition-colors"
         >
           <Plus className="w-4 h-4" />
@@ -84,76 +102,63 @@ const AddressSelector = ({ setFormData }) => {
     );
   }
 
-  const shortAddr = [defaultAddr.addressLine1, defaultAddr.city, defaultAddr.pincode]
-    .filter(Boolean)
-    .join(", ");
-
   return (
     <div className="space-y-3">
-      {/* Collapsed card — tap to expand */}
-      <button
-        type="button"
-        onClick={() => setExpanded((v) => !v)}
-        className="w-full text-left bg-secondary/30 border border-border rounded-xl p-4 hover:border-primary/30 transition-all"
-      >
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="flex items-center gap-1.5 mb-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-success flex-shrink-0" />
-              <span className="text-[10px] font-bold text-success uppercase tracking-wider">Saved Address</span>
-            </div>
-            <p className="text-sm font-bold text-foreground">{defaultAddr.fullName}</p>
-            <p className="text-sm text-muted-foreground mt-0.5 truncate">{shortAddr}</p>
-          </div>
-          <ChevronDown
-            className={`w-4 h-4 text-muted-foreground flex-shrink-0 mt-1 transition-transform duration-200 ${
-              expanded ? "rotate-180" : ""
-            }`}
-          />
-        </div>
-      </button>
-
-      {/* Expanded full details */}
-      <AnimatePresence initial={false}>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="overflow-hidden"
-          >
-            <div className="bg-white border border-border rounded-xl p-4 space-y-1">
-              <p className="text-sm font-bold text-foreground">{defaultAddr.fullName}</p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {[defaultAddr.addressLine1, defaultAddr.addressLine2, defaultAddr.landmark]
-                  .filter(Boolean)
-                  .join(", ")}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {defaultAddr.city}, {defaultAddr.state} {defaultAddr.pincode}
-              </p>
-              <p className="text-sm text-muted-foreground">Mob: +91 {defaultAddr.phone}</p>
-              <div className="pt-2 border-t border-border/50 mt-2">
-                <Link
-                  to="/address-book"
-                  className="text-xs font-bold text-primary hover:underline"
+      {/* Selectable saved addresses */}
+      <div className="space-y-2.5">
+        {addresses.map((addr) => {
+          const isSelected = addr.id === selectedId;
+          const lines = [addr.addressLine1, addr.addressLine2, addr.landmark].filter(Boolean).join(", ");
+          return (
+            <button
+              key={addr.id}
+              type="button"
+              onClick={() => applyAddress(addr)}
+              className={`w-full text-left rounded-xl border p-4 transition-all ${
+                isSelected
+                  ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                  : "border-border bg-secondary/30 hover:border-primary/30"
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                {/* Radio indicator */}
+                <span
+                  className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                    isSelected ? "border-primary" : "border-border"
+                  }`}
                 >
-                  Edit in Address Book
-                </Link>
+                  {isSelected && <span className="w-2 h-2 rounded-full bg-primary" />}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-sm font-bold text-foreground">{addr.fullName}</p>
+                    {addr.isDefault && (
+                      <span className="text-[9px] font-bold text-success uppercase tracking-wider bg-success-muted border border-success-border rounded-full px-1.5 py-0.5">
+                        Default
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">{lines}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {addr.city}, {addr.state} {addr.pincode}
+                  </p>
+                  <p className="text-sm text-muted-foreground">Mob: +91 {addr.phone}</p>
+                </div>
+                {isSelected && <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />}
               </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </button>
+          );
+        })}
+      </div>
 
-      {/* Add / change address */}
+      {/* Add / edit address — round-trips back to checkout */}
       <Link
         to="/address-book"
+        state={ADDR_BOOK_STATE}
         className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-primary transition-colors"
       >
         <Plus className="w-3.5 h-3.5" />
-        Add or change address
+        Add or edit addresses
       </Link>
 
       <ServiceabilityNote />
@@ -235,7 +240,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
         icon={MapPin}
         subtitle="Currently serving Gurgaon, Noida, and select areas across Delhi NCR."
       >
-        <AddressSelector setFormData={setFormData} />
+        <AddressSelector formData={formData} setFormData={setFormData} />
       </CheckoutCard>
 
       {/* 3. Rental Start Details */}

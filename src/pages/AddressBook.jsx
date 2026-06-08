@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { MapPin, Plus, Pencil, Trash2, ChevronLeft, Star, Loader2, CheckCircle2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -199,6 +199,11 @@ const AddressForm = ({ initial = EMPTY_FORM, onSave, onCancel }) => {
 };
 
 const AddressBook = () => {
+  const location = useLocation();
+  // When opened mid-checkout the link passes returnTo so we can send the user
+  // back to where they were instead of always dumping them on Profile.
+  const returnTo = location.state?.returnTo || "/profile";
+  const backLabel = returnTo === "/checkout" ? "Checkout" : "Profile";
   const [addresses, setAddresses] = useState(getAddresses);
   const [mode, setMode] = useState(null); // null | "add" | { type: "edit", id }
 
@@ -302,10 +307,10 @@ const AddressBook = () => {
       <main className="flex-1 section-container py-10 md:py-14 max-w-lg mx-auto w-full">
         {/* Back link */}
         <Link
-          to="/profile"
+          to={returnTo}
           className="inline-flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest mb-6"
         >
-          <ChevronLeft className="w-3.5 h-3.5" /> Profile
+          <ChevronLeft className="w-3.5 h-3.5" /> {backLabel}
         </Link>
 
         {/* Page heading */}

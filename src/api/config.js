@@ -20,7 +20,8 @@ export const USING_MOCK_DATA = !RAW_API_BASE;
 export const API_BASE = import.meta.env.DEV ? "/api" : RAW_API_BASE;
 
 // JWT minting (/get-jwt-token) and KYC upload (/update-kyc) live on testaws.
-export const AWS_BASE = "https://testaws.rentbasket.com";
+// In dev the Vite proxy forwards /aws/* to testaws (avoids CORS).
+export const AWS_BASE = import.meta.env.DEV ? "/aws" : "https://testaws.rentbasket.com";
 
 // App key for /get-jwt-token (Bearer-JWT auth for most endpoints).
 export const APP_KEY = import.meta.env.VITE_API_APP_KEY?.trim();

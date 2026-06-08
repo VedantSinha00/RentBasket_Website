@@ -28,7 +28,7 @@ const AccountDetails = () => {
       address: "",
       org_name: "",
       about_me: "",
-      social_media_link: "",
+      social_media_links: "",
       reg_mobile_num: current?.phone ?? "",
     };
   };

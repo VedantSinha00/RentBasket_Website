@@ -15,6 +15,7 @@ import {
 import logo from "@/assets/7 1.png";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
+import { getRecentOrders } from "@/lib/recentOrders";
 
 const SUPPORT_WHATSAPP = "https://wa.me/919958858473";
 
@@ -225,12 +226,16 @@ const MyOrders = () => {
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    // TODO: replace with real API call
-    // const auth = getAuth();
-    // const data = await fetch("/orders/my-orders", {
-    //   headers: { Authorization: `Bearer ${auth.token}` }
-    // }).then(r => r.json());
-    // setOrders(data.orders);
+    // STOPGAP: the order-history API is still pending from Shivam. Until it
+    // lands we surface orders placed on this device (see lib/recentOrders.js)
+    // so this page reflects a just-placed order instead of a flat empty state.
+    // TODO(Shivam API): replace with the real call, e.g.
+    //   const auth = getAuth();
+    //   const data = await fetch("/orders/my-orders", {
+    //     headers: { Authorization: `Bearer ${auth.token}` }
+    //   }).then(r => r.json());
+    //   setOrders(data.orders);
+    setOrders(getRecentOrders());
     setIsLoading(false);
   }, []);
 

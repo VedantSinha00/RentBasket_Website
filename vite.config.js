@@ -46,17 +46,22 @@ export default defineConfig(({ command, mode }) => {
       hmr: { overlay: false },
       // Proxy /api/* → API server in dev to avoid CORS issues.
       // Production requests go direct; Shivam needs to add CORS headers there.
-      ...(apiTarget
-        ? {
-            proxy: {
+      proxy: {
+        "/aws": {
+          target: "https://testaws.rentbasket.com",
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/aws/, ""),
+        },
+        ...(apiTarget
+          ? {
               "/api": {
                 target: apiTarget,
                 changeOrigin: true,
                 rewrite: (p) => p.replace(/^\/api/, ""),
               },
-            },
-          }
-        : {}),
+            }
+          : {}),
+      },
     },
     plugins: [react(), cspMeta(mode === "production")],
     resolve: {

@@ -54,8 +54,7 @@ const Kyc = () => {
         ]);
 
         const kycDetails = kycData.kyc_details ?? [];
-        const kycChecklist = kycData.kyc_check_list ?? [];
-        const mandatoryDocs = kycChecklist.filter((d) => d.mandatory === 1);
+        const mandatoryDocs = (docList ?? []).filter((d) => d.mandatory === 1);
 
         const allMandatoryDone = mandatoryDocs.every((d) => d.is_done === 1);
         if (kycDetails[0]?.status === "Completed" && allMandatoryDone) {

@@ -92,6 +92,10 @@ const CustomerValidation = () => {
         userData = await loginWithOtp(phoneNumber, otp);
       } else {
         await signUpWithOtp(phoneNumber, otp, cityId);
+        // The signup endpoint doesn't return a token (mobile-app-only field).
+        // We re-use the same OTP to log in immediately after. If the backend
+        // treats OTPs as single-use this second call will fail — in that case
+        // we catch below and tell the user to request a fresh OTP.
         userData = await loginWithOtp(phoneNumber, otp);
       }
       setAuth({
@@ -107,7 +111,19 @@ const CustomerValidation = () => {
       });
       navigate(returnTo, { state: { verifiedPhone: phoneNumber } });
     } catch (err) {
-      toast.error(err.message);
+      const isPostSignupLoginFail = !isRegistered;
+      toast.error(
+        isPostSignupLoginFail
+          ? "Account created! Please request a new OTP to log in."
+          : err.message,
+        isPostSignupLoginFail
+          ? { description: "Tap 'Resend OTP' below to get a fresh code." }
+          : undefined,
+      );
+      if (isPostSignupLoginFail) {
+        setOtp("");
+        setIsRegistered(true); // switch to login path so next attempt skips signUpWithOtp
+      }
     } finally {
       setIsLoading(false);
     }

@@ -78,7 +78,7 @@ const RouterApp = () => {
           {routePair("/customer-validation", <CustomerValidation />)}
           {routePair("/order-summary", <OrderSummary />)}
           {routePair("/order-success", <OrderSuccess />)}
-          {routePair("/kyc", <Kyc />)}
+          {routePair("/kyc", <ProtectedRoute><Kyc /></ProtectedRoute>)}
           {routePair("/profile", <Profile />)}
           {routePair("/account/details", <ProtectedRoute><AccountDetails /></ProtectedRoute>)}
           {routePair("/address-book", <ProtectedRoute><AddressBook /></ProtectedRoute>)}
