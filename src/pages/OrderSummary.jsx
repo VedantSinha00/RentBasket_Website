@@ -8,6 +8,9 @@ import { getAuth } from "@/lib/auth";
 import { safeRemove } from "@/lib/safeStorage";
 import { recordOrder } from "@/lib/recentOrders";
 import { addItemsToProposal, confirmProposal } from "@/api/proposal";
+import CheckoutHeader from "@/components/checkout/CheckoutHeader";
+import CheckoutProgress from "@/components/checkout/CheckoutProgress";
+import CheckoutSummary from "@/components/checkout/CheckoutSummary";
 
 /** Tear down the per-checkout session state once an order is placed. */
 const clearCheckoutSession = () => {
@@ -15,9 +18,6 @@ const clearCheckoutSession = () => {
   safeRemove("rb_verified_phone", sessionStorage);
   safeRemove("rb_cart_proceed", sessionStorage);
 };
-import CheckoutHeader from "@/components/checkout/CheckoutHeader";
-import CheckoutProgress from "@/components/checkout/CheckoutProgress";
-import CheckoutSummary from "@/components/checkout/CheckoutSummary";
 
 const OrderSummary = () => {
   const { cartItems, clearCart, coupon } = useCart();

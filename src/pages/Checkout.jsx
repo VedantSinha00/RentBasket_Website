@@ -5,6 +5,9 @@ import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 import { getAuth } from "@/lib/auth";
 import { safeSet, safeGet } from "@/lib/safeStorage";
+import CheckoutHeader from "@/components/checkout/CheckoutHeader";
+import CheckoutProgress from "@/components/checkout/CheckoutProgress";
+import CheckoutForm from "@/components/checkout/CheckoutForm";
 
 const CHECKOUT_FORM_KEY = "rb_checkout_form";
 
@@ -16,9 +19,6 @@ const loadCheckoutDraft = () => {
     return null;
   }
 };
-import CheckoutHeader from "@/components/checkout/CheckoutHeader";
-import CheckoutProgress from "@/components/checkout/CheckoutProgress";
-import CheckoutForm from "@/components/checkout/CheckoutForm";
 
 const DEFAULT_FORM = {
   fullName: "",
