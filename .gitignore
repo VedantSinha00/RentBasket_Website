@@ -25,3 +25,6 @@ Thumbs.db
 # Internal planning docs (not for the repo)
 docs/
 _internal/
+
+# Vite dev server artifacts
+vite.config.js.timestamp-*
