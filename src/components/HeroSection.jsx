@@ -21,10 +21,9 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <span className="font-script font-normal text-primary text-[1.1em] mr-1">Comfort</span>{" "}
-          <span className="text-primary">for your home</span>
-          <br />
-          <span className="text-gradient-coral font-extrabold [filter:drop-shadow(0_0_10px_rgba(255,255,255,1))_drop-shadow(0_0_20px_rgba(255,255,255,0.9))_drop-shadow(0_2px_4px_rgba(255,255,255,0.8))]">without the hassle of ownership</span>
+          <span className="font-script font-normal text-primary text-[1.1em] mr-1">Rent</span>{" "}
+          quality furniture &amp; appliances in{" "}
+          <span className="text-primary">Delhi&nbsp;NCR</span>
         </motion.h1>
 
         {/* Mascot video container - Chest up close-up */}
