@@ -110,7 +110,7 @@ const ProductDetails = () => {
       percent_discount: product.percent_discount,
       security_multiple: product.security_multiple,
     });
-    toast.success(`${product.name} added to cart`, {
+    toast.success(`${product.name} added to basket`, {
       description: `${durationLabel} plan · ₹${price.toLocaleString("en-IN")}`,
     });
     navigate("/cart");

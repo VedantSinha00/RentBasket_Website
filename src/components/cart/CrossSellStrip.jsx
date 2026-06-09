@@ -125,7 +125,7 @@ const CrossSellStrip = () => {
       isRecommendation: true,
     });
 
-    toast.success(`${product.name} added to cart`, {
+    toast.success(`${product.name} added to basket`, {
       description: `${label} plan · ₹${basePrice.toLocaleString("en-IN")}/mo`,
     });
   };
