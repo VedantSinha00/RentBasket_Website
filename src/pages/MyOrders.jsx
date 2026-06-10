@@ -16,27 +16,30 @@ import logo from "@/assets/7 1.png";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
 import { getRecentOrders } from "@/lib/recentOrders";
+import { fetchOrders } from "@/api/orders";
+import { getAuth } from "@/lib/auth";
 
 const SUPPORT_WHATSAPP = "https://wa.me/919958858473";
 
+// Status buckets. The founder confirmed (2026-06-11) the order table will gain
+// explicit "Active rental" and "Completed" statuses. The "active" bucket is wired
+// up and ready but stays empty until the backend emits that status — until then
+// every order falls into "upcoming" or "completed" (see src/api/orders.js).
 const STATUS_CONFIG = {
-  active: {
-    label: "Active Rental",
-    icon: CalendarCheck,
-    badgeClass: "bg-success-muted text-success-muted-foreground border-success-border",
-    dot: "bg-success",
-  },
   upcoming: {
     label: "Arriving Soon",
     icon: Truck,
     badgeClass: "bg-coral-surface text-primary border-coral-border",
-    dot: "bg-primary",
+  },
+  active: {
+    label: "Active Rental",
+    icon: CalendarCheck,
+    badgeClass: "bg-success-muted text-success-muted-foreground border-success-border",
   },
   completed: {
     label: "Completed",
     icon: CheckCircle2,
     badgeClass: "bg-secondary/40 text-muted-foreground border-border",
-    dot: "bg-muted-foreground",
   },
 };
 
@@ -117,15 +120,17 @@ const OrderCard = ({ order }) => {
           <div key={idx} className="flex gap-4 pb-4 border-b border-border/30 last:border-0 last:pb-0">
             <Link
               to={`/product/${item.amenity_type_id}`}
-              className="w-16 h-16 bg-gray-50 rounded-xl border border-border/50 flex-shrink-0 p-1.5 hover:border-primary/30 transition-colors group"
+              className="w-16 h-16 bg-gray-50 rounded-xl border border-border/50 flex-shrink-0 p-1.5 hover:border-primary/30 transition-colors group flex items-center justify-center"
             >
-              {item.image && (
+              {item.image ? (
                 <img
                   src={item.image}
                   alt={item.name}
                   className="w-full h-full object-contain transition-transform group-hover:scale-105"
                   onError={(e) => { e.target.style.display = "none"; }}
                 />
+              ) : (
+                <Package className="w-6 h-6 text-muted-foreground/40" />
               )}
             </Link>
             <div className="flex-1 min-w-0">
@@ -155,11 +160,11 @@ const OrderCard = ({ order }) => {
           <div className="rounded-xl border border-border/50 bg-background p-3.5">
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 mb-2">
               <MapPin className="w-3.5 h-3.5 text-primary" />
-              {order.status === "completed" ? "Was Delivered To" : order.status === "upcoming" ? "Delivering To" : "Delivery"}
+              {order.status === "completed" ? "Was Delivered To" : order.status === "active" ? "Delivered To" : "Delivering To"}
             </p>
-            <p className="text-xs text-muted-foreground leading-relaxed">{order.address}</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">{order.address || "Address on file"}</p>
             <p className="text-[11px] font-medium text-foreground mt-1.5">
-              {order.status === "upcoming" ? "Scheduled: " : ""}{order.deliveryDate} · {order.deliverySlot}
+              {order.status === "upcoming" ? "Scheduled: " : ""}{order.deliveryDate}{order.deliverySlot ? ` · ${order.deliverySlot}` : ""}
             </p>
           </div>
           <div className="rounded-xl border border-border/50 bg-background p-3.5">
@@ -173,14 +178,20 @@ const OrderCard = ({ order }) => {
                 <span className="text-muted-foreground">Deposit (refundable)</span>
                 <span className="font-medium text-foreground">₹{order.deposit.toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between pt-1 mt-1 border-t border-border/50">
-                <span className="text-muted-foreground font-medium">
-                  {order.status === "completed" ? "Returned On" : order.status === "upcoming" ? "Starts On" : "Renews On"}
-                </span>
-                <span className="font-bold text-foreground">
-                  {order.returnedOn || order.startsOn || order.renewsOn}
-                </span>
-              </div>
+              {(() => {
+                // Only render the lifecycle row when we have a real date for it.
+                // Upcoming orders start on the delivery date ("Starts On").
+                // Completed orders have no return date from this API, so the row
+                // is omitted rather than showing a misleading delivery date.
+                const lifecycleDate = order.startsOn;
+                if (!lifecycleDate) return null;
+                return (
+                  <div className="flex justify-between pt-1 mt-1 border-t border-border/50">
+                    <span className="text-muted-foreground font-medium">Starts On</span>
+                    <span className="font-bold text-foreground">{lifecycleDate}</span>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>
@@ -195,7 +206,15 @@ const OrderCard = ({ order }) => {
               <RotateCcw className="w-3.5 h-3.5" />
               Rent Again
             </button>
-          ) : order.status === "upcoming" ? (
+          ) : order.status === "active" ? (
+            <a
+              href="tel:+919958858473"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-primary/30 text-xs font-bold text-primary hover:bg-primary/5 transition-colors active:scale-95"
+            >
+              <Headset className="w-3.5 h-3.5" />
+              Get Support
+            </a>
+          ) : (
             <a
               href={SUPPORT_WHATSAPP}
               target="_blank"
@@ -204,14 +223,6 @@ const OrderCard = ({ order }) => {
             >
               <Truck className="w-3.5 h-3.5" />
               Track Delivery
-            </a>
-          ) : (
-            <a
-              href="tel:+919958858473"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-primary/30 text-xs font-bold text-primary hover:bg-primary/5 transition-colors active:scale-95"
-            >
-              <Headset className="w-3.5 h-3.5" />
-              Get Support
             </a>
           )}
         </div>
@@ -223,20 +234,46 @@ const OrderCard = ({ order }) => {
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    // STOPGAP: the order-history API is still pending from Shivam. Until it
-    // lands we surface orders placed on this device (see lib/recentOrders.js)
-    // so this page reflects a just-placed order instead of a flat empty state.
-    // TODO(Shivam API): replace with the real call, e.g.
-    //   const auth = getAuth();
-    //   const data = await fetch("/orders/my-orders", {
-    //     headers: { Authorization: `Bearer ${auth.token}` }
-    //   }).then(r => r.json());
-    //   setOrders(data.orders);
-    setOrders(getRecentOrders());
-    setIsLoading(false);
+    let cancelled = false;
+
+    // Optimistic: orders placed on this device (lib/recentOrders.js) show
+    // immediately while the backend list loads — and bridge the window before a
+    // just-placed order is reflected server-side.
+    const local = getRecentOrders();
+
+    const userId = getAuth()?.userId;
+    if (!userId) {
+      // Not signed in (or legacy auth without userId) — fall back to local only.
+      setOrders(local);
+      setIsLoading(false);
+      return;
+    }
+
+    (async () => {
+      try {
+        const remote = await fetchOrders(userId);
+        if (cancelled) return;
+        // Merge: remote is the source of truth; keep any local order the backend
+        // doesn't list yet (de-duped by orderId), newest-first.
+        const remoteIds = new Set(remote.map((o) => o.orderId));
+        const pendingLocal = local.filter((o) => !remoteIds.has(String(o.orderId)));
+        setOrders([...pendingLocal, ...remote]);
+      } catch {
+        if (cancelled) return;
+        // Network/API failure → show local orders and a soft error notice
+        // rather than a misleading empty state.
+        setOrders(local);
+        setLoadError(true);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    })();
+
+    return () => { cancelled = true; };
   }, []);
 
   const visibleOrders = filter === "all"
@@ -306,6 +343,12 @@ const MyOrders = () => {
               );
             })}
           </div>
+
+          {loadError && !isLoading && (
+            <div className="mb-5 rounded-xl border border-coral-border bg-coral-surface px-4 py-3 text-xs font-medium text-primary">
+              We couldn't refresh your orders just now. Showing recent activity from this device — pull up again in a bit.
+            </div>
+          )}
 
           {/* Content */}
           {isLoading ? (

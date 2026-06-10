@@ -69,7 +69,16 @@ export async function addItemsToProposal(userId, leadId, cartItems, added = new 
   return [...added.values()];
 }
 
-export async function confirmProposal(userId, leadId, cartItemIds, couponId) {
+/**
+ * Confirm the proposal into an order.
+ *
+ * `delivery` carries the two extra order keys the backend accepts (founder
+ * 2026-06-11): `expected_delivery_date` and `expected_delivery_time_slot`.
+ * Build it with getDeliveryFields() from src/lib/delivery.js so the "no choice →
+ * slot 4_6 on the 3rd day" default is applied consistently. Any keys present are
+ * spread onto the request body; omit `delivery` to send neither.
+ */
+export async function confirmProposal(userId, leadId, cartItemIds, couponId, delivery = {}) {
   return proposalFetch("/confirm-proposal-for-tenant", {
     user_id: String(userId),
     lead_id: String(leadId),
@@ -77,6 +86,7 @@ export async function confirmProposal(userId, leadId, cartItemIds, couponId) {
       cart_item_id: id,
       coupon_list: couponId != null ? [couponId] : [],
     })),
+    ...delivery,
   });
 }
 

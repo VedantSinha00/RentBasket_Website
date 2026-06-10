@@ -1,14 +1,13 @@
 import { safeSet } from "@/lib/safeStorage";
 
 /**
- * STOPGAP order history.
+ * Optimistic local order bridge.
  *
- * The real order-history API is still pending from Shivam (backend). Until it
- * lands, we persist the orders placed on this device to localStorage so that
- * "My Orders" reflects a just-placed order instead of a permanent empty state.
- *
- * TODO(Shivam API): replace getRecentOrders() in MyOrders with a real
- * GET /orders/my-orders call and delete this module.
+ * My Orders now loads the real backend list via src/api/orders.js
+ * (GET /get-order-details). This module persists orders placed on THIS device
+ * so a just-placed order shows immediately, bridging the window before the
+ * backend reflects it. MyOrders merges these in, de-duped by orderId, and the
+ * backend list is the source of truth once an order appears there.
  */
 
 const KEY = "rentbasket_recent_orders";

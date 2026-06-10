@@ -7,6 +7,7 @@ import { cartBreakdown } from "@/lib/pricing";
 import { getAuth } from "@/lib/auth";
 import { safeRemove } from "@/lib/safeStorage";
 import { recordOrder } from "@/lib/recentOrders";
+import { getDeliveryFields } from "@/lib/delivery";
 import { addItemsToProposal, confirmProposal, fetchProposalCart, applyGlobalCoupon } from "@/api/proposal";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
@@ -130,7 +131,10 @@ const OrderSummary = () => {
         await applyGlobalCoupon(auth.userId, auth.leadId, coupon.id).catch(() => {});
       }
 
-      const apiResponse = await confirmProposal(auth.userId, auth.leadId, cartItemIds, coupon?.id ?? null);
+      // Attach expected_delivery_date + expected_delivery_time_slot. getDeliveryFields
+      // defaults to slot "4_6" on the 3rd day from today when the user didn't choose.
+      const delivery = getDeliveryFields(formData);
+      const apiResponse = await confirmProposal(auth.userId, auth.leadId, cartItemIds, coupon?.id ?? null, delivery);
 
       const b = cartBreakdown(cartItems, coupon);
       const rawOrderId = apiResponse?.data?.order_id ?? apiResponse?.data?.orderId;
