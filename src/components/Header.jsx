@@ -13,6 +13,7 @@ const Header = () => {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const onCatalog = pathname === "/catalog";
+  const onCart = pathname === "/cart";
   const showMobileSearch =
     pathname === "/" || pathname === "/catalog" || pathname.startsWith("/product");
 
@@ -143,7 +144,7 @@ const Header = () => {
 
           {/* Icons */}
           <div
-            className={`flex items-center gap-1 md:gap-3 shrink-0 transition-opacity duration-200 ${
+            className={`ml-auto flex items-center gap-1 md:gap-3 shrink-0 transition-opacity duration-200 ${
               searchFocused
                 ? "opacity-20 pointer-events-none md:opacity-100 md:pointer-events-auto"
                 : "opacity-100"
@@ -168,18 +169,20 @@ const Header = () => {
                 </span>
               )}
             </Link>
-            <Link
-              to="/cart"
-              className="relative p-1.5 md:p-2 rounded-xl hover:bg-secondary transition-colors"
-              title="View Cart"
-            >
-              <ShoppingBag className="w-5 h-5 text-muted-foreground" />
-              {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
-                  {cartCount > 9 ? "9+" : cartCount}
-                </span>
-              )}
-            </Link>
+            {!onCart && (
+              <Link
+                to="/cart"
+                className="relative p-1.5 md:p-2 rounded-xl hover:bg-secondary transition-colors"
+                title="View Cart"
+              >
+                <ShoppingBag className="w-5 h-5 text-muted-foreground" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
+                    {cartCount > 9 ? "9+" : cartCount}
+                  </span>
+                )}
+              </Link>
+            )}
             <a
               href="#download"
               className="hidden sm:inline-flex btn-outline text-sm py-2 px-4"
