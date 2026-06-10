@@ -28,3 +28,6 @@ _internal/
 
 # Vite dev server artifacts
 vite.config.js.timestamp-*
+
+# Local Netlify folder
+.netlify
