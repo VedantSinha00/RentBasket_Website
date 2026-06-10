@@ -5,9 +5,12 @@ the secret keys never ship in the browser bundle. This is the **Option A** appro
 from [`docs/proxy-vs-publishable-decision.md`](../docs/proxy-vs-publishable-decision.md),
 deployed via **Sub-path A-i** (a subdomain on Netlify reached by one CNAME in Wix).
 
-> **Status: pre-build, NOT yet wired into the website.** This is a provisional bet
-> on Option A (reversible). The client still talks to the API directly until the
-> founder confirms A and we do the WS3 cut-over. Nothing here changes the live site.
+> **Status (2026-06-11): Option A confirmed and WIRED in code; deploy is infra-gated.**
+> The website now switches to the proxy whenever `VITE_PROXY_URL` is set (see
+> `src/api/config.js`) and ships no secret keys in that mode — verified locally.
+> The remaining work is account/DNS setup only (see `docs/proxy-deploy-handoff.md`);
+> until the proxy is deployed and that var is set, the live site still runs in
+> direct mode, so nothing here has changed the live site yet. Fully reversible.
 
 ## What it does
 
@@ -42,26 +45,31 @@ curl http://localhost:8787/get-amenity-types        # → real catalog JSON, no 
 3. Add the custom domain `api.rentbasket.com` in Netlify, then add the **one CNAME**
    it gives you in **Wix DNS**. Netlify provisions the TLS cert.
 
-## Wiring the website to it (later — WS3, one file)
+## Wiring the website to it (DONE — controlled by one env var)
 
-Because of the WS1 seam, this is a one-file change in
-[`src/api/config.js`](../src/api/config.js):
+Thanks to the WS1 seam, wiring lives entirely in
+[`src/api/config.js`](../src/api/config.js) and is toggled by `VITE_PROXY_URL`:
 
-- Set `API_BASE` to the proxy origin (`https://api.rentbasket.com` in prod).
-- Remove `APP_KEY` / `CATALOG_API_KEY` from the client (the proxy holds them).
-- In `auth.js`, stop sending `app_key` in the `/get-jwt-token` body (proxy adds it).
-- In `products.js` `catalogFetch`, drop the `Authorization-Key` header (proxy adds it).
+- When `VITE_PROXY_URL` is set, `API_BASE` and `AWS_BASE` point at the proxy and the
+  client ships **no secret keys** (the key branches are dead-code-eliminated — the
+  gate is `import.meta.env.VITE_PROXY_URL` directly, so the minifier drops them).
+- `auth.js` still sends an (empty) `app_key`; the proxy overwrites it server-side.
+- `products.js` `catalogFetch` still sends a non-secret `"proxy"` sentinel as the
+  `Authorization-Key`; the proxy overwrites it with the real key.
 
-Then **rotate the old key** (it's out of the bundle) — a one-line swap of the proxy's
-env var, no website release.
+To go live: set `VITE_PROXY_URL=https://api.rentbasket.com` in the build env and stop
+setting the two `VITE_*` key vars. **Key rotation** (after the key is confirmed out of
+the deployed bundle) is Shivam's task during production wrap-up — a one-line swap of
+the proxy's env var, no website release.
 
-## Known gaps (pre-build)
+## Known gaps
 
-- **Multipart upload** (`/update-kyc`, FormData) is not proxied yet — needs binary
-  body passthrough. KYC upload is independently broken upstream (shivam-pending #7),
-  so it isn't blocking. Add before relying on KYC uploads through the proxy.
 - **httpOnly cookie** for the JWT is a later step (WS3/Phase 3); today the browser
   still holds the JWT (a session token, not the app-key secret).
+
+_(The earlier multipart `/update-kyc` gap is closed — the body is passed through as
+raw bytes in both `dev-server.js` and `netlify/functions/api.js`; KYC upload verified
+returning 200 through the proxy.)_
 
 ## Reversibility
 
