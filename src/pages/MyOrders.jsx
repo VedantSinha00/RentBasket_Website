@@ -85,7 +85,7 @@ const OrderCard = ({ order }) => {
         image: item.image,
       });
     });
-    toast.success("Added to cart", { description: "Your previous items are ready to rent again." });
+    toast.success("Added to basket", { description: "Your previous items are ready to rent again." });
   };
 
   return (
