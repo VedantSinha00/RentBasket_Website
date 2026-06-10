@@ -20,9 +20,10 @@
  *   - The catalog Authorization-Key is injected here; the browser never holds it.
  *   (A later step can move the JWT into an httpOnly cookie — WS3/Phase 3.)
  *
- * NOTE: multipart upload (/update-kyc, FormData) is not handled by this pre-build
- * yet — see README "Known gaps". KYC upload is independently broken upstream
- * (shivam-pending #7) so it isn't on the critical path.
+ * Body handling: the raw request body is passed through to upstream untouched
+ * (as a Buffer), so multipart uploads (/update-kyc, FormData) survive intact —
+ * the incoming Content-Type, including the multipart boundary, is forwarded.
+ * Only /get-jwt-token decodes the body, to inject the app key into its JSON.
  */
 
 const UPSTREAM_API = process.env.UPSTREAM_API || "https://testapi.rentbasket.com";
@@ -84,9 +85,10 @@ export async function handleProxy({ method, path, query = "", headers = {}, body
   let outBody = body;
   if (path === "/get-jwt-token") {
     // Inject the app key server-side so the browser never holds it.
+    const raw = body ? body.toString("utf8") : "";
     let parsed = {};
     try {
-      parsed = body ? JSON.parse(body) : {};
+      parsed = raw ? JSON.parse(raw) : {};
     } catch {
       parsed = {};
     }
@@ -94,6 +96,8 @@ export async function handleProxy({ method, path, query = "", headers = {}, body
     outBody = JSON.stringify(parsed);
     outHeaders["Content-Type"] = "application/json";
   } else if (body && h["content-type"]) {
+    // Pass the body through as-is (Buffer). For multipart this preserves the
+    // boundary declared in the incoming Content-Type, so file uploads survive.
     outHeaders["Content-Type"] = h["content-type"];
   }
 

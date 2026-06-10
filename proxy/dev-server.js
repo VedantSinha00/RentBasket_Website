@@ -17,7 +17,10 @@ const server = http.createServer(async (req, res) => {
   try {
     const chunks = [];
     for await (const c of req) chunks.push(c);
-    const body = chunks.length ? Buffer.concat(chunks).toString("utf8") : undefined;
+    // Keep the body as raw bytes — multipart uploads (/update-kyc) carry binary
+    // file data that a UTF-8 decode would corrupt. The handler decodes to a
+    // string only for the JSON paths that need it.
+    const body = chunks.length ? Buffer.concat(chunks) : undefined;
     const [path, query = ""] = req.url.split("?");
 
     const result = await handleProxy({
