@@ -53,8 +53,10 @@ export function slotLabel(timeSlot) {
   return "";
 }
 
-/** Date string (YYYY-MM-DD) for N days from today, in local time. */
-function dateNDaysFromToday(n) {
+/** Date string (YYYY-MM-DD) for N days from today, in local time.
+ *  Exported as THE way to build form/cart dates — `toISOString()` is UTC and
+ *  shows yesterday's date between midnight and 05:30 IST. */
+export function dateNDaysFromToday(n) {
   const d = new Date();
   d.setDate(d.getDate() + n);
   // Local YYYY-MM-DD (avoid toISOString's UTC shift flipping the day).

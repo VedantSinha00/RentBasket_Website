@@ -38,6 +38,9 @@ const CartItemCard = ({ item }) => {
   const handleDurationChange = (newDurationKey) => {
     setShowDurationPicker(false);
     if (newDurationKey === item.duration) return;
+    // Pricing for the new duration needs the product; until it loads, bail out
+    // rather than carry the old duration's rent onto the new plan.
+    if (!product) return;
 
     // Moving to another duration shifts this line into a different cart group
     // (and a different checkout). changeItemDuration handles the rent recalc and

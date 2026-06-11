@@ -8,6 +8,18 @@ import { generateOtp, loginWithOtp, signUpWithOtp } from "@/api/otp";
 
 const RESEND_COOLDOWN = 30; // seconds
 
+/**
+ * Backend validation messages (e.g. "Invalid OTP") are user-meaningful; the
+ * plumbing failures ("Auth: token fetch failed (500)", "OTP API failed (502)",
+ * "Failed to fetch") are not — swap those for friendly copy.
+ */
+const friendlyError = (err, fallback) => {
+  const msg = err?.message || "";
+  return !msg || /^auth:|failed \(\d+\)|failed to fetch|networkerror/i.test(msg)
+    ? fallback
+    : msg;
+};
+
 const CustomerValidation = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,7 +53,7 @@ const CustomerValidation = () => {
       setResendIn(RESEND_COOLDOWN);
       toast.success("OTP sent to your mobile number");
     } catch (err) {
-      toast.error(err.message);
+      toast.error(friendlyError(err, "Couldn't send the OTP. Please check your connection and try again."));
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +68,7 @@ const CustomerValidation = () => {
       setResendIn(RESEND_COOLDOWN);
       toast.success("OTP resent to your mobile number");
     } catch (err) {
-      toast.error(err.message);
+      toast.error(friendlyError(err, "Couldn't resend the OTP. Please try again in a moment."));
     } finally {
       setIsLoading(false);
     }
@@ -104,7 +116,7 @@ const CustomerValidation = () => {
         setOtp("");
         setIsRegistered(true);
       } else {
-        toast.error(err.message || "Something went wrong. Please try again.");
+        toast.error(friendlyError(err, "Couldn't verify the OTP. Please try again."));
       }
     } finally {
       setIsLoading(false);

@@ -167,9 +167,13 @@ const OrderSummary = () => {
       );
 
       // Set delivery slot + date on the proposal (non-fatal — don't block confirmation).
+      // The endpoint wants a numeric slot id; a legacy draft may hold an old text
+      // label ("Morning") — skip the call then, confirmProposal still carries the
+      // resolved slot code via getDeliveryFields.
       const delivery = getDeliveryFields(formData);
-      if (formData?.timeSlot && delivery.expected_delivery_date) {
-        await setDeliverySlot(auth.leadId, formData.timeSlot, delivery.expected_delivery_date).catch((err) => {
+      const slotId = Number(formData?.timeSlot);
+      if (Number.isFinite(slotId) && slotId > 0 && delivery.expected_delivery_date) {
+        await setDeliverySlot(auth.leadId, slotId, delivery.expected_delivery_date).catch((err) => {
           console.warn("[OrderSummary] set-delivery-slot failed (non-fatal):", err.message);
         });
       }
@@ -275,8 +279,7 @@ const OrderSummary = () => {
                   <span>
                     Starts{" "}
                     {new Date(formData.startDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
-                    {" · "}
-                    {slotLabel(formData.timeSlot)}
+                    {slotLabel(formData.timeSlot) ? ` · ${slotLabel(formData.timeSlot)}` : ""}
                   </span>
                 </div>
               </div>

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useEffect } from "react";
+import { useLocation, useNavigate, Navigate, Link } from "react-router-dom";
 import { ShieldCheck, FileCheck2, ArrowRight, CheckCircle2 } from "lucide-react";
 import logo from "@/assets/7 1.png";
 import SuccessHero from "@/components/success/SuccessHero";
@@ -10,59 +10,17 @@ import { IncludedBenefits, SuccessSupport, SuccessFAQ } from "@/components/succe
 const OrderSuccess = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [orderData, setOrderData] = useState(null);
+  const orderData = location.state?.orderData ?? null;
   const kycComplete = Boolean(location.state?.kycComplete);
 
   useEffect(() => {
-    // If we have state from checkout, use it. Otherwise, use mock data for direct visits/testing.
-    if (location.state && location.state.orderData) {
-      setOrderData(location.state.orderData);
-    } else {
-      // Create comprehensive mock data if accessed directly
-      setOrderData({
-        orderId: `RB-${Math.floor(Math.random() * 90000) + 10000}`,
-        bookingDate: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
-        deliveryDate: new Date(Date.now() + 86400000 * 2).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
-        deliverySlot: "Morning (9 AM - 1 PM)",
-        customerDetails: {
-          name: "Rahul Sharma",
-          phone: "+91 99588 58473",
-          email: "rahul@example.com"
-        },
-        deliveryAddress: "Flat 402, Block B, Silver Oaks, Sector 45, Near Huda City Center, Gurgaon, Haryana, 122001",
-        paymentDetails: {
-          method: "UPI",
-          transactionId: "TXN849302847",
-          status: "Successful"
-        },
-        items: [
-          {
-            name: "Fully Automatic Top Load Washing Machine",
-            image: "https://rentbasket.in/wp-content/uploads/2022/10/washing-machine-6.5kg-750x750.png",
-            durationLabel: "6 Months",
-            quantity: 1,
-            price: 1099
-          }
-        ],
-        totalRent: 1499,
-        itemSavings: 400,
-        coupon: 0,
-        baseRent: 1099,
-        gst: 198,
-        netMonthlyRent: 1297,
-        security: 2000,
-        netFirstMonth: 3297,
-        upfront: 1649,
-        payOnDelivery: 1648,
-        grandTotal: 3297
-      });
-    }
-    
-    // Scroll to top on load
     window.scrollTo(0, 0);
-  }, [location.state]);
+  }, []);
 
-  if (!orderData) return null; // Or a loading spinner
+  // No order in the navigation state — a direct/bookmarked visit (the route is
+  // prerendered so SPA refreshes don't 404). Never fabricate an order: send a
+  // KYC-return without order context to their orders, anyone else home.
+  if (!orderData) return <Navigate to={kycComplete ? "/account/orders" : "/"} replace />;
 
   return (
     <div className="min-h-screen bg-background">

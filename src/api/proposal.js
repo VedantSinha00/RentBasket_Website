@@ -1,4 +1,5 @@
 import { authFetch } from "./client";
+import { unitSecurityOf } from "@/lib/pricing";
 
 async function proposalFetch(path, body) {
   const res = await authFetch(path, { method: "POST", body });
@@ -45,7 +46,11 @@ export async function addItemsToProposal(userId, leadId, cartItems, added = new 
         count: item.quantity,
         rent: item.rent,
         duration: item.duration,
-        security: item.deposit,
+        // Per-unit security via the same resolution the UI breakdown uses
+        // (security_multiple × rent, then adv_security, then the 2× default).
+        // Cart items never carry a `deposit` field, so the old `item.deposit`
+        // silently sent undefined/0 — a zero-deposit order on the backend.
+        security: unitSecurityOf(item),
       });
     } catch (apiErr) {
       // Record how far we got so the caller can resume on the next attempt.

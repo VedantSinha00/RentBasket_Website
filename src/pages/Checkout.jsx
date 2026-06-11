@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { getAuth } from "@/lib/auth";
 import { safeSet, safeGet } from "@/lib/safeStorage";
 import { getUserAddress, saveUserAddress } from "@/api/address";
+import { dateNDaysFromToday } from "@/lib/delivery";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutForm from "@/components/checkout/CheckoutForm";
@@ -31,7 +32,7 @@ const DEFAULT_FORM = {
   pincode: "",
   city: "",
   state: "",
-  startDate: new Date(Date.now() + 86400000 * 2).toISOString().split("T")[0], // Default to +2 days
+  startDate: dateNDaysFromToday(2),
   timeSlot: null,
   instructions: "",
   paymentMethod: "upi",
@@ -130,7 +131,7 @@ const Checkout = () => {
       });
       return;
     }
-    const minDate = new Date(Date.now() + 86400000 * 2).toISOString().split("T")[0];
+    const minDate = dateNDaysFromToday(2);
     if (!formData.startDate || formData.startDate < minDate) {
       toast.error("Please pick a later start date", {
         description: "We need at least 2 days to prepare your delivery.",

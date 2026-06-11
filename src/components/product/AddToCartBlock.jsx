@@ -2,6 +2,7 @@ import { Minus, Plus, ShieldCheck, Clock, ArrowRightLeft, Headphones } from "luc
 import { useCart } from "@/context/CartContext";
 import { DURATION_OPTIONS } from "@/data/products";
 import { discountedRent } from "@/lib/pricing";
+import { dateNDaysFromToday } from "@/lib/delivery";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
@@ -21,7 +22,7 @@ const AddToCartBlock = ({ product, selectedDuration, quantity, onQuantityChange 
       durationLabel,
       price,
       quantity,
-      startDate: new Date().toISOString().split("T")[0],
+      startDate: dateNDaysFromToday(0),
       adv_security: product.adv_security,
       image: product.image,
       category: product.category,

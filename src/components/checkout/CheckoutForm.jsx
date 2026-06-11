@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { User, Phone, Mail, MapPin, Calendar, Info, CheckCircle2, Loader2 } from "lucide-react";
 import { getDeliverySlots } from "@/api/otp";
+import { dateNDaysFromToday } from "@/lib/delivery";
 
 const CheckoutCard = ({ title, icon: Icon, children, subtitle }) => (
   <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-soft mb-6">
@@ -121,7 +122,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
             state: prev.state || (a.state || ""),
             pincode: prev.pincode || (a.postcode || ""),
           }));
-        } catch {}
+        } catch { /* reverse-geocode failed — user fills the fields manually */ }
         setGeoState("done");
       },
       () => setGeoState("denied"),
@@ -297,7 +298,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
             type="date"
             value={formData.startDate}
             onChange={handleChange}
-            min={new Date(Date.now() + 86400000 * 2).toISOString().split("T")[0]}
+            min={dateNDaysFromToday(2)}
           />
 
           <div className="space-y-1.5">

@@ -17,7 +17,11 @@ import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
 import { getRecentOrders } from "@/lib/recentOrders";
 import { fetchOrders } from "@/api/orders";
+import { fetchProducts } from "@/api/products";
 import { getAuth } from "@/lib/auth";
+import { DURATION_OPTIONS } from "@/data/products";
+import { discountedRent } from "@/lib/pricing";
+import { dateNDaysFromToday } from "@/lib/delivery";
 
 const SUPPORT_WHATSAPP = "https://wa.me/919958858473";
 
@@ -76,19 +80,68 @@ const OrderCard = ({ order }) => {
   const StatusIcon = cfg.icon;
   const { addToCart } = useCart();
 
-  const handleRentAgain = () => {
+  const handleRentAgain = async () => {
+    // Re-resolve each item against the current catalog: the order's rent is
+    // historical, and its duration may no longer be offered. The catalog is
+    // already cached for the rest of the site, so this is normally 0 requests.
+    const products = await fetchProducts().catch(() => []);
+    const labelFor = (key) => DURATION_OPTIONS.find((d) => d.key === key)?.label || "";
+    let added = 0;
+
     order.items.forEach((item) => {
-      addToCart({
-        productId: item.amenity_type_id,
-        name: item.name,
-        duration: "1_month",
-        durationLabel: item.durationLabel,
-        price: item.rent,
-        quantity: item.quantity,
-        image: item.image,
-      });
+      // Order cards carry the duration as a label ("12 months") — map it back
+      // to a duration key, falling back if that plan no longer exists.
+      const orderedKey = `${parseInt(item.durationLabel, 10)}_months`;
+      const product = products.find((p) => String(p.id) === String(item.amenity_type_id));
+
+      if (product) {
+        const pricing = product.pricing_by_duration ?? {};
+        const duration = pricing[orderedKey] != null ? orderedKey : Object.keys(pricing)[0];
+        if (!duration) return; // product exists but has no rentable plan — skip
+        addToCart({
+          productId: product.id,
+          name: product.name,
+          duration,
+          durationLabel: labelFor(duration),
+          price: discountedRent(pricing[duration], product.percent_discount),
+          quantity: item.quantity,
+          startDate: dateNDaysFromToday(0),
+          adv_security: product.adv_security,
+          image: product.image,
+          category: product.category,
+          subcategory_id: product.subcategory_id,
+          rent: pricing[duration],
+          percent_discount: product.percent_discount,
+          security_multiple: product.security_multiple,
+        });
+        added++;
+      } else if (item.rent) {
+        // Catalog unavailable or the product was delisted — fall back to the
+        // order's own numbers so the basket line still prices correctly.
+        const duration = DURATION_OPTIONS.some((d) => d.key === orderedKey)
+          ? orderedKey
+          : DURATION_OPTIONS[0].key;
+        addToCart({
+          productId: item.amenity_type_id,
+          name: item.name,
+          duration,
+          durationLabel: labelFor(duration),
+          price: item.rent,
+          quantity: item.quantity,
+          startDate: dateNDaysFromToday(0),
+          image: item.image,
+          rent: item.rent,
+          percent_discount: 0,
+        });
+        added++;
+      }
     });
-    toast.success("Added to basket", { description: "Your previous items are ready to rent again." });
+
+    if (added > 0) {
+      toast.success("Added to basket", { description: "Your previous items are ready to rent again." });
+    } else {
+      toast.error("These items aren't available to rent right now.");
+    }
   };
 
   return (

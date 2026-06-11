@@ -11,6 +11,8 @@ import {
   ShieldCheck,
   Lock,
   Loader2,
+  RefreshCw,
+  AlertCircle,
 } from "lucide-react";
 import logo from "@/assets/7 1.png";
 import { toast } from "sonner";
@@ -37,55 +39,67 @@ const Kyc = () => {
   // file === null means pre-filled from API (no re-upload needed)
   const [files, setFiles] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
+  const loadKycState = async () => {
     const mobile = getAuth()?.phone;
     if (!mobile) {
       setIsLoading(false);
       return;
     }
 
-    (async () => {
-      try {
-        const [kycData, docList] = await Promise.all([
-          getKycStatus(mobile),
-          getKycDocList(mobile),
-        ]);
+    setIsLoading(true);
+    setLoadError(false);
+    try {
+      const [kycData, docList] = await Promise.all([
+        getKycStatus(mobile),
+        getKycDocList(mobile),
+      ]);
 
-        const kycDetails = kycData.kyc_details ?? [];
-        const mandatoryDocs = (docList ?? []).filter((d) => d.mandatory === 1);
+      const kycDetails = kycData.kyc_details ?? [];
+      const mandatoryDocs = (docList ?? []).filter((d) => d.mandatory === 1);
 
-        const allMandatoryDone = mandatoryDocs.every((d) => d.is_done === 1);
-        if (kycDetails[0]?.status === "Completed" && allMandatoryDone) {
-          navigate("/order-success", {
-            state: { orderData, kycComplete: true },
-            replace: true,
-          });
-          return;
-        }
-
-        setDocs(mandatoryDocs);
-
-        const prefilledState = {};
-        (docList ?? [])
-          .filter((d) => d.mandatory === 1 && d.is_done === 1)
-          .forEach((doc) => {
-            prefilledState[doc.doc_type] = {
-              name: doc.doc_type_name,
-              isImage: true,
-              url: doc.doc_path,
-              file: null,
-            };
-          });
-        setFiles(prefilledState);
-      } catch (err) {
-        toast.error("Failed to load KYC status. Please refresh.");
-        console.error(err);
-      } finally {
-        setIsLoading(false);
+      const allMandatoryDone = mandatoryDocs.every((d) => d.is_done === 1);
+      if (kycDetails[0]?.status === "Completed" && allMandatoryDone) {
+        navigate("/order-success", {
+          state: { orderData, kycComplete: true },
+          replace: true,
+        });
+        return;
       }
-    })();
+
+      // An empty doc list means the requirements couldn't be loaded — treat it
+      // like a failure so the user gets a Retry instead of "Upload all 0 documents".
+      if (mandatoryDocs.length === 0) {
+        setLoadError(true);
+        return;
+      }
+
+      setDocs(mandatoryDocs);
+
+      const prefilledState = {};
+      docList
+        .filter((d) => d.mandatory === 1 && d.is_done === 1)
+        .forEach((doc) => {
+          prefilledState[doc.doc_type] = {
+            name: doc.doc_type_name,
+            isImage: true,
+            url: doc.doc_path,
+            file: null,
+          };
+        });
+      setFiles(prefilledState);
+    } catch (err) {
+      setLoadError(true);
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadKycState();
   }, []);
 
   // Revoke blob previews when files change or on unmount
@@ -195,6 +209,23 @@ const Kyc = () => {
             <div className="flex items-center justify-center py-20 text-muted-foreground">
               <Loader2 className="w-6 h-6 animate-spin mr-2" />
               <span className="text-sm font-medium">Loading KYC status…</span>
+            </div>
+          ) : loadError ? (
+            <div className="flex flex-col items-center text-center py-16 px-6 bg-card border border-border rounded-2xl">
+              <div className="w-12 h-12 rounded-2xl bg-destructive-muted text-destructive flex items-center justify-center mb-4">
+                <AlertCircle className="w-6 h-6" />
+              </div>
+              <h2 className="text-lg font-bold text-foreground">Couldn't load your KYC requirements</h2>
+              <p className="text-sm text-muted-foreground mt-1 max-w-sm leading-relaxed">
+                Something went wrong fetching the document list. Your order is safe — please try again.
+              </p>
+              <button
+                onClick={loadKycState}
+                className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-2xl border border-primary/30 text-sm font-bold text-primary hover:bg-primary/5 transition-colors active:scale-95"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Try Again
+              </button>
             </div>
           ) : (
             <>

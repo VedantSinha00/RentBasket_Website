@@ -6,7 +6,7 @@ const fallbackGet = () => {
   try { return JSON.parse(localStorage.getItem(FALLBACK_KEY)) || null; } catch { return null; }
 };
 const fallbackSet = (data) => {
-  try { localStorage.setItem(FALLBACK_KEY, JSON.stringify(data)); } catch {}
+  try { localStorage.setItem(FALLBACK_KEY, JSON.stringify(data)); } catch { /* storage unavailable — skip cache */ }
 };
 
 // Maps the API response shape to the form field names used by EditAddress / Checkout.
@@ -45,7 +45,7 @@ export async function getUserAddress(mobile) {
         return addr;
       }
     }
-  } catch {}
+  } catch { /* API down — serve the cached copy below */ }
   return fallbackGet();
 }
 
@@ -70,7 +70,7 @@ export async function saveUserAddress(mobile, address) {
       fallbackSet(saved);
       return saved;
     }
-  } catch {}
+  } catch { /* API down — still persist locally below */ }
   fallbackSet({ ...cached, ...address });
   return null;
 }
