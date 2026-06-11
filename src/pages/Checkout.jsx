@@ -72,6 +72,12 @@ const Checkout = () => {
           state: addr.state || "",
         };
       });
+      if (addr.servicable === 0) {
+        toast.error("We don't deliver to your area yet", {
+          description: `${addr.city || "Your city"} is not in our delivery zone. Please contact us to check availability.`,
+          duration: 8000,
+        });
+      }
     }).catch(() => {});
   }, [verifiedPhone]);
 

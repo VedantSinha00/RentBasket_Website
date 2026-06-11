@@ -25,6 +25,7 @@ function normalizeAddress(raw) {
     state:         raw.state_name?.trim() ?? "",
     lat:           raw.lat ?? null,
     lng:           raw.lng ?? null,
+    servicable:    raw.servicable ?? null,
   };
 }
 
