@@ -331,6 +331,9 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
                     </button>
                   ))}
             </div>
+            <p className="text-[10px] text-muted-foreground mt-1.5 leading-relaxed">
+              This is a preferred slot and does not confirm the actual time. Our delivery team will get in touch with you soon.
+            </p>
           </div>
 
           <div className="md:col-span-2 space-y-1.5">
