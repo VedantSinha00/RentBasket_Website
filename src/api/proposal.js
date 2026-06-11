@@ -114,3 +114,24 @@ export async function applyGlobalCoupon(userId, leadId, couponId) {
     coupon_id: couponId,
   });
 }
+
+/**
+ * Set the delivery slot and date on the proposal.
+ * Params are sent as query strings (backend ignores JSON body).
+ * Non-fatal — a failure here should not block order confirmation.
+ *
+ * @param {string|number} proposalId  — same as leadId in our flow
+ * @param {string|number} slotId      — slot id from /get-delivery-slots
+ * @param {string}        deliveryDate — YYYY-MM-DD
+ */
+export async function setDeliverySlot(proposalId, slotId, deliveryDate) {
+  const res = await authFetch(
+    `/set-delivery-slot?slot_id=${encodeURIComponent(slotId)}&delivery_date=${encodeURIComponent(deliveryDate)}&proposal_id=${encodeURIComponent(proposalId)}`,
+    { method: "POST" },
+  );
+  const json = await res.json().catch(() => null);
+  if (!res.ok || !json?.status) {
+    throw new Error(json?.message || `set-delivery-slot failed (${res.status})`);
+  }
+  return json;
+}

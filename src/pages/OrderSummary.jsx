@@ -8,7 +8,7 @@ import { getAuth } from "@/lib/auth";
 import { safeRemove } from "@/lib/safeStorage";
 import { recordOrder } from "@/lib/recentOrders";
 import { getDeliveryFields, slotLabel } from "@/lib/delivery";
-import { addItemsToProposal, confirmProposal, fetchProposalCart, applyGlobalCoupon } from "@/api/proposal";
+import { addItemsToProposal, confirmProposal, fetchProposalCart, applyGlobalCoupon, setDeliverySlot } from "@/api/proposal";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutSummary from "@/components/checkout/CheckoutSummary";
@@ -126,14 +126,20 @@ const OrderSummary = () => {
         addedItemsRef.current,
       );
 
+      // Set delivery slot + date on the proposal (non-fatal — don't block confirmation).
+      const delivery = getDeliveryFields(formData);
+      if (formData?.timeSlot && delivery.expected_delivery_date) {
+        await setDeliverySlot(auth.leadId, formData.timeSlot, delivery.expected_delivery_date).catch((err) => {
+          console.warn("[OrderSummary] set-delivery-slot failed (non-fatal):", err.message);
+        });
+      }
+
       // Apply the backend-attached coupon (if any) before confirming.
       if (coupon?.id) {
         await applyGlobalCoupon(auth.userId, auth.leadId, coupon.id).catch(() => {});
       }
 
-      // Attach expected_delivery_date + expected_delivery_time_slot. getDeliveryFields
-      // defaults to slot "4_6" on the 3rd day from today when the user didn't choose.
-      const delivery = getDeliveryFields(formData);
+      // Attach expected_delivery_date + expected_delivery_time_slot to the confirmation.
       const apiResponse = await confirmProposal(auth.userId, auth.leadId, cartItemIds, coupon?.id ?? null, delivery);
 
       const b = cartBreakdown(cartItems, coupon);
