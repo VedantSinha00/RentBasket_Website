@@ -9,17 +9,40 @@ const fallbackSet = (data) => {
   try { localStorage.setItem(FALLBACK_KEY, JSON.stringify(data)); } catch {}
 };
 
+// Maps the API response shape to the form field names used by EditAddress / Checkout.
+// API:  flat_no, area, city_name, state_name, full_name, mobile, landmark, pincode, lat, lng
+// Form: address_line_1, address_line_2, city, state, contact_name, contact_phone, landmark, pincode, lat, lng
+function normalizeAddress(raw) {
+  return {
+    address_id:    raw.id ?? null,
+    contact_name:  raw.full_name ?? "",
+    contact_phone: raw.mobile ?? "",
+    address_line_1: raw.flat_no ?? "",
+    address_line_2: raw.area ?? "",
+    landmark:      raw.landmark ?? "",
+    pincode:       raw.pincode ?? "",
+    city:          raw.city_name ?? "",
+    state:         raw.state_name?.trim() ?? "",
+    lat:           raw.lat ?? null,
+    lng:           raw.lng ?? null,
+  };
+}
+
 /**
  * Fetch the user's single saved address. Falls back to localStorage if the
  * API is not yet live or returns an error.
  */
 export async function getUserAddress(mobile) {
   try {
-    const res = await authFetch(`/get-user-addresses?mobile=${encodeURIComponent(mobile)}`);
+    const res = await authFetch(`/get-delivery-address?mobile=${encodeURIComponent(mobile)}`);
     const json = await res.json().catch(() => null);
     if (res.ok && json?.responseCode === 200) {
-      const addr = json.data?.address ?? json.data ?? null;
-      if (addr) { fallbackSet(addr); return addr; }
+      const raw = json.data?.address ?? json.data ?? null;
+      if (raw) {
+        const addr = normalizeAddress(raw);
+        fallbackSet(addr);
+        return addr;
+      }
     }
   } catch {}
   return fallbackGet();
