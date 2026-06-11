@@ -4,9 +4,27 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import logo from "@/assets/7 1.png";
 import { toast } from "sonner";
 import { setAuth } from "@/lib/auth";
-import { generateOtp, loginWithOtp, signUpWithOtp } from "@/api/otp";
+import { generateOtp, loginWithOtp, signUpWithOtp, getCities } from "@/api/otp";
 
 const RESEND_COOLDOWN = 30; // seconds
+
+// Serviceable cities, mirrored from /get-ig-cities (confirmed 2026-06-07).
+// Used only if the live cities call fails — signup still needs a real choice
+// because the backend keys every new lead to a city.
+const FALLBACK_CITIES = [
+  { city_id: 1, city: "Gurugram" },
+  { city_id: 2, city: "Sohna" },
+  { city_id: 3, city: "Noida" },
+  { city_id: 4, city: "Dwarka" },
+  { city_id: 5, city: "Faridabad" },
+  { city_id: 6, city: "Greater Noida" },
+  { city_id: 7, city: "South Delhi" },
+  { city_id: 999, city: "Rest Of NCR" },
+];
+
+// "Rest Of NCR" (999) reads as a catch-all — keep it last regardless of API order.
+const sortCities = (cities) =>
+  [...cities].sort((a, b) => (a.city_id === 999 ? 1 : b.city_id === 999 ? -1 : a.city_id - b.city_id));
 
 /**
  * Backend validation messages (e.g. "Invalid OTP") are user-meaningful; the
@@ -32,6 +50,9 @@ const CustomerValidation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [resendIn, setResendIn] = useState(0); // seconds until resend is allowed
   const [isRegistered, setIsRegistered] = useState(null); // null | true | false
+  // New users must pick their city — the backend keys the CRM lead to it.
+  const [cities, setCities] = useState([]);
+  const [cityId, setCityId] = useState("");
 
   // Countdown for the Resend OTP cooldown
   useEffect(() => {
@@ -52,6 +73,13 @@ const CustomerValidation = () => {
       setStep("otp");
       setResendIn(RESEND_COOLDOWN);
       toast.success("OTP sent to your mobile number");
+      // New user → the OTP step shows a city picker. Load the live list in the
+      // background; fall back to the bundled list so signup is never blocked.
+      if (!IsRegistered && cities.length === 0) {
+        getCities()
+          .then((list) => setCities(sortCities(list?.length ? list : FALLBACK_CITIES)))
+          .catch(() => setCities(sortCities(FALLBACK_CITIES)));
+      }
     } catch (err) {
       toast.error(friendlyError(err, "Couldn't send the OTP. Please check your connection and try again."));
     } finally {
@@ -79,6 +107,12 @@ const CustomerValidation = () => {
       toast.error("Please enter a valid OTP");
       return;
     }
+    if (isRegistered === false && !cityId) {
+      toast.error("Please select your city", {
+        description: "We need it to set up delivery for your area.",
+      });
+      return;
+    }
 
     setIsLoading(true);
     let signUpDone = false;
@@ -87,7 +121,7 @@ const CustomerValidation = () => {
       if (isRegistered) {
         userData = await loginWithOtp(phoneNumber, otp);
       } else {
-        await signUpWithOtp(phoneNumber, otp, "1");
+        await signUpWithOtp(phoneNumber, otp, cityId);
         signUpDone = true;
         // The signup endpoint doesn't return a token. Re-use the same OTP to
         // log in immediately after. If the backend treats OTPs as single-use
@@ -215,6 +249,33 @@ const CustomerValidation = () => {
                     />
                   </div>
 
+                  {/* City picker — new accounts only; the backend keys the lead to a city */}
+                  {isRegistered === false && (
+                    <div>
+                      <label className="text-sm font-semibold text-foreground block mb-2">
+                        Your City
+                      </label>
+                      <select
+                        value={cityId}
+                        onChange={(e) => setCityId(e.target.value)}
+                        disabled={isLoading}
+                        className="w-full px-3.5 py-2.5 border border-primary/30 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-60 disabled:cursor-not-allowed bg-background font-medium"
+                      >
+                        <option value="" disabled>
+                          {cities.length ? "Select your city" : "Loading cities…"}
+                        </option>
+                        {cities.map((c) => (
+                          <option key={c.city_id} value={c.city_id}>
+                            {c.city}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="text-[11px] text-muted-foreground mt-1.5">
+                        We currently deliver across Delhi NCR.
+                      </p>
+                    </div>
+                  )}
+
                   {/* Verify OTP Button */}
                   <button
                     onClick={handleOtpSubmit}
@@ -247,6 +308,7 @@ const CustomerValidation = () => {
                         setPhoneNumber("");
                         setResendIn(0);
                         setIsRegistered(null);
+                        setCityId("");
                       }}
                       disabled={isLoading}
                       className="text-muted-foreground hover:text-primary transition-colors underline disabled:opacity-60"
