@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User, Phone, Mail, MapPin, Calendar, Info, CheckCircle2, Loader2 } from "lucide-react";
+import { getDeliverySlots } from "@/api/otp";
 
 const CheckoutCard = ({ title, icon: Icon, children, subtitle }) => (
   <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-soft mb-6">
@@ -52,6 +53,22 @@ const ServiceabilityNote = () => (
 const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
   const [geoState, setGeoState] = useState("idle"); // idle | loading | done | denied
   const [pincodeState, setPincodeState] = useState("idle"); // idle | loading | done | error
+  const [slots, setSlots] = useState([]);
+
+  useEffect(() => {
+    getDeliverySlots()
+      .then((s) => {
+        // Sort by id ascending (earliest slot first)
+        const sorted = [...s].sort((a, b) => a.id - b.id);
+        setSlots(sorted);
+        // Pre-select the first slot if nothing is selected yet
+        setFormData((prev) => ({
+          ...prev,
+          timeSlot: prev.timeSlot || sorted[0]?.id,
+        }));
+      })
+      .catch(() => {}); // fallback: existing hardcoded selection stays
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -287,21 +304,32 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
             <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
               Time Slot
             </label>
-            <div className="grid grid-cols-3 gap-2">
-              {["Morning", "Afternoon", "Evening"].map((slot) => (
-                <button
-                  key={slot}
-                  type="button"
-                  onClick={() => setFormData((prev) => ({ ...prev, timeSlot: slot }))}
-                  className={`py-2.5 px-1 rounded-xl border text-[10px] md:text-xs font-bold transition-all ${
-                    formData.timeSlot === slot
-                      ? "bg-primary border-primary text-white shadow-md shadow-primary/20"
-                      : "bg-secondary/30 border-border text-muted-foreground hover:border-primary/40"
-                  }`}
-                >
-                  {slot}
-                </button>
-              ))}
+            <div className="grid grid-cols-2 gap-2">
+              {slots.length > 0
+                ? slots.map((slot) => (
+                    <button
+                      key={slot.id}
+                      type="button"
+                      onClick={() => setFormData((prev) => ({ ...prev, timeSlot: slot.id }))}
+                      className={`py-2.5 px-2 rounded-xl border text-[10px] md:text-xs font-bold transition-all ${
+                        formData.timeSlot === slot.id
+                          ? "bg-primary border-primary text-white shadow-md shadow-primary/20"
+                          : "bg-secondary/30 border-border text-muted-foreground hover:border-primary/40"
+                      }`}
+                    >
+                      {slot.slot_name}
+                    </button>
+                  ))
+                : ["8AM - 10AM", "10AM - 12PM", "12PM - 2PM", "2PM - 4PM"].map((label) => (
+                    <button
+                      key={label}
+                      type="button"
+                      disabled
+                      className="py-2.5 px-2 rounded-xl border text-[10px] md:text-xs font-bold bg-secondary/30 border-border text-muted-foreground/40 animate-pulse"
+                    >
+                      {label}
+                    </button>
+                  ))}
             </div>
           </div>
 

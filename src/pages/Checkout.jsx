@@ -32,7 +32,7 @@ const DEFAULT_FORM = {
   city: "",
   state: "",
   startDate: new Date(Date.now() + 86400000 * 2).toISOString().split("T")[0], // Default to +2 days
-  timeSlot: "Morning",
+  timeSlot: null,
   instructions: "",
   paymentMethod: "upi",
 };

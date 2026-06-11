@@ -7,7 +7,7 @@ import { cartBreakdown } from "@/lib/pricing";
 import { getAuth } from "@/lib/auth";
 import { safeRemove } from "@/lib/safeStorage";
 import { recordOrder } from "@/lib/recentOrders";
-import { getDeliveryFields } from "@/lib/delivery";
+import { getDeliveryFields, slotLabel } from "@/lib/delivery";
 import { addItemsToProposal, confirmProposal, fetchProposalCart, applyGlobalCoupon } from "@/api/proposal";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
@@ -233,7 +233,7 @@ const OrderSummary = () => {
                     Starts{" "}
                     {new Date(formData.startDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                     {" · "}
-                    {formData.timeSlot}
+                    {slotLabel(formData.timeSlot)}
                   </span>
                 </div>
               </div>

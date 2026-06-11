@@ -39,6 +39,11 @@ export async function getCities() {
   return json.data.cities;
 }
 
+export async function getDeliverySlots() {
+  const json = await otpFetch("/get-delivery-slots");
+  return json.data.slots; // [{id, slot_name, from, to}]
+}
+
 export async function sendEmailOtp(email) {
   await emailOtpFetch(`/send-email-otp?email=${encodeURIComponent(email)}`);
 }
