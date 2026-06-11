@@ -11,7 +11,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
 import ProductDetails from "./pages/ProductDetails";
-import Cart from "./pages/Cart";
+import Basket from "./pages/Basket";
 import Checkout from "./pages/Checkout";
 import CustomerValidation from "./pages/CustomerValidation";
 import OrderSummary from "./pages/OrderSummary";
@@ -73,7 +73,10 @@ const RouterApp = () => {
           <Route path="/catalogue" element={<Navigate to="/catalog/" replace />} />
           <Route path="/catalogue/" element={<Navigate to="/catalog/" replace />} />
           {routePair("/product/:id", <ProductDetails />)}
-          {routePair("/cart", <Cart />)}
+          {routePair("/basket", <Basket />)}
+          {/* /cart kept as a redirect so old links / bookmarks still resolve. */}
+          <Route path="/cart" element={<Navigate to="/basket/" replace />} />
+          <Route path="/cart/" element={<Navigate to="/basket/" replace />} />
           {routePair("/checkout", <Checkout />)}
           {routePair("/customer-validation", <CustomerValidation />)}
           {routePair("/order-summary", <OrderSummary />)}

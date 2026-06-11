@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartHeader from "@/components/cart/CartHeader";
+import CartDurationTabs from "@/components/cart/CartDurationTabs";
 import CartItemsList from "@/components/cart/CartItemsList";
 import OrderSummary from "@/components/cart/OrderSummary";
 import CrossSellStrip from "@/components/cart/CrossSellStrip";
@@ -11,13 +12,15 @@ import { toast } from "sonner";
 import { isAuthenticated, getAuth } from "@/lib/auth";
 import { safeSet } from "@/lib/safeStorage";
 
-const Cart = () => {
-  const { cartItems } = useCart();
+const Basket = () => {
+  const { cartItems, selectedDuration } = useCart();
   const hasItems = cartItems.length > 0;
   const navigate = useNavigate();
 
   const handleProceedToCheckout = () => {
     safeSet("rb_cart_proceed", "1", sessionStorage);
+    // Carry the duration group being checked out — each group is its own order.
+    safeSet("rb_checkout_duration", selectedDuration || "", sessionStorage);
     if (isAuthenticated()) {
       navigate("/checkout", { state: { verifiedPhone: getAuth()?.phone || "" } });
     } else {
@@ -35,8 +38,9 @@ const Cart = () => {
         <div className="section-container pb-10 md:pb-16">
           {hasItems ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Left: Cart Items */}
-              <div id="cart-items" className="lg:col-span-2">
+              {/* Left: Basket Items */}
+              <div id="basket-items" className="lg:col-span-2">
+                <CartDurationTabs />
                 <CartItemsList />
                 <CrossSellStrip />
               </div>
@@ -58,4 +62,4 @@ const Cart = () => {
   );
 };
 
-export default Cart;
+export default Basket;

@@ -13,7 +13,9 @@ const Header = () => {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const onCatalog = pathname === "/catalog";
-  const onCart = pathname === "/cart";
+  const onCart = pathname === "/basket" || pathname === "/basket/";
+  const onProfile = pathname === "/profile";
+  const onWishlist = pathname === "/wishlist";
   const showMobileSearch =
     pathname === "/" || pathname === "/catalog" || pathname.startsWith("/product");
 
@@ -152,17 +154,21 @@ const Header = () => {
           >
             <Link
               to="/profile"
-              className="relative p-1.5 md:p-2 rounded-xl hover:bg-secondary transition-colors"
+              className={`relative p-1.5 md:p-2 rounded-xl transition-colors ${
+                onProfile ? "bg-primary/10" : "hover:bg-secondary"
+              }`}
               title="My Profile"
             >
-              <User className="w-5 h-5 text-muted-foreground" />
+              <User className={`w-5 h-5 ${onProfile ? "text-primary" : "text-muted-foreground"}`} />
             </Link>
             <Link
               to="/wishlist"
-              className="relative p-1.5 md:p-2 rounded-xl hover:bg-secondary transition-colors"
+              className={`relative p-1.5 md:p-2 rounded-xl transition-colors ${
+                onWishlist ? "bg-primary/10" : "hover:bg-secondary"
+              }`}
               title="My Wishlist"
             >
-              <Heart className="w-5 h-5 text-muted-foreground" />
+              <Heart className={`w-5 h-5 ${onWishlist ? "text-primary fill-primary" : "text-muted-foreground"}`} />
               {wishlistCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
                   {wishlistCount > 9 ? "9+" : wishlistCount}
@@ -171,9 +177,9 @@ const Header = () => {
             </Link>
             {!onCart && (
               <Link
-                to="/cart"
+                to="/basket"
                 className="relative p-1.5 md:p-2 rounded-xl hover:bg-secondary transition-colors"
-                title="View Cart"
+                title="View Basket"
               >
                 <ShoppingBag className="w-5 h-5 text-muted-foreground" />
                 {cartCount > 0 && (
@@ -182,6 +188,16 @@ const Header = () => {
                   </span>
                 )}
               </Link>
+            )}
+            {onCart && (
+              <div className="relative p-1.5 md:p-2 rounded-xl bg-primary/10">
+                <ShoppingBag className="w-5 h-5 text-primary" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
+                    {cartCount > 9 ? "9+" : cartCount}
+                  </span>
+                )}
+              </div>
             )}
             <a
               href="#download"

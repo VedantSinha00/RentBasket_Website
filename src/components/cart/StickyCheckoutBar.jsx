@@ -3,12 +3,13 @@ import { Lock } from "lucide-react";
 import { cartBreakdown } from "@/lib/pricing";
 
 const StickyCheckoutBar = ({ onCheckout }) => {
-  const { cartItems, getCartItemCount, coupon } = useCart();
+  // Mirrors the order summary: totals reflect the ACTIVE duration group only.
+  const { activeItems, getCartItemCount, coupon, selectedDuration } = useCart();
 
-  if (cartItems.length === 0) return null;
+  if (activeItems.length === 0) return null;
 
-  const b = cartBreakdown(cartItems, coupon);
-  const itemCount = getCartItemCount();
+  const b = cartBreakdown(activeItems, coupon);
+  const itemCount = getCartItemCount(selectedDuration);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-background/95 backdrop-blur-sm border-t border-border shadow-elevated">

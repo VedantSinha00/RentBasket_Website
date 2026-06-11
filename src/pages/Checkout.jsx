@@ -38,10 +38,19 @@ const DEFAULT_FORM = {
 };
 
 const Checkout = () => {
-  const { cartItems } = useCart();
+  const { cartItems, itemsForDuration, selectedDuration } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   const verifiedPhone = location.state?.verifiedPhone || sessionStorage.getItem("rb_verified_phone") || getAuth()?.phone || "";
+
+  // The duration group being checked out (each group is its own order). Resolved
+  // from explicit nav state, the value the cart stashed, then the active group.
+  const checkoutDuration =
+    location.state?.checkoutDuration ||
+    sessionStorage.getItem("rb_checkout_duration") ||
+    selectedDuration ||
+    "";
+  const groupItems = checkoutDuration ? itemsForDuration(checkoutDuration) : cartItems;
 
   // Persist verifiedPhone so navigating back to checkout doesn't lose it.
   useEffect(() => {
@@ -81,19 +90,20 @@ const Checkout = () => {
     }).catch(() => {});
   }, [verifiedPhone]);
 
-  // Enforce flow order: cart must have items, and mobile must be verified first.
+  // Enforce flow order: the chosen plan must have items, and mobile must be
+  // verified first.
   useEffect(() => {
-    if (cartItems.length === 0) {
-      navigate("/cart");
-      toast.error("Your cart is empty", {
+    if (groupItems.length === 0) {
+      navigate("/basket");
+      toast.error("Your basket is empty", {
         description: "Add some items before checking out.",
       });
     } else if (!sessionStorage.getItem("rb_cart_proceed")) {
-      navigate("/cart");
+      navigate("/basket");
     } else if (!verifiedPhone) {
       navigate("/customer-validation", { state: { returnTo: "/checkout" } });
     }
-  }, [cartItems, navigate, verifiedPhone]);
+  }, [groupItems, navigate, verifiedPhone]);
 
   // Prefill order: defaults < persisted draft < API address < explicit state from "Edit Details"
   // < explicit state from "Edit Details" on the order summary.
@@ -140,10 +150,10 @@ const Checkout = () => {
         contact_phone: formData.phone || verifiedPhone,
       }).catch(() => {});
     }
-    navigate("/order-summary", { state: { verifiedPhone, formData } });
+    navigate("/order-summary", { state: { verifiedPhone, formData, checkoutDuration } });
   };
 
-  if (cartItems.length === 0 || !verifiedPhone) return null;
+  if (groupItems.length === 0 || !verifiedPhone) return null;
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -153,11 +163,11 @@ const Checkout = () => {
         {/* Breadcrumb / Back Link */}
         <div className="mb-6 md:mb-8">
           <Link
-            to="/cart"
+            to="/basket"
             className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
-            Review Cart
+            Review Basket
           </Link>
           <div className="mt-4">
             <h1 className="text-2xl md:text-4xl font-black text-foreground tracking-tight">

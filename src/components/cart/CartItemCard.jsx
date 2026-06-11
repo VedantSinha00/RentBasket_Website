@@ -6,6 +6,7 @@ import { DURATION_OPTIONS } from "@/data/products";
 import { discountedRent, lineOf, gstAmount } from "@/lib/pricing";
 import { useProduct } from "@/hooks/useProducts";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 const MONTHLY_KEYS = new Set([
   "3_months",
@@ -14,7 +15,7 @@ const MONTHLY_KEYS = new Set([
   "12_months",
 ]);
 const CartItemCard = ({ item }) => {
-  const { updateItem, removeFromCart } = useCart();
+  const { updateItem, removeFromCart, changeItemDuration, selectedDuration } = useCart();
   const [showDurationPicker, setShowDurationPicker] = useState(false);
   const pickerRef = useRef(null);
 
@@ -35,19 +36,21 @@ const CartItemCard = ({ item }) => {
   }, [showDurationPicker]);
 
   const handleDurationChange = (newDurationKey) => {
-    if (!product) return;
-    const basePrice = discountedRent(
-      product.pricing_by_duration[newDurationKey],
-      product.percent_discount
-    );
-    const newLabel = DURATION_OPTIONS.find((d) => d.key === newDurationKey)?.label || "";
-    updateItem(item.cartItemId, {
-      duration: newDurationKey,
-      durationLabel: newLabel,
-      rent: product.pricing_by_duration[newDurationKey],
-      price: basePrice,
-    });
     setShowDurationPicker(false);
+    if (newDurationKey === item.duration) return;
+
+    // Moving to another duration shifts this line into a different cart group
+    // (and a different checkout). changeItemDuration handles the rent recalc and
+    // merges with any existing same-product line in the destination group.
+    const { moved, label } = changeItemDuration(item.cartItemId, newDurationKey, product);
+
+    // Per the agreed UX, the user stays on the group they were viewing — so when
+    // the item leaves that group, tell them where it went.
+    if (moved && newDurationKey !== selectedDuration) {
+      toast.success(`Moved to your ${label} plan`, {
+        description: `${item.name} is now in your ${label} cart.`,
+      });
+    }
   };
 
   const handleQuantityChange = (delta) => {

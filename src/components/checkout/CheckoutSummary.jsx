@@ -3,13 +3,16 @@ import { useCart } from "@/context/CartContext";
 import { Link } from "react-router-dom";
 import { cartBreakdown, lineOf } from "@/lib/pricing";
 
-const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
-  const { cartItems, getCartItemCount, coupon, removeCoupon } = useCart();
+const CheckoutSummary = ({ onPlaceOrder, isProcessing, items }) => {
+  const { activeItems, coupon, removeCoupon } = useCart();
+  // The order being placed is a single duration group. Callers pass that group
+  // as `items`; default to the active group for any standalone use.
+  const groupItems = items ?? activeItems;
 
-  if (cartItems.length === 0) return null;
+  if (groupItems.length === 0) return null;
 
-  const itemCount = getCartItemCount();
-  const b = cartBreakdown(cartItems, coupon);
+  const itemCount = groupItems.reduce((n, i) => n + (i.quantity || 0), 0);
+  const b = cartBreakdown(groupItems, coupon);
 
   return (
     <div className="lg:sticky lg:top-24 space-y-5">
@@ -28,7 +31,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing }) => {
         <div className="p-6 space-y-5">
           {/* Items Preview */}
           <div className="space-y-4">
-            {cartItems.map((item) => {
+            {groupItems.map((item) => {
               const line = lineOf(item);
               return (
                 <div key={item.cartItemId} className="flex gap-3 pb-4 border-b border-border/30 last:border-0 last:pb-0">

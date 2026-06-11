@@ -142,7 +142,7 @@ const ProductDetails = () => {
     toast.success(`${product.name} added to basket`, {
       description: `${durationLabel} plan · ₹${price.toLocaleString("en-IN")}`,
     });
-    navigate("/cart");
+    navigate("/basket");
   };
 
   return (

@@ -21,13 +21,23 @@ const clearCheckoutSession = () => {
 };
 
 const OrderSummary = () => {
-  const { cartItems, clearCart, coupon, setAvailableCoupon } = useCart();
+  const { cartItems, itemsForDuration, selectedDuration, setSelectedDuration, clearGroup, coupon, setAvailableCoupon } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   const verifiedPhone = location.state?.verifiedPhone || getAuth()?.phone || "";
   const formData = location.state?.formData || null;
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+
+  // The duration group being ordered. Each group is confirmed as its own order;
+  // on success only this group is cleared and the user returns to the cart for
+  // any remaining groups.
+  const checkoutDuration =
+    location.state?.checkoutDuration ||
+    sessionStorage.getItem("rb_checkout_duration") ||
+    selectedDuration ||
+    "";
+  const groupItems = checkoutDuration ? itemsForDuration(checkoutDuration) : cartItems;
 
   // On mount, try to read any coupon the backend has pre-attached to this lead's
   // proposal and auto-apply it so the user sees the discount before confirming.
@@ -51,17 +61,17 @@ const OrderSummary = () => {
   // Passed into addItemsToProposal so already-POSTed items are skipped on retry.
   const addedItemsRef = useRef(new Map());
 
-  // Guard: must have a cart, a verified mobile, and submitted details.
+  // Guard: the chosen plan must have items, a verified mobile, and submitted details.
   useEffect(() => {
     if (orderPlaced) return;
-    if (cartItems.length === 0) {
-      navigate("/cart");
+    if (groupItems.length === 0) {
+      navigate("/basket");
     } else if (!verifiedPhone) {
       navigate("/customer-validation");
     } else if (!formData) {
-      navigate("/checkout", { state: { verifiedPhone } });
+      navigate("/checkout", { state: { verifiedPhone, checkoutDuration } });
     }
-  }, [cartItems, navigate, verifiedPhone, formData, orderPlaced]);
+  }, [groupItems, navigate, verifiedPhone, formData, orderPlaced, checkoutDuration]);
 
   const buildOrderPayload = (b, orderId) => ({
     orderId,
@@ -79,7 +89,8 @@ const OrderSummary = () => {
       transactionId: `TXN${Math.floor(Math.random() * 900000) + 100000}`,
       status: "Successful",
     },
-    items: cartItems,
+    items: groupItems,
+    duration: checkoutDuration,
     totalRent: b.totalRent,
     itemSavings: b.itemSavings,
     coupon: b.coupon,
@@ -93,6 +104,40 @@ const OrderSummary = () => {
     grandTotal: b.netFirstMonth, // legacy fallback
   });
 
+  /**
+   * Finalise a placed order. Only the just-ordered duration group is cleared.
+   * If other duration groups still have items, the user is sent back to the cart
+   * to check those out (each is a separate order); otherwise to the success page.
+   */
+  const finalizeOrder = (orderPayload) => {
+    setOrderPlaced(true);
+    recordOrder(orderPayload);
+
+    // What's left after this group is removed?
+    const remaining = cartItems.filter((i) => i.duration !== checkoutDuration);
+    const remainingDurations = [...new Set(remaining.map((i) => i.duration))];
+
+    if (remainingDurations.length > 0) {
+      const n = remainingDurations.length;
+      toast.success("Order placed successfully!", {
+        description: `Your plan is confirmed. You have ${n} more rental ${n === 1 ? "plan" : "plans"} to check out.`,
+      });
+      // Point the cart at the next group, then return there.
+      safeRemove("rb_cart_proceed", sessionStorage);
+      sessionStorage.setItem("rb_checkout_duration", remainingDurations[0]);
+      setSelectedDuration(remainingDurations[0]);
+      navigate("/basket");
+      clearGroup(checkoutDuration);
+      return;
+    }
+
+    toast.success("Order placed successfully!", { description: "Your rental order has been confirmed." });
+    // Navigate first, then clear — same tick, so the empty cart never renders.
+    navigate("/order-success", { state: { orderData: orderPayload } });
+    clearGroup(checkoutDuration);
+    clearCheckoutSession();
+  };
+
   const handlePlaceOrder = async () => {
     setIsProcessing(true);
 
@@ -103,14 +148,9 @@ const OrderSummary = () => {
       console.warn("[OrderSummary] userId or leadId missing from auth — using mock order flow");
       setTimeout(() => {
         setIsProcessing(false);
-        const b = cartBreakdown(cartItems, coupon);
+        const b = cartBreakdown(groupItems, coupon);
         const orderPayload = buildOrderPayload(b, `RB-${Math.floor(Math.random() * 90000) + 10000}`);
-        setOrderPlaced(true);
-        recordOrder(orderPayload);
-        toast.success("Order placed successfully!", { description: "Your rental order has been confirmed." });
-        navigate("/order-success", { state: { orderData: orderPayload } });
-        clearCart();
-        clearCheckoutSession();
+        finalizeOrder(orderPayload);
       }, 2500);
       return;
     }
@@ -122,7 +162,7 @@ const OrderSummary = () => {
       const cartItemIds = await addItemsToProposal(
         auth.userId,
         auth.leadId,
-        cartItems,
+        groupItems,
         addedItemsRef.current,
       );
 
@@ -142,7 +182,7 @@ const OrderSummary = () => {
       // Attach expected_delivery_date + expected_delivery_time_slot to the confirmation.
       const apiResponse = await confirmProposal(auth.userId, auth.leadId, cartItemIds, coupon?.id ?? null, delivery);
 
-      const b = cartBreakdown(cartItems, coupon);
+      const b = cartBreakdown(groupItems, coupon);
       const rawOrderId = apiResponse?.data?.order_id ?? apiResponse?.data?.orderId;
       // Warn when the backend omits order_id — makes contract drift visible in logs.
       if (rawOrderId == null) {
@@ -155,13 +195,10 @@ const OrderSummary = () => {
       const orderId = rawOrderId ?? `RB-${auth.leadId}`;
       const orderPayload = buildOrderPayload(b, String(orderId));
 
-      setOrderPlaced(true);
-      recordOrder(orderPayload);
-      toast.success("Order placed successfully!", { description: "Your rental order has been confirmed." });
-      // Navigate first, then clear — same tick, so the empty cart never renders.
-      navigate("/order-success", { state: { orderData: orderPayload } });
-      clearCart();
-      clearCheckoutSession();
+      // Reset the resume accumulator so the NEXT group's checkout starts clean
+      // (these ids belong to the group we just confirmed).
+      addedItemsRef.current = new Map();
+      finalizeOrder(orderPayload);
     } catch (err) {
       // err.cartItemIds is set by addItemsToProposal when it fails mid-loop;
       // those ids are already in addedItemsRef.current so a retry will skip them.
@@ -170,7 +207,7 @@ const OrderSummary = () => {
     }
   };
 
-  if (!orderPlaced && (cartItems.length === 0 || !verifiedPhone || !formData)) return null;
+  if (!orderPlaced && (groupItems.length === 0 || !verifiedPhone || !formData)) return null;
 
   const addressLine = formData
     ? [formData.addressLine1, formData.addressLine2, formData.landmark, formData.city, formData.state, formData.pincode]
@@ -247,7 +284,7 @@ const OrderSummary = () => {
           )}
 
           {/* Order summary + Confirm & Pay */}
-          <CheckoutSummary onPlaceOrder={handlePlaceOrder} isProcessing={isProcessing} />
+          <CheckoutSummary onPlaceOrder={handlePlaceOrder} isProcessing={isProcessing} items={groupItems} />
         </div>
       </main>
     </div>

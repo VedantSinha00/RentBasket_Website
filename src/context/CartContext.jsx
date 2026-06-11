@@ -1,12 +1,28 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { syncCart, CART_SYNC_ENABLED } from "@/api/cart";
 import { getCartId } from "@/lib/cartId";
-import { safeSet } from "@/lib/safeStorage";
+import { safeSet, safeGet } from "@/lib/safeStorage";
 import { makeId } from "@/lib/utils";
+import { DURATION_OPTIONS } from "@/data/products";
+import { discountedRent } from "@/lib/pricing";
 
 const CartContext = createContext();
 const CART_STORAGE_KEY = "rentbasket_cart";
+// Which duration group is currently shown in the cart. Persisted so a refresh
+// keeps the user on the same plan. The cart is split by rental duration: each
+// duration is its own group and, at checkout, its own order.
+const SELECTED_DURATION_KEY = "rentbasket_cart_duration";
 const CART_SYNC_DEBOUNCE_MS = 3000;
+
+// Canonical ordering of duration groups (matches the picker order). Used to
+// sort the durations present in the cart so the switcher is always stable.
+const DURATION_ORDER = DURATION_OPTIONS.map((d) => d.key);
+const durationRank = (key) => {
+  const i = DURATION_ORDER.indexOf(key);
+  return i === -1 ? DURATION_ORDER.length : i;
+};
+const labelForDuration = (key) =>
+  DURATION_OPTIONS.find((d) => d.key === key)?.label || key || "";
 
 /**
  * Unique id for a cart line item. Date.now() alone collides when several items
@@ -63,6 +79,11 @@ export const useCart = () => {
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(loadCart);
   const [coupon, setCoupon] = useState(null);
+  // The duration group currently shown in the cart. Restored from storage on
+  // load; reconciled against the durations actually present by the effect below.
+  const [selectedDuration, setSelectedDurationState] = useState(
+    () => safeGet(SELECTED_DURATION_KEY) || null
+  );
 
   // Persist to localStorage on every change (primary store).
   // Uses safeSet so a write failure (private mode, quota exceeded) swallows
@@ -70,6 +91,40 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     safeSet(CART_STORAGE_KEY, JSON.stringify(cartItems));
   }, [cartItems]);
+
+  // The ordered list of duration groups that have at least one item.
+  const durationsInCart = useMemo(() => {
+    const present = [...new Set(cartItems.map((i) => i.duration).filter(Boolean))];
+    return present.sort((a, b) => durationRank(a) - durationRank(b));
+  }, [cartItems]);
+
+  // Keep selectedDuration valid: if it points at an empty/absent group (e.g. the
+  // last item moved away or was removed), fall back to the first group present.
+  // Also seeds the selection on first load.
+  useEffect(() => {
+    if (durationsInCart.length === 0) {
+      if (selectedDuration !== null) setSelectedDurationState(null);
+      return;
+    }
+    if (!durationsInCart.includes(selectedDuration)) {
+      setSelectedDurationState(durationsInCart[0]);
+    }
+  }, [durationsInCart, selectedDuration]);
+
+  useEffect(() => {
+    if (selectedDuration) safeSet(SELECTED_DURATION_KEY, selectedDuration);
+  }, [selectedDuration]);
+
+  const setSelectedDuration = (key) => setSelectedDurationState(key);
+
+  // Items belonging to one duration group (defaults to the active group).
+  const itemsForDuration = (key) => cartItems.filter((i) => i.duration === key);
+  const activeItems = useMemo(
+    () => cartItems.filter((i) => i.duration === selectedDuration),
+    [cartItems, selectedDuration]
+  );
+  const groupCount = (key) =>
+    cartItems.reduce((n, i) => (i.duration === key ? n + i.quantity : n), 0);
 
   // Recalculate deposit waiver for recommendation items whenever the cart changes.
   // A recommendation gets 0 deposit only if its price is less than the highest-priced
@@ -143,7 +198,68 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+  /**
+   * Move a cart line to a different rental duration (which is also a different
+   * checkout group). Recomputes rent/price for the new duration from the
+   * product's pricing_by_duration. If the destination group already contains
+   * the same product, the two lines are MERGED (quantities summed) so a product
+   * never appears twice within one duration group — consistent with addToCart.
+   *
+   * Returns { moved, label } so the caller can fire the right toast:
+   *   moved === false → user re-picked the same duration (no-op).
+   *   label           → human label of the destination duration.
+   */
+  const changeItemDuration = (cartItemId, newDuration, product) => {
+    const label = labelForDuration(newDuration);
+    setCartItems((prev) => {
+      const item = prev.find((i) => i.cartItemId === cartItemId);
+      if (!item || item.duration === newDuration) return prev;
+
+      // Resolve the new rent/price for this duration. Prefer live product
+      // pricing; fall back to the item's current rent if pricing is unavailable.
+      const newRent = product?.pricing_by_duration?.[newDuration] ?? item.rent;
+      const newPrice = discountedRent(newRent, item.percent_discount ?? 0);
+
+      // Is there already a line for this product in the destination group?
+      const mergeTarget = prev.find(
+        (i) =>
+          i.cartItemId !== cartItemId &&
+          i.productId === item.productId &&
+          i.duration === newDuration
+      );
+
+      if (mergeTarget) {
+        // Merge: drop the moved line, bump the target's quantity (capped at 10).
+        return prev
+          .filter((i) => i.cartItemId !== cartItemId)
+          .map((i) =>
+            i.cartItemId === mergeTarget.cartItemId
+              ? { ...i, quantity: Math.min(10, i.quantity + item.quantity) }
+              : i
+          );
+      }
+
+      // No merge — just re-tag the line with the new duration + pricing.
+      return prev.map((i) =>
+        i.cartItemId === cartItemId
+          ? {
+              ...i,
+              duration: newDuration,
+              durationLabel: label,
+              rent: newRent,
+              price: newPrice,
+            }
+          : i
+      );
+    });
+    return { moved: true, label };
+  };
+
   const clearCart = () => setCartItems([]);
+
+  /** Remove every line in one duration group — used after that group is ordered. */
+  const clearGroup = (key) =>
+    setCartItems((prev) => prev.filter((i) => i.duration !== key));
 
   const setAvailableCoupon = (couponData) => {
     setCoupon(couponData);
@@ -153,9 +269,15 @@ export const CartProvider = ({ children }) => {
     setCoupon(null);
   };
 
-  const getCartItemCount = () => {
-    return cartItems.reduce((count, item) => count + item.quantity, 0);
-  };
+  // Total units across the WHOLE cart. Pass a duration key to count one group.
+  const getCartItemCount = (duration) =>
+    cartItems.reduce(
+      (count, item) =>
+        duration == null || item.duration === duration
+          ? count + item.quantity
+          : count,
+      0
+    );
 
   return (
     <CartContext.Provider
@@ -164,11 +286,20 @@ export const CartProvider = ({ children }) => {
         addToCart,
         removeFromCart,
         updateItem,
+        changeItemDuration,
         clearCart,
+        clearGroup,
         getCartItemCount,
         coupon,
         setAvailableCoupon,
         removeCoupon,
+        // Duration grouping
+        selectedDuration,
+        setSelectedDuration,
+        durationsInCart,
+        itemsForDuration,
+        activeItems,
+        groupCount,
       }}
     >
       {children}
