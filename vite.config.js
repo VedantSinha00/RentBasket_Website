@@ -39,7 +39,7 @@ export default defineConfig(({ command, mode }) => {
   const apiTarget = env.VITE_API_BASE_URL;
 
   return {
-    base: mode === "production" ? "/RentBasket_Website/" : "/",
+    base: "/",
     server: {
       host: "::",
       port: 8080,

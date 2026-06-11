@@ -1,0 +1,29 @@
+pipelines:
+  branches:
+    main:
+      - step:
+          name: 'Deploy to Production'
+          deployment: production
+          runs-on:
+            - homeui
+            - self.hosted
+            - linux.shell
+          script:
+            - DEPLOY_PATH=/var/www/homeui
+
+            - cd $BITBUCKET_CLONE_DIR
+            - echo "Creating .env file"
+            - echo "$VITE_BASE_URL" > .env
+            - echo "$VITE_APP_NAME" >> .env
+            - echo "$VITE_API_BASE_URL" >> .env
+            - echo "$VITE_API_APP_KEY" >> .env
+            - echo "$VITE_CATALOG_API_KEY" >> .env
+            - echo "$VITE_WHATSAPP_NUMBER" >> .env
+
+            - npm i
+            - npm run build
+            - sudo rsync -av --delete --exclude='.git' $BITBUCKET_CLONE_DIR/ $DEPLOY_PATH/
+
+            - sudo chown -R ubuntu:www-data $DEPLOY_PATH
+            - sudo chmod -R 775 $DEPLOY_PATH
+            - sudo nginx -s reload
