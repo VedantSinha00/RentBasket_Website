@@ -19,7 +19,7 @@ export async function getToken() {
   return _inflight;
 }
 
-async function _refresh() {
+async function _fetchToken() {
   const res = await fetch(`${AWS_BASE}/get-jwt-token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -29,7 +29,18 @@ async function _refresh() {
   const json = await res.json().catch(() => null);
   const token = json?.data?.jwt_token;
   if (!token) throw new Error("Auth: token missing from response");
-  _token = token;
+  return token;
+}
+
+async function _refresh() {
+  try {
+    _token = await _fetchToken();
+  } catch (err) {
+    // Single retry after 1.5 s — handles transient testaws blips without
+    // cascading every API call on the page into a failure.
+    await new Promise((r) => setTimeout(r, 1500));
+    _token = await _fetchToken();
+  }
   return _token;
 }
 
