@@ -162,8 +162,12 @@ export async function fetchOrders(userId) {
   ]);
 
   const json = await res.json().catch(() => null);
-  if (!res.ok || !json || json.responseCode !== 200) {
+  if (!res.ok || !json) {
     throw new Error(json?.data?.messageDescription || json?.message || `Orders API failed (${res.status})`);
+  }
+  // responseCode 201 = "no orders found" — treat as empty list, not an error
+  if (json.responseCode !== 200) {
+    return [];
   }
 
   // Build amenity_id → image lookup from the catalog (product id === amenity_type_id).
