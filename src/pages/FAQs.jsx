@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, HelpCircle, Phone, MessageSquare } from "lucide-react";
+import { ChevronDown, Phone, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -47,18 +47,15 @@ const FAQs = () => {
       <Header />
       <main className="section-container py-12 md:py-20 max-w-3xl">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 mb-4">
-            <HelpCircle className="w-6 h-6 text-primary" />
-          </div>
-          <h1 className="font-display font-semibold text-3xl md:text-4xl text-foreground">
+          <p className="text-primary font-sans font-semibold text-sm uppercase tracking-widest mb-3">
+            FAQ'S
+          </p>
+          <h1 className="font-display font-extrabold text-5xl md:text-7xl text-foreground leading-tight">
             Frequently Asked Questions
           </h1>
-          <p className="text-muted-foreground mt-2 font-sans max-w-lg mx-auto">
-            Got questions about deposits, delivery, or damages? We've got you covered.
-          </p>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-4">
           {faqs.map((faq, i) => {
             const isOpen = openIndex === i;
             return (
@@ -68,9 +65,9 @@ const FAQs = () => {
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="w-full flex items-center justify-between px-6 py-5 text-left focus:outline-none"
+                  className="w-full flex items-center justify-between px-7 py-6 text-left focus:outline-none"
                 >
-                  <span className="text-base font-semibold text-foreground pr-4 font-sans leading-snug">
+                  <span className="text-base font-bold text-foreground pr-4 font-sans leading-snug">
                     {faq.q}
                   </span>
                   <ChevronDown

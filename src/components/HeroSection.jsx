@@ -48,7 +48,7 @@ const HeroSection = () => {
         >
           <div className="text-center">
             <div className="font-sans font-extrabold italic text-primary leading-none text-[28px] sm:text-[32px] tracking-[-0.04em]">
-              1200+
+              2000+
             </div>
             <div className="font-sans font-semibold text-muted-foreground text-[11px] sm:text-xs mt-1.5 tracking-tight">
               Happy Customers
@@ -119,7 +119,7 @@ const HeroSection = () => {
           >
             <div>
               <div className="font-sans font-extrabold italic text-primary leading-none lg:text-[44px] xl:text-[52px] tracking-[-0.04em]">
-                1200+
+                2000+
               </div>
               <div className="font-sans font-bold text-muted-foreground text-sm xl:text-base mt-1 tracking-tight">
                 Happy Customers
