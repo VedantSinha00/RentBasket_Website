@@ -18,6 +18,7 @@ pipelines:
             - echo "$VITE_API_BASE_URL" >> .env
             - echo "$VITE_API_APP_KEY" >> .env
             - echo "$VITE_CATALOG_API_KEY" >> .env
+            - echo "$VITE_PROXY_URL" >> .env
             - echo "$VITE_WHATSAPP_NUMBER" >> .env
 
             - npm i
