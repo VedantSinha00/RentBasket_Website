@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { AlertCircle, RotateCw } from "lucide-react";
 import { DURATION_OPTIONS } from "@/data/products";
 import { discountedRent } from "@/lib/pricing";
 import { useProduct } from "@/hooks/useProducts";
@@ -24,7 +25,7 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
 
-  const { data: product, isLoading } = useProduct(id);
+  const { data: product, isLoading, isError, refetch } = useProduct(id);
 
   const [selectedDuration, setSelectedDuration] = useState("12_months");
   const [quantity, setQuantity] = useState(1);
@@ -61,6 +62,34 @@ const ProductDetails = () => {
               <div className="h-24 bg-secondary rounded-xl animate-pulse" />
               <div className="h-12 bg-secondary rounded-xl animate-pulse" />
             </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="section-container py-20">
+          <div className="flex flex-col items-center justify-center text-center">
+            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
+              <AlertCircle className="w-7 h-7 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Couldn't load this product</h3>
+            <p className="text-sm text-muted-foreground max-w-sm mb-5">
+              Something went wrong fetching the product. Please check your connection
+              and try again.
+            </p>
+            <button
+              onClick={() => refetch()}
+              className="btn-outline inline-flex items-center gap-2 text-sm px-5 py-2.5"
+            >
+              <RotateCw className="w-4 h-4" />
+              Retry
+            </button>
           </div>
         </div>
         <Footer />
@@ -113,7 +142,7 @@ const ProductDetails = () => {
     toast.success(`${product.name} added to basket`, {
       description: `${durationLabel} plan · ₹${price.toLocaleString("en-IN")}`,
     });
-    navigate("/cart");
+    navigate("/basket");
   };
 
   return (

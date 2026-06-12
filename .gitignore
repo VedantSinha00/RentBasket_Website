@@ -22,5 +22,12 @@ graphify-out/
 .DS_Store
 Thumbs.db
 
-# Worklog
-docs/internship-worklog.md
+# Internal planning docs (not for the repo)
+docs/
+_internal/
+
+# Vite dev server artifacts
+vite.config.js.timestamp-*
+
+# Local Netlify folder
+.netlify

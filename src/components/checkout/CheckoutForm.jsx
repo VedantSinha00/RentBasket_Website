@@ -1,8 +1,8 @@
-import { User, Phone, Mail, MapPin, Calendar, Clock, Info, CheckCircle2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { User, Phone, Mail, MapPin, Calendar, Info, CheckCircle2, Loader2 } from "lucide-react";
+import { getDeliverySlots } from "@/api/otp";
+import { dateNDaysFromToday } from "@/lib/delivery";
 
-/**
- * Reusable Card for Checkout Sections
- */
 const CheckoutCard = ({ title, icon: Icon, children, subtitle }) => (
   <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-soft mb-6">
     <div className="px-5 py-4 border-b border-border/50 flex items-center justify-between bg-secondary/10">
@@ -22,10 +22,7 @@ const CheckoutCard = ({ title, icon: Icon, children, subtitle }) => (
   </div>
 );
 
-/**
- * Standard Input Field
- */
-const InputField = ({ label, icon: Icon, placeholder, type = "text", ...props }) => (
+const InputField = ({ label, icon: Icon, placeholder, type = "text", hint, ...props }) => (
   <div className="space-y-1.5">
     <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
       {label}
@@ -41,160 +38,303 @@ const InputField = ({ label, icon: Icon, placeholder, type = "text", ...props })
         {...props}
       />
     </div>
+    {hint && <div className="ml-1 text-[10px] mt-0.5">{hint}</div>}
   </div>
 );
 
-const CheckoutForm = ({ formData, setFormData }) => {
+const ServiceabilityNote = () => (
+  <div className="p-3 bg-primary/5 border border-primary/10 rounded-xl flex gap-3 mt-2">
+    <Info className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+    <p className="text-[11px] text-muted-foreground leading-relaxed">
+      <span className="font-bold text-primary">Serviceability Note:</span> If your pincode is outside our primary zone, our team will coordinate for a custom delivery quote.
+    </p>
+  </div>
+);
+
+const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
+  const [geoState, setGeoState] = useState("idle"); // idle | loading | done | denied
+  const [pincodeState, setPincodeState] = useState("idle"); // idle | loading | done | error
+  const [slots, setSlots] = useState([]);
+
+  useEffect(() => {
+    getDeliverySlots()
+      .then((s) => {
+        // Sort by id ascending (earliest slot first)
+        const sorted = [...s].sort((a, b) => a.id - b.id);
+        setSlots(sorted);
+        // Pre-select the first slot if nothing is selected yet
+        setFormData((prev) => ({
+          ...prev,
+          timeSlot: prev.timeSlot || sorted[0]?.id,
+        }));
+      })
+      .catch(() => {}); // fallback: existing hardcoded selection stays
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handlePincodeChange = async (e) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
+    setFormData((prev) => ({ ...prev, pincode: value }));
+    if (value.length !== 6) { setPincodeState("idle"); return; }
+    setPincodeState("loading");
+    try {
+      const res = await fetch(`https://api.postalpincode.in/pincode/${value}`);
+      const data = await res.json();
+      const po = data?.[0]?.PostOffice?.[0];
+      if (data?.[0]?.Status === "Success" && po) {
+        setFormData((prev) => ({
+          ...prev,
+          city: prev.city || po.District || po.Block || "",
+          state: prev.state || po.State || "",
+        }));
+        setPincodeState("done");
+      } else {
+        setPincodeState("error");
+      }
+    } catch {
+      setPincodeState("error");
+    }
+  };
+
+  const handleUseLocation = () => {
+    if (!navigator.geolocation) { setGeoState("denied"); return; }
+    setGeoState("loading");
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
+            { headers: { "User-Agent": "RentBasket/1.0 (rentbasket.com)" } }
+          );
+          if (!res.ok) throw new Error();
+          const data = await res.json();
+          const a = data.address || {};
+          setFormData((prev) => ({
+            ...prev,
+            addressLine1: prev.addressLine1 || [a.house_number, a.road].filter(Boolean).join(", "),
+            addressLine2: prev.addressLine2 || (a.suburb || a.neighbourhood || a.quarter || ""),
+            city: prev.city || (a.city || a.town || a.village || a.county || ""),
+            state: prev.state || (a.state || ""),
+            pincode: prev.pincode || (a.postcode || ""),
+          }));
+        } catch { /* reverse-geocode failed — user fills the fields manually */ }
+        setGeoState("done");
+      },
+      () => setGeoState("denied"),
+      { timeout: 8000 }
+    );
+  };
+
   return (
     <div className="w-full">
-      {/* 1. Contact Information */}
-      <CheckoutCard 
-        title="Contact Information" 
+      {/* 1. Your Details */}
+      <CheckoutCard
+        title="Your Details"
         icon={User}
         subtitle="We'll use these details to share delivery updates and your invoice."
       >
+        {phoneVerified && (
+          <div className="flex items-center justify-between gap-3 mb-5 p-3 bg-success-muted border border-success-border rounded-xl">
+            <div className="flex items-center gap-2.5">
+              <CheckCircle2 className="w-4 h-4 text-success flex-shrink-0" />
+              <div>
+                <p className="text-[10px] font-bold text-success-muted-foreground uppercase tracking-wider">Mobile Verified</p>
+                <p className="text-sm font-bold text-foreground">+91 {formData.phone}</p>
+              </div>
+            </div>
+            <span className="text-[10px] font-bold text-success uppercase tracking-wider">Verified</span>
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <InputField 
-            label="Full Name" 
-            icon={User} 
+          <InputField
+            label="Full Name"
+            icon={User}
             name="fullName"
-            placeholder="e.g. Rahul Sharma" 
+            placeholder="e.g. Rahul Sharma"
             value={formData.fullName}
             onChange={handleChange}
           />
-          <InputField 
-            label="Mobile Number" 
-            icon={Phone} 
-            name="phone"
-            placeholder="e.g. 99588 58473" 
-            value={formData.phone}
+          <InputField
+            label="Email Address"
+            icon={Mail}
+            name="email"
+            type="email"
+            placeholder="e.g. rahul@example.com"
+            value={formData.email}
             onChange={handleChange}
           />
-          <div className="md:col-span-2">
-            <InputField 
-              label="Email Address" 
-              icon={Mail} 
-              name="email"
-              type="email"
-              placeholder="e.g. rahul@example.com" 
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
+          {!phoneVerified && (
+            <div className="md:col-span-2">
+              <InputField
+                label="Mobile Number"
+                icon={Phone}
+                name="phone"
+                placeholder="e.g. 99588 58473"
+                value={formData.phone}
+                onChange={handleChange}
+              />
+            </div>
+          )}
         </div>
       </CheckoutCard>
 
       {/* 2. Delivery Address */}
-      <CheckoutCard 
-        title="Delivery Address" 
+      <CheckoutCard
+        title="Delivery Address"
         icon={MapPin}
         subtitle="Currently serving Gurgaon, Noida, and select areas across Delhi NCR."
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="md:col-span-2">
-            <InputField 
-              label="House / Flat / Building No." 
-              icon={MapPin} 
-              name="addressLine1"
-              placeholder="e.g. Flat 402, Block B, Silver Oaks" 
-              value={formData.addressLine1}
+        <div className="space-y-4">
+          {/* Use my location */}
+          <button
+            type="button"
+            onClick={handleUseLocation}
+            disabled={geoState === "loading" || geoState === "done"}
+            className={`w-full flex items-center justify-center gap-2 py-2.5 border rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+              geoState === "done"
+                ? "border-success/40 text-success bg-success/5"
+                : geoState === "denied"
+                ? "border-orange-300 text-orange-600 hover:border-orange-400 bg-orange-50/40"
+                : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
+            }`}
+          >
+            {geoState === "loading" ? (
+              <><Loader2 className="w-4 h-4 animate-spin" /> Getting location…</>
+            ) : geoState === "done" ? (
+              <><MapPin className="w-4 h-4" /> Location captured ✓</>
+            ) : geoState === "denied" ? (
+              <><MapPin className="w-4 h-4" /> Retry location</>
+            ) : (
+              <><MapPin className="w-4 h-4" /> Use my location</>
+            )}
+          </button>
+
+          <InputField
+            label="Address Line 1"
+            icon={MapPin}
+            name="addressLine1"
+            placeholder="House / Flat / Block No."
+            value={formData.addressLine1}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Address Line 2"
+            icon={MapPin}
+            name="addressLine2"
+            placeholder="Street, Colony, Area"
+            value={formData.addressLine2}
+            onChange={handleChange}
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <InputField
+              label="Landmark"
+              icon={MapPin}
+              name="landmark"
+              placeholder="Near metro, school, etc."
+              value={formData.landmark}
+              onChange={handleChange}
+            />
+            <InputField
+              label="Pincode"
+              icon={MapPin}
+              name="pincode"
+              placeholder="6-digit pincode"
+              value={formData.pincode}
+              onChange={handlePincodeChange}
+              maxLength={6}
+              inputMode="numeric"
+              hint={
+                pincodeState === "loading" ? (
+                  <span className="text-muted-foreground flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Looking up…</span>
+                ) : pincodeState === "done" ? (
+                  <span className="text-success flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> City &amp; state filled</span>
+                ) : pincodeState === "error" ? (
+                  <span className="text-muted-foreground">Not found — enter manually</span>
+                ) : null
+              }
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <InputField
+              label="City"
+              icon={MapPin}
+              name="city"
+              placeholder="City"
+              value={formData.city}
+              onChange={handleChange}
+            />
+            <InputField
+              label="State"
+              icon={MapPin}
+              name="state"
+              placeholder="State"
+              value={formData.state}
               onChange={handleChange}
             />
           </div>
-          <div className="md:col-span-2">
-            <InputField 
-              label="Street / Area / Sector" 
-              icon={MapPin} 
-              name="addressLine2"
-              placeholder="e.g. Sector 45, Near Huda City Center" 
-              value={formData.addressLine2}
-              onChange={handleChange}
-            />
-          </div>
-          <InputField 
-            label="Landmark (Optional)" 
-            icon={MapPin} 
-            name="landmark"
-            placeholder="e.g. Opp. Central Park" 
-            value={formData.landmark}
-            onChange={handleChange}
-          />
-          <InputField 
-            label="Pincode" 
-            icon={MapPin} 
-            name="pincode"
-            placeholder="e.g. 122001" 
-            value={formData.pincode}
-            onChange={handleChange}
-          />
-          <InputField 
-            label="City" 
-            icon={MapPin} 
-            name="city"
-            placeholder="e.g. Gurgaon" 
-            value={formData.city}
-            onChange={handleChange}
-          />
-          <InputField 
-            label="State" 
-            icon={MapPin} 
-            name="state"
-            placeholder="e.g. Haryana" 
-            value={formData.state}
-            onChange={handleChange}
-          />
-        </div>
-        
-        <div className="mt-4 p-3 bg-primary/5 border border-primary/10 rounded-xl flex gap-3">
-          <Info className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-          <p className="text-[11px] text-muted-foreground leading-relaxed">
-            <span className="font-bold text-primary">Serviceability Note:</span> If your pincode is outside our primary zone, our team will coordinate for a custom delivery quote.
-          </p>
+
+          <ServiceabilityNote />
         </div>
       </CheckoutCard>
 
       {/* 3. Rental Start Details */}
-      <CheckoutCard 
-        title="Rental Start Details" 
+      <CheckoutCard
+        title="Rental Start Details"
         icon={Calendar}
         subtitle="When would you like your items delivered and set up?"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <InputField 
-            label="Preferred Start Date" 
-            icon={Calendar} 
+          <InputField
+            label="Preferred Start Date"
+            icon={Calendar}
             name="startDate"
             type="date"
             value={formData.startDate}
             onChange={handleChange}
-            min={new Date().toISOString().split("T")[0]}
+            min={dateNDaysFromToday(2)}
           />
-          
+
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
               Time Slot
             </label>
-            <div className="grid grid-cols-3 gap-2">
-              {["Morning", "Afternoon", "Evening"].map((slot) => (
-                <button
-                  key={slot}
-                  type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, timeSlot: slot }))}
-                  className={`py-2.5 px-1 rounded-xl border text-[10px] md:text-xs font-bold transition-all ${
-                    formData.timeSlot === slot
-                      ? "bg-primary border-primary text-white shadow-md shadow-primary/20"
-                      : "bg-secondary/30 border-border text-muted-foreground hover:border-primary/40"
-                  }`}
-                >
-                  {slot}
-                </button>
-              ))}
+            <div className="grid grid-cols-2 gap-2">
+              {slots.length > 0
+                ? slots.map((slot) => (
+                    <button
+                      key={slot.id}
+                      type="button"
+                      onClick={() => setFormData((prev) => ({ ...prev, timeSlot: slot.id }))}
+                      className={`py-2.5 px-2 rounded-xl border text-[10px] md:text-xs font-bold transition-all ${
+                        formData.timeSlot === slot.id
+                          ? "bg-primary border-primary text-white shadow-md shadow-primary/20"
+                          : "bg-secondary/30 border-border text-muted-foreground hover:border-primary/40"
+                      }`}
+                    >
+                      {slot.slot_name}
+                    </button>
+                  ))
+                : ["8AM - 10AM", "10AM - 12PM", "12PM - 2PM", "2PM - 4PM"].map((label) => (
+                    <button
+                      key={label}
+                      type="button"
+                      disabled
+                      className="py-2.5 px-2 rounded-xl border text-[10px] md:text-xs font-bold bg-secondary/30 border-border text-muted-foreground/40 animate-pulse"
+                    >
+                      {label}
+                    </button>
+                  ))}
             </div>
+            <p className="text-[10px] text-muted-foreground mt-1.5 leading-relaxed">
+              This is a preferred slot and does not confirm the actual time. Our delivery team will get in touch with you soon.
+            </p>
           </div>
 
           <div className="md:col-span-2 space-y-1.5">
@@ -213,7 +353,7 @@ const CheckoutForm = ({ formData, setFormData }) => {
         </div>
       </CheckoutCard>
 
-      {/* 4. Included Benefits Trust Card */}
+      {/* 4. Included Benefits */}
       <div className="bg-success rounded-2xl p-5 md:p-6 text-white shadow-lg shadow-success/25 mb-8 relative overflow-hidden">
         <div className="relative z-10">
           <h4 className="text-base font-bold mb-4 flex items-center gap-2">
@@ -236,7 +376,6 @@ const CheckoutForm = ({ formData, setFormData }) => {
             ))}
           </div>
         </div>
-        {/* Abstract background element */}
         <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
       </div>
     </div>

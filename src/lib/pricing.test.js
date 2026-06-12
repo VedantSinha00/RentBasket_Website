@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   discountedRent,
   unitSecurity,
+  unitSecurityOf,
   couponDiscount,
   cartBreakdown,
 } from "./pricing";
@@ -16,6 +17,13 @@ describe("pricing — per-unit primitives", () => {
   it("unit security = list rent × security_multiple", () => {
     expect(unitSecurity(769, 2)).toBe(1538); // live cart
     expect(unitSecurity(420, 2)).toBe(840);
+  });
+
+  it("unitSecurityOf resolves multiple → precomputed → 2× default (sent to the proposal API)", () => {
+    expect(unitSecurityOf({ rent: 769, security_multiple: 2 })).toBe(1538);
+    expect(unitSecurityOf({ rent: 769, security_multiple: 0 })).toBe(0); // waived rec item
+    expect(unitSecurityOf({ rent: 769, adv_security: 1200 })).toBe(1200);
+    expect(unitSecurityOf({ rent: 769 })).toBe(1538); // default 2×
   });
 });
 

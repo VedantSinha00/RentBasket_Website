@@ -1,5 +1,6 @@
 import { forwardRef, useState } from "react";
-// import { Heart } from "lucide-react"; // wishlist disabled — requires auth backend
+import { Heart } from "lucide-react";
+import { useWishlist } from "@/context/WishlistContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { DURATION_OPTIONS } from "@/data/products";
@@ -7,7 +8,8 @@ import { discountedRent } from "@/lib/pricing";
 import ProductImage from "@/components/ui/ProductImage";
 
 const ProductCard = forwardRef(({ product }, ref) => {
-  // const [isFavorite, setIsFavorite] = useState(false); // wishlist disabled
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const isFavorite = isInWishlist(product.id);
   const [showPricingLadder, setShowPricingLadder] = useState(false);
   const navigate = useNavigate();
 
@@ -61,11 +63,11 @@ const ProductCard = forwardRef(({ product }, ref) => {
           </span>
         ) : null}
 
-        {/* Favorite Icon — disabled until auth backend is ready */}
-        {/* <button
+        {/* Wishlist button */}
+        <button
           onClick={(e) => {
             e.stopPropagation();
-            setIsFavorite(!isFavorite);
+            toggleWishlist(product);
           }}
           className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:scale-110 transition-transform"
         >
@@ -74,7 +76,7 @@ const ProductCard = forwardRef(({ product }, ref) => {
               isFavorite ? "fill-primary text-primary" : "text-muted-foreground"
             }`}
           />
-        </button> */}
+        </button>
 
         {/* Hover Pricing Ladder */}
         <AnimatePresence>

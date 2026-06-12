@@ -1,169 +1,223 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ChevronLeft, ShieldCheck, Truck, Clock } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { ChevronLeft, ShieldCheck, Truck, Clock, ArrowRight } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
-import { cartBreakdown } from "@/lib/pricing";
+import { getAuth } from "@/lib/auth";
+import { safeSet, safeGet } from "@/lib/safeStorage";
+import { getUserAddress, saveUserAddress } from "@/api/address";
+import { dateNDaysFromToday } from "@/lib/delivery";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutForm from "@/components/checkout/CheckoutForm";
-import CheckoutPayment from "@/components/checkout/CheckoutPayment";
-import CheckoutSummary from "@/components/checkout/CheckoutSummary";
+
+const CHECKOUT_FORM_KEY = "rb_checkout_form";
+
+/** Read a persisted checkout draft from sessionStorage, or null. */
+const loadCheckoutDraft = () => {
+  try {
+    return JSON.parse(safeGet(CHECKOUT_FORM_KEY, sessionStorage)) || null;
+  } catch {
+    return null;
+  }
+};
+
+const DEFAULT_FORM = {
+  fullName: "",
+  phone: "",
+  email: "",
+  addressLine1: "",
+  addressLine2: "",
+  landmark: "",
+  pincode: "",
+  city: "",
+  state: "",
+  startDate: dateNDaysFromToday(2),
+  timeSlot: null,
+  instructions: "",
+  paymentMethod: "upi",
+};
 
 const Checkout = () => {
-  const { cartItems, clearCart, coupon } = useCart();
+  const { cartItems, itemsForDuration, selectedDuration } = useCart();
   const navigate = useNavigate();
-  const [isProcessing, setIsProcessing] = useState(false);
+  const location = useLocation();
+  const verifiedPhone = location.state?.verifiedPhone || sessionStorage.getItem("rb_verified_phone") || getAuth()?.phone || "";
 
-  // Redirect if cart is empty
+  // The duration group being checked out (each group is its own order). Resolved
+  // from explicit nav state, the value the cart stashed, then the active group.
+  const checkoutDuration =
+    location.state?.checkoutDuration ||
+    sessionStorage.getItem("rb_checkout_duration") ||
+    selectedDuration ||
+    "";
+  const groupItems = checkoutDuration ? itemsForDuration(checkoutDuration) : cartItems;
+
+  // Persist verifiedPhone so navigating back to checkout doesn't lose it.
   useEffect(() => {
-    if (cartItems.length === 0) {
-      navigate("/cart");
-      toast.error("Your cart is empty", {
+    if (location.state?.verifiedPhone) {
+      safeSet("rb_verified_phone", location.state.verifiedPhone, sessionStorage);
+    }
+  }, []);
+
+  // Pre-fill address fields from the user's saved address if the form doesn't
+  // already have address data (i.e. no draft). Fire-and-forget — a failure here
+  // just means the user fills in the fields manually.
+  const addressPrefilled = useRef(false);
+  useEffect(() => {
+    if (!verifiedPhone || addressPrefilled.current) return;
+    addressPrefilled.current = true;
+    getUserAddress(verifiedPhone).then((addr) => {
+      if (!addr) return;
+      setFormData((prev) => {
+        if (prev.addressLine1) return prev; // draft already has address — don't overwrite
+        return {
+          ...prev,
+          fullName: prev.fullName || addr.contact_name || "",
+          addressLine1: addr.address_line_1 || "",
+          addressLine2: addr.address_line_2 || "",
+          landmark: addr.landmark || "",
+          pincode: addr.pincode || "",
+          city: addr.city || "",
+          state: addr.state || "",
+        };
+      });
+      if (addr.servicable === 0) {
+        toast.error("We don't deliver to your area yet", {
+          description: `${addr.city || "Your city"} is not in our delivery zone. Please contact us to check availability.`,
+          duration: 8000,
+        });
+      }
+    }).catch(() => {});
+  }, [verifiedPhone]);
+
+  // Enforce flow order: the chosen plan must have items, and mobile must be
+  // verified first.
+  useEffect(() => {
+    if (groupItems.length === 0) {
+      navigate("/basket");
+      toast.error("Your basket is empty", {
         description: "Add some items before checking out.",
       });
+    } else if (!sessionStorage.getItem("rb_cart_proceed")) {
+      navigate("/basket");
+    } else if (!verifiedPhone) {
+      navigate("/customer-validation", { state: { returnTo: "/checkout" } });
     }
-  }, [cartItems, navigate]);
+  }, [groupItems, navigate, verifiedPhone]);
 
-  const [formData, setFormData] = useState({
-    fullName: "",
-    phone: "",
-    email: "",
-    addressLine1: "",
-    addressLine2: "",
-    landmark: "",
-    pincode: "",
-    city: "",
-    state: "",
-    startDate: new Date(Date.now() + 86400000 * 2).toISOString().split("T")[0], // Default to +2 days
-    timeSlot: "Morning",
-    instructions: "",
-    paymentMethod: "upi",
+  // Prefill order: defaults < persisted draft < API address < explicit state from "Edit Details"
+  // < explicit state from "Edit Details" on the order summary.
+  const [formData, setFormData] = useState(() => {
+    const draft = loadCheckoutDraft() || {};
+    return {
+      ...DEFAULT_FORM,
+      ...draft,
+      ...(location.state?.formData || {}),
+      phone: verifiedPhone || location.state?.formData?.phone || draft.phone || "",
+    };
   });
 
-  const handlePlaceOrder = () => {
-    // Basic validation
+  // Persist the draft so navigating to the address book and back never loses
+  // the name / email / date / instructions the user already typed.
+  useEffect(() => {
+    safeSet(CHECKOUT_FORM_KEY, JSON.stringify(formData), sessionStorage);
+  }, [formData]);
+
+  const handleReviewSummary = () => {
     if (!formData.fullName || !formData.phone || !formData.addressLine1 || !formData.pincode) {
       toast.error("Please fill required fields", {
-        description: "Name, Mobile, and Address are mandatory.",
+        description: "Name, Address, and Pincode are mandatory.",
       });
       return;
     }
-
-    setIsProcessing(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsProcessing(false);
-      // Build the order data payload using the new pricing breakdown
-      const b = cartBreakdown(cartItems, coupon);
-      
-      const orderPayload = {
-        orderId: `RB-${Math.floor(Math.random() * 90000) + 10000}`,
-        bookingDate: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
-        deliveryDate: new Date(formData.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
-        deliverySlot: formData.timeSlot,
-        customerDetails: {
-          name: formData.fullName,
-          phone: formData.phone,
-          email: formData.email
-        },
-        deliveryAddress: `${formData.addressLine1}, ${formData.addressLine2}, ${formData.city}, ${formData.state}, ${formData.pincode}`,
-        paymentDetails: {
-          method: formData.paymentMethod.toUpperCase(),
-          transactionId: `TXN${Math.floor(Math.random() * 900000) + 100000}`,
-          status: "Successful"
-        },
-        items: cartItems,
-        totalRent: b.totalRent,
-        itemSavings: b.itemSavings,
-        coupon: b.coupon,
-        baseRent: b.netBaseRent,
-        gst: b.gst,
-        netMonthlyRent: b.netMonthlyRent,
-        security: b.security,
-        netFirstMonth: b.netFirstMonth,
-        upfront: b.upfront,
-        payOnDelivery: b.payOnDelivery,
-        grandTotal: b.netFirstMonth // legacy fallback
-      };
-
-      clearCart();
-      toast.success("Order placed successfully!", {
-        description: "Your rental order has been confirmed. Redirecting...",
+    const minDate = dateNDaysFromToday(2);
+    if (!formData.startDate || formData.startDate < minDate) {
+      toast.error("Please pick a later start date", {
+        description: "We need at least 2 days to prepare your delivery.",
       });
-      
-      setTimeout(() => navigate("/order-success", { state: { orderData: orderPayload } }), 1000);
-    }, 2500);
+      return;
+    }
+    // Silently sync the address back so it pre-fills on the next order.
+    if (formData.addressLine1) {
+      saveUserAddress(formData.phone || verifiedPhone, {
+        address_line_1: formData.addressLine1,
+        address_line_2: formData.addressLine2 || "",
+        landmark: formData.landmark || "",
+        pincode: formData.pincode,
+        city: formData.city,
+        state: formData.state,
+        contact_name: formData.fullName,
+        contact_phone: formData.phone || verifiedPhone,
+      }).catch(() => {});
+    }
+    navigate("/order-summary", { state: { verifiedPhone, formData, checkoutDuration } });
   };
 
-  if (cartItems.length === 0) return null;
+  if (groupItems.length === 0 || !verifiedPhone) return null;
 
   return (
     <div className="min-h-screen bg-background pb-20">
       <CheckoutHeader />
-      
+
       <main className="section-container mt-4 md:mt-6">
         {/* Breadcrumb / Back Link */}
         <div className="mb-6 md:mb-8">
-          <Link 
-            to="/cart" 
+          <Link
+            to="/basket"
             className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
-            Review Cart
+            Review Basket
           </Link>
           <div className="mt-4">
             <h1 className="text-2xl md:text-4xl font-black text-foreground tracking-tight">
               Checkout
             </h1>
             <p className="text-[11px] md:text-sm text-muted-foreground font-medium mt-1">
-              Finalize your rental details and confirm your delivery.
+              Enter your delivery details — you'll review the order summary next.
             </p>
           </div>
         </div>
 
         <CheckoutProgress currentStep="checkout" />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 mt-4 md:mt-8">
-          {/* Main Form Area */}
-          <div className="lg:col-span-12 xl:col-span-8 space-y-2">
-            
-            {/* Trust Banner - Top of Column */}
-            <div className="flex flex-wrap items-center gap-4 bg-primary/5 border border-primary/10 rounded-2xl p-4 mb-8">
-              <div className="flex items-center gap-2 text-primary">
-                <ShieldCheck className="w-5 h-5" />
-                <span className="text-xs font-black uppercase tracking-wider">Secured Rental</span>
-              </div>
-              <div className="h-4 w-px bg-primary/20 hidden md:block" />
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Truck className="w-4 h-4" />
-                <span className="text-[11px] font-bold uppercase tracking-wider">Free Delivery & Setup</span>
-              </div>
-              <div className="h-4 w-px bg-primary/20 hidden md:block" />
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Clock className="w-4 h-4" />
-                <span className="text-[11px] font-bold uppercase tracking-wider">24/48 Hr Installation</span>
-              </div>
+        <div className="max-w-3xl mx-auto mt-4 md:mt-8">
+          {/* Trust Banner */}
+          <div className="flex flex-wrap items-center gap-4 bg-primary/5 border border-primary/10 rounded-2xl p-4 mb-8">
+            <div className="flex items-center gap-2 text-primary">
+              <ShieldCheck className="w-5 h-5" />
+              <span className="text-xs font-black uppercase tracking-wider">Secured Rental</span>
             </div>
-
-            <CheckoutForm formData={formData} setFormData={setFormData} />
-            
-            <CheckoutPayment 
-              selectedMethod={formData.paymentMethod} 
-              onSelect={(method) => setFormData(prev => ({ ...prev, paymentMethod: method }))} 
-            />
-
-            {/* Bottom Note */}
-            <p className="text-xs text-muted-foreground text-center py-4 bg-secondary/20 rounded-2xl border border-dashed border-border/50 font-medium">
-              Need help with your order? <a href="tel:+919958858473" className="text-primary font-bold hover:underline">Chat with us</a> for instant setup support.
-            </p>
+            <div className="h-4 w-px bg-primary/20 hidden md:block" />
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Truck className="w-4 h-4" />
+              <span className="text-[11px] font-bold uppercase tracking-wider">Free Delivery & Setup</span>
+            </div>
+            <div className="h-4 w-px bg-primary/20 hidden md:block" />
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Clock className="w-4 h-4" />
+              <span className="text-[11px] font-bold uppercase tracking-wider">24/48 Hr Installation</span>
+            </div>
           </div>
 
-          {/* Sticky Summary */}
-          <div className="lg:col-span-12 xl:col-span-4">
-            <CheckoutSummary onPlaceOrder={handlePlaceOrder} isProcessing={isProcessing} />
-          </div>
+          <CheckoutForm formData={formData} setFormData={setFormData} phoneVerified={Boolean(verifiedPhone)} />
+
+          {/* Proceed to Order Summary */}
+          <button
+            onClick={handleReviewSummary}
+            className="gradient-coral w-full py-4 rounded-2xl font-black text-lg shadow-lg shadow-primary/30 transition-all hover:shadow-primary/40 hover:opacity-95 active:scale-[0.98] flex items-center justify-center gap-3 group"
+          >
+            Order Summary
+            <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
+              <ArrowRight className="w-4 h-4" />
+            </div>
+          </button>
+
+          {/* Bottom Note */}
+          <p className="text-xs text-muted-foreground text-center py-4 mt-3 bg-secondary/20 rounded-2xl border border-dashed border-border/50 font-medium">
+            Need help with your order? <a href="tel:+919958858473" className="text-primary font-bold hover:underline">Chat with us</a> for instant setup support.
+          </p>
         </div>
       </main>
     </div>
