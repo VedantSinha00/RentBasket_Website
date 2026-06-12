@@ -11,7 +11,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="section-container" style={{ width: "100%" }}>
         <div
-          className="flex items-center justify-between h-16 md:h-20"
+          className="flex items-center justify-between h-12 md:h-14"
           style={{
             width: "100%",
           }}

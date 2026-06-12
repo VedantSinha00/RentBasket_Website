@@ -1,4 +1,4 @@
-import { MapPin } from "lucide-react";
+import { MapPin, Check } from "lucide-react";
 import kuMascot from "@/assets/Ku_standing_proud.png";
 
 /** Compact Ku — native square aspect, keeps catalog above the fold */
@@ -28,10 +28,14 @@ const CatalogHero = () => {
               <span className="text-primary italic">every duration</span>
             </h1>
 
-            <p className="mt-2 text-sm lg:text-base text-muted-foreground leading-relaxed max-w-xl">
-              From 1 day to 12 months — flexible rentals, transparent pricing,
-              free maintenance, delivery and installation.
-            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {["3–12 month rentals", "Transparent pricing", "Free maintenance", "Free delivery & install"].map((label) => (
+                <span key={label} className="inline-flex items-center gap-1.5 bg-secondary text-foreground text-xs font-semibold px-3 py-1.5 rounded-full border border-border">
+                  <Check className="w-3 h-3 text-primary shrink-0" />
+                  {label}
+                </span>
+              ))}
+            </div>
           </div>
 
           <div className="shrink-0 w-[110px] sm:w-[160px] lg:w-[252px]">
