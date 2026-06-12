@@ -5,13 +5,23 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
 import ProductDetails from "./pages/ProductDetails";
-import Cart from "./pages/Cart";
+import Basket from "./pages/Basket";
 import Checkout from "./pages/Checkout";
+import CustomerValidation from "./pages/CustomerValidation";
+import OrderSummary from "./pages/OrderSummary";
 import OrderSuccess from "./pages/OrderSuccess";
+import Kyc from "./pages/Kyc";
+import MyOrders from "./pages/MyOrders";
+import Profile from "./pages/Profile";
+import EditAddress from "./pages/EditAddress";
+import AccountDetails from "./pages/AccountDetails";
+import Wishlist from "./pages/Wishlist";
 import TermsConditions from "./pages/TermsConditions";
 import ShippingReturns from "./pages/ShippingReturns";
 import FAQs from "./pages/FAQs";
@@ -63,9 +73,20 @@ const RouterApp = () => {
           <Route path="/catalogue" element={<Navigate to="/catalog/" replace />} />
           <Route path="/catalogue/" element={<Navigate to="/catalog/" replace />} />
           {routePair("/product/:id", <ProductDetails />)}
-          {routePair("/cart", <Cart />)}
+          {routePair("/basket", <Basket />)}
+          {/* /cart kept as a redirect so old links / bookmarks still resolve. */}
+          <Route path="/cart" element={<Navigate to="/basket/" replace />} />
+          <Route path="/cart/" element={<Navigate to="/basket/" replace />} />
           {routePair("/checkout", <Checkout />)}
+          {routePair("/customer-validation", <CustomerValidation />)}
+          {routePair("/order-summary", <OrderSummary />)}
           {routePair("/order-success", <OrderSuccess />)}
+          {routePair("/kyc", <ProtectedRoute><Kyc /></ProtectedRoute>)}
+          {routePair("/profile", <Profile />)}
+          {routePair("/account/details", <ProtectedRoute><AccountDetails /></ProtectedRoute>)}
+          {routePair("/account/address", <ProtectedRoute><EditAddress /></ProtectedRoute>)}
+          {routePair("/account/orders", <ProtectedRoute><MyOrders /></ProtectedRoute>)}
+          {routePair("/wishlist", <Wishlist />)}
           {routePair("/terms-n-conditions", <TermsConditions />)}
           {routePair("/shipping-returns", <ShippingReturns />)}
           {routePair("/faqs", <FAQs />)}
@@ -83,6 +104,7 @@ const RouterApp = () => {
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
+      <WishlistProvider>
       <CartProvider>
         <TooltipProvider>
           <Sonner />
@@ -93,6 +115,7 @@ const App = () => (
           </BrowserRouter>
         </TooltipProvider>
       </CartProvider>
+      </WishlistProvider>
     </QueryClientProvider>
   </ErrorBoundary>
 );

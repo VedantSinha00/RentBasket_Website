@@ -13,16 +13,13 @@ const CartHeader = () => {
         </div>
         <div>
           <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground">
-            Your Cart
+            Your Basket
             {count > 0 && (
               <span className="ml-2 text-base md:text-lg font-semibold text-muted-foreground">
                 ({count} {count === 1 ? "item" : "items"})
               </span>
             )}
           </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Review your selected products, rental durations, and pricing
-          </p>
         </div>
       </div>
     </div>

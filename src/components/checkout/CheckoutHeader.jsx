@@ -34,12 +34,12 @@ const CheckoutHeader = () => {
               </a>
             </div>
             
-            {/* Back to Cart link */}
-            <Link 
-              to="/cart" 
+            {/* Back to Basket link */}
+            <Link
+              to="/basket"
               className="px-4 py-2 rounded-xl text-primary font-bold hover:bg-primary/5 transition-colors border border-primary/20"
             >
-              Back to Cart
+              Back to Basket
             </Link>
           </div>
         </div>

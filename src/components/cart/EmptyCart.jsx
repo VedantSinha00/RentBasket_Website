@@ -11,11 +11,10 @@ const EmptyCart = () => {
         </div>
       </div>
       <h2 className="text-xl md:text-2xl font-display font-bold mb-2">
-        Your cart is empty
+        Your basket is empty
       </h2>
       <p className="text-sm md:text-base text-muted-foreground max-w-md mb-8 leading-relaxed">
-        Explore furniture and appliances for flexible rental durations — from 1
-        day to 12 months. Free delivery, installation, and maintenance included.
+        Explore furniture and appliances for flexible rental durations. Free delivery and installation included.
       </p>
       <Link
         to="/catalog"

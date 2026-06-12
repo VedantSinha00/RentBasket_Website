@@ -137,8 +137,8 @@ const BookingSummary = ({ orderData }) => {
               <MapPin className="w-3.5 h-3.5 text-primary" /> Delivery Details
             </h4>
             <div className="space-y-2 text-sm">
-              <p className="font-semibold">{customerDetails.name}</p>
-              <p className="text-muted-foreground flex items-center gap-1.5 text-xs"><User className="w-3 h-3"/> {customerDetails.phone}</p>
+              <p className="font-semibold">{customerDetails?.name}</p>
+              <p className="text-muted-foreground flex items-center gap-1.5 text-xs"><User className="w-3 h-3"/> {customerDetails?.phone}</p>
               <p className="text-muted-foreground text-xs leading-relaxed">{deliveryAddress}</p>
               <div className="mt-2 text-[10px] bg-secondary/40 px-2 py-1.5 rounded text-muted-foreground font-medium inline-block">
                 Slot: {orderData.deliverySlot}
@@ -154,11 +154,11 @@ const BookingSummary = ({ orderData }) => {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Method</span>
-                <span className="font-medium uppercase">{paymentDetails.method}</span>
+                <span className="font-medium uppercase">{paymentDetails?.method}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Transaction ID</span>
-                <span className="font-medium text-xs font-mono">{paymentDetails.transactionId}</span>
+                <span className="font-medium text-xs font-mono">{paymentDetails?.transactionId}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Invoice</span>

@@ -108,10 +108,10 @@ const FAQs = () => {
               Our team is ready to assist you with custom requirements or support queries.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3 w-full md:w-auto">
+          <div className="flex gap-3 w-full md:w-auto">
             <a
               href="tel:+919958858473"
-              className="flex-1 md:flex-initial flex items-center justify-center gap-2 h-11 px-5 rounded-full border border-border text-foreground font-sans font-bold text-sm bg-white hover:bg-secondary transition-colors"
+              className="flex-1 md:flex-none whitespace-nowrap flex items-center justify-center gap-2 h-11 px-5 rounded-full border border-border text-foreground font-sans font-bold text-sm bg-white hover:bg-secondary transition-colors"
             >
               <Phone className="w-4 h-4 text-muted-foreground" />
               Call Gurgaon
@@ -120,10 +120,10 @@ const FAQs = () => {
               href="https://wa.me/919958858473"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 md:flex-initial flex items-center justify-center gap-2 h-11 px-5 rounded-full text-white font-sans font-bold text-sm bg-[#2E7D32] hover:bg-[#2E7D32]/90 transition-colors"
+              className="flex-1 md:flex-none whitespace-nowrap flex items-center justify-center gap-2 h-11 px-5 rounded-full text-white font-sans font-bold text-sm bg-[#2E7D32] hover:bg-[#2E7D32]/90 transition-colors"
             >
               <MessageSquare className="w-4 h-4" />
-              WhatsApp Us
+              WhatsApp
             </a>
           </div>
         </div>
