@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { getAuth } from "@/lib/auth";
 import { getUserAddress, saveUserAddress } from "@/api/address";
 import { toast } from "sonner";
+import { lookupPincode, SERVED_CITIES } from "@/lib/pincode";
 
 const EMPTY = {
   contact_name: "",
@@ -59,26 +60,19 @@ const EditAddress = () => {
       .finally(() => setIsFetching(false));
   }, []);
 
-  const handlePincodeChange = async (e) => {
+  const handlePincodeChange = (e) => {
     const value = e.target.value.replace(/\D/g, "").slice(0, 6);
     setForm((f) => ({ ...f, pincode: value }));
     if (value.length !== 6) { setPincodeState("idle"); return; }
-    setPincodeState("loading");
-    try {
-      const res = await fetch(`https://api.postalpincode.in/pincode/${value}`);
-      const data = await res.json();
-      const po = data?.[0]?.PostOffice?.[0];
-      if (data?.[0]?.Status === "Success" && po) {
-        setForm((f) => ({
-          ...f,
-          city: f.city || po.District || po.Block || "",
-          state: f.state || po.State || "",
-        }));
-        setPincodeState("done");
-      } else {
-        setPincodeState("error");
-      }
-    } catch {
+    const result = lookupPincode(value);
+    if (result) {
+      setForm((f) => ({
+        ...f,
+        city: f.city || result.city,
+        state: f.state || result.state,
+      }));
+      setPincodeState("done");
+    } else {
       setPincodeState("error");
     }
   };
@@ -220,7 +214,19 @@ const EditAddress = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <Field label="City" required placeholder="City" value={form.city} onChange={set("city")} />
+              <div>
+                <label className="text-xs font-semibold text-foreground block mb-1">
+                  City <span className="text-primary">*</span>
+                </label>
+                <select
+                  value={form.city}
+                  onChange={set("city")}
+                  className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background appearance-none"
+                >
+                  <option value="">Select city</option>
+                  {SERVED_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
               <Field label="State" required placeholder="State" value={form.state} onChange={set("state")} />
             </div>
 

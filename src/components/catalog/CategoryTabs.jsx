@@ -28,7 +28,7 @@ const CategoryTabs = ({
   const subcategories = SUBCATEGORIES[activeCategory] || [];
 
   return (
-    <div className="sticky top-16 md:top-20 z-40 bg-background border-b border-border">
+    <div className="bg-background border-b border-border">
       <div className="section-container">
         {/* Primary Category Tabs */}
         <div

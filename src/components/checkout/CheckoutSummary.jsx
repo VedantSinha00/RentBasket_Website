@@ -46,7 +46,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items }) => {
                     <div className="flex items-center justify-between mt-1">
                       <span className="text-[11px] font-bold text-primary flex items-center gap-1">
                         {line.listRentTotal > line.rentTotal && (
-                          <span className="line-through text-muted-foreground text-[9px]">₹{line.listRentTotal.toLocaleString("en-IN")}</span>
+                          <span className="text-muted-foreground text-[9px]">₹{line.listRentTotal.toLocaleString("en-IN")}</span>
                         )}
                         <span>₹{line.rentTotal.toLocaleString("en-IN")}/mo</span>
                       </span>
@@ -61,7 +61,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items }) => {
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground font-medium">Total Rent</span>
-              <span className="line-through text-muted-foreground text-xs">₹{b.totalRent.toLocaleString("en-IN")}/mo</span>
+              <span className="text-muted-foreground text-xs">₹{b.totalRent.toLocaleString("en-IN")}/mo</span>
             </div>
 
             {b.itemSavings > 0 && (

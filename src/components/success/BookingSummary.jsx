@@ -59,7 +59,7 @@ const BookingSummary = ({ orderData }) => {
         <div className="bg-secondary/20 rounded-2xl p-5 space-y-3 border border-border/50">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground font-medium">Total Rent</span>
-            <span className="line-through text-muted-foreground text-xs">
+            <span className="text-muted-foreground text-xs">
               ₹{(totalRent || baseRent || 0).toLocaleString("en-IN")}/mo
             </span>
           </div>
