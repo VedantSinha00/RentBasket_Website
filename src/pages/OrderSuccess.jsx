@@ -5,7 +5,7 @@ import logo from "@/assets/7 1.png";
 import SuccessHero from "@/components/success/SuccessHero";
 import NextSteps from "@/components/success/NextSteps";
 import BookingSummary from "@/components/success/BookingSummary";
-import { IncludedBenefits, SuccessSupport, SuccessFAQ } from "@/components/success/SuccessSupport";
+import { IncludedBenefits, SupportHelp, SupportManage, SuccessFAQ } from "@/components/success/SuccessSupport";
 import { getKycStatus, getKycDocList } from "@/api/kyc";
 import { getAuth } from "@/lib/auth";
 
@@ -115,10 +115,13 @@ const OrderSuccess = () => {
 
           <NextSteps kycComplete={kycComplete} />
           
-          <div className="space-y-8 my-12">
+          <div className="my-12 space-y-8">
             <BookingSummary orderData={orderData} />
-            <IncludedBenefits />
-            <SuccessSupport />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <IncludedBenefits />
+              <SupportHelp />
+              <SupportManage />
+            </div>
           </div>
 
           <SuccessFAQ />
