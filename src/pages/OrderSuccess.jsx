@@ -123,7 +123,7 @@ const OrderSuccess = () => {
             
             {/* Right Column: Benefits and Cross-sell */}
             <div className="lg:col-span-5 h-full">
-              <div className="sticky top-24">
+              <div>
                 <IncludedBenefits />
                 <SuccessSupport />
               </div>
