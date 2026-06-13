@@ -46,7 +46,7 @@ function corsHeaders(origin) {
   return {
     "Access-Control-Allow-Origin": allow,
     "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-    "Access-Control-Allow-Headers": "Authorization, Content-Type",
+    "Access-Control-Allow-Headers": "Authorization, Authorization-Key, Content-Type",
     "Access-Control-Allow-Credentials": "true",
     Vary: "Origin",
   };

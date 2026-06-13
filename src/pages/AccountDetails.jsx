@@ -108,6 +108,12 @@ const AccountDetails = () => {
     }
     setEmailStep("sending");
     try {
+      // Save email to profile first so the backend recognises it when sending OTP
+      const current = getAuth();
+      if (current?.userId) {
+        await updateUserProfile(buildProfilePayload({ email: trimmed }));
+        setAuth({ ...getAuth(), email: trimmed });
+      }
       await sendEmailOtp(trimmed);
       setPendingEmail(trimmed);
       setEmailStep("otp");
