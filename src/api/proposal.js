@@ -46,10 +46,10 @@ export async function addItemsToProposal(userId, leadId, cartItems, added = new 
         count: item.quantity,
         rent: item.rent,
         duration: item.duration,
-        // Per-unit security via the same resolution the UI breakdown uses
-        // (security_multiple × rent, then adv_security, then the 2× default).
-        // Cart items never carry a `deposit` field, so the old `item.deposit`
-        // silently sent undefined/0 — a zero-deposit order on the backend.
+        // Per-unit security via the same resolution the UI breakdown uses:
+        // round(discounted_rent × 1.18) × security_multiple. Cart items never
+        // carry a `deposit` field, so the old `item.deposit` silently sent
+        // undefined/0 — a zero-deposit order on the backend.
         security: unitSecurityOf(item),
       });
     } catch (apiErr) {
