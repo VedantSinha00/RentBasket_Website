@@ -1,8 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
-import { User, Package, ChevronRight, LogOut, Phone, Heart, HelpCircle, LogIn, LifeBuoy, UserCircle } from "lucide-react";
+import { User, Package, ChevronRight, LogOut, Phone, Heart, HelpCircle, LogIn, LifeBuoy, UserCircle, FileCheck2, ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getAuth, clearAuth, isAuthenticated } from "@/lib/auth";
+import { useKycStatus } from "@/hooks/useKycStatus";
 
 const MenuItem = ({ to, state, icon: Icon, iconBg = "bg-primary/10", iconColor = "text-primary", title, subtitle }) => (
   <Link
@@ -26,6 +27,7 @@ const Profile = () => {
   const loggedIn = isAuthenticated();
   const auth = getAuth();
   const phone = auth?.phone ?? "—";
+  const { kycDone, loading: kycLoading } = useKycStatus();
 
   const handleSignOut = () => {
     clearAuth();
@@ -54,6 +56,30 @@ const Profile = () => {
             )}
           </div>
         </div>
+
+        {/* KYC banner — only when logged in and not yet done */}
+        {loggedIn && !kycLoading && !kycDone && (
+          <div className="mb-6 rounded-2xl border-2 border-primary/30 bg-coral-surface p-4 md:p-5">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center flex-shrink-0">
+                <FileCheck2 className="w-5 h-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-foreground flex items-center gap-2 flex-wrap">
+                  Complete your KYC
+                  <span className="text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-extrabold bg-destructive-muted text-destructive">Pending</span>
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">Required to confirm your rental orders.</p>
+              </div>
+              <button
+                onClick={() => navigate("/kyc")}
+                className="gradient-coral px-4 py-2 rounded-xl font-bold text-xs shadow-md shadow-primary/20 flex items-center gap-1.5 whitespace-nowrap shrink-0"
+              >
+                Start <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Menu items */}
         <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden divide-y divide-border">

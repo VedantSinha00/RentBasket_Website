@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ChevronLeft, User, Phone, Mail, LogOut, CheckCircle2, Loader2, MapPin, Save } from "lucide-react";
+import { ChevronLeft, User, Phone, Mail, LogOut, CheckCircle2, Loader2, MapPin, Save, FileCheck2, ArrowRight } from "lucide-react";
+import { useKycStatus } from "@/hooks/useKycStatus";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getAuth, setAuth, clearAuth } from "@/lib/auth";
@@ -26,6 +27,7 @@ const ADDR_EMPTY = {
 const AccountDetails = () => {
   const navigate = useNavigate();
   const auth = getAuth();
+  const { kycDone, loading: kycLoading } = useKycStatus();
   const [name, setName] = useState(auth?.name ?? "");
   const [email, setEmail] = useState(auth?.email ?? "");
   const [isSaving, setIsSaving] = useState(false);
@@ -279,6 +281,29 @@ const AccountDetails = () => {
         >
           <ChevronLeft className="w-3.5 h-3.5" /> Profile
         </Link>
+
+        {!kycLoading && !kycDone && (
+          <div className="mb-6 rounded-2xl border-2 border-primary/30 bg-coral-surface p-4 md:p-5">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center flex-shrink-0">
+                <FileCheck2 className="w-5 h-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-foreground flex items-center gap-2 flex-wrap">
+                  Complete your KYC
+                  <span className="text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-extrabold bg-destructive-muted text-destructive">Pending</span>
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">Required to confirm your rental orders.</p>
+              </div>
+              <button
+                onClick={() => navigate("/kyc")}
+                className="gradient-coral px-4 py-2 rounded-xl font-bold text-xs shadow-md shadow-primary/20 flex items-center gap-1.5 whitespace-nowrap shrink-0"
+              >
+                Start <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
