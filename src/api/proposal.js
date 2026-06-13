@@ -75,6 +75,171 @@ export async function addItemsToProposal(userId, leadId, cartItems, added = new 
 }
 
 /**
+ * Remove a product from the server proposal cart. Best-effort: used during
+ * reconciliation to drop products the user no longer has locally. Resolves to
+ * true on success, false on any failure (so a remove failure never aborts an
+ * order — the caller just won't confirm that product).
+ *
+ * Keys on `amenity_type_id`, not the row's cart_item_id (per Shivam 2026-06-13).
+ * Consistent with add-to-proposal, the server treats one product as one cart
+ * slot, so this removes the product's row regardless of its stored duration.
+ */
+export async function removeFromProposal(userId, leadId, amenityTypeId) {
+  try {
+    const res = await authFetch("/remove-from-proposal-cart", {
+      method: "POST",
+      body: { user_id: String(userId), lead_id: String(leadId), amenity_type_id: amenityTypeId },
+    });
+    const json = await res.json().catch(() => null);
+    return Boolean(res.ok && json && json.responseCode === 200);
+  } catch {
+    return false;
+  }
+}
+
+/** Stable match key for a proposal line: product + rental duration.
+ *  Server durations come back numeric (9) while local items use a key
+ *  ("9_months"); normalise both to the leading integer so they compare. */
+const durationNum = (d) => parseInt(d, 10);
+const matchKey = (productId, duration) => `${productId}|${durationNum(duration)}`;
+
+/**
+ * Pure reconciliation: given the local basket and the server proposal's existing
+ * rows, decide which local items are already on the server (reuse their id),
+ * which must be added, and which server rows are stale and should be removed.
+ *
+ * Matching is by amenity_type_id + duration (NOT quantity) — a quantity change
+ * on an otherwise-matching line is handled by the caller, not treated as a
+ * different item. Exported for unit testing without the network.
+ *
+ * Because the backend keys both add and remove on `amenity_type_id` alone (one
+ * product = one cart slot, regardless of duration), reconciliation is
+ * product-level:
+ *   - server row whose product+duration matches a local line → reuse its id.
+ *   - server row for a product the basket still wants but at the WRONG duration
+ *     → its product id is "conflicting": remove it, then re-add at the right
+ *     duration (a plain re-add would 401 "Item already in cart").
+ *   - server row for a product not in the basket at all → stale: remove it.
+ *
+ * @param {Array} localItems  cart items ({ productId, duration, ... })
+ * @param {Array} serverRows  rows from get-proposal-cart-items-for-lead.cartItems
+ *                            ({ id, amenity_type_id, duration, amenity_count })
+ * @returns {{ existing: Array<{item,row,id}>, toAdd: Array, staleAmenityIds: Array }}
+ */
+export function reconcileCartItems(localItems = [], serverRows = []) {
+  const serverByKey = new Map();      // product|duration -> { row, id }
+  const serverProductIds = new Set(); // every amenity_type_id present on the server
+  for (const row of serverRows) {
+    const id = row?.id ?? row?.cart_item_id;
+    if (id == null || row.amenity_type_id == null) continue;
+    serverByKey.set(matchKey(row.amenity_type_id, row.duration), { row, id });
+    serverProductIds.add(String(row.amenity_type_id));
+  }
+
+  const localProductIds = new Set(localItems.map((i) => String(i.productId)));
+
+  const existing = [];
+  const toAdd = [];
+  const claimedKeys = new Set();
+
+  for (const item of localItems) {
+    const key = matchKey(item.productId, item.duration);
+    const hit = serverByKey.get(key);
+    if (hit && !claimedKeys.has(key)) {
+      existing.push({ item, row: hit.row, id: hit.id }); // exact match → reuse
+      claimedKeys.add(key);
+    } else {
+      toAdd.push(item); // missing, or present only at a different duration
+    }
+  }
+
+  // Products to remove before adding: a server product is removed if EITHER
+  //  (a) the basket doesn't contain that product at all (stale leftover), or
+  //  (b) the basket wants it but no exact product+duration row matched (it's on
+  //      the server at the wrong duration — must clear it so the re-add succeeds).
+  const staleAmenityIds = [];
+  for (const pid of serverProductIds) {
+    if (!localProductIds.has(pid)) {
+      staleAmenityIds.push(pid); // (a) not wanted at all
+      continue;
+    }
+    // (b) wanted, but check whether an exact-duration match was found for it
+    const matchedExactly = existing.some((e) => String(e.row.amenity_type_id) === pid);
+    if (!matchedExactly) staleAmenityIds.push(pid);
+  }
+
+  return { existing, toAdd, staleAmenityIds };
+}
+
+/**
+ * Reconcile the server proposal cart with the local basket, then return the
+ * exact set of cart_item_ids to confirm.
+ *
+ * This fixes the "Item already in cart" hard-block: the server proposal cart
+ * persists across sessions and drifts from the local basket. Instead of blindly
+ * re-adding every local item (which 401s when a row already exists), we:
+ *   1. read the server cart,
+ *   2. reuse ids for items already present (matched by product + duration),
+ *   3. add only the genuinely-missing items,
+ *   4. remove stale server rows the basket no longer contains (best-effort),
+ * so confirmation always reflects exactly what the user saw.
+ *
+ * Falls back to a plain add (legacy behaviour) if the server cart can't be read.
+ *
+ * @returns {Promise<Array>} cart_item_ids for confirmProposal, in basket order
+ */
+export async function reconcileProposalCart(userId, leadId, localItems, added = new Map()) {
+  const data = await fetchProposalCart(userId, leadId);
+
+  // Couldn't read the server cart → fall back to the original add path so we
+  // don't make ordering *worse* than before when the read endpoint is down.
+  if (!data) return addItemsToProposal(userId, leadId, localItems, added);
+
+  const serverRows = Array.isArray(data.cartItems) ? data.cartItems : [];
+  const { existing, toAdd, staleAmenityIds } = reconcileCartItems(localItems, serverRows);
+
+  // Seed the resume accumulator with ids we already have, so a mid-add failure
+  // (and retry) still knows about them.
+  for (const { item, id } of existing) {
+    if (item.cartItemId != null) added.set(item.cartItemId, id);
+  }
+
+  // Remove conflicting/stale PRODUCTS first (keyed by amenity_type_id) so a
+  // wrong-duration leftover can't make the re-add 401 "Item already in cart".
+  // Must finish before adding. Best-effort, parallel — a failed remove just
+  // means that product's add may still 401 (surfaced to the user as a retry).
+  await Promise.all(staleAmenityIds.map((pid) => removeFromProposal(userId, leadId, pid)));
+
+  // Add the genuinely-missing items. We do NOT rely on the add response for the
+  // new id — /add-to-proposal-for-lead returns only a message, no cart_item_id.
+  if (toAdd.length) await addItemsToProposal(userId, leadId, toAdd, added);
+
+  // Re-read the cart so every line resolves to a real server cart_item_id by
+  // product+duration. This is the source of truth: it covers the just-added
+  // rows (whose ids the add call never returned) and the reused ones.
+  let finalRows = serverRows;
+  if (toAdd.length || staleAmenityIds.length) {
+    const fresh = await fetchProposalCart(userId, leadId);
+    if (fresh && Array.isArray(fresh.cartItems)) finalRows = fresh.cartItems;
+  }
+  const idByKey = new Map();
+  for (const row of finalRows) {
+    const id = row?.id ?? row?.cart_item_id;
+    if (id != null && row.amenity_type_id != null) {
+      idByKey.set(matchKey(row.amenity_type_id, row.duration), id);
+    }
+  }
+
+  // Final id set, ordered to follow the basket, matched by product+duration.
+  const ids = [];
+  for (const item of localItems) {
+    const id = idByKey.get(matchKey(item.productId, item.duration));
+    if (id != null && !ids.includes(id)) ids.push(id);
+  }
+  return ids;
+}
+
+/**
  * Confirm the proposal into an order.
  *
  * `delivery` carries the two extra order keys the backend accepts (founder

@@ -133,7 +133,10 @@ const CustomerValidation = () => {
         token: userData.token,
         userId: userData.user_id,
         leadId: userData.lead_id,
-        name: userData.first_name ? `${userData.first_name} ${userData.last_name}`.trim() : "",
+        // Join only the name parts that exist — a null/absent last_name must not
+        // become the literal string "null" in the displayed name (backend returns
+        // last_name: null for single-name accounts).
+        name: [userData.first_name, userData.last_name].filter(Boolean).join(" "),
         email: userData.email || "",
       });
       toast.success("Mobile verified!", {
