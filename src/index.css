@@ -201,11 +201,6 @@
 }
 
 @layer utilities {
-  .dot-bg {
-    background-image: radial-gradient(circle, hsl(0 0% 75% / 0.8) 1px, transparent 1px);
-    background-size: 10px 10px;
-  }
-
   .font-display {
     font-family: 'Playfair Display', Georgia, serif;
   }
