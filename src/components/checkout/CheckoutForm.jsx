@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { User, Phone, Mail, MapPin, Calendar, Info, CheckCircle2, Loader2 } from "lucide-react";
 import { getDeliverySlots } from "@/api/otp";
 import { dateNDaysFromToday } from "@/lib/delivery";
+import { lookupPincode, SERVED_CITIES } from "@/lib/pincode";
 
 const CheckoutCard = ({ title, icon: Icon, children, subtitle }) => (
   <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-soft mb-6">
@@ -76,26 +77,19 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePincodeChange = async (e) => {
+  const handlePincodeChange = (e) => {
     const value = e.target.value.replace(/\D/g, "").slice(0, 6);
     setFormData((prev) => ({ ...prev, pincode: value }));
     if (value.length !== 6) { setPincodeState("idle"); return; }
-    setPincodeState("loading");
-    try {
-      const res = await fetch(`https://api.postalpincode.in/pincode/${value}`);
-      const data = await res.json();
-      const po = data?.[0]?.PostOffice?.[0];
-      if (data?.[0]?.Status === "Success" && po) {
-        setFormData((prev) => ({
-          ...prev,
-          city: prev.city || po.District || po.Block || "",
-          state: prev.state || po.State || "",
-        }));
-        setPincodeState("done");
-      } else {
-        setPincodeState("error");
-      }
-    } catch {
+    const result = lookupPincode(value);
+    if (result) {
+      setFormData((prev) => ({
+        ...prev,
+        city: prev.city || result.city,
+        state: prev.state || result.state,
+      }));
+      setPincodeState("done");
+    } else {
       setPincodeState("error");
     }
   };
@@ -262,14 +256,25 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField
-              label="City"
-              icon={MapPin}
-              name="city"
-              placeholder="City"
-              value={formData.city}
-              onChange={handleChange}
-            />
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
+                City
+              </label>
+              <div className="relative group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
+                  <MapPin className="w-4 h-4" />
+                </div>
+                <select
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  className="w-full pl-11 pr-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-background transition-all appearance-none"
+                >
+                  <option value="">Select city</option>
+                  {SERVED_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+            </div>
             <InputField
               label="State"
               icon={MapPin}

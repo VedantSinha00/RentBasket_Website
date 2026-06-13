@@ -154,7 +154,7 @@ const CartItemCard = ({ item }) => {
               <span className="text-muted-foreground">Rent</span>
               <span className="flex items-center gap-1">
                 {line.listRentTotal > line.rentTotal && (
-                  <span className="line-through text-muted-foreground text-[10px]">₹{line.listRentTotal.toLocaleString("en-IN")}</span>
+                  <span className="text-muted-foreground text-[10px]">₹{line.listRentTotal.toLocaleString("en-IN")}</span>
                 )}
                 <span>₹{line.rentTotal.toLocaleString("en-IN")}{isMonthly ? "/mo" : ""}</span>
               </span>
@@ -269,7 +269,7 @@ const CartItemCard = ({ item }) => {
           <div className="w-48 flex-shrink-0 text-right space-y-1">
             <div className="text-lg font-bold text-foreground flex flex-col items-end">
               {line.listRentTotal > line.rentTotal && (
-                <span className="line-through text-muted-foreground text-xs font-normal">₹{line.listRentTotal.toLocaleString("en-IN")}/mo</span>
+                <span className="text-muted-foreground text-xs font-normal">₹{line.listRentTotal.toLocaleString("en-IN")}/mo</span>
               )}
               <span>₹{line.rentTotal.toLocaleString("en-IN")}{isMonthly ? <span className="text-sm font-normal text-muted-foreground">/mo</span> : ""}</span>
             </div>

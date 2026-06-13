@@ -44,7 +44,7 @@ const OrderSummary = ({ onCheckout }) => {
                 </span>
                 <span className="font-medium whitespace-nowrap flex items-center gap-1">
                   {line.listRentTotal > line.rentTotal && (
-                    <span className="line-through text-muted-foreground text-[10px]">₹{line.listRentTotal.toLocaleString("en-IN")}</span>
+                    <span className="text-muted-foreground text-[10px]">₹{line.listRentTotal.toLocaleString("en-IN")}</span>
                   )}
                   <span>₹{line.rentTotal.toLocaleString("en-IN")}{isM && "/mo"}</span>
                 </span>
@@ -56,7 +56,7 @@ const OrderSummary = ({ onCheckout }) => {
           {/* Total Rent (list total) */}
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Total Rent</span>
-            <span className="line-through text-muted-foreground text-xs">
+            <span className="text-muted-foreground text-xs">
               ₹{b.totalRent.toLocaleString("en-IN")}/mo
             </span>
           </div>
