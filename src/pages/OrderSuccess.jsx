@@ -115,19 +115,10 @@ const OrderSuccess = () => {
 
           <NextSteps kycComplete={kycComplete} />
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 my-12">
-            {/* Left Column: Summary and Support */}
-            <div className="lg:col-span-7 space-y-8">
-              <BookingSummary orderData={orderData} />
-            </div>
-            
-            {/* Right Column: Benefits and Cross-sell */}
-            <div className="lg:col-span-5 h-full">
-              <div>
-                <IncludedBenefits />
-                <SuccessSupport />
-              </div>
-            </div>
+          <div className="space-y-8 my-12">
+            <BookingSummary orderData={orderData} />
+            <IncludedBenefits />
+            <SuccessSupport />
           </div>
 
           <SuccessFAQ />
