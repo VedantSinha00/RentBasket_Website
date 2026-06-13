@@ -3,9 +3,10 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ChevronLeft, ShieldCheck, Truck, Clock, ArrowRight } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
-import { getAuth } from "@/lib/auth";
+import { getAuth, setAuth } from "@/lib/auth";
 import { safeSet, safeGet } from "@/lib/safeStorage";
 import { getUserAddress, saveUserAddress } from "@/api/address";
+import { updateUserProfile } from "@/api/profile";
 import { dateNDaysFromToday } from "@/lib/delivery";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
@@ -139,6 +140,26 @@ const Checkout = () => {
       });
       return;
     }
+    const auth = getAuth();
+
+    // Silently sync name + email to profile API so they appear in account details.
+    if (auth?.userId) {
+      const nameParts = (formData.fullName || "").trim().split(" ");
+      updateUserProfile({
+        user_id: auth.userId,
+        first_name: nameParts[0] || "",
+        last_name: nameParts.slice(1).join(" "),
+        email: formData.email || auth?.email || "",
+        address: "",
+        org_name: "",
+        about_me: "",
+        social_media_links: "",
+        reg_mobile_num: auth?.phone ?? "",
+      }).then(() => {
+        setAuth({ ...getAuth(), name: formData.fullName || auth?.name, email: formData.email || auth?.email });
+      }).catch(() => {});
+    }
+
     // Silently sync the address back so it pre-fills on the next order.
     if (formData.addressLine1) {
       saveUserAddress(formData.phone || verifiedPhone, {
