@@ -56,6 +56,8 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
   const [geoState, setGeoState] = useState("idle"); // idle | loading | done | denied
   const [pincodeState, setPincodeState] = useState("idle"); // idle | loading | done | error
   const [slots, setSlots] = useState([]);
+  // Start collapsed if address was pre-filled, open if blank
+  const [addrEditing, setAddrEditing] = useState(!formData.addressLine1);
 
   useEffect(() => {
     getDeliverySlots()
@@ -183,110 +185,145 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
         icon={MapPin}
         subtitle="Currently serving Gurgaon, Noida, and select areas across Delhi NCR."
       >
-        <div className="space-y-4">
-          {/* Use my location */}
+        {!addrEditing ? (
+          /* Compact summary */
           <button
             type="button"
-            onClick={handleUseLocation}
-            disabled={geoState === "loading" || geoState === "done"}
-            className={`w-full flex items-center justify-center gap-2 py-2.5 border rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-              geoState === "done"
-                ? "border-success/40 text-success bg-success/5"
-                : geoState === "denied"
-                ? "border-orange-300 text-orange-600 hover:border-orange-400 bg-orange-50/40"
-                : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
-            }`}
+            onClick={() => setAddrEditing(true)}
+            className="w-full text-left p-4 bg-secondary/30 border border-border rounded-xl hover:border-primary/40 hover:bg-background transition-all group"
           >
-            {geoState === "loading" ? (
-              <><Loader2 className="w-4 h-4 animate-spin" /> Getting location…</>
-            ) : geoState === "done" ? (
-              <><MapPin className="w-4 h-4" /> Location captured ✓</>
-            ) : geoState === "denied" ? (
-              <><MapPin className="w-4 h-4" /> Retry location</>
-            ) : (
-              <><MapPin className="w-4 h-4" /> Use my location</>
-            )}
-          </button>
-
-          <InputField
-            label="Address Line 1"
-            icon={MapPin}
-            name="addressLine1"
-            placeholder="House / Flat / Block No."
-            value={formData.addressLine1}
-            onChange={handleChange}
-          />
-          <InputField
-            label="Address Line 2"
-            icon={MapPin}
-            name="addressLine2"
-            placeholder="Street, Colony, Area"
-            value={formData.addressLine2}
-            onChange={handleChange}
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField
-              label="Landmark"
-              icon={MapPin}
-              name="landmark"
-              placeholder="Near metro, school, etc."
-              value={formData.landmark}
-              onChange={handleChange}
-            />
-            <InputField
-              label="Pincode"
-              icon={MapPin}
-              name="pincode"
-              placeholder="6-digit pincode"
-              value={formData.pincode}
-              onChange={handlePincodeChange}
-              maxLength={6}
-              inputMode="numeric"
-              hint={
-                pincodeState === "loading" ? (
-                  <span className="text-muted-foreground flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Looking up…</span>
-                ) : pincodeState === "done" ? (
-                  <span className="text-success flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> City &amp; state filled</span>
-                ) : pincodeState === "error" ? (
-                  <span className="text-muted-foreground">Not found — enter manually</span>
-                ) : null
-              }
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
-                City
-              </label>
-              <div className="relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
-                  <MapPin className="w-4 h-4" />
-                </div>
-                <select
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className="w-full pl-11 pr-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-background transition-all appearance-none"
-                >
-                  <option value="">Select city</option>
-                  {SERVED_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                </select>
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-foreground truncate">{formData.fullName}</p>
+                <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
+                  {[formData.addressLine1, formData.addressLine2, formData.landmark].filter(Boolean).join(", ")}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {[formData.city, formData.state, formData.pincode].filter(Boolean).join(" · ")}
+                </p>
               </div>
+              <span className="text-xs font-bold text-primary group-hover:underline whitespace-nowrap mt-0.5 shrink-0">
+                Edit
+              </span>
             </div>
+          </button>
+        ) : (
+          <div className="space-y-4">
+            {/* Use my location */}
+            <button
+              type="button"
+              onClick={handleUseLocation}
+              disabled={geoState === "loading" || geoState === "done"}
+              className={`w-full flex items-center justify-center gap-2 py-2.5 border rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                geoState === "done"
+                  ? "border-success/40 text-success bg-success/5"
+                  : geoState === "denied"
+                  ? "border-orange-300 text-orange-600 hover:border-orange-400 bg-orange-50/40"
+                  : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
+              }`}
+            >
+              {geoState === "loading" ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> Getting location…</>
+              ) : geoState === "done" ? (
+                <><MapPin className="w-4 h-4" /> Location captured ✓</>
+              ) : geoState === "denied" ? (
+                <><MapPin className="w-4 h-4" /> Retry location</>
+              ) : (
+                <><MapPin className="w-4 h-4" /> Use my location</>
+              )}
+            </button>
+
             <InputField
-              label="State"
+              label="Address Line 1"
               icon={MapPin}
-              name="state"
-              placeholder="State"
-              value={formData.state}
+              name="addressLine1"
+              placeholder="House / Flat / Block No."
+              value={formData.addressLine1}
               onChange={handleChange}
             />
-          </div>
+            <InputField
+              label="Address Line 2"
+              icon={MapPin}
+              name="addressLine2"
+              placeholder="Street, Colony, Area"
+              value={formData.addressLine2}
+              onChange={handleChange}
+            />
 
-          <ServiceabilityNote />
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField
+                label="Landmark"
+                icon={MapPin}
+                name="landmark"
+                placeholder="Near metro, school, etc."
+                value={formData.landmark}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Pincode"
+                icon={MapPin}
+                name="pincode"
+                placeholder="6-digit pincode"
+                value={formData.pincode}
+                onChange={handlePincodeChange}
+                maxLength={6}
+                inputMode="numeric"
+                hint={
+                  pincodeState === "loading" ? (
+                    <span className="text-muted-foreground flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Looking up…</span>
+                  ) : pincodeState === "done" ? (
+                    <span className="text-success flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> City &amp; state filled</span>
+                  ) : pincodeState === "error" ? (
+                    <span className="text-muted-foreground">Not found — enter manually</span>
+                  ) : null
+                }
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
+                  City
+                </label>
+                <div className="relative group">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
+                    <MapPin className="w-4 h-4" />
+                  </div>
+                  <select
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    className="w-full pl-11 pr-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-background transition-all appearance-none"
+                  >
+                    <option value="">Select city</option>
+                    {SERVED_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+              </div>
+              <InputField
+                label="State"
+                icon={MapPin}
+                name="state"
+                placeholder="State"
+                value={formData.state}
+                onChange={handleChange}
+              />
+            </div>
+
+            <ServiceabilityNote />
+
+            {/* Confirm button — collapses the form */}
+            {formData.addressLine1 && (
+              <button
+                type="button"
+                onClick={() => setAddrEditing(false)}
+                className="w-full py-2.5 bg-primary/10 border border-primary/20 text-primary text-sm font-semibold rounded-xl hover:bg-primary/15 transition-colors"
+              >
+                Confirm Address
+              </button>
+            )}
+          </div>
+        )}
       </CheckoutCard>
 
       {/* 3. Rental Start Details */}
