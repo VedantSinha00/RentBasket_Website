@@ -29,7 +29,7 @@ const CatalogHero = () => {
             </h1>
 
             <div className="mt-3 flex flex-wrap gap-2">
-              {["3–12 month rentals", "Transparent pricing", "Free maintenance", "Free delivery & install"].map((label) => (
+              {["3–12 month rentals", "Transparent pricing", "Free maintenance", "Free delivery & installation"].map((label) => (
                 <span key={label} className="inline-flex items-center gap-1.5 bg-secondary text-foreground text-xs font-semibold px-3 py-1.5 rounded-full border border-border">
                   <Check className="w-3 h-3 text-primary shrink-0" />
                   {label}
