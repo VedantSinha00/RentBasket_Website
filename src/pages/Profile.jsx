@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { User, Package, ChevronRight, LogOut, Phone, Heart, HelpCircle, LogIn, MapPin, LifeBuoy, UserCircle } from "lucide-react";
+import { User, Package, ChevronRight, LogOut, Phone, Heart, HelpCircle, LogIn, LifeBuoy, UserCircle } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getAuth, clearAuth, isAuthenticated } from "@/lib/auth";
@@ -72,14 +72,6 @@ const Profile = () => {
                 icon={Package}
                 title="My Orders"
                 subtitle="View and track your rentals"
-              />
-              <MenuItem
-                to="/account/address"
-                icon={MapPin}
-                iconBg="bg-emerald-50"
-                iconColor="text-emerald-600"
-                title="My Address"
-                subtitle="Your saved delivery address"
               />
             </>
           )}
