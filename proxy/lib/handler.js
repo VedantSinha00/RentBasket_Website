@@ -27,7 +27,9 @@
  */
 
 const UPSTREAM_API = process.env.UPSTREAM_API || "https://testapi.rentbasket.com";
-const UPSTREAM_AWS = process.env.UPSTREAM_AWS || "https://testaws.rentbasket.com";
+// JWT + KYC upstream. testaws is being retired; the backend serves these on
+// testapi now, so the default points there. Overridable via the UPSTREAM_AWS env.
+const UPSTREAM_AWS = process.env.UPSTREAM_AWS || "https://testapi.rentbasket.com";
 const APP_KEY = process.env.API_APP_KEY;
 const CATALOG_API_KEY = process.env.CATALOG_API_KEY;
 // Origin allowed to call the proxy. Comma-separated list supported (e.g. prod + localhost).

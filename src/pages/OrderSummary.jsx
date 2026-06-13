@@ -8,7 +8,7 @@ import { getAuth } from "@/lib/auth";
 import { safeRemove } from "@/lib/safeStorage";
 import { recordOrder } from "@/lib/recentOrders";
 import { getDeliveryFields, slotLabel } from "@/lib/delivery";
-import { addItemsToProposal, confirmProposal, fetchProposalCart, applyGlobalCoupon, setDeliverySlot } from "@/api/proposal";
+import { reconcileProposalCart, confirmProposal, fetchProposalCart, applyGlobalCoupon, setDeliverySlot } from "@/api/proposal";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutSummary from "@/components/checkout/CheckoutSummary";
@@ -28,6 +28,7 @@ const OrderSummary = () => {
   const formData = location.state?.formData || null;
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const orderPlacedRef = useRef(false); // sync ref so the guard effect never races
 
   // The duration group being ordered. Each group is confirmed as its own order;
   // on success only this group is cleared and the user returns to the cart for
@@ -63,7 +64,7 @@ const OrderSummary = () => {
 
   // Guard: the chosen plan must have items, a verified mobile, and submitted details.
   useEffect(() => {
-    if (orderPlaced) return;
+    if (orderPlaced || orderPlacedRef.current) return;
     if (groupItems.length === 0) {
       navigate("/basket");
     } else if (!verifiedPhone) {
@@ -110,6 +111,7 @@ const OrderSummary = () => {
    * to check those out (each is a separate order); otherwise to the success page.
    */
   const finalizeOrder = (orderPayload) => {
+    orderPlacedRef.current = true;
     setOrderPlaced(true);
     recordOrder(orderPayload);
 
@@ -117,25 +119,20 @@ const OrderSummary = () => {
     const remaining = cartItems.filter((i) => i.duration !== checkoutDuration);
     const remainingDurations = [...new Set(remaining.map((i) => i.duration))];
 
-    if (remainingDurations.length > 0) {
-      const n = remainingDurations.length;
-      toast.success("Order placed successfully!", {
-        description: `Your plan is confirmed. You have ${n} more rental ${n === 1 ? "plan" : "plans"} to check out.`,
-      });
-      // Point the cart at the next group, then return there.
-      safeRemove("rb_cart_proceed", sessionStorage);
+    const hasMoreGroups = remainingDurations.length > 0;
+
+    if (hasMoreGroups) {
+      // Pre-select the next group so the basket opens on it when the user goes back.
       sessionStorage.setItem("rb_checkout_duration", remainingDurations[0]);
       setSelectedDuration(remainingDurations[0]);
-      navigate("/basket");
-      clearGroup(checkoutDuration);
-      return;
+      safeRemove("rb_cart_proceed", sessionStorage);
     }
 
     toast.success("Order placed successfully!", { description: "Your rental order has been confirmed." });
     // Navigate first, then clear — same tick, so the empty cart never renders.
-    navigate("/order-success", { state: { orderData: orderPayload } });
+    navigate("/order-success", { state: { orderData: orderPayload, hasMoreGroups } });
     clearGroup(checkoutDuration);
-    clearCheckoutSession();
+    if (!hasMoreGroups) clearCheckoutSession();
   };
 
   const handlePlaceOrder = async () => {
@@ -156,15 +153,22 @@ const OrderSummary = () => {
     }
 
     try {
-      // Pass the persistent accumulator Map so that any items already POSTed on a
-      // previous attempt are skipped (dedupe by productId|duration key).
-      // addItemsToProposal mutates the Map in place and returns the full id list.
-      const cartItemIds = await addItemsToProposal(
+      // Reconcile the server proposal cart with this group before confirming.
+      // The server cart persists across sessions and can already hold these
+      // items (or stale ones at other durations) — a blind re-add 401s with
+      // "Item already in cart". reconcileProposalCart reuses existing ids, adds
+      // only what's missing, removes stale rows, and returns the exact id set.
+      // The accumulator Map still gives resume-on-retry within this session.
+      const cartItemIds = await reconcileProposalCart(
         auth.userId,
         auth.leadId,
         groupItems,
         addedItemsRef.current,
       );
+
+      if (!cartItemIds.length) {
+        throw new Error("We couldn't prepare your order. Please try again.");
+      }
 
       // Set delivery slot + date on the proposal (non-fatal — don't block confirmation).
       // The endpoint wants a numeric slot id; a legacy draft may hold an old text
@@ -206,7 +210,13 @@ const OrderSummary = () => {
     } catch (err) {
       // err.cartItemIds is set by addItemsToProposal when it fails mid-loop;
       // those ids are already in addedItemsRef.current so a retry will skip them.
-      toast.error(err.message);
+      // Map the raw "Item already in cart" backend string (which should no longer
+      // occur after reconciliation, but can if the read failed) to actionable copy.
+      const raw = err?.message || "";
+      const friendly = /already in cart/i.test(raw)
+        ? "Something went out of sync with your basket. Please try placing the order again."
+        : raw || "Couldn't place your order. Please try again.";
+      toast.error(friendly);
       setIsProcessing(false);
     }
   };

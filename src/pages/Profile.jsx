@@ -1,8 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
-import { User, Package, ChevronRight, LogOut, Phone, Heart, HelpCircle, LogIn, MapPin, LifeBuoy, UserCircle } from "lucide-react";
+import { User, Package, ChevronRight, LogOut, Phone, Heart, HelpCircle, LogIn, LifeBuoy, UserCircle, ShieldCheck } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import KycStatusBanner from "@/components/KycStatusBanner";
 import { getAuth, clearAuth, isAuthenticated } from "@/lib/auth";
+import { useKycStatus } from "@/hooks/useKycStatus";
 
 const MenuItem = ({ to, state, icon: Icon, iconBg = "bg-primary/10", iconColor = "text-primary", title, subtitle }) => (
   <Link
@@ -26,6 +28,7 @@ const Profile = () => {
   const loggedIn = isAuthenticated();
   const auth = getAuth();
   const phone = auth?.phone ?? "—";
+  const { kycStatus, loading: kycLoading } = useKycStatus();
 
   const handleSignOut = () => {
     clearAuth();
@@ -55,6 +58,11 @@ const Profile = () => {
           </div>
         </div>
 
+        {/* KYC status banner — single shared component, same everywhere. */}
+        {loggedIn && !kycLoading && (
+          <KycStatusBanner kycStatus={kycStatus} returnTo="/profile" className="mb-6" />
+        )}
+
         {/* Menu items */}
         <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden divide-y divide-border">
           {loggedIn && (
@@ -73,13 +81,16 @@ const Profile = () => {
                 title="My Orders"
                 subtitle="View and track your rentals"
               />
+              {/* Stable KYC entry — the status banner above is status-dependent and
+                  vanishes if the fetch fails, so keep a permanent way in. */}
               <MenuItem
-                to="/account/address"
-                icon={MapPin}
+                to="/kyc"
+                state={{ view: true, returnTo: "/profile" }}
+                icon={ShieldCheck}
                 iconBg="bg-emerald-50"
                 iconColor="text-emerald-600"
-                title="My Address"
-                subtitle="Your saved delivery address"
+                title="Identity Verification"
+                subtitle="View or complete your KYC"
               />
             </>
           )}
