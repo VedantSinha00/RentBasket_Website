@@ -34,15 +34,23 @@ const AccountDetails = () => {
   const [addr, setAddr] = useState(ADDR_EMPTY);
   const [addrFetching, setAddrFetching] = useState(true);
   const [addrSaving, setAddrSaving] = useState(false);
+  const [addrEditing, setAddrEditing] = useState(false);
   const [geoState, setGeoState] = useState("idle"); // idle | loading | done | denied
   const [pincodeState, setPincodeState] = useState("idle"); // idle | done | error
 
   useEffect(() => {
     const a = getAuth();
-    if (!a?.phone) { setAddrFetching(false); return; }
+    if (!a?.phone) { setAddrFetching(false); setAddrEditing(true); return; }
     getUserAddress(a.phone)
-      .then((data) => { if (data) setAddr({ ...ADDR_EMPTY, ...data }); })
-      .catch(() => {})
+      .then((data) => {
+        if (data && data.address_line_1) {
+          setAddr({ ...ADDR_EMPTY, ...data });
+          setAddrEditing(false);
+        } else {
+          setAddrEditing(true);
+        }
+      })
+      .catch(() => { setAddrEditing(true); })
       .finally(() => setAddrFetching(false));
   }, []);
 
@@ -101,6 +109,7 @@ const AccountDetails = () => {
     setAddrSaving(true);
     await saveUserAddress(a.phone, addr).catch(() => {});
     setAddrSaving(false);
+    setAddrEditing(false);
     toast.success("Address saved");
   };
 
@@ -417,7 +426,30 @@ const AccountDetails = () => {
             <div className="flex items-center justify-center py-10">
               <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
             </div>
+          ) : !addrEditing ? (
+            /* Compact summary card */
+            <button
+              type="button"
+              onClick={() => setAddrEditing(true)}
+              className="w-full text-left bg-white rounded-2xl border border-border shadow-sm px-5 py-4 hover:border-primary/40 hover:shadow-md transition-all group"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate">{addr.contact_name}</p>
+                  <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
+                    {[addr.address_line_1, addr.address_line_2, addr.landmark].filter(Boolean).join(", ")}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {[addr.city, addr.state, addr.pincode].filter(Boolean).join(" · ")}
+                  </p>
+                </div>
+                <span className="text-xs font-semibold text-primary group-hover:underline whitespace-nowrap mt-0.5 shrink-0">
+                  Edit
+                </span>
+              </div>
+            </button>
           ) : (
+            /* Edit form */
             <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
               {/* Contact Name + Phone */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -560,15 +592,26 @@ const AccountDetails = () => {
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={handleSaveAddress}
-                disabled={addrSaving}
-                className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-primary to-primary/90 text-white text-sm font-semibold rounded-xl hover:shadow-md hover:shadow-primary/25 transition-all active:scale-95 disabled:opacity-60 mt-1"
-              >
-                {addrSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                {addrSaving ? "Saving…" : "Save Address"}
-              </button>
+              <div className="flex gap-3 mt-1">
+                {addr.address_line_1 && (
+                  <button
+                    type="button"
+                    onClick={() => setAddrEditing(false)}
+                    className="flex-1 py-3 border border-border text-sm font-semibold rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                  >
+                    Cancel
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={handleSaveAddress}
+                  disabled={addrSaving}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-primary to-primary/90 text-white text-sm font-semibold rounded-xl hover:shadow-md hover:shadow-primary/25 transition-all active:scale-95 disabled:opacity-60"
+                >
+                  {addrSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  {addrSaving ? "Saving…" : "Save Address"}
+                </button>
+              </div>
             </div>
           )}
         </div>
