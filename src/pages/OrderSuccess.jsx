@@ -12,6 +12,7 @@ const OrderSuccess = () => {
   const navigate = useNavigate();
   const orderData = location.state?.orderData ?? null;
   const kycComplete = Boolean(location.state?.kycComplete);
+  const hasMoreGroups = Boolean(location.state?.hasMoreGroups);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -43,7 +44,7 @@ const OrderSuccess = () => {
       </header>
 
       <main className="section-container pb-20">
-        <SuccessHero orderData={orderData} />
+        <SuccessHero orderData={orderData} hasMoreGroups={hasMoreGroups} />
 
         <div className="max-w-4xl mx-auto mt-8">
           {/* KYC gate — required to confirm the order */}

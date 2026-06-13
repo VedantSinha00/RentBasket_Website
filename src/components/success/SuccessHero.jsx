@@ -1,7 +1,7 @@
-import { CheckCircle2, ChevronRight } from "lucide-react";
+import { CheckCircle2, ChevronRight, ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const SuccessHero = ({ orderData }) => {
+const SuccessHero = ({ orderData, hasMoreGroups }) => {
   return (
     <div className="w-full flex flex-col items-center text-center py-8">
       {/* Checkmark Illustration */}
@@ -50,10 +50,23 @@ const SuccessHero = ({ orderData }) => {
       </div>
 
       {/* Primary CTA */}
-      <div className="mt-8 flex w-full max-w-md">
+      <div className="mt-8 flex flex-col w-full max-w-md gap-3">
+        {hasMoreGroups && (
+          <Link
+            to="/basket"
+            className="w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 bg-primary text-white shadow-md shadow-primary/20 hover:shadow-primary/30"
+          >
+            <ShoppingBag className="w-4 h-4" />
+            Checkout Remaining Items
+          </Link>
+        )}
         <Link
           to="/catalog"
-          className="flex-1 py-3.5 rounded-xl text-white font-bold text-sm shadow-md shadow-primary/20 transition-all hover:shadow-primary/30 active:scale-95 flex items-center justify-center gap-2 bg-primary"
+          className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 ${
+            hasMoreGroups
+              ? "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+              : "bg-primary text-white shadow-md shadow-primary/20 hover:shadow-primary/30"
+          }`}
         >
           Continue Browsing
           <ChevronRight className="w-4 h-4" />

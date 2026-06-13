@@ -119,25 +119,20 @@ const OrderSummary = () => {
     const remaining = cartItems.filter((i) => i.duration !== checkoutDuration);
     const remainingDurations = [...new Set(remaining.map((i) => i.duration))];
 
-    if (remainingDurations.length > 0) {
-      const n = remainingDurations.length;
-      toast.success("Order placed successfully!", {
-        description: `Your plan is confirmed. You have ${n} more rental ${n === 1 ? "plan" : "plans"} to check out.`,
-      });
-      // Point the cart at the next group, then return there.
-      safeRemove("rb_cart_proceed", sessionStorage);
+    const hasMoreGroups = remainingDurations.length > 0;
+
+    if (hasMoreGroups) {
+      // Pre-select the next group so the basket opens on it when the user goes back.
       sessionStorage.setItem("rb_checkout_duration", remainingDurations[0]);
       setSelectedDuration(remainingDurations[0]);
-      navigate("/basket");
-      clearGroup(checkoutDuration);
-      return;
+      safeRemove("rb_cart_proceed", sessionStorage);
     }
 
     toast.success("Order placed successfully!", { description: "Your rental order has been confirmed." });
     // Navigate first, then clear — same tick, so the empty cart never renders.
-    navigate("/order-success", { state: { orderData: orderPayload } });
+    navigate("/order-success", { state: { orderData: orderPayload, hasMoreGroups } });
     clearGroup(checkoutDuration);
-    clearCheckoutSession();
+    if (!hasMoreGroups) clearCheckoutSession();
   };
 
   const handlePlaceOrder = async () => {
