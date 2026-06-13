@@ -32,7 +32,9 @@ const OrderSuccess = () => {
       .then(([kycData, docList]) => {
         const mandatoryDocs = (docList ?? []).filter((d) => d.mandatory === 1);
         const allMandatoryDone = mandatoryDocs.length > 0 && mandatoryDocs.every((d) => !!d.is_done);
-        if (kycData?.kyc_details?.[0]?.status === "Completed" && allMandatoryDone) {
+        // Hide the banner as soon as all docs are uploaded — "Completed" only
+        // flips after admin verification, which happens offline after submission.
+        if (allMandatoryDone) {
           setKycComplete(true);
         }
       })

@@ -61,9 +61,10 @@ const Kyc = () => {
       const kycDetails = kycData.kyc_details ?? [];
       const mandatoryDocs = (docList ?? []).filter((d) => d.mandatory === 1);
 
-      // is_done can be 1 (done), 0, or null (not yet uploaded) — treat truthy as done
+      // is_done can be 1 (done), 0, or null (not yet uploaded) — treat truthy as done.
+      // Don't require status === "Completed" — that only flips after admin verification.
       const allMandatoryDone = mandatoryDocs.length > 0 && mandatoryDocs.every((d) => !!d.is_done);
-      if (kycDetails[0]?.status === "Completed" && allMandatoryDone) {
+      if (allMandatoryDone) {
         navigate("/order-success", {
           state: { orderData, kycComplete: true },
           replace: true,

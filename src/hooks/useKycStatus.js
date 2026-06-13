@@ -16,7 +16,9 @@ export function useKycStatus() {
       .then(([kycData, docList]) => {
         const mandatoryDocs = (docList ?? []).filter((d) => d.mandatory === 1);
         const allDone = mandatoryDocs.length > 0 && mandatoryDocs.every((d) => !!d.is_done);
-        setKycDone(kycData?.kyc_details?.[0]?.status === "Completed" && allDone);
+        // Treat as done as soon as all mandatory docs are uploaded — "Completed"
+        // only flips after admin verification, which is an offline step.
+        setKycDone(allDone);
       })
       .catch(() => setKycDone(false));
   }, []);
