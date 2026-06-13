@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate, Navigate, Link } from "react-router-dom";
 import { ShieldCheck, FileCheck2, ArrowRight, CheckCircle2 } from "lucide-react";
 import logo from "@/assets/7 1.png";
@@ -6,16 +6,37 @@ import SuccessHero from "@/components/success/SuccessHero";
 import NextSteps from "@/components/success/NextSteps";
 import BookingSummary from "@/components/success/BookingSummary";
 import { IncludedBenefits, SuccessSupport, SuccessFAQ } from "@/components/success/SuccessSupport";
+import { getKycStatus, getKycDocList } from "@/api/kyc";
+import { getAuth } from "@/lib/auth";
 
 const OrderSuccess = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const orderData = location.state?.orderData ?? null;
-  const kycComplete = Boolean(location.state?.kycComplete);
   const hasMoreGroups = Boolean(location.state?.hasMoreGroups);
+
+  // Seed from nav state (set when coming back from /kyc), then verify live from API.
+  const [kycComplete, setKycComplete] = useState(Boolean(location.state?.kycComplete));
 
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  // Check real KYC status on mount so the banner is accurate regardless of
+  // how the user arrived here (fresh checkout vs. returning from /kyc).
+  useEffect(() => {
+    if (kycComplete) return; // already confirmed — no need to re-check
+    const mobile = getAuth()?.phone;
+    if (!mobile) return;
+    Promise.all([getKycStatus(mobile), getKycDocList(mobile)])
+      .then(([kycData, docList]) => {
+        const mandatoryDocs = (docList ?? []).filter((d) => d.mandatory === 1);
+        const allMandatoryDone = mandatoryDocs.length > 0 && mandatoryDocs.every((d) => d.is_done === 1);
+        if (kycData?.kyc_details?.[0]?.status === "Completed" && allMandatoryDone) {
+          setKycComplete(true);
+        }
+      })
+      .catch(() => {}); // non-fatal — banner stays as "pending" on error
   }, []);
 
   // No order in the navigation state — a direct/bookmarked visit (the route is
