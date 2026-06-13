@@ -60,7 +60,8 @@ const Kyc = () => {
       const kycDetails = kycData.kyc_details ?? [];
       const mandatoryDocs = (docList ?? []).filter((d) => d.mandatory === 1);
 
-      const allMandatoryDone = mandatoryDocs.every((d) => d.is_done === 1);
+      // is_done can be 1 (done), 0, or null (not yet uploaded) — treat truthy as done
+      const allMandatoryDone = mandatoryDocs.length > 0 && mandatoryDocs.every((d) => !!d.is_done);
       if (kycDetails[0]?.status === "Completed" && allMandatoryDone) {
         navigate("/order-success", {
           state: { orderData, kycComplete: true },
@@ -80,7 +81,7 @@ const Kyc = () => {
 
       const prefilledState = {};
       docList
-        .filter((d) => d.mandatory === 1 && d.is_done === 1)
+        .filter((d) => d.mandatory === 1 && !!d.is_done)
         .forEach((doc) => {
           prefilledState[doc.doc_type] = {
             name: doc.doc_type_name,
@@ -92,7 +93,7 @@ const Kyc = () => {
       setFiles(prefilledState);
     } catch (err) {
       setLoadError(true);
-      console.error(err);
+      console.error("KYC load failed:", err?.message ?? err);
     } finally {
       setIsLoading(false);
     }

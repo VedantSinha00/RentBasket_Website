@@ -15,7 +15,7 @@ export function useKycStatus() {
     Promise.all([getKycStatus(mobile), getKycDocList(mobile)])
       .then(([kycData, docList]) => {
         const mandatoryDocs = (docList ?? []).filter((d) => d.mandatory === 1);
-        const allDone = mandatoryDocs.length > 0 && mandatoryDocs.every((d) => d.is_done === 1);
+        const allDone = mandatoryDocs.length > 0 && mandatoryDocs.every((d) => !!d.is_done);
         setKycDone(kycData?.kyc_details?.[0]?.status === "Completed" && allDone);
       })
       .catch(() => setKycDone(false));

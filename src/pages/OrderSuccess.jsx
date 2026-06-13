@@ -31,7 +31,7 @@ const OrderSuccess = () => {
     Promise.all([getKycStatus(mobile), getKycDocList(mobile)])
       .then(([kycData, docList]) => {
         const mandatoryDocs = (docList ?? []).filter((d) => d.mandatory === 1);
-        const allMandatoryDone = mandatoryDocs.length > 0 && mandatoryDocs.every((d) => d.is_done === 1);
+        const allMandatoryDone = mandatoryDocs.length > 0 && mandatoryDocs.every((d) => !!d.is_done);
         if (kycData?.kyc_details?.[0]?.status === "Completed" && allMandatoryDone) {
           setKycComplete(true);
         }
