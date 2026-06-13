@@ -28,6 +28,7 @@ const OrderSummary = () => {
   const formData = location.state?.formData || null;
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const orderPlacedRef = useRef(false); // sync ref so the guard effect never races
 
   // The duration group being ordered. Each group is confirmed as its own order;
   // on success only this group is cleared and the user returns to the cart for
@@ -63,7 +64,7 @@ const OrderSummary = () => {
 
   // Guard: the chosen plan must have items, a verified mobile, and submitted details.
   useEffect(() => {
-    if (orderPlaced) return;
+    if (orderPlaced || orderPlacedRef.current) return;
     if (groupItems.length === 0) {
       navigate("/basket");
     } else if (!verifiedPhone) {
@@ -110,6 +111,7 @@ const OrderSummary = () => {
    * to check those out (each is a separate order); otherwise to the success page.
    */
   const finalizeOrder = (orderPayload) => {
+    orderPlacedRef.current = true;
     setOrderPlaced(true);
     recordOrder(orderPayload);
 
