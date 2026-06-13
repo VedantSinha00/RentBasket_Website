@@ -20,7 +20,7 @@ const AppDownloadCard = () => {
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm leading-tight">Get the RentBasket app</p>
                 <p className="text-xs text-background/60 mt-0.5 leading-tight">
-                  Track orders, get exclusive deals &amp; more
+                  Faster KYC with camera capture &amp; live order tracking
                 </p>
               </div>
               <button

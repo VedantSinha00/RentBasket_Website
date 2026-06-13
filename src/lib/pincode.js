@@ -18,8 +18,6 @@ const PINCODE_MAP = {
   "201313": "Noida", "201314": "Noida", "201315": "Noida",
   "201316": "Noida", "201317": "Noida", "201318": "Noida",
   "201019": "Noida",
-  // Greater Noida
-  "201310": "Noida", "201318": "Noida",
   // Delhi
   "110001": "Delhi", "110002": "Delhi", "110003": "Delhi",
   "110004": "Delhi", "110005": "Delhi", "110006": "Delhi",

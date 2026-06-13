@@ -1,7 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
-import { User, Package, ChevronRight, LogOut, Phone, Heart, HelpCircle, LogIn, LifeBuoy, UserCircle, FileCheck2, ArrowRight } from "lucide-react";
+import { User, Package, ChevronRight, LogOut, Phone, Heart, HelpCircle, LogIn, LifeBuoy, UserCircle, ShieldCheck } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import KycStatusBanner from "@/components/KycStatusBanner";
 import { getAuth, clearAuth, isAuthenticated } from "@/lib/auth";
 import { useKycStatus } from "@/hooks/useKycStatus";
 
@@ -57,28 +58,9 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* KYC banner — only when logged in and not yet done */}
-        {loggedIn && !kycLoading && kycStatus === "none" && (
-          <div className="mb-6 rounded-2xl border-2 border-primary/30 bg-coral-surface p-4 md:p-5">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center flex-shrink-0">
-                <FileCheck2 className="w-5 h-5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-foreground flex items-center gap-2 flex-wrap">
-                  Complete your KYC
-                  <span className="text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-extrabold bg-destructive-muted text-destructive">Pending</span>
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">Required to confirm your rental orders.</p>
-              </div>
-              <button
-                onClick={() => navigate("/kyc")}
-                className="gradient-coral px-4 py-2 rounded-xl font-bold text-xs shadow-md shadow-primary/20 flex items-center gap-1.5 whitespace-nowrap shrink-0"
-              >
-                Start <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
+        {/* KYC status banner — single shared component, same everywhere. */}
+        {loggedIn && !kycLoading && (
+          <KycStatusBanner kycStatus={kycStatus} returnTo="/profile" className="mb-6" />
         )}
 
         {/* Menu items */}
@@ -98,6 +80,17 @@ const Profile = () => {
                 icon={Package}
                 title="My Orders"
                 subtitle="View and track your rentals"
+              />
+              {/* Stable KYC entry — the status banner above is status-dependent and
+                  vanishes if the fetch fails, so keep a permanent way in. */}
+              <MenuItem
+                to="/kyc"
+                state={{ view: true, returnTo: "/profile" }}
+                icon={ShieldCheck}
+                iconBg="bg-emerald-50"
+                iconColor="text-emerald-600"
+                title="Identity Verification"
+                subtitle="View or complete your KYC"
               />
             </>
           )}

@@ -18,6 +18,7 @@ import logo from "@/assets/7 1.png";
 import { toast } from "sonner";
 import { getAuth } from "@/lib/auth";
 import { getKycStatus, getKycDocList, submitKycDoc } from "@/api/kyc";
+import AppNudge from "@/components/AppNudge";
 
 function getDocIcon(docType) {
   if (docType === 1 || docType === 2) return CreditCard;
@@ -33,6 +34,15 @@ const Kyc = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const orderData = location.state?.orderData || null;
+  // When the user explicitly came to view their documents (e.g. from Profile /
+  // order-success "View documents"), don't auto-redirect even if all verified —
+  // they want to see the docs, not bounce to the order page.
+  const viewOnly = Boolean(location.state?.view);
+  // Where the back link returns to. Defaults to the post-checkout order page,
+  // but a profile-side entry (KycStatusBanner) passes its own path so back
+  // doesn't dump the user on an empty Order Success page.
+  const returnTo = location.state?.returnTo || "/order-success";
+  const backLabel = returnTo === "/order-success" ? "Back to Order" : "Profile";
 
   const [docs, setDocs] = useState([]);
   // { [doc_type]: { name, isImage, url, file } }
@@ -58,19 +68,7 @@ const Kyc = () => {
         getKycDocList(mobile),
       ]);
 
-      const kycDetails = kycData.kyc_details ?? [];
       const mandatoryDocs = (docList ?? []).filter((d) => d.mandatory === 1);
-
-      // is_done can be 1 (done), 0, or null (not yet uploaded) — treat truthy as done.
-      // Don't require status === "Completed" — that only flips after admin verification.
-      const allMandatoryDone = mandatoryDocs.length > 0 && mandatoryDocs.every((d) => !!d.is_done);
-      if (allMandatoryDone) {
-        navigate("/order-success", {
-          state: { orderData, kycComplete: true },
-          replace: true,
-        });
-        return;
-      }
 
       // An empty doc list means the requirements couldn't be loaded — treat it
       // like a failure so the user gets a Retry instead of "Upload all 0 documents".
@@ -80,17 +78,32 @@ const Kyc = () => {
         return;
       }
 
+      // Verification is per-document. is_done = uploaded, is_verified = admin-
+      // approved. KYC is complete ONLY when every mandatory doc is verified —
+      // upload alone is not enough. Redirect to order-success only in that case.
+      const allVerified = mandatoryDocs.every((d) => !!d.is_verified);
+      if (allVerified && !viewOnly) {
+        navigate("/order-success", {
+          state: { orderData, kycComplete: true },
+          replace: true,
+        });
+        return;
+      }
+
       setDocs(mandatoryDocs);
 
+      // Pre-fill any already-uploaded doc. `verified` locks the tile (no
+      // re-upload); an uploaded-but-unverified doc stays editable.
       const prefilledState = {};
-      docList
-        .filter((d) => d.mandatory === 1 && !!d.is_done)
+      mandatoryDocs
+        .filter((d) => !!d.is_done)
         .forEach((doc) => {
           prefilledState[doc.doc_type] = {
             name: doc.doc_type_name,
             isImage: true,
             url: doc.doc_path,
             file: null,
+            verified: !!doc.is_verified,
           };
         });
       setFiles(prefilledState);
@@ -121,9 +134,11 @@ const Kyc = () => {
     };
   }, [files]);
 
-  const isDocReady = (doc) => Boolean(files[doc.doc_type]);
+  const isDocReady = (doc) => Boolean(files[doc.doc_type]); // uploaded or staged
+  const isDocVerified = (doc) => Boolean(files[doc.doc_type]?.verified);
   const uploadedCount = docs.filter(isDocReady).length;
   const allUploaded = docs.length > 0 && docs.every(isDocReady);
+  const verifiedCount = docs.filter(isDocVerified).length;
 
   const handleSelect = (docType, fileList) => {
     const file = fileList?.[0];
@@ -131,10 +146,12 @@ const Kyc = () => {
     const isImage = file.type.startsWith("image/");
     setFiles((prev) => {
       const existing = prev[docType];
+      // Verified docs are locked — never replace one.
+      if (existing?.verified) return prev;
       if (existing?.url?.startsWith("blob:")) URL.revokeObjectURL(existing.url);
       return {
         ...prev,
-        [docType]: { name: file.name, isImage, url: isImage ? URL.createObjectURL(file) : null, file },
+        [docType]: { name: file.name, isImage, url: isImage ? URL.createObjectURL(file) : null, file, verified: false },
       };
     });
   };
@@ -142,6 +159,8 @@ const Kyc = () => {
   const handleRemove = (docType) => {
     setFiles((prev) => {
       const existing = prev[docType];
+      // Verified docs can't be removed/re-uploaded.
+      if (existing?.verified) return prev;
       if (existing?.url?.startsWith("blob:")) URL.revokeObjectURL(existing.url);
       const next = { ...prev };
       delete next[docType];
@@ -149,8 +168,11 @@ const Kyc = () => {
     });
   };
 
+  // Docs with a freshly picked file that still need to be sent to the backend.
+  const pendingUploads = docs.filter((doc) => files[doc.doc_type]?.file);
+
   const handleSubmit = async () => {
-    if (!allUploaded || isSubmitting) return;
+    if (!allUploaded || isSubmitting || pendingUploads.length === 0) return;
     const mobile = getAuth()?.phone;
     if (!mobile) {
       toast.error("Session expired. Please sign in again.");
@@ -159,15 +181,17 @@ const Kyc = () => {
     }
     setIsSubmitting(true);
     try {
-      for (const doc of docs) {
-        const entry = files[doc.doc_type];
-        if (!entry?.file) continue; // pre-filled — skip re-upload
-        await submitKycDoc(mobile, doc.doc_type, entry.file);
+      for (const doc of pendingUploads) {
+        await submitKycDoc(mobile, doc.doc_type, files[doc.doc_type].file);
       }
-      toast.success("KYC verified — your order is confirmed!", {
-        description: "Our team will reach out to schedule delivery.",
+      // Upload only means "submitted for review" — verification happens
+      // admin-side per document, so we don't claim the order is confirmed here.
+      toast.success("Documents submitted for verification", {
+        description: "We'll review them and confirm your order shortly.",
       });
-      navigate("/order-success", { state: { orderData, kycComplete: true } });
+      // Upload ≠ verified. Signal "just submitted" so order-success seeds the
+      // "under review" banner; the live fetch there confirms the real state.
+      navigate("/order-success", { state: { orderData, kycSubmitted: true } });
     } catch (err) {
       toast.error(err.message || "Upload failed. Please try again.");
     } finally {
@@ -196,12 +220,12 @@ const Kyc = () => {
         <div className="max-w-2xl mx-auto">
           {/* Back */}
           <Link
-            to="/order-success"
-            state={{ orderData }}
+            to={returnTo}
+            state={returnTo === "/order-success" ? { orderData } : undefined}
             className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
-            Back to Order
+            {backLabel}
           </Link>
 
           {/* Heading */}
@@ -215,8 +239,20 @@ const Kyc = () => {
             </p>
           </div>
 
+          {/* App nudge — static "get the app" card with no dependency on the KYC
+              API, so it renders immediately, ABOVE the loading gate. (KYC's camera
+              capture is genuinely faster than web upload — honest, high-intent.) */}
+          <AppNudge
+            id="nudge-kyc"
+            reason="Verifying is faster in the app — snap your documents with your camera instead of uploading files."
+            className="mb-6"
+          />
+
           {isLoading ? (
-            <div className="flex items-center justify-center py-20 text-muted-foreground">
+            // Reserve roughly the height of the loaded document list so the
+            // spinner → tiles swap doesn't lurch the page below it. min-h keeps
+            // the loading and loaded states close in height (CLS fix).
+            <div className="flex items-start justify-center pt-20 min-h-[1100px] text-muted-foreground">
               <Loader2 className="w-6 h-6 animate-spin mr-2" />
               <span className="text-sm font-medium">Loading KYC status…</span>
             </div>
@@ -243,18 +279,22 @@ const Kyc = () => {
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    {uploadedCount} of {docs.length} uploaded
+                    {verifiedCount} of {docs.length} verified
                   </span>
-                  {allUploaded && (
+                  {verifiedCount === docs.length ? (
                     <span className="inline-flex items-center gap-1 text-xs font-bold text-success">
-                      <Check className="w-3.5 h-3.5" /> All documents ready
+                      <Check className="w-3.5 h-3.5" /> All documents verified
                     </span>
-                  )}
+                  ) : allUploaded ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-600">
+                      <Loader2 className="w-3.5 h-3.5" /> Under review
+                    </span>
+                  ) : null}
                 </div>
                 <div className="h-2 w-full rounded-full bg-secondary/60 overflow-hidden">
                   <div
-                    className="h-full bg-primary rounded-full transition-all duration-300"
-                    style={{ width: docs.length ? `${(uploadedCount / docs.length) * 100}%` : "0%" }}
+                    className="h-full bg-success rounded-full transition-all duration-300"
+                    style={{ width: docs.length ? `${(verifiedCount / docs.length) * 100}%` : "0%" }}
                   />
                 </div>
               </div>
@@ -264,13 +304,16 @@ const Kyc = () => {
                 {docs.map((doc) => {
                   const Icon = getDocIcon(doc.doc_type);
                   const uploaded = files[doc.doc_type];
+                  const verified = uploaded?.verified;
                   const accept = getDocAccept(doc.doc_type);
                   return (
                     <div
                       key={doc.doc_type}
                       className={`relative rounded-2xl border-2 p-4 transition-all ${
-                        uploaded
+                        verified
                           ? "border-success/40 bg-success-muted/40"
+                          : uploaded
+                          ? "border-amber-300 bg-amber-50/50"
                           : "border-dashed border-border bg-card hover:border-primary/40"
                       }`}
                     >
@@ -278,17 +321,25 @@ const Kyc = () => {
                         <div className="flex items-center gap-2">
                           <div
                             className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                              uploaded ? "bg-success text-white" : "bg-primary/10 text-primary"
+                              verified
+                                ? "bg-success text-white"
+                                : uploaded
+                                ? "bg-amber-500 text-white"
+                                : "bg-primary/10 text-primary"
                             }`}
                           >
-                            {uploaded ? <Check className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
+                            {verified ? <Check className="w-4 h-4" /> : uploaded ? <Loader2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
                           </div>
                           <div>
                             <p className="text-sm font-bold text-foreground leading-tight">{doc.name}</p>
-                            <p className="text-[10px] text-muted-foreground">{doc.user_prompt}</p>
+                            {/* Show review/verified state, falling back to the upload prompt */}
+                            <p className={`text-[10px] ${verified ? "text-success font-semibold" : uploaded ? "text-amber-600 font-semibold" : "text-muted-foreground"}`}>
+                              {verified ? "Verified" : uploaded ? "Under review" : doc.user_prompt}
+                            </p>
                           </div>
                         </div>
-                        {uploaded && (
+                        {/* Only an uploaded-but-unverified doc can be removed/replaced. */}
+                        {uploaded && !verified && (
                           <button
                             onClick={() => handleRemove(doc.doc_type)}
                             className="text-muted-foreground hover:text-destructive transition-colors p-1"
@@ -296,6 +347,9 @@ const Kyc = () => {
                           >
                             <X className="w-4 h-4" />
                           </button>
+                        )}
+                        {verified && (
+                          <Lock className="w-3.5 h-3.5 text-success" aria-label="Verified — locked" />
                         )}
                       </div>
 
@@ -312,7 +366,19 @@ const Kyc = () => {
                               <FileText className="w-5 h-5 text-muted-foreground" />
                             </div>
                           )}
-                          <span className="text-xs font-medium text-foreground truncate">{uploaded.name}</span>
+                          <span className="text-xs font-medium text-foreground truncate flex-1">{uploaded.name}</span>
+                          {/* Re-upload allowed while not yet verified. */}
+                          {!verified && (
+                            <label className="text-[11px] font-bold text-primary hover:underline cursor-pointer shrink-0">
+                              Replace
+                              <input
+                                type="file"
+                                accept={accept}
+                                className="hidden"
+                                onChange={(e) => handleSelect(doc.doc_type, e.target.files)}
+                              />
+                            </label>
+                          )}
                         </div>
                       ) : (
                         <label className="flex flex-col items-center justify-center gap-1.5 rounded-xl bg-secondary/30 border border-border/50 py-5 cursor-pointer hover:bg-secondary/50 transition-colors">
@@ -342,22 +408,30 @@ const Kyc = () => {
                 </span>
               </div>
 
-              {/* Submit */}
-              <button
-                onClick={handleSubmit}
-                disabled={!allUploaded || isSubmitting}
-                className="gradient-coral w-full py-4 mt-6 rounded-2xl font-black text-lg shadow-lg shadow-primary/30 transition-all hover:shadow-primary/40 hover:opacity-95 active:scale-[0.98] disabled:opacity-60 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-3"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" /> Uploading documents…
-                  </>
-                ) : allUploaded ? (
-                  <>Submit &amp; Confirm Order <ShieldCheck className="w-5 h-5" /></>
-                ) : (
-                  `Upload all ${docs.length} documents to continue`
-                )}
-              </button>
+              {/* Submit — enabled only when everything is uploaded AND there is at
+                  least one new/replaced file to send. If all docs are uploaded but
+                  awaiting review (nothing new), show a non-actionable status. */}
+              {allUploaded && pendingUploads.length === 0 ? (
+                <div className="w-full py-4 mt-6 rounded-2xl border-2 border-amber-300 bg-amber-50/60 text-amber-700 font-bold text-sm flex items-center justify-center gap-2">
+                  <Loader2 className="w-4 h-4" /> Documents submitted — under review
+                </div>
+              ) : (
+                <button
+                  onClick={handleSubmit}
+                  disabled={!allUploaded || isSubmitting || pendingUploads.length === 0}
+                  className="gradient-coral w-full py-4 mt-6 rounded-2xl font-black text-lg shadow-lg shadow-primary/30 transition-all hover:shadow-primary/40 hover:opacity-95 active:scale-[0.98] disabled:opacity-60 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" /> Uploading documents…
+                    </>
+                  ) : allUploaded ? (
+                    <>Submit for Verification <ShieldCheck className="w-5 h-5" /></>
+                  ) : (
+                    `Upload all ${docs.length} documents to continue`
+                  )}
+                </button>
+              )}
             </>
           )}
         </div>

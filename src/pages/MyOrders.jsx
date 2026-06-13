@@ -22,6 +22,7 @@ import { getAuth } from "@/lib/auth";
 import { DURATION_OPTIONS } from "@/data/products";
 import { discountedRent } from "@/lib/pricing";
 import { dateNDaysFromToday } from "@/lib/delivery";
+import AppNudge from "@/components/AppNudge";
 
 const SUPPORT_WHATSAPP = "https://wa.me/919958858473";
 
@@ -355,11 +356,11 @@ const MyOrders = () => {
       <main className="section-container py-8 md:py-12">
         <div className="max-w-4xl mx-auto">
           <Link
-            to="/"
+            to="/profile"
             className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest mb-5"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
-            Home
+            Profile
           </Link>
 
           <div className="flex items-center gap-3 mb-2">
@@ -396,6 +397,14 @@ const MyOrders = () => {
               );
             })}
           </div>
+
+          {/* App nudge — live delivery + renewal tracking is a real app perk
+              and this page is exactly about tracking, so it's an honest fit. */}
+          <AppNudge
+            id="nudge-orders"
+            reason="Track deliveries and rental renewals in real time from the app."
+            className="mb-6"
+          />
 
           {loadError && !isLoading && (
             <div className="mb-5 rounded-xl border border-coral-border bg-coral-surface px-4 py-3 text-xs font-medium text-primary">

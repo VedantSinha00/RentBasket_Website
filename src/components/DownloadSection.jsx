@@ -34,10 +34,10 @@ const DownloadSection = () => {
             {/* Feature Text */}
             <div className="mb-6 md:mb-8 space-y-1 w-full lg:text-left text-center relative z-10">
               <p className="hidden lg:flex text-lg md:text-xl font-semibold text-white md:text-2xl">
-                Never Miss an Offer
+                Faster KYC with camera capture
               </p>
               <p className="hidden lg:flex text-lg md:text-xl font-semibold text-white md:text-2xl">
-                Get exclusive Deals
+                Live delivery &amp; renewal updates
               </p>
               <p className="text-xl md:text-2xl font-semibold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
                 Track orders and renewals in one place.

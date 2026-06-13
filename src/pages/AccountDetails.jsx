@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ChevronLeft, User, Phone, Mail, LogOut, CheckCircle2, Loader2, MapPin, Save, FileCheck2, ArrowRight } from "lucide-react";
+import { ChevronLeft, User, Phone, Mail, LogOut, CheckCircle2, Loader2, MapPin, Save } from "lucide-react";
 import { useKycStatus } from "@/hooks/useKycStatus";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import KycStatusBanner from "@/components/KycStatusBanner";
 import { getAuth, setAuth, clearAuth } from "@/lib/auth";
 import { updateUserProfile } from "@/api/profile";
 import { sendEmailOtp, verifyEmailOtp } from "@/api/otp";
@@ -93,7 +94,7 @@ const AccountDetails = () => {
             state: f.state || (a.state || ""),
             pincode: f.pincode || (a.postcode || ""),
           }));
-        } catch {}
+        } catch { /* reverse-geocode failed — user fills the fields manually */ }
         setGeoState("done");
       },
       () => setGeoState("denied"),
@@ -206,12 +207,22 @@ const AccountDetails = () => {
     }
     setEmailStep("sending");
     try {
-      // Save email to profile first so the backend recognises it when sending OTP
+      // The backend only sends an OTP to an email that is already saved against
+      // the user's profile (send-email-otp returns "Email not found" otherwise).
+      // So persisting the email MUST succeed before we request the OTP — for a
+      // new/changed email this is the step that makes it deliverable.
       const current = getAuth();
-      if (current?.userId) {
-        await updateUserProfile(buildProfilePayload({ email: trimmed }));
-        setAuth({ ...getAuth(), email: trimmed });
+      if (!current?.userId) {
+        // Without a userId we can't save the email to the profile, so the OTP
+        // request would come back "Email not found". Fail loudly instead of
+        // firing a request the backend will reject.
+        setEmailStep("idle");
+        toast.error("Couldn't verify your account. Please sign out and sign in again, then retry.");
+        return;
       }
+      await updateUserProfile(buildProfilePayload({ email: trimmed }));
+      setAuth({ ...getAuth(), email: trimmed });
+
       await sendEmailOtp(trimmed);
       setPendingEmail(trimmed);
       setEmailStep("otp");
@@ -221,7 +232,12 @@ const AccountDetails = () => {
       setTimeout(() => otpInputRef.current?.focus(), 100);
     } catch (err) {
       setEmailStep("idle");
-      toast.error(err.message || "Failed to send OTP");
+      // "Email not found" means the profile-save didn't take on the backend —
+      // surface it as something the user can act on rather than a raw API string.
+      const msg = /email not found/i.test(err.message || "")
+        ? "We couldn't link that email to your account. Please try again in a moment."
+        : err.message || "Failed to send OTP";
+      toast.error(msg);
     }
   };
 
@@ -282,27 +298,8 @@ const AccountDetails = () => {
           <ChevronLeft className="w-3.5 h-3.5" /> Profile
         </Link>
 
-        {!kycLoading && kycStatus === "none" && (
-          <div className="mb-6 rounded-2xl border-2 border-primary/30 bg-coral-surface p-4 md:p-5">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center flex-shrink-0">
-                <FileCheck2 className="w-5 h-5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-foreground flex items-center gap-2 flex-wrap">
-                  Complete your KYC
-                  <span className="text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-extrabold bg-destructive-muted text-destructive">Pending</span>
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">Required to confirm your rental orders.</p>
-              </div>
-              <button
-                onClick={() => navigate("/kyc")}
-                className="gradient-coral px-4 py-2 rounded-xl font-bold text-xs shadow-md shadow-primary/20 flex items-center gap-1.5 whitespace-nowrap shrink-0"
-              >
-                Start <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
+        {!kycLoading && (
+          <KycStatusBanner kycStatus={kycStatus} returnTo="/account/details" className="mb-6" />
         )}
 
         <div className="flex items-center gap-3 mb-8">
@@ -369,6 +366,10 @@ const AccountDetails = () => {
               <div className="mt-3 space-y-2">
                 <p className="text-[11px] text-muted-foreground">
                   OTP sent to <span className="font-semibold text-foreground">{pendingEmail}</span>
+                </p>
+                <p className="text-[11px] text-muted-foreground">
+                  Can't find it? Check your <span className="font-semibold text-foreground">spam</span> or
+                  <span className="font-semibold text-foreground"> junk</span> folder.
                 </p>
                 <div className="flex gap-2">
                   <input

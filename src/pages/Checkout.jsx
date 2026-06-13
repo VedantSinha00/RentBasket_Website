@@ -120,8 +120,8 @@ const Checkout = () => {
     };
   });
 
-  // Persist the draft so navigating to the address book and back never loses
-  // the name / email / date / instructions the user already typed.
+  // Persist the draft so leaving checkout and coming back (e.g. to log in / verify
+  // OTP) never loses the name / email / date / instructions the user already typed.
   useEffect(() => {
     safeSet(CHECKOUT_FORM_KEY, JSON.stringify(formData), sessionStorage);
   }, [formData]);

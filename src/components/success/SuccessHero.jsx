@@ -1,7 +1,7 @@
 import { CheckCircle2, ChevronRight, ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const SuccessHero = ({ orderData, hasMoreGroups }) => {
+const SuccessHero = ({ orderData, hasMoreGroups, kycBanner }) => {
   return (
     <div className="w-full flex flex-col items-center text-center py-8">
       {/* Checkmark Illustration */}
@@ -31,9 +31,9 @@ const SuccessHero = ({ orderData, hasMoreGroups }) => {
             <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Date</p>
             <p className="text-sm font-bold text-foreground">{orderData.bookingDate}</p>
           </div>
-          <div className="col-span-2 pt-4 border-t border-border/50">
+          <div className="col-span-2 pt-4 border-t border-border/50 text-center">
             <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Payment Status</p>
-            <div className="flex items-center gap-1.5 text-success">
+            <div className="flex items-center justify-center gap-1.5 text-success">
               <CheckCircle2 className="w-4 h-4" />
               <span className="text-sm font-bold">Successful</span>
             </div>
@@ -48,6 +48,13 @@ const SuccessHero = ({ orderData, hasMoreGroups }) => {
         </svg>
         <span className="flex-1 text-left">You will receive booking updates on WhatsApp.</span>
       </div>
+
+      {/* KYC banner — slotted in between the WhatsApp notice and the CTA. */}
+      {kycBanner && (
+        <div className="mt-6 w-full max-w-md">
+          {kycBanner}
+        </div>
+      )}
 
       {/* Primary CTA */}
       <div className="mt-8 flex flex-col w-full max-w-md gap-3">
