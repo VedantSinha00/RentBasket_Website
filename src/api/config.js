@@ -50,12 +50,13 @@ export const USING_MOCK_DATA = !RAW_API_BASE;
 // Otherwise the full configured URL is used directly.
 export const API_BASE = import.meta.env.DEV ? "/api" : RAW_API_BASE;
 
-// JWT minting (/get-jwt-token) and KYC upload (/update-kyc) live on testaws.
-// In proxy mode they go through the proxy (which routes them to testaws).
-// In dev the Vite proxy forwards /aws/* to testaws (avoids CORS).
+// JWT minting (/get-jwt-token) and KYC upload (/update-kyc) now live on testapi
+// (the backend consolidated them off the retired testaws server).
+// In proxy mode they go through the proxy (which routes them to testapi).
+// In dev the Vite proxy forwards /aws/* to testapi (avoids CORS).
 export const AWS_BASE = import.meta.env.DEV
   ? "/aws"
-  : PROXY_URL || "https://testaws.rentbasket.com";
+  : PROXY_URL || "https://testapi.rentbasket.com";
 
 // App key for /get-jwt-token. In proxy mode the proxy injects the real key
 // server-side, so the bundle carries only an empty placeholder (the body field

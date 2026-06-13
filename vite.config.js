@@ -47,8 +47,11 @@ export default defineConfig(({ command, mode }) => {
       // Proxy /api/* → API server in dev to avoid CORS issues.
       // Production requests go direct; Shivam needs to add CORS headers there.
       proxy: {
+        // JWT mint + KYC upload. These used to live on testaws; the backend has
+        // consolidated them onto testapi (testaws is being retired), so the dev
+        // /aws proxy now forwards to testapi like everything else.
         "/aws": {
-          target: "https://testaws.rentbasket.com",
+          target: "https://testapi.rentbasket.com",
           changeOrigin: true,
           rewrite: (p) => p.replace(/^\/aws/, ""),
         },
