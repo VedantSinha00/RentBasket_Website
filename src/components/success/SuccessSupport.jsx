@@ -30,7 +30,7 @@ export const IncludedBenefits = () => (
 );
 
 export const SuccessSupport = () => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+  <div className="grid grid-cols-1 gap-5 mb-8">
     {/* Help / Support Block */}
     <div className="bg-white border border-border rounded-[24px] p-6 shadow-sm hover:shadow-md transition-all flex flex-col items-center text-center">
       <div className="w-14 h-14 rounded-full bg-destructive-muted flex items-center justify-center text-destructive mb-4">
