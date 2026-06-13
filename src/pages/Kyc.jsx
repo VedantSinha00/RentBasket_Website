@@ -40,6 +40,7 @@ const Kyc = () => {
   const [files, setFiles] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+  const [loadErrorMsg, setLoadErrorMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loadKycState = async () => {
@@ -73,6 +74,7 @@ const Kyc = () => {
       // An empty doc list means the requirements couldn't be loaded — treat it
       // like a failure so the user gets a Retry instead of "Upload all 0 documents".
       if (mandatoryDocs.length === 0) {
+        setLoadErrorMsg("No documents were returned by the server.");
         setLoadError(true);
         return;
       }
@@ -92,8 +94,14 @@ const Kyc = () => {
         });
       setFiles(prefilledState);
     } catch (err) {
+      const msg = err?.message ?? String(err);
+      console.error("KYC load failed:", msg);
+      // Surface auth/network errors so the user knows it's a server-side issue
+      const isAuthErr = msg.toLowerCase().includes("token") || msg.toLowerCase().includes("auth") || msg.includes("526") || msg.includes("502") || msg.includes("503");
+      setLoadErrorMsg(isAuthErr
+        ? "Our authentication server is temporarily unreachable. Please try again in a moment."
+        : "Something went wrong fetching the document list.");
       setLoadError(true);
-      console.error("KYC load failed:", err?.message ?? err);
     } finally {
       setIsLoading(false);
     }
@@ -218,7 +226,7 @@ const Kyc = () => {
               </div>
               <h2 className="text-lg font-bold text-foreground">Couldn't load your KYC requirements</h2>
               <p className="text-sm text-muted-foreground mt-1 max-w-sm leading-relaxed">
-                Something went wrong fetching the document list. Your order is safe — please try again.
+                {loadErrorMsg || "Something went wrong fetching the document list."} Your order is safe — please try again.
               </p>
               <button
                 onClick={loadKycState}
