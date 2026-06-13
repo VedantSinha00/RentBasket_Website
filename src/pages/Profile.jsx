@@ -27,7 +27,7 @@ const Profile = () => {
   const loggedIn = isAuthenticated();
   const auth = getAuth();
   const phone = auth?.phone ?? "—";
-  const { kycDone, loading: kycLoading } = useKycStatus();
+  const { kycStatus, loading: kycLoading } = useKycStatus();
 
   const handleSignOut = () => {
     clearAuth();
@@ -58,7 +58,7 @@ const Profile = () => {
         </div>
 
         {/* KYC banner — only when logged in and not yet done */}
-        {loggedIn && !kycLoading && !kycDone && (
+        {loggedIn && !kycLoading && kycStatus === "none" && (
           <div className="mb-6 rounded-2xl border-2 border-primary/30 bg-coral-surface p-4 md:p-5">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center flex-shrink-0">

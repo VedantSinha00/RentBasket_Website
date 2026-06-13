@@ -27,7 +27,7 @@ const ADDR_EMPTY = {
 const AccountDetails = () => {
   const navigate = useNavigate();
   const auth = getAuth();
-  const { kycDone, loading: kycLoading } = useKycStatus();
+  const { kycStatus, loading: kycLoading } = useKycStatus();
   const [name, setName] = useState(auth?.name ?? "");
   const [email, setEmail] = useState(auth?.email ?? "");
   const [isSaving, setIsSaving] = useState(false);
@@ -282,7 +282,7 @@ const AccountDetails = () => {
           <ChevronLeft className="w-3.5 h-3.5" /> Profile
         </Link>
 
-        {!kycLoading && !kycDone && (
+        {!kycLoading && kycStatus === "none" && (
           <div className="mb-6 rounded-2xl border-2 border-primary/30 bg-coral-surface p-4 md:p-5">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center flex-shrink-0">

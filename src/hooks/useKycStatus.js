@@ -3,25 +3,31 @@ import { getAuth } from "@/lib/auth";
 import { getKycStatus, getKycDocList } from "@/api/kyc";
 
 /**
- * Returns { kycDone, loading } for the currently logged-in user.
- * kycDone is null while loading, true if KYC is complete, false if not.
+ * Returns { kycStatus, loading } for the currently logged-in user.
+ *
+ * kycStatus:
+ *   null        — still loading
+ *   "none"      — docs not yet uploaded
+ *   "submitted" — all mandatory docs uploaded, awaiting admin verification
+ *   "verified"  — backend status === "Completed" (admin approved)
  */
 export function useKycStatus() {
-  const [kycDone, setKycDone] = useState(null);
+  const [kycStatus, setKycStatus] = useState(null);
 
   useEffect(() => {
     const mobile = getAuth()?.phone;
-    if (!mobile) { setKycDone(false); return; }
+    if (!mobile) { setKycStatus("none"); return; }
     Promise.all([getKycStatus(mobile), getKycDocList(mobile)])
       .then(([kycData, docList]) => {
         const mandatoryDocs = (docList ?? []).filter((d) => d.mandatory === 1);
-        const allDone = mandatoryDocs.length > 0 && mandatoryDocs.every((d) => !!d.is_done);
-        // Treat as done as soon as all mandatory docs are uploaded — "Completed"
-        // only flips after admin verification, which is an offline step.
-        setKycDone(allDone);
+        const allUploaded = mandatoryDocs.length > 0 && mandatoryDocs.every((d) => !!d.is_done);
+        const adminVerified = kycData?.kyc_details?.[0]?.status === "Completed";
+        if (adminVerified) setKycStatus("verified");
+        else if (allUploaded) setKycStatus("submitted");
+        else setKycStatus("none");
       })
-      .catch(() => setKycDone(false));
+      .catch(() => setKycStatus("none"));
   }, []);
 
-  return { kycDone, loading: kycDone === null };
+  return { kycStatus, loading: kycStatus === null };
 }
