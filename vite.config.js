@@ -9,18 +9,19 @@ import path from "path";
 function cspMeta(isProd) {
   const csp = [
     "default-src 'self'",
-    // Razorpay's checkout.js plus the inline scripts it injects. Razorpay requires
-    // 'unsafe-inline' in script-src (it injects inline <script> blocks the hashes
-    // change per release, so hashing isn't viable). https://razorpay.com/docs/...
-    "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://api.razorpay.com",
+    // Razorpay's checkout.js, its inline scripts, and the risk-detection bundle
+    // from cdn.razorpay.com. Wildcard *.razorpay.com covers checkout/api/cdn.
+    // 'unsafe-inline' is required — Razorpay injects inline <script> blocks whose
+    // hashes change per release, so hashing isn't viable.
+    "script-src 'self' 'unsafe-inline' https://*.razorpay.com",
     "style-src 'self' 'unsafe-inline'", // Tailwind / Radix / framer-motion inject inline styles
     "img-src 'self' data: https:", // product images come from the remote catalog/CDN
-    "font-src 'self' data:",
+    "font-src 'self' data: https://*.razorpay.com", // Razorpay checkout fonts
     // API + proxy on a rentbasket subdomain, plus Razorpay's payment APIs (the
     // modal calls api/lumberjack.razorpay.com) and the address geocoder.
     "connect-src 'self' https://*.rentbasket.com https://*.razorpay.com https://nominatim.openstreetmap.org",
     // Razorpay opens its checkout in an iframe — frame-src must allow it.
-    "frame-src https://*.razorpay.com https://checkout.razorpay.com",
+    "frame-src https://*.razorpay.com",
     "media-src 'self'",
     "object-src 'none'",
     "base-uri 'self'", // meta-only hosts (e.g. GitHub Pages, which ignores _headers) still get this
