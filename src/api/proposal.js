@@ -240,6 +240,40 @@ export async function reconcileProposalCart(userId, leadId, localItems, added = 
 }
 
 /**
+ * create-proposal-for-tenant — the MIDDLE step Shivam added (sent 2026-06-14,
+ * previously undocumented). Called AFTER confirm-proposal-for-tenant. This is
+ * the call that actually materialises the proposal RECORD and returns the
+ * `proposal_id` (the ~2400-range id) that razorpay/create-order needs.
+ *
+ * Auth: requires the Bearer JWT (probed: POST with no token → 401 Unauthorised),
+ * so it goes through proposalFetch like the other proposal endpoints — NOT like
+ * the public razorpay/* routes.
+ *
+ * Request body (Shivam, 2026-06-14): { user_id, snapshot_id }. NOTE this keys on
+ * `snapshot_id`, NOT `lead_id` — the snapshot_id comes out of the preceding
+ * confirm-proposal step (it's the cart snapshot being turned into a proposal).
+ *
+ * Returns the `proposal_id` (the ~2400-range id) that razorpay/create-order
+ * needs. Response field name still to be confirmed, so we read it defensively
+ * from the likely keys. See SHIVAM-RAZORPAY-QUESTIONS.md.
+ *
+ * @param {string|number} userId
+ * @param {string|number} snapshotId   from the confirm-proposal response
+ * @returns {Promise<{ proposalId: string|number|null, raw: object }>}
+ */
+export async function createProposalForTenant(userId, snapshotId) {
+  const json = await proposalFetch("/create-proposal-for-tenant", {
+    user_id: String(userId),
+    snapshot_id: snapshotId,
+  });
+  const d = json?.data ?? {};
+  // Try the field names this id is most likely to arrive under.
+  const proposalId =
+    d.proposal_id ?? d.proposalId ?? d.id ?? d.proposal?.id ?? null;
+  return { proposalId, raw: json };
+}
+
+/**
  * Confirm the proposal into an order.
  *
  * `delivery` carries the two extra order keys the backend accepts (founder
