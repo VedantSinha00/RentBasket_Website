@@ -8,7 +8,8 @@ import { getAuth } from "@/lib/auth";
 import { safeRemove } from "@/lib/safeStorage";
 import { recordOrder } from "@/lib/recentOrders";
 import { getDeliveryFields, slotLabel } from "@/lib/delivery";
-import { reconcileProposalCart, confirmProposal, fetchProposalCart, applyGlobalCoupon, setDeliverySlot } from "@/api/proposal";
+import { reconcileProposalCart, confirmProposal, createProposalForTenant, fetchProposalCart, applyGlobalCoupon, setDeliverySlot } from "@/api/proposal";
+import { isRazorpayConfigured, openRazorpayCheckout, PAYMENT_TYPE } from "@/api/razorpay";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutSummary from "@/components/checkout/CheckoutSummary";
@@ -28,6 +29,9 @@ const OrderSummary = () => {
   const formData = location.state?.formData || null;
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  // Full vs 50%-upfront payment choice (drives razorpay payment_type). Default
+  // to the upfront/min plan the site advertises ("pay 50% now").
+  const [paymentChoice, setPaymentChoice] = useState("min"); // "min" | "full"
   const orderPlacedRef = useRef(false); // sync ref so the guard effect never races
 
   // The duration group being ordered. Each group is confirmed as its own order;
@@ -74,7 +78,11 @@ const OrderSummary = () => {
     }
   }, [groupItems, navigate, verifiedPhone, formData, orderPlaced, checkoutDuration]);
 
-  const buildOrderPayload = (b, orderId) => ({
+  // `payment` (optional) carries the real Razorpay result once a payment is
+  // taken: { transactionId, method, payment_type }. When omitted (mock /
+  // pre-Razorpay flow) we fall back to a generated id so the success page still
+  // renders — but a real order always passes the verified razorpay_payment_id.
+  const buildOrderPayload = (b, orderId, payment = null) => ({
     orderId,
     bookingDate: new Date().toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }),
     deliveryDate: new Date(formData.startDate).toLocaleDateString("en-IN", { day: "numeric", month: "short" }),
@@ -86,8 +94,11 @@ const OrderSummary = () => {
     },
     deliveryAddress: `${formData.addressLine1}, ${formData.addressLine2}, ${formData.city}, ${formData.state}, ${formData.pincode}`,
     paymentDetails: {
-      method: formData.paymentMethod.toUpperCase(),
-      transactionId: `TXN${Math.floor(Math.random() * 900000) + 100000}`,
+      method: payment?.method || (formData.paymentMethod || "online").toUpperCase(),
+      transactionId: payment?.transactionId || `TXN${Math.floor(Math.random() * 900000) + 100000}`,
+      // What the user actually paid now: full first-month vs 50% upfront.
+      amountPaid: payment?.amountPaid ?? (payment?.payment_type === PAYMENT_TYPE.MIN ? b.upfront : b.netFirstMonth),
+      paymentType: payment?.payment_type || null,
       status: "Successful",
     },
     items: groupItems,
@@ -191,17 +202,77 @@ const OrderSummary = () => {
       const apiResponse = await confirmProposal(auth.userId, auth.leadId, cartItemIds, coupon?.id ?? null, delivery);
 
       const b = cartBreakdown(groupItems, coupon);
-      const rawOrderId = apiResponse?.data?.order_id ?? apiResponse?.data?.orderId;
-      // Warn when the backend omits order_id — makes contract drift visible in logs.
-      if (rawOrderId == null) {
-        console.warn(
-          "[OrderSummary] confirmProposal response missing order_id / orderId — " +
-          "falling back to RB-{leadId}. Check backend contract with Shivam.",
-          apiResponse?.data,
-        );
+
+      // ── The real proposal id (the ~2400-range id razorpay/create-order wants)
+      // comes from a TWO-step backend chain (Shivam, confirmed 2026-06-14 with a
+      // real response sample):
+      //   confirm-proposal-for-tenant → returns `data.snapshot_id` (e.g. 4552)
+      //   create-proposal-for-tenant  ({ user_id, snapshot_id }) → returns proposal_id
+      //   razorpay/create-order       (?proposal_id=…) → opens the payment
+      // We previously (wrongly) sent leadId to create-order → "lead_id on null".
+      // `data.snapshot_id` is the confirmed field; the extra fallbacks are belt-
+      // and-braces only. See SHIVAM-RAZORPAY-QUESTIONS.md.
+      const snapshotId =
+        apiResponse?.data?.snapshot_id ??
+        apiResponse?.data?.snapshotId ??
+        null;
+
+      let proposalId = null;
+      if (snapshotId != null) {
+        try {
+          const { proposalId: pid } = await createProposalForTenant(auth.userId, snapshotId);
+          proposalId = pid;
+        } catch (cpErr) {
+          console.warn("[OrderSummary] create-proposal-for-tenant failed:", cpErr.message);
+        }
+      } else {
+        console.warn("[OrderSummary] no snapshot_id in confirm-proposal response — can't create proposal", apiResponse?.data);
       }
-      const orderId = rawOrderId ?? `RB-${auth.leadId}`;
-      const orderPayload = buildOrderPayload(b, String(orderId));
+
+      // Order id we show the user. Prefer the real proposal id; fall back to a
+      // readable RB-{leadId} only for display when the backend didn't give one.
+      const orderId = proposalId ?? `RB-${auth.leadId}`;
+
+      // ── Razorpay payment ─────────────────────────────────────────────────
+      // proposalId (from create-proposal-for-tenant) is what razorpay/create-order
+      // keys on. Open the modal, take the payment, and only finalise on a
+      // *verified* payment. When Razorpay isn't configured, or we have no
+      // proposalId, skip to finalize so the flow doesn't dead-end.
+      let payment = null;
+      if (isRazorpayConfigured() && proposalId != null) {
+        // min_payment = pay 50% upfront to confirm; full_payment = whole first
+        // month + deposit. Driven by the user's choice on the order summary.
+        const paymentType = paymentChoice === "full" ? PAYMENT_TYPE.FULL : PAYMENT_TYPE.MIN;
+        try {
+          const result = await openRazorpayCheckout({
+            proposalId,
+            paymentType,
+            prefill: {
+              name: formData.fullName,
+              email: formData.email,
+              contact: formData.phone || verifiedPhone,
+            },
+            description: `RentBasket order ${orderId}`,
+          });
+          payment = {
+            transactionId: result.paymentId,
+            method: "RAZORPAY",
+            payment_type: paymentType,
+          };
+        } catch (payErr) {
+          // Cancelled or failed payment: the order is confirmed on the backend
+          // but unpaid. Don't finalise — let the user retry the payment.
+          setIsProcessing(false);
+          if (payErr?.code === "PAYMENT_CANCELLED") {
+            toast.error("Payment cancelled", { description: "Your order is held — try again to pay and confirm." });
+          } else {
+            toast.error("Payment failed", { description: payErr?.message || "Please try again." });
+          }
+          return;
+        }
+      }
+
+      const orderPayload = buildOrderPayload(b, String(orderId), payment);
 
       // Reset the resume accumulator so the NEXT group's checkout starts clean
       // (these ids belong to the group we just confirmed).
@@ -297,7 +368,13 @@ const OrderSummary = () => {
           )}
 
           {/* Order summary + Confirm & Pay */}
-          <CheckoutSummary onPlaceOrder={handlePlaceOrder} isProcessing={isProcessing} items={groupItems} />
+          <CheckoutSummary
+            onPlaceOrder={handlePlaceOrder}
+            isProcessing={isProcessing}
+            items={groupItems}
+            paymentChoice={paymentChoice}
+            onPaymentChoiceChange={setPaymentChoice}
+          />
         </div>
       </main>
     </div>
