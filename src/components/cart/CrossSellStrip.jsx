@@ -51,7 +51,7 @@ function pickAnchors(cartItems, products) {
 }
 
 const CrossSellStrip = () => {
-  const { cartItems, addToCart } = useCart();
+  const { cartItems, addToCart, selectedDuration, durationsInCart } = useCart();
   const { data: products = [] } = useProducts();
 
   const [winnerProductId, runnerUpProductId] = useMemo(
@@ -108,8 +108,23 @@ const CrossSellStrip = () => {
   const firstDuration = (product) =>
     DURATION_OPTIONS.find((d) => (product.pricing_by_duration?.[d.key] ?? 0) > 0)?.key ?? "3_months";
 
+  // The duration a quick-added item should inherit: match what other products
+  // in the cart belong to (the active duration group, or the first group
+  // present), falling back to 12 months when the cart has no duration context.
+  const targetDuration =
+    selectedDuration || durationsInCart[0] || "12_months";
+
+  // Pick the duration to add this product at: prefer the cart's target
+  // duration, but only if the product actually offers pricing for it —
+  // otherwise fall back to the product's first available duration so we
+  // never add a line with no price.
+  const resolveDuration = (product) =>
+    (product.pricing_by_duration?.[targetDuration] ?? 0) > 0
+      ? targetDuration
+      : firstDuration(product);
+
   const handleQuickAdd = (product) => {
-    const defaultDuration = firstDuration(product);
+    const defaultDuration = resolveDuration(product);
     const basePrice = discountedRent(product.pricing_by_duration[defaultDuration], product.percent_discount);
     const label = DURATION_OPTIONS.find((d) => d.key === defaultDuration)?.label || "3 Months";
     const depositWaived = basePrice < maxCartPrice;
@@ -153,7 +168,7 @@ const CrossSellStrip = () => {
       <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar -mx-1 px-1">
         {suggestions.map((product) => {
           const displayPrice = discountedRent(
-            product.pricing_by_duration[firstDuration(product)] ?? 0,
+            product.pricing_by_duration[resolveDuration(product)] ?? 0,
             product.percent_discount
           );
 
