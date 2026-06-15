@@ -284,11 +284,11 @@ const LovedByCustomers = () => {
           </div>
         ))}
 
-        {/* Mascot sitting on top of the stack */}
+        {/* Mascot sitting on the right, on top of the stack */}
         <motion.img
           src={mascotUrl}
           alt="RentBasket mascot"
-          className="relative z-10 w-[22rem] max-w-[90%] mx-auto -mt-2 -mb-16 pointer-events-none select-none"
+          className="relative z-10 w-[30rem] max-w-none ml-auto -mr-10 -mt-2 -mb-4 pointer-events-none select-none"
           draggable={false}
           animate={{ y: [0, -8, 0] }}
           transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
