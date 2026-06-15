@@ -80,7 +80,11 @@ const HeroSection = () => {
       </section>
 
       {/* ── Desktop View (Dual Layout) ───────────────────────────── */}
-      <section className="hidden lg:flex relative flex-row bg-background overflow-hidden lg:min-h-[440px] w-full">
+      {/* Inner row capped to max-w-7xl and centered so the hero doesn't sprawl
+          edge-to-edge (and de-align from the rest of the site) on wide / zoomed-
+          out screens. The section stays full-bleed for the background. */}
+      <section className="hidden lg:flex relative flex-row justify-center bg-background overflow-hidden lg:min-h-[440px] w-full">
+        <div className="flex flex-row w-full max-w-7xl mx-auto">
         {/* Content column */}
         <div className="flex flex-col justify-center px-16 xl:px-20 z-10 w-[44%] shrink-0 gap-6">
           {/* Headline */}
@@ -158,6 +162,7 @@ const HeroSection = () => {
             playsInline
             aria-label="RentBasket mascot Ku waving hello"
           />
+        </div>
         </div>
       </section>
     </>

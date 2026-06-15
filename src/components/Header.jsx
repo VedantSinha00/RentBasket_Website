@@ -118,11 +118,13 @@ const Header = () => {
             </form>
           )}
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex flex-1 items-center justify-center gap-8">
+          {/* Desktop Nav — gaps and search width scale up with the breakpoint so
+              the whole bar fits in the tight md band (768–~830px) instead of
+              overflowing and cutting off the Download App button. */}
+          <nav className="hidden md:flex flex-1 items-center justify-center gap-4 lg:gap-8 min-w-0">
             <Link
               to="/catalog"
-              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
             >
               Browse Catalogue
             </Link>
@@ -132,14 +134,14 @@ const Header = () => {
             >
               FAQs
             </Link>
-            <form onSubmit={handleSubmit} className="relative">
+            <form onSubmit={handleSubmit} className="relative min-w-0 flex-1 max-w-xs lg:max-w-none lg:flex-none">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
               <input
                 type="text"
                 value={query}
                 onChange={handleChange}
                 placeholder="Search furniture, appliances..."
-                className="w-80 pl-9 pr-4 py-2 border border-border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full lg:w-80 pl-9 pr-4 py-2 border border-border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
             </form>
           </nav>
@@ -201,7 +203,7 @@ const Header = () => {
             )}
             <a
               href="#download"
-              className="hidden sm:inline-flex btn-outline text-sm py-2 px-4"
+              className="hidden lg:inline-flex btn-outline text-sm py-2 px-4 whitespace-nowrap"
             >
               Download App
             </a>

@@ -7,14 +7,21 @@ const Card = ({ belief, reality }) => {
   const [isCentered, setIsCentered] = useState(false);
   const cardRef = useRef(null);
 
-  // Mirror the lg breakpoint (1024px) used throughout the catalog
+  // Mirror the lg breakpoint (1024px) used throughout the catalog. Use matchMedia
+  // (not window.innerWidth) so this stays in lock-step with the CSS `lg:` classes
+  // under browser zoom / display scaling — reading innerWidth drifts out of sync
+  // with the media query at non-100% zoom and flips the layout at the wrong point.
   const [isMobileLayout, setIsMobileLayout] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 1024 : false
+    typeof window !== "undefined"
+      ? window.matchMedia("(max-width: 1023px)").matches
+      : false
   );
   useEffect(() => {
-    const onResize = () => setIsMobileLayout(window.innerWidth < 1024);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const onChange = (e) => setIsMobileLayout(e.matches);
+    setIsMobileLayout(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
   }, []);
 
   // Mobile/tablet: tilt (30°) when the card centre crosses the middle 40% of the viewport.

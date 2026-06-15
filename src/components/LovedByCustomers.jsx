@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 
@@ -6,7 +6,7 @@ const mascotUrl = "https://www.figma.com/api/mcp/asset/16332cb1-7534-49d4-9463-0
 
 const reviews = [
   {
-    name: "Rahul S.",
+    name: "Pranjal A.",
     location: "Gurgaon",
     segments: [
       { text: "I rented all my appliances from RentBasket and overall had a really good experience. The items were in great shape, clean, and handled professionally. The delivery and installation were done on time and staff was very polite and helpful, which I really appreciated. Pricing felt fair for the convenience and quality. " },
@@ -15,7 +15,7 @@ const reviews = [
     ],
   },
   {
-    name: "Priya M.",
+    name: "Shikhar B.",
     location: "Gurgaon",
     segments: [
       { text: "I've " },
@@ -24,7 +24,7 @@ const reviews = [
     ],
   },
   {
-    name: "Ankit V.",
+    name: "Urbi K.",
     location: "Gurgaon",
     segments: [
       { text: "RentBasket has been a savior in terms of furnishing our house and also maintaining the aesthetics of the house.", highlight: true },
@@ -240,18 +240,6 @@ const mobileBgCards = [
 const LovedByCustomers = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [expandedMobile, setExpandedMobile] = useState(null);
-  const scrollRef = useRef(null);
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const center = () => {
-      el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
-    };
-    center();
-    window.addEventListener("resize", center);
-    return () => window.removeEventListener("resize", center);
-  }, []);
 
   return (
     <section className="pt-14 md:pt-20 bg-white">
@@ -319,24 +307,37 @@ const LovedByCustomers = () => {
         </div>
       </div>
 
-      {/* Desktop layout: fanned overlapping card cluster */}
-      <div ref={scrollRef} className="hidden md:block overflow-x-auto overflow-y-hidden no-scrollbar">
-        <div className="relative flex items-end justify-center min-h-[560px] md:min-h-[680px] w-[1400px] pb-8">
-        {/* Background blurred cards */}
-        {bgCards.map(([ri, rotate, tx, ty, blur, opacity], i) => (
-          <FloatingBgCard
-            key={i}
-            review={reviews[ri]}
-            rotate={rotate}
-            tx={tx}
-            ty={ty}
-            blur={blur}
-            opacity={opacity}
-            index={i}
-          />
-        ))}
+      {/* Desktop layout: fanned overlapping card cluster.
+          Built responsive-by-construction: the foreground (mascot + 3 cards) is a
+          normal centered flex column that reflows at any width; the decorative
+          blurred cards live in their own clipped layer (see below) so they crop at
+          the screen edges instead of forcing a fixed-width horizontal scroll or
+          bleeding into the next section. No more w-[1400px] stage / JS centering. */}
+      <div className="hidden md:flex relative w-full max-w-7xl mx-auto items-end justify-center min-h-[560px] md:min-h-[680px] pb-8 overflow-x-clip">
+        {/* Decorative background layer — absolutely positioned, clipped by this
+            wrapper. The inner box keeps the authored 1400px-wide centered geometry
+            so the bgCards pixel translates stay correct; overflow-hidden crops
+            whatever spills past the viewport. pointer-events-none so it never
+            intercepts hover on the foreground cards. */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[1400px] h-full">
+            {bgCards.map(([ri, rotate, tx, ty, blur, opacity], i) => (
+              <FloatingBgCard
+                key={i}
+                review={reviews[ri]}
+                rotate={rotate}
+                tx={tx}
+                ty={ty}
+                blur={blur}
+                opacity={opacity}
+                index={i}
+              />
+            ))}
+          </div>
+        </div>
 
-        {/* Mascot + foreground cards */}
+        {/* Mascot + foreground cards — normal flow, never clipped (so the mascot
+            head pokes up toward the heading freely). */}
         <motion.div
           className="relative flex flex-col items-center z-10 self-end"
           initial={{ opacity: 0, y: 40 }}
@@ -392,7 +393,6 @@ const LovedByCustomers = () => {
             })}
           </div>
         </motion.div>
-        </div>
       </div>
     </section>
   );
