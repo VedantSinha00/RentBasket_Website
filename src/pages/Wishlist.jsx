@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Heart, ChevronLeft, Trash2 } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/catalog/ProductCard";
 import { useWishlist } from "@/context/WishlistContext";
@@ -11,8 +10,6 @@ const Wishlist = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-
       <main className="section-container py-8 md:py-12">
         {/* Back link */}
         <Link

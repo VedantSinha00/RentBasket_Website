@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import { User, Package, ChevronRight, LogOut, Phone, Heart, HelpCircle, LogIn, LifeBuoy, UserCircle, ShieldCheck } from "lucide-react";
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import KycStatusBanner from "@/components/KycStatusBanner";
 import { getAuth, clearAuth, isAuthenticated } from "@/lib/auth";
@@ -37,8 +36,6 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-
       <main className="flex-1 section-container py-10 md:py-16 max-w-lg mx-auto w-full">
         {/* Avatar block */}
         <div className="flex flex-col items-center gap-4 mb-10">

@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ChevronLeft, User, Phone, Mail, LogOut, CheckCircle2, Loader2, MapPin, Save } from "lucide-react";
 import { useKycStatus } from "@/hooks/useKycStatus";
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import KycStatusBanner from "@/components/KycStatusBanner";
 import { getAuth, setAuth, clearAuth } from "@/lib/auth";
@@ -288,8 +287,6 @@ const AccountDetails = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-
       <main className="flex-1 section-container py-10 md:py-14 max-w-lg mx-auto w-full">
         <Link
           to="/profile"

@@ -121,6 +121,8 @@ const FurnitureGallery = ({ activeCategory = "Furniture" }) => {
       <div className="section-container">
         {/* Catalog scroll */}
         <div className="relative">
+          {/* Right-edge fade to hint at more content */}
+          <div className="pointer-events-none absolute right-0 top-0 bottom-4 w-16 z-10 bg-gradient-to-l from-cream/60 to-transparent" />
           <div
             ref={containerRef}
             className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"

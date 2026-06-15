@@ -8,6 +8,7 @@ import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import BottomTabBar from "@/components/BottomTabBar";
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
 import ProductDetails from "./pages/ProductDetails";
@@ -58,6 +59,7 @@ const RouterApp = () => {
   return (
     <>
       <ScrollToTop />
+      <BottomTabBar />
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={location.pathname}

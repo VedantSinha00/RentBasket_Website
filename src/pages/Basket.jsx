@@ -1,4 +1,3 @@
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartHeader from "@/components/cart/CartHeader";
 import CartDurationTabs from "@/components/cart/CartDurationTabs";
@@ -31,7 +30,6 @@ const Basket = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       <main className="pb-20 lg:pb-0">
         <CartHeader />
 

@@ -7,6 +7,7 @@ import ResponsibilitySection from "@/components/ResponsibilitySection";
 // import HowItWorks from "@/components/HowItWorks";
 // import FoundersSection from "@/components/FoundersSection";
 import MythOrFact from "@/components/MythOrFact";
+import LovedByCustomers from "@/components/LovedByCustomers";
 import Testimonials from "@/components/Testimonials";
 import WhatMakesDifferent from "@/components/WhatMakesDifferent";
 import DownloadSection from "@/components/DownloadSection";
@@ -41,6 +42,7 @@ const Index = () => {
         {/* v1: Founders — hidden for this release */}
         {/* <FoundersSection /> */}
         <MythOrFact />
+        <LovedByCustomers />
         <Testimonials />
         <DownloadSection />
         <WhatMakesDifferent />

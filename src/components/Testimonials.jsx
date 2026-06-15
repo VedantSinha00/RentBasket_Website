@@ -139,7 +139,13 @@ const Testimonials = () => (
       </p>
     </div>
 
-    <div className="flex flex-col gap-4">
+    <div
+      className="flex flex-col gap-4"
+      style={{
+        maskImage: "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+        WebkitMaskImage: "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+      }}
+    >
       <MarqueeRow items={row1} duration={35} />
       <MarqueeRow items={row2} duration={45} reverse={true} />
     </div>
