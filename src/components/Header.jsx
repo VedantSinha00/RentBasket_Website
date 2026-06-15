@@ -71,7 +71,7 @@ const Header = () => {
 
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/40">
       <div className="section-container" style={{ width: "100%" }}>
         <div
           className="flex items-center justify-between h-12 md:h-14"
@@ -95,7 +95,7 @@ const Header = () => {
             </div>
           </Link>
 
-          {/* Mobile search — flex-1 fills the centre; inner div is always w-full */}
+          {/* Mobile search — flex-1 fills the centre */}
           {showMobileSearch && (
             <form
               onSubmit={handleSubmit}
@@ -154,7 +154,7 @@ const Header = () => {
           >
             <Link
               to="/profile"
-              className={`relative p-1.5 md:p-2 rounded-xl transition-colors ${
+              className={`hidden md:flex relative p-1.5 md:p-2 rounded-xl transition-colors ${
                 onProfile ? "bg-primary/10" : "hover:bg-secondary"
               }`}
               title="My Profile"
@@ -163,7 +163,7 @@ const Header = () => {
             </Link>
             <Link
               to="/wishlist"
-              className={`relative p-1.5 md:p-2 rounded-xl transition-colors ${
+              className={`hidden md:flex relative p-1.5 md:p-2 rounded-xl transition-colors ${
                 onWishlist ? "bg-primary/10" : "hover:bg-secondary"
               }`}
               title="My Wishlist"
@@ -178,7 +178,7 @@ const Header = () => {
             {!onCart && (
               <Link
                 to="/basket"
-                className="relative p-1.5 md:p-2 rounded-xl hover:bg-secondary transition-colors"
+                className="hidden md:flex relative p-1.5 md:p-2 rounded-xl hover:bg-secondary transition-colors"
                 title="View Basket"
               >
                 <ShoppingBag className="w-5 h-5 text-muted-foreground" />
@@ -190,7 +190,7 @@ const Header = () => {
               </Link>
             )}
             {onCart && (
-              <div className="relative p-1.5 md:p-2 rounded-xl bg-primary/10">
+              <div className="hidden md:flex relative p-1.5 md:p-2 rounded-xl bg-primary/10">
                 <ShoppingBag className="w-5 h-5 text-primary" />
                 {cartCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">

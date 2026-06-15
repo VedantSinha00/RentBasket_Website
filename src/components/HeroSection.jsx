@@ -77,21 +77,6 @@ const HeroSection = () => {
             For now, since collection filtering is handled directly within the catalog, they are removed from the hero view. */}
         </div>
 
-        {/* CTA Button */}
-        <motion.div
-          className="w-full max-w-xs pb-8"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-        >
-          <Link
-            to={catalogLink}
-            data-testid="hero-cta"
-            className="flex items-center justify-center h-[52px] w-full rounded-full border-[2.5px] border-primary text-primary font-sans font-bold text-[16px] tracking-tight bg-white hover:bg-primary/5 transition-colors shadow-soft active:scale-[0.98] focus-visible:outline-none"
-          >
-            Browse Catalogue
-          </Link>
-        </motion.div>
       </section>
 
       {/* ── Desktop View (Dual Layout) ───────────────────────────── */}

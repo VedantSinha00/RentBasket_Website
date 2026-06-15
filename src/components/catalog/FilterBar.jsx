@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
+import { ChevronDown, SlidersHorizontal, X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DURATION_OPTIONS, BEST_FOR_OPTIONS, SORT_OPTIONS } from "@/data/products";
 
@@ -402,6 +402,126 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
         )}
       </AnimatePresence>
     </>
+  );
+};
+
+/** Desktop sticky sidebar — used in place of the top FilterBar on md+ */
+export const FilterSidebar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
+  const clearAllFilters = () =>
+    onFilterChange({ duration: null, priceRange: null, availability: false, bestFor: null });
+
+  const hasActiveFilters = filters.duration || filters.bestFor || filters.availability;
+
+  const PillGroup = ({ label, options, value, onChange }) => (
+    <div>
+      <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">{label}</h4>
+      <div className="flex flex-wrap gap-2">
+        {options.map((opt) => {
+          const val = typeof opt === "string" ? opt : opt.label;
+          const active = value === val;
+          return (
+            <button
+              key={val}
+              onClick={() => onChange(active ? null : val)}
+              className={`px-3 py-1.5 rounded-full border text-sm transition-all ${
+                active
+                  ? "border-primary text-primary bg-primary/5 font-semibold"
+                  : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
+              }`}
+            >
+              {val}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  return (
+    <aside className="hidden md:flex flex-col gap-6 w-56 shrink-0">
+      <div className="sticky top-20 flex flex-col gap-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <SlidersHorizontal className="w-4 h-4" />
+            Filters
+          </h3>
+          {hasActiveFilters && (
+            <button
+              onClick={clearAllFilters}
+              className="text-xs text-primary hover:underline font-medium"
+            >
+              Clear all
+            </button>
+          )}
+        </div>
+
+        {/* Sort */}
+        <div>
+          <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Sort by</h4>
+          <div className="flex flex-col gap-1.5">
+            {SORT_OPTIONS.map((opt) => {
+              const val = typeof opt === "string" ? opt : opt.label;
+              const active = sortBy === val;
+              return (
+                <button
+                  key={val}
+                  onClick={() => onSortChange(val)}
+                  className={`flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all text-left ${
+                    active
+                      ? "bg-primary/5 text-primary font-semibold border border-primary/20"
+                      : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  }`}
+                >
+                  {val}
+                  {active && <Check className="w-3.5 h-3.5 shrink-0" />}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="border-t border-border/50" />
+
+        {/* Duration */}
+        <PillGroup
+          label="Duration"
+          options={DURATION_OPTIONS}
+          value={filters.duration}
+          onChange={(val) => onFilterChange({ ...filters, duration: val })}
+        />
+
+        <div className="border-t border-border/50" />
+
+        {/* Best for */}
+        <PillGroup
+          label="Best for"
+          options={BEST_FOR_OPTIONS}
+          value={filters.bestFor}
+          onChange={(val) => onFilterChange({ ...filters, bestFor: val })}
+        />
+
+        <div className="border-t border-border/50" />
+
+        {/* Availability */}
+        <div>
+          <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Availability</h4>
+          <button
+            onClick={() => onFilterChange({ ...filters, availability: !filters.availability })}
+            className={`flex items-center gap-2 px-3 py-2 rounded-full border text-sm transition-all ${
+              filters.availability
+                ? "border-primary text-primary bg-primary/5 font-semibold"
+                : "border-border text-muted-foreground hover:border-primary/30"
+            }`}
+          >
+            <span className={`w-3 h-3 rounded-full border-2 transition-colors ${
+              filters.availability ? "bg-primary border-primary" : "border-muted-foreground"
+            }`} />
+            In Stock Only
+          </button>
+        </div>
+      </div>
+    </aside>
   );
 };
 
