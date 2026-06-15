@@ -214,12 +214,12 @@ const CollapsibleMobileCard = ({ review, expanded, onToggle, offsetX, rotate, zI
       <ReviewText segments={expanded ? review.segments : previewSegments(review.segments)} />
       <button
         type="button"
-        className="self-start mt-3 text-xs font-semibold text-primary"
+        className="self-start mt-2 text-xs font-semibold text-primary hover:underline underline-offset-2"
         onClick={(e) => { e.stopPropagation(); onToggle(); }}
       >
-        {expanded ? "Show less" : "Read more"}
+        {expanded ? "Show less ↑" : "Read more →"}
       </button>
-      <div className="flex items-center gap-3 mt-4 pt-3 border-t border-border/30">
+      <div className="flex items-center gap-3 mt-5 pt-3 border-t border-border/30">
         <Avatar name={review.name} />
         <div>
           <p className="text-sm font-bold text-foreground leading-tight">{review.name}</p>
@@ -262,7 +262,7 @@ const LovedByCustomers = () => {
       </div>
 
       {/* Mobile layout: mascot-on-top + static staggered vertical card stack */}
-      <div className="md:hidden relative px-4 pb-10 overflow-hidden">
+      <div className="md:hidden relative px-4 pt-2 pb-10 overflow-hidden">
         {/* Blurred faded background cards */}
         {mobileBgCards.map(([ri, rotate, side, offset, top, blur, opacity], i) => (
           <div
@@ -288,7 +288,7 @@ const LovedByCustomers = () => {
         <motion.img
           src={mascotUrl}
           alt="RentBasket mascot"
-          className="relative z-10 w-60 mx-auto -mb-10 pointer-events-none select-none"
+          className="relative z-10 w-[22rem] max-w-[90%] mx-auto -mt-2 -mb-16 pointer-events-none select-none"
           draggable={false}
           animate={{ y: [0, -8, 0] }}
           transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
