@@ -180,15 +180,15 @@ const LovedByCustomers = () => {
   }, []);
 
   return (
-    <section className="py-14 md:py-20 bg-white">
-      <div className="section-container text-center mb-10">
+    <section className="pt-14 md:pt-20 bg-white">
+      <div className="section-container text-center mb-[-8px] relative z-0">
         <h2 className="font-display font-bold text-4xl md:text-6xl text-foreground leading-tight">
           Loved by Customers
         </h2>
       </div>
 
-      <div ref={scrollRef} className="overflow-x-auto no-scrollbar">
-        <div className="relative flex items-center justify-center min-h-[520px] md:min-h-[640px] w-[1400px]">
+      <div ref={scrollRef} className="overflow-x-auto overflow-y-hidden no-scrollbar">
+        <div className="relative flex items-end justify-center min-h-[560px] md:min-h-[680px] w-[1400px] pb-8">
         {/* Background blurred cards */}
         {bgCards.map(([ri, rotate, tx, ty, blur, opacity], i) => (
           <FloatingBgCard
@@ -204,8 +204,8 @@ const LovedByCustomers = () => {
         ))}
 
         {/* Mascot + foreground cards */}
-        <motion.div 
-          className="relative flex flex-col items-center z-10"
+        <motion.div
+          className="relative flex flex-col items-center z-10 self-end"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -214,7 +214,7 @@ const LovedByCustomers = () => {
           <motion.img
             src={mascotUrl}
             alt="RentBasket mascot"
-            className="w-96 md:w-[32rem] relative z-10 -mb-10 pointer-events-none select-none"
+            className="w-80 md:w-[30rem] relative z-10 -mb-6 pointer-events-none select-none"
             draggable={false}
             animate={{
               y: [0, -8, 0],
