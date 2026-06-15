@@ -1,4 +1,4 @@
-import { MapPin, Check } from "lucide-react";
+import { MapPin } from "lucide-react";
 import kuMascot from "@/assets/Ku_standing_proud.png";
 
 /** Compact Ku — native square aspect, keeps catalog above the fold */
@@ -28,14 +28,19 @@ const CatalogHero = () => {
               <span className="text-primary italic">every duration</span>
             </h1>
 
-            <div className="mt-3 flex flex-wrap gap-2">
-              {["3–12 month rentals", "Transparent pricing", "Free maintenance", "Free delivery & installation"].map((label) => (
-                <span key={label} className="inline-flex items-center gap-1.5 bg-secondary text-foreground text-xs font-semibold px-3 py-1.5 rounded-full border border-border">
-                  <Check className="w-3 h-3 text-primary shrink-0" />
-                  {label}
+            {/* Trust points — kept, but quiet: a light inline line with dot
+                separators instead of bordered capsules so they don't compete
+                with the category/filter pills below. Dots are flowed as separators
+                BETWEEN items (not prefixed to each) so wrapped rows stay flush to
+                the left margin. */}
+            <p className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+              {["3–12 month rentals", "Transparent pricing", "Free maintenance", "Free delivery & installation"].map((label, i) => (
+                <span key={label} className="contents">
+                  {i > 0 && <span className="text-border" aria-hidden="true">•</span>}
+                  <span>{label}</span>
                 </span>
               ))}
-            </div>
+            </p>
           </div>
 
           <div className="shrink-0 w-[110px] sm:w-[160px] lg:w-[252px]">

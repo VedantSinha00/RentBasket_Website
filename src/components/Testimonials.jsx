@@ -4,17 +4,17 @@ import { useState } from "react";
 const reviews = [
   {
     text: "I rented all my appliances from RentBasket and overall had a really good experience. The items were in great shape, clean, and handled professionally. Pricing felt fair for the convenience and quality. Would definitely recommend it to anyone looking for a hassle-free rental option.",
-    name: "Rahul S.",
+    name: "Pranjal A.",
     location: "Gurgaon",
   },
   {
     text: "I've used RentBasket in three different flats across Gurgaon, and I can honestly say they're the best rental service I've come across. Every time I've needed to rent something, the process has been seamless, with no surprises or hassles.",
-    name: "Priya M.",
+    name: "Shikhar B.",
     location: "Gurgaon",
   },
   {
     text: "RentBasket has been a savior in terms of furnishing our house and also maintaining the aesthetics. We rented beds with storage, household appliances and sofa sets and have been highly satisfied with their service.",
-    name: "Ankit V.",
+    name: "Urbi K.",
     location: "Gurgaon",
   },
   {
@@ -126,20 +126,18 @@ const MarqueeRow = ({ items, duration, reverse = false }) => {
 };
 
 const Testimonials = () => (
-  <section className="py-14 md:py-20 overflow-hidden">
-    <div className="section-container mb-10">
-      <p className="text-primary font-sans font-semibold text-sm uppercase tracking-widest mb-3">
-        Our Reviews
-      </p>
-      <h2 className="font-display font-extrabold text-4xl md:text-6xl text-foreground leading-tight mb-3">
-        Loved by RentBasket homes.
-      </h2>
-      <p className="text-muted-foreground font-sans text-base">
-        Real reviews from real customers across Delhi NCR.
-      </p>
-    </div>
-
-    <div className="flex flex-col gap-4">
+  <section className="pb-14 md:pb-20 overflow-hidden">
+    {/* Cap + center the marquee within the same max width the rest of the site
+        uses (max-w-7xl), so on wide / zoomed-out screens the scrolling rows stay
+        centered under the "Loved by Customers" fan instead of jamming to the
+        left edge. overflow-hidden here re-clips the rows within the capped box. */}
+    <div
+      className="max-w-7xl mx-auto overflow-hidden flex flex-col gap-4"
+      style={{
+        maskImage: "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+        WebkitMaskImage: "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+      }}
+    >
       <MarqueeRow items={row1} duration={35} />
       <MarqueeRow items={row2} duration={45} reverse={true} />
     </div>

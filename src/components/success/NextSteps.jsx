@@ -1,7 +1,8 @@
 import { CheckCircle2, FileCheck2, PackageSearch, Truck, CalendarCheck, Wrench, Check } from "lucide-react";
 
 // status: "done" | "current" | "upcoming"
-const buildSteps = (kycComplete) => [
+// kycStatus: "none" | "submitted" | "verified"
+const buildSteps = (kycStatus) => [
   {
     id: "received",
     title: "Order Received",
@@ -12,19 +13,22 @@ const buildSteps = (kycComplete) => [
   {
     id: "kyc",
     title: "Complete KYC",
-    description: kycComplete
-      ? "Documents verified — your identity is confirmed."
-      : "Upload Aadhaar (front & back), a selfie, and your rent agreement to verify your identity.",
+    description:
+      kycStatus === "verified"
+        ? "Documents verified — your identity is confirmed."
+        : kycStatus === "submitted"
+        ? "Documents submitted — our team is reviewing them."
+        : "Upload Aadhaar (front & back), a selfie, and your rent agreement to verify your identity.",
     icon: FileCheck2,
-    status: kycComplete ? "done" : "current",
-    currentBadge: "Action Needed",
+    status: kycStatus === "verified" ? "done" : kycStatus === "submitted" ? "current" : "current",
+    currentBadge: kycStatus === "submitted" ? "Under Review" : "Action Needed",
   },
   {
     id: "confirmed",
     title: "Team Confirmation",
     description: "Our team reviews your booking and confirms your delivery slot within 24 hours.",
     icon: PackageSearch,
-    status: kycComplete ? "current" : "upcoming",
+    status: kycStatus !== "none" ? "current" : "upcoming",
   },
   {
     id: "delivery",
@@ -49,8 +53,8 @@ const buildSteps = (kycComplete) => [
   },
 ];
 
-const NextSteps = ({ kycComplete = false }) => {
-  const steps = buildSteps(kycComplete);
+const NextSteps = ({ kycStatus = "none" }) => {
+  const steps = buildSteps(kycStatus);
 
   return (
     <div className="w-full bg-card border border-border rounded-2xl p-6 md:p-8 shadow-soft my-8">

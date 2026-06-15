@@ -1,9 +1,9 @@
-import { ShieldCheck, Info, Tag, Truck, Wrench, CheckCircle } from "lucide-react";
+import { ShieldCheck, Info, Tag, Truck, Wrench, CheckCircle, Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { Link } from "react-router-dom";
 import { cartBreakdown, lineOf } from "@/lib/pricing";
 
-const CheckoutSummary = ({ onPlaceOrder, isProcessing, items }) => {
+const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "min", onPaymentChoiceChange }) => {
   const { activeItems, coupon, removeCoupon } = useCart();
   // The order being placed is a single duration group. Callers pass that group
   // as `items`; default to the active group for any standalone use.
@@ -131,9 +131,62 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items }) => {
                 ₹{b.netFirstMonth.toLocaleString("en-IN")}
               </span>
             </div>
-            <p className="text-[10px] md:text-xs text-muted-foreground mt-2 leading-relaxed text-right">
-              Pay <strong className="text-foreground">₹{b.upfront.toLocaleString("en-IN")}</strong> now (50%), rest on delivery.
-            </p>
+
+            {/* Payment choice — Full vs 50% upfront. Drives razorpay payment_type. */}
+            <div className="mt-3 space-y-2.5">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                Choose how much to pay now
+              </p>
+              {[
+                {
+                  id: "min",
+                  title: "Pay 50% Now",
+                  amount: b.upfront,
+                  sub: `₹${b.payOnDelivery.toLocaleString("en-IN")} on delivery`,
+                },
+                {
+                  id: "full",
+                  title: "Pay Full Amount",
+                  amount: b.netFirstMonth,
+                  sub: "Nothing due on delivery",
+                },
+              ].map((opt) => {
+                const isSelected = paymentChoice === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => onPaymentChoiceChange?.(opt.id)}
+                    aria-pressed={isSelected}
+                    className={`w-full flex items-center justify-between gap-3 p-3.5 rounded-xl border-2 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-[0.99] ${
+                      isSelected
+                        ? "border-primary bg-primary/[0.04] ring-1 ring-primary/20"
+                        : "border-border bg-background hover:border-primary/30 hover:bg-secondary/20"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span
+                        className={`w-5 h-5 rounded-full flex items-center justify-center border-2 flex-shrink-0 transition-colors ${
+                          isSelected ? "bg-primary border-primary text-white" : "border-border text-transparent"
+                        }`}
+                      >
+                        <Check className="w-3 h-3 stroke-[3px]" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className={`text-sm font-bold ${isSelected ? "text-primary" : "text-foreground"}`}>
+                          {opt.title}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground font-medium leading-tight">{opt.sub}</p>
+                      </div>
+                    </div>
+                    <span className={`text-base font-black tracking-tight flex-shrink-0 ${isSelected ? "text-primary" : "text-foreground"}`}>
+                      ₹{opt.amount.toLocaleString("en-IN")}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
             <div className="flex items-center gap-1.5 text-success bg-success-muted px-2.5 py-1.5 rounded-xl border border-success-border mt-3 shadow-sm justify-center">
               <ShieldCheck className="w-4 h-4 flex-shrink-0" />
               <p className="text-[10px] font-bold leading-tight uppercase tracking-wider">
@@ -166,7 +219,9 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items }) => {
             disabled={isProcessing}
             className="gradient-coral w-full py-4 rounded-2xl font-black text-lg shadow-lg shadow-primary/30 transition-all hover:shadow-primary/40 hover:opacity-95 active:scale-[0.98] disabled:opacity-70 disabled:grayscale flex items-center justify-center gap-3 group"
           >
-            {isProcessing ? "Processing..." : "Confirm & Pay Now"}
+            {isProcessing
+              ? "Processing..."
+              : `Confirm & Pay ₹${(paymentChoice === "full" ? b.netFirstMonth : b.upfront).toLocaleString("en-IN")}`}
             {!isProcessing && <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">→</div>}
           </button>
           

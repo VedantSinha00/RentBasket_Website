@@ -77,25 +77,14 @@ const HeroSection = () => {
             For now, since collection filtering is handled directly within the catalog, they are removed from the hero view. */}
         </div>
 
-        {/* CTA Button */}
-        <motion.div
-          className="w-full max-w-xs pb-8"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-        >
-          <Link
-            to={catalogLink}
-            data-testid="hero-cta"
-            className="flex items-center justify-center h-[52px] w-full rounded-full border-[2.5px] border-primary text-primary font-sans font-bold text-[16px] tracking-tight bg-white hover:bg-primary/5 transition-colors shadow-soft active:scale-[0.98] focus-visible:outline-none"
-          >
-            Browse Catalogue
-          </Link>
-        </motion.div>
       </section>
 
       {/* ── Desktop View (Dual Layout) ───────────────────────────── */}
-      <section className="hidden lg:flex relative flex-row bg-background overflow-hidden lg:min-h-[440px] w-full">
+      {/* Inner row capped to max-w-7xl and centered so the hero doesn't sprawl
+          edge-to-edge (and de-align from the rest of the site) on wide / zoomed-
+          out screens. The section stays full-bleed for the background. */}
+      <section className="hidden lg:flex relative flex-row justify-center bg-background overflow-hidden lg:min-h-[440px] w-full">
+        <div className="flex flex-row w-full max-w-7xl mx-auto">
         {/* Content column */}
         <div className="flex flex-col justify-center px-16 xl:px-20 z-10 w-[44%] shrink-0 gap-6">
           {/* Headline */}
@@ -173,6 +162,7 @@ const HeroSection = () => {
             playsInline
             aria-label="RentBasket mascot Ku waving hello"
           />
+        </div>
         </div>
       </section>
     </>

@@ -8,7 +8,8 @@ import { getAuth } from "@/lib/auth";
 import { safeRemove } from "@/lib/safeStorage";
 import { recordOrder } from "@/lib/recentOrders";
 import { getDeliveryFields, slotLabel } from "@/lib/delivery";
-import { addItemsToProposal, confirmProposal, fetchProposalCart, applyGlobalCoupon, setDeliverySlot } from "@/api/proposal";
+import { reconcileProposalCart, confirmProposal, createProposalForTenant, fetchProposalCart, applyGlobalCoupon, setDeliverySlot } from "@/api/proposal";
+import { isRazorpayConfigured, openRazorpayCheckout, PAYMENT_TYPE } from "@/api/razorpay";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
 import CheckoutSummary from "@/components/checkout/CheckoutSummary";
@@ -28,6 +29,10 @@ const OrderSummary = () => {
   const formData = location.state?.formData || null;
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  // Full vs 50%-upfront payment choice (drives razorpay payment_type). Default
+  // to the upfront/min plan the site advertises ("pay 50% now").
+  const [paymentChoice, setPaymentChoice] = useState("min"); // "min" | "full"
+  const orderPlacedRef = useRef(false); // sync ref so the guard effect never races
 
   // The duration group being ordered. Each group is confirmed as its own order;
   // on success only this group is cleared and the user returns to the cart for
@@ -63,7 +68,7 @@ const OrderSummary = () => {
 
   // Guard: the chosen plan must have items, a verified mobile, and submitted details.
   useEffect(() => {
-    if (orderPlaced) return;
+    if (orderPlaced || orderPlacedRef.current) return;
     if (groupItems.length === 0) {
       navigate("/basket");
     } else if (!verifiedPhone) {
@@ -73,7 +78,11 @@ const OrderSummary = () => {
     }
   }, [groupItems, navigate, verifiedPhone, formData, orderPlaced, checkoutDuration]);
 
-  const buildOrderPayload = (b, orderId) => ({
+  // `payment` (optional) carries the real Razorpay result once a payment is
+  // taken: { transactionId, method, payment_type }. When omitted (mock /
+  // pre-Razorpay flow) we fall back to a generated id so the success page still
+  // renders — but a real order always passes the verified razorpay_payment_id.
+  const buildOrderPayload = (b, orderId, payment = null) => ({
     orderId,
     bookingDate: new Date().toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }),
     deliveryDate: new Date(formData.startDate).toLocaleDateString("en-IN", { day: "numeric", month: "short" }),
@@ -85,8 +94,11 @@ const OrderSummary = () => {
     },
     deliveryAddress: `${formData.addressLine1}, ${formData.addressLine2}, ${formData.city}, ${formData.state}, ${formData.pincode}`,
     paymentDetails: {
-      method: formData.paymentMethod.toUpperCase(),
-      transactionId: `TXN${Math.floor(Math.random() * 900000) + 100000}`,
+      method: payment?.method || (formData.paymentMethod || "online").toUpperCase(),
+      transactionId: payment?.transactionId || `TXN${Math.floor(Math.random() * 900000) + 100000}`,
+      // What the user actually paid now: full first-month vs 50% upfront.
+      amountPaid: payment?.amountPaid ?? (payment?.payment_type === PAYMENT_TYPE.MIN ? b.upfront : b.netFirstMonth),
+      paymentType: payment?.payment_type || null,
       status: "Successful",
     },
     items: groupItems,
@@ -110,6 +122,7 @@ const OrderSummary = () => {
    * to check those out (each is a separate order); otherwise to the success page.
    */
   const finalizeOrder = (orderPayload) => {
+    orderPlacedRef.current = true;
     setOrderPlaced(true);
     recordOrder(orderPayload);
 
@@ -117,25 +130,20 @@ const OrderSummary = () => {
     const remaining = cartItems.filter((i) => i.duration !== checkoutDuration);
     const remainingDurations = [...new Set(remaining.map((i) => i.duration))];
 
-    if (remainingDurations.length > 0) {
-      const n = remainingDurations.length;
-      toast.success("Order placed successfully!", {
-        description: `Your plan is confirmed. You have ${n} more rental ${n === 1 ? "plan" : "plans"} to check out.`,
-      });
-      // Point the cart at the next group, then return there.
-      safeRemove("rb_cart_proceed", sessionStorage);
+    const hasMoreGroups = remainingDurations.length > 0;
+
+    if (hasMoreGroups) {
+      // Pre-select the next group so the basket opens on it when the user goes back.
       sessionStorage.setItem("rb_checkout_duration", remainingDurations[0]);
       setSelectedDuration(remainingDurations[0]);
-      navigate("/basket");
-      clearGroup(checkoutDuration);
-      return;
+      safeRemove("rb_cart_proceed", sessionStorage);
     }
 
     toast.success("Order placed successfully!", { description: "Your rental order has been confirmed." });
     // Navigate first, then clear — same tick, so the empty cart never renders.
-    navigate("/order-success", { state: { orderData: orderPayload } });
+    navigate("/order-success", { state: { orderData: orderPayload, hasMoreGroups } });
     clearGroup(checkoutDuration);
-    clearCheckoutSession();
+    if (!hasMoreGroups) clearCheckoutSession();
   };
 
   const handlePlaceOrder = async () => {
@@ -156,15 +164,22 @@ const OrderSummary = () => {
     }
 
     try {
-      // Pass the persistent accumulator Map so that any items already POSTed on a
-      // previous attempt are skipped (dedupe by productId|duration key).
-      // addItemsToProposal mutates the Map in place and returns the full id list.
-      const cartItemIds = await addItemsToProposal(
+      // Reconcile the server proposal cart with this group before confirming.
+      // The server cart persists across sessions and can already hold these
+      // items (or stale ones at other durations) — a blind re-add 401s with
+      // "Item already in cart". reconcileProposalCart reuses existing ids, adds
+      // only what's missing, removes stale rows, and returns the exact id set.
+      // The accumulator Map still gives resume-on-retry within this session.
+      const cartItemIds = await reconcileProposalCart(
         auth.userId,
         auth.leadId,
         groupItems,
         addedItemsRef.current,
       );
+
+      if (!cartItemIds.length) {
+        throw new Error("We couldn't prepare your order. Please try again.");
+      }
 
       // Set delivery slot + date on the proposal (non-fatal — don't block confirmation).
       // The endpoint wants a numeric slot id; a legacy draft may hold an old text
@@ -187,17 +202,77 @@ const OrderSummary = () => {
       const apiResponse = await confirmProposal(auth.userId, auth.leadId, cartItemIds, coupon?.id ?? null, delivery);
 
       const b = cartBreakdown(groupItems, coupon);
-      const rawOrderId = apiResponse?.data?.order_id ?? apiResponse?.data?.orderId;
-      // Warn when the backend omits order_id — makes contract drift visible in logs.
-      if (rawOrderId == null) {
-        console.warn(
-          "[OrderSummary] confirmProposal response missing order_id / orderId — " +
-          "falling back to RB-{leadId}. Check backend contract with Shivam.",
-          apiResponse?.data,
-        );
+
+      // ── The real proposal id (the ~2400-range id razorpay/create-order wants)
+      // comes from a TWO-step backend chain (Shivam, confirmed 2026-06-14 with a
+      // real response sample):
+      //   confirm-proposal-for-tenant → returns `data.snapshot_id` (e.g. 4552)
+      //   create-proposal-for-tenant  ({ user_id, snapshot_id }) → returns proposal_id
+      //   razorpay/create-order       (?proposal_id=…) → opens the payment
+      // We previously (wrongly) sent leadId to create-order → "lead_id on null".
+      // `data.snapshot_id` is the confirmed field; the extra fallbacks are belt-
+      // and-braces only. See SHIVAM-RAZORPAY-QUESTIONS.md.
+      const snapshotId =
+        apiResponse?.data?.snapshot_id ??
+        apiResponse?.data?.snapshotId ??
+        null;
+
+      let proposalId = null;
+      if (snapshotId != null) {
+        try {
+          const { proposalId: pid } = await createProposalForTenant(auth.userId, snapshotId);
+          proposalId = pid;
+        } catch (cpErr) {
+          console.warn("[OrderSummary] create-proposal-for-tenant failed:", cpErr.message);
+        }
+      } else {
+        console.warn("[OrderSummary] no snapshot_id in confirm-proposal response — can't create proposal", apiResponse?.data);
       }
-      const orderId = rawOrderId ?? `RB-${auth.leadId}`;
-      const orderPayload = buildOrderPayload(b, String(orderId));
+
+      // Order id we show the user. Prefer the real proposal id; fall back to a
+      // readable RB-{leadId} only for display when the backend didn't give one.
+      const orderId = proposalId ?? `RB-${auth.leadId}`;
+
+      // ── Razorpay payment ─────────────────────────────────────────────────
+      // proposalId (from create-proposal-for-tenant) is what razorpay/create-order
+      // keys on. Open the modal, take the payment, and only finalise on a
+      // *verified* payment. When Razorpay isn't configured, or we have no
+      // proposalId, skip to finalize so the flow doesn't dead-end.
+      let payment = null;
+      if (isRazorpayConfigured() && proposalId != null) {
+        // min_payment = pay 50% upfront to confirm; full_payment = whole first
+        // month + deposit. Driven by the user's choice on the order summary.
+        const paymentType = paymentChoice === "full" ? PAYMENT_TYPE.FULL : PAYMENT_TYPE.MIN;
+        try {
+          const result = await openRazorpayCheckout({
+            proposalId,
+            paymentType,
+            prefill: {
+              name: formData.fullName,
+              email: formData.email,
+              contact: formData.phone || verifiedPhone,
+            },
+            description: `RentBasket order ${orderId}`,
+          });
+          payment = {
+            transactionId: result.paymentId,
+            method: "RAZORPAY",
+            payment_type: paymentType,
+          };
+        } catch (payErr) {
+          // Cancelled or failed payment: the order is confirmed on the backend
+          // but unpaid. Don't finalise — let the user retry the payment.
+          setIsProcessing(false);
+          if (payErr?.code === "PAYMENT_CANCELLED") {
+            toast.error("Payment cancelled", { description: "Your order is held — try again to pay and confirm." });
+          } else {
+            toast.error("Payment failed", { description: payErr?.message || "Please try again." });
+          }
+          return;
+        }
+      }
+
+      const orderPayload = buildOrderPayload(b, String(orderId), payment);
 
       // Reset the resume accumulator so the NEXT group's checkout starts clean
       // (these ids belong to the group we just confirmed).
@@ -206,7 +281,13 @@ const OrderSummary = () => {
     } catch (err) {
       // err.cartItemIds is set by addItemsToProposal when it fails mid-loop;
       // those ids are already in addedItemsRef.current so a retry will skip them.
-      toast.error(err.message);
+      // Map the raw "Item already in cart" backend string (which should no longer
+      // occur after reconciliation, but can if the read failed) to actionable copy.
+      const raw = err?.message || "";
+      const friendly = /already in cart/i.test(raw)
+        ? "Something went out of sync with your basket. Please try placing the order again."
+        : raw || "Couldn't place your order. Please try again.";
+      toast.error(friendly);
       setIsProcessing(false);
     }
   };
@@ -287,7 +368,13 @@ const OrderSummary = () => {
           )}
 
           {/* Order summary + Confirm & Pay */}
-          <CheckoutSummary onPlaceOrder={handlePlaceOrder} isProcessing={isProcessing} items={groupItems} />
+          <CheckoutSummary
+            onPlaceOrder={handlePlaceOrder}
+            isProcessing={isProcessing}
+            items={groupItems}
+            paymentChoice={paymentChoice}
+            onPaymentChoiceChange={setPaymentChoice}
+          />
         </div>
       </main>
     </div>

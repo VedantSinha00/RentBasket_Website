@@ -3,9 +3,10 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ChevronLeft, ShieldCheck, Truck, Clock, ArrowRight } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
-import { getAuth } from "@/lib/auth";
+import { getAuth, setAuth } from "@/lib/auth";
 import { safeSet, safeGet } from "@/lib/safeStorage";
 import { getUserAddress, saveUserAddress } from "@/api/address";
+import { updateUserProfile } from "@/api/profile";
 import { dateNDaysFromToday } from "@/lib/delivery";
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
 import CheckoutProgress from "@/components/checkout/CheckoutProgress";
@@ -67,22 +68,23 @@ const Checkout = () => {
   useEffect(() => {
     if (!verifiedPhone || addressPrefilled.current) return;
     addressPrefilled.current = true;
-    getUserAddress(verifiedPhone).then((addr) => {
-      if (!addr) return;
+    const auth = getAuth();
+    getUserAddress(verifiedPhone).catch(() => null).then((addr) => {
       setFormData((prev) => {
-        if (prev.addressLine1) return prev; // draft already has address — don't overwrite
+        if (prev.addressLine1 && prev.email) return prev; // draft already complete — don't overwrite
         return {
           ...prev,
-          fullName: prev.fullName || addr.contact_name || "",
-          addressLine1: addr.address_line_1 || "",
-          addressLine2: addr.address_line_2 || "",
-          landmark: addr.landmark || "",
-          pincode: addr.pincode || "",
-          city: addr.city || "",
-          state: addr.state || "",
+          fullName: prev.fullName || addr?.contact_name || auth?.name || "",
+          email: prev.email || auth?.email || "",
+          addressLine1: prev.addressLine1 || addr?.address_line_1 || "",
+          addressLine2: prev.addressLine2 || addr?.address_line_2 || "",
+          landmark: prev.landmark || addr?.landmark || "",
+          pincode: prev.pincode || addr?.pincode || "",
+          city: prev.city || addr?.city || "",
+          state: prev.state || addr?.state || "",
         };
       });
-      if (addr.servicable === 0) {
+      if (addr?.servicable === 0) {
         toast.error("We don't deliver to your area yet", {
           description: `${addr.city || "Your city"} is not in our delivery zone. Please contact us to check availability.`,
           duration: 8000,
@@ -118,8 +120,8 @@ const Checkout = () => {
     };
   });
 
-  // Persist the draft so navigating to the address book and back never loses
-  // the name / email / date / instructions the user already typed.
+  // Persist the draft so leaving checkout and coming back (e.g. to log in / verify
+  // OTP) never loses the name / email / date / instructions the user already typed.
   useEffect(() => {
     safeSet(CHECKOUT_FORM_KEY, JSON.stringify(formData), sessionStorage);
   }, [formData]);
@@ -138,6 +140,26 @@ const Checkout = () => {
       });
       return;
     }
+    const auth = getAuth();
+
+    // Silently sync name + email to profile API so they appear in account details.
+    if (auth?.userId) {
+      const nameParts = (formData.fullName || "").trim().split(" ");
+      updateUserProfile({
+        user_id: auth.userId,
+        first_name: nameParts[0] || "",
+        last_name: nameParts.slice(1).join(" "),
+        email: formData.email || auth?.email || "",
+        address: "",
+        org_name: "",
+        about_me: "",
+        social_media_links: "",
+        reg_mobile_num: auth?.phone ?? "",
+      }).then(() => {
+        setAuth({ ...getAuth(), name: formData.fullName || auth?.name, email: formData.email || auth?.email });
+      }).catch(() => {});
+    }
+
     // Silently sync the address back so it pre-fills on the next order.
     if (formData.addressLine1) {
       saveUserAddress(formData.phone || verifiedPhone, {

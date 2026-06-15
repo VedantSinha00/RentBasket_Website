@@ -34,7 +34,7 @@ const ProductGrid = ({ products }) => {
   const hasMore = visibleCount < products.length;
 
   return (
-    <section className="section-container py-8 md:py-12">
+    <section className="py-0">
       {products.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">

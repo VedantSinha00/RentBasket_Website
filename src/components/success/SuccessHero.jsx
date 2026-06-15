@@ -1,7 +1,7 @@
-import { CheckCircle2, ChevronRight } from "lucide-react";
+import { CheckCircle2, ChevronRight, ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const SuccessHero = ({ orderData }) => {
+const SuccessHero = ({ orderData, hasMoreGroups, kycBanner }) => {
   return (
     <div className="w-full flex flex-col items-center text-center py-8">
       {/* Checkmark Illustration */}
@@ -31,9 +31,9 @@ const SuccessHero = ({ orderData }) => {
             <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Date</p>
             <p className="text-sm font-bold text-foreground">{orderData.bookingDate}</p>
           </div>
-          <div className="col-span-2 pt-4 border-t border-border/50">
+          <div className="col-span-2 pt-4 border-t border-border/50 text-center">
             <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Payment Status</p>
-            <div className="flex items-center gap-1.5 text-success">
+            <div className="flex items-center justify-center gap-1.5 text-success">
               <CheckCircle2 className="w-4 h-4" />
               <span className="text-sm font-bold">Successful</span>
             </div>
@@ -49,11 +49,31 @@ const SuccessHero = ({ orderData }) => {
         <span className="flex-1 text-left">You will receive booking updates on WhatsApp.</span>
       </div>
 
+      {/* KYC banner — slotted in between the WhatsApp notice and the CTA. */}
+      {kycBanner && (
+        <div className="mt-6 w-full max-w-md">
+          {kycBanner}
+        </div>
+      )}
+
       {/* Primary CTA */}
-      <div className="mt-8 flex w-full max-w-md">
+      <div className="mt-8 flex flex-col w-full max-w-md gap-3">
+        {hasMoreGroups && (
+          <Link
+            to="/basket"
+            className="w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 bg-primary text-white shadow-md shadow-primary/20 hover:shadow-primary/30"
+          >
+            <ShoppingBag className="w-4 h-4" />
+            Checkout Remaining Items
+          </Link>
+        )}
         <Link
           to="/catalog"
-          className="flex-1 py-3.5 rounded-xl text-white font-bold text-sm shadow-md shadow-primary/20 transition-all hover:shadow-primary/30 active:scale-95 flex items-center justify-center gap-2 bg-primary"
+          className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 ${
+            hasMoreGroups
+              ? "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+              : "bg-primary text-white shadow-md shadow-primary/20 hover:shadow-primary/30"
+          }`}
         >
           Continue Browsing
           <ChevronRight className="w-4 h-4" />

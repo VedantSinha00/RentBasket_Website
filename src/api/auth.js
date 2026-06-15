@@ -6,8 +6,9 @@
 
 import { APP_KEY, AWS_BASE } from "./config";
 
-// JWT token endpoint only works on testaws (AWS_BASE) — testapi returns 401.
-// All other API calls use API_BASE (proxied in dev, direct in prod).
+// JWT mint goes to AWS_BASE — now testapi (the backend consolidated it off the
+// retired testaws server). All other API calls use API_BASE.
+// (In proxy mode both AWS_BASE and API_BASE point at the edge proxy.)
 
 let _token = null;
 let _inflight = null; // shared promise so parallel callers don't each fire a separate POST

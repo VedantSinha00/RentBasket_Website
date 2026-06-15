@@ -3,22 +3,34 @@ import { HelpCircle, Check } from "lucide-react";
 
 const Card = ({ belief, reality }) => {
   const [isFlipped, setIsFlipped] = useState(false);
+  // Mobile/tablet: card tilts to 30° (not a flip) while centred in the viewport
+  const [isCentered, setIsCentered] = useState(false);
   const cardRef = useRef(null);
-  const manuallyClosedRef = useRef(false);
 
-  // Mirror the lg breakpoint (1024px) used throughout the catalog
+  // Mirror the lg breakpoint (1024px) used throughout the catalog. Use matchMedia
+  // (not window.innerWidth) so this stays in lock-step with the CSS `lg:` classes
+  // under browser zoom / display scaling — reading innerWidth drifts out of sync
+  // with the media query at non-100% zoom and flips the layout at the wrong point.
   const [isMobileLayout, setIsMobileLayout] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 1024 : false
+    typeof window !== "undefined"
+      ? window.matchMedia("(max-width: 1023px)").matches
+      : false
   );
   useEffect(() => {
-    const onResize = () => setIsMobileLayout(window.innerWidth < 1024);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const onChange = (e) => setIsMobileLayout(e.matches);
+    setIsMobileLayout(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  // Mobile/tablet: flip when the card centre crosses the middle 40% of the viewport
+  // Mobile/tablet: tilt (30°) when the card centre crosses the middle 40% of the viewport.
+  // This is only a passive peek — a full flip still requires a tap.
   useEffect(() => {
-    if (!isMobileLayout) return;
+    if (!isMobileLayout) {
+      setIsCentered(false);
+      return;
+    }
     const el = cardRef.current;
     if (!el) return;
 
@@ -26,14 +38,7 @@ const Card = ({ belief, reality }) => {
       const { top, height } = el.getBoundingClientRect();
       const cardCenter = top + height / 2;
       const vh = window.innerHeight;
-      const inCenter = cardCenter > vh * 0.3 && cardCenter < vh * 0.7;
-
-      if (inCenter && !manuallyClosedRef.current) {
-        setIsFlipped(true);
-      } else if (!inCenter) {
-        // Reset manual flag so it auto-flips again on next scroll-in
-        manuallyClosedRef.current = false;
-      }
+      setIsCentered(cardCenter > vh * 0.3 && cardCenter < vh * 0.7);
     };
 
     window.addEventListener("scroll", check, { passive: true });
@@ -42,20 +47,16 @@ const Card = ({ belief, reality }) => {
   }, [isMobileLayout]);
 
   const handleInteraction = () => {
-    if (isFlipped) {
-      manuallyClosedRef.current = true;
-      setIsFlipped(false);
-    } else {
-      manuallyClosedRef.current = false;
-      setIsFlipped(true);
-    }
+    setIsFlipped((prev) => !prev);
   };
+
+  // The tilt should never show while the card is flipped to the reality side.
+  const showTilt = isCentered && !isFlipped;
 
   return (
     <div
       ref={cardRef}
       className="group h-[260px] sm:h-[300px] md:h-[320px] w-full [perspective:1000px] cursor-pointer"
-      onMouseEnter={!isMobileLayout ? () => setIsFlipped(true) : undefined}
       onClick={handleInteraction}
       role="button"
       tabIndex={0}
@@ -68,7 +69,11 @@ const Card = ({ belief, reality }) => {
     >
       <div
         className={`relative h-full w-full rounded-2xl transition-all duration-700 [transform-style:preserve-3d] shadow-soft group-hover:shadow-card ${
-          isFlipped ? "[transform:rotateY(180deg)]" : ""
+          isFlipped
+            ? "[transform:rotateY(180deg)]"
+            : showTilt
+            ? "[transform:rotateY(30deg)] shadow-card"
+            : "lg:group-hover:[transform:rotateY(30deg)]"
         }`}
       >
         {/* FRONT SIDE (BELIEF - RED GRADIENT) */}

@@ -9,11 +9,19 @@ import path from "path";
 function cspMeta(isProd) {
   const csp = [
     "default-src 'self'",
-    "script-src 'self'",
+    // Razorpay's checkout.js, its inline scripts, and the risk-detection bundle
+    // from cdn.razorpay.com. Wildcard *.razorpay.com covers checkout/api/cdn.
+    // 'unsafe-inline' is required — Razorpay injects inline <script> blocks whose
+    // hashes change per release, so hashing isn't viable.
+    "script-src 'self' 'unsafe-inline' https://*.razorpay.com",
     "style-src 'self' 'unsafe-inline'", // Tailwind / Radix / framer-motion inject inline styles
     "img-src 'self' data: https:", // product images come from the remote catalog/CDN
-    "font-src 'self' data:",
-    "connect-src 'self' https://*.rentbasket.com", // API + (future) proxy on a rentbasket subdomain
+    "font-src 'self' data: https://*.razorpay.com", // Razorpay checkout fonts
+    // API + proxy on a rentbasket subdomain, plus Razorpay's payment APIs (the
+    // modal calls api/lumberjack.razorpay.com) and the address geocoder.
+    "connect-src 'self' https://*.rentbasket.com https://*.razorpay.com https://nominatim.openstreetmap.org",
+    // Razorpay opens its checkout in an iframe — frame-src must allow it.
+    "frame-src https://*.razorpay.com",
     "media-src 'self'",
     "object-src 'none'",
     "base-uri 'self'", // meta-only hosts (e.g. GitHub Pages, which ignores _headers) still get this
@@ -47,8 +55,11 @@ export default defineConfig(({ command, mode }) => {
       // Proxy /api/* → API server in dev to avoid CORS issues.
       // Production requests go direct; Shivam needs to add CORS headers there.
       proxy: {
+        // JWT mint + KYC upload. These used to live on testaws; the backend has
+        // consolidated them onto testapi (testaws is being retired), so the dev
+        // /aws proxy now forwards to testapi like everything else.
         "/aws": {
-          target: "https://testaws.rentbasket.com",
+          target: "https://testapi.rentbasket.com",
           changeOrigin: true,
           rewrite: (p) => p.replace(/^\/aws/, ""),
         },

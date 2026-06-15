@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CatalogHero from "@/components/catalog/CatalogHero";
 import CategoryTabs from "@/components/catalog/CategoryTabs";
-import FilterBar from "@/components/catalog/FilterBar";
+import FilterBar, { FilterSidebar } from "@/components/catalog/FilterBar";
 import ProductGrid from "@/components/catalog/ProductGrid";
 import TrustBenefits from "@/components/catalog/TrustBenefits";
 import CatalogCTA from "@/components/catalog/CatalogCTA";
@@ -16,7 +16,7 @@ import { searchProducts } from "@/lib/search";
 
 /** Placeholder cards shown while the catalog is being fetched. */
 const CatalogGridSkeleton = () => (
-  <section className="section-container py-8 md:py-12">
+  <section className="py-4">
     <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
       {Array.from({ length: 8 }).map((_, i) => (
         <div
@@ -38,7 +38,7 @@ const CatalogGridSkeleton = () => (
 
 /** Shown when the catalog fails to load, with a retry. */
 const CatalogGridError = ({ onRetry }) => (
-  <section className="section-container py-8 md:py-12">
+  <section className="py-4">
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
         <AlertCircle className="w-7 h-7 text-muted-foreground" />
@@ -199,7 +199,7 @@ const Catalog = () => {
   }, [products, activeCategory, activeSubcategory, filters, sortBy, searchQuery]);
 
   return (
-    <div className="min-h-screen dot-bg">
+    <div className="min-h-screen">
       <Header />
       <main>
         <CatalogHero />
@@ -211,19 +211,38 @@ const Catalog = () => {
           nonEmptyCategories={isLoading ? null : nonEmptyCategories}
         />
         <div id="catalog-results" />
-        <FilterBar
-          filters={filters}
-          onFilterChange={setFilters}
-          sortBy={sortBy}
-          onSortChange={setSortBy}
-        />
-        {isLoading ? (
-          <CatalogGridSkeleton />
-        ) : isError ? (
-          <CatalogGridError onRetry={() => refetch()} />
-        ) : (
-          <ProductGrid products={filteredProducts} />
-        )}
+
+        {/* Mobile filter bar — hidden on desktop */}
+        <div className="md:hidden">
+          <FilterBar
+            filters={filters}
+            onFilterChange={setFilters}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+          />
+        </div>
+
+        {/* Desktop: sidebar + grid */}
+        <div className="section-container py-6 md:py-8">
+          <div className="flex gap-8 items-start">
+            <FilterSidebar
+              filters={filters}
+              onFilterChange={setFilters}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+            />
+            <div className="flex-1 min-w-0">
+              {isLoading ? (
+                <CatalogGridSkeleton />
+              ) : isError ? (
+                <CatalogGridError onRetry={() => refetch()} />
+              ) : (
+                <ProductGrid products={filteredProducts} />
+              )}
+            </div>
+          </div>
+        </div>
+
         <TrustBenefits />
         <CatalogCTA />
       </main>

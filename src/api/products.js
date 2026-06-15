@@ -85,7 +85,10 @@ function normalizeProduct(item, meta = {}) {
 
   return {
     id: String(item.amenity_type_id),
-    name: item.amenity_type_name,
+    // Display name now comes from prod_title (DB field added in the catalog
+    // rework); fall back to the legacy amenity_type_name while prod_title is
+    // still being backfilled so the grid never renders a blank name.
+    name: item.prod_title ?? item.amenity_type_name,
     subtitle: item.prod_subtitle ?? null,
     // prod_description is being filled progressively — nullable until complete
     description: item.prod_description ?? null,

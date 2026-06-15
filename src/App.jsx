@@ -8,6 +8,7 @@ import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import BottomTabBar from "@/components/BottomTabBar";
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
 import ProductDetails from "./pages/ProductDetails";
@@ -19,7 +20,6 @@ import OrderSuccess from "./pages/OrderSuccess";
 import Kyc from "./pages/Kyc";
 import MyOrders from "./pages/MyOrders";
 import Profile from "./pages/Profile";
-import EditAddress from "./pages/EditAddress";
 import AccountDetails from "./pages/AccountDetails";
 import Wishlist from "./pages/Wishlist";
 import TermsConditions from "./pages/TermsConditions";
@@ -59,6 +59,7 @@ const RouterApp = () => {
   return (
     <>
       <ScrollToTop />
+      <BottomTabBar />
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={location.pathname}
@@ -84,7 +85,6 @@ const RouterApp = () => {
           {routePair("/kyc", <ProtectedRoute><Kyc /></ProtectedRoute>)}
           {routePair("/profile", <Profile />)}
           {routePair("/account/details", <ProtectedRoute><AccountDetails /></ProtectedRoute>)}
-          {routePair("/account/address", <ProtectedRoute><EditAddress /></ProtectedRoute>)}
           {routePair("/account/orders", <ProtectedRoute><MyOrders /></ProtectedRoute>)}
           {routePair("/wishlist", <Wishlist />)}
           {routePair("/terms-n-conditions", <TermsConditions />)}
