@@ -33,6 +33,12 @@ const OrderSummary = () => {
   // to the upfront/min plan the site advertises ("pay 50% now").
   const [paymentChoice, setPaymentChoice] = useState("min"); // "min" | "full"
   const orderPlacedRef = useRef(false); // sync ref so the guard effect never races
+  // Hard re-entrancy lock for handlePlaceOrder. `isProcessing` (state) updates
+  // asynchronously, so a fast double-click or a click while the async flow is
+  // mid-flight can fire handlePlaceOrder twice — each running confirmProposal +
+  // createProposalForTenant and creating a DUPLICATE backend order. This sync
+  // ref blocks the second entry immediately, before React re-renders.
+  const placingRef = useRef(false);
 
   // The duration group being ordered. Each group is confirmed as its own order;
   // on success only this group is cleared and the user returns to the cart for
@@ -147,13 +153,41 @@ const OrderSummary = () => {
   };
 
   const handlePlaceOrder = async () => {
+    // Re-entrancy guard: drop any second invocation while one is in flight.
+    if (placingRef.current || orderPlacedRef.current) return;
+    placingRef.current = true;
     setIsProcessing(true);
+
+    // Release the re-entrancy lock + spinner on any path that lets the user
+    // retry. NOT called on success (finalizeOrder navigates away and the
+    // orderPlaced guard keeps the button inert).
+    const releaseLock = () => {
+      placingRef.current = false;
+      setIsProcessing(false);
+    };
 
     const auth = getAuth();
 
-    // Guard: fall back to mock if userId/leadId haven't propagated yet
+    // Guard: no authenticated user/lead → we cannot place a REAL, payable order.
+    //
+    // SECURITY: the old behaviour here finalized a fake `RB-xxxxx` order with NO
+    // payment and showed the success screen — a full payment bypass any user
+    // could trigger just by clearing leadId from storage. That mock path is for
+    // local development ONLY; it must never run against a real build. In
+    // production we hard-stop and ask the user to re-authenticate instead of
+    // ever confirming an unpaid order.
     if (!auth?.userId || !auth?.leadId) {
-      console.warn("[OrderSummary] userId or leadId missing from auth — using mock order flow");
+      if (import.meta.env.PROD) {
+        console.error("[OrderSummary] Missing userId/leadId on a production order — blocking (no unpaid mock orders in prod).");
+        releaseLock();
+        toast.error("Please sign in again to complete your order", {
+          description: "Your session expired before payment. Re-verify your number and try again.",
+        });
+        navigate("/customer-validation", { state: { checkoutDuration } });
+        return;
+      }
+      // Dev-only mock so the flow is testable without a backend.
+      console.warn("[OrderSummary] userId or leadId missing — DEV mock order flow (no payment).");
       setTimeout(() => {
         setIsProcessing(false);
         const b = cartBreakdown(groupItems, coupon);
@@ -236,10 +270,42 @@ const OrderSummary = () => {
       // ── Razorpay payment ─────────────────────────────────────────────────
       // proposalId (from create-proposal-for-tenant) is what razorpay/create-order
       // keys on. Open the modal, take the payment, and only finalise on a
-      // *verified* payment. When Razorpay isn't configured, or we have no
-      // proposalId, skip to finalize so the flow doesn't dead-end.
+      // *verified* payment.
+      //
+      // FAIL-CLOSED: by this point we have a real authenticated order (the
+      // userId/leadId mock path returned at the top), so a payment is EXPECTED.
+      // If the publishable key is missing (e.g. VITE_RAZORPAY_KEY_ID not set in
+      // the build env) or the proposal-id chain didn't yield an id, we must NOT
+      // fall through to finalizeOrder — that would confirm an UNPAID order and
+      // send the user to the success page without ever charging them (the live
+      // "skipped the payment page" bug). Block the order with a clear error so
+      // the gap is visible instead of silently letting orders through for free.
+      if (!isRazorpayConfigured()) {
+        console.error(
+          "[OrderSummary] Razorpay not configured (VITE_RAZORPAY_KEY_ID missing) " +
+          "but reached payment for a real order — blocking to avoid an unpaid confirmation.",
+        );
+        releaseLock();
+        toast.error("Payments are temporarily unavailable", {
+          description: "We couldn't start the secure payment. Please try again shortly or contact support.",
+        });
+        return;
+      }
+      if (proposalId == null) {
+        console.error(
+          "[OrderSummary] No proposalId from the confirm/create-proposal chain — " +
+          "blocking to avoid an unpaid confirmation.",
+          apiResponse?.data,
+        );
+        releaseLock();
+        toast.error("We couldn't prepare your payment", {
+          description: "Something went out of sync while confirming your order. Please try again.",
+        });
+        return;
+      }
+
       let payment = null;
-      if (isRazorpayConfigured() && proposalId != null) {
+      {
         // min_payment = pay 50% upfront to confirm; full_payment = whole first
         // month + deposit. Driven by the user's choice on the order summary.
         const paymentType = paymentChoice === "full" ? PAYMENT_TYPE.FULL : PAYMENT_TYPE.MIN;
@@ -254,6 +320,14 @@ const OrderSummary = () => {
             },
             description: `RentBasket order ${orderId}`,
           });
+          // Defense in depth: openRazorpayCheckout only resolves after the
+          // backend verify returned success, so a verified payment MUST carry a
+          // payment id. If it somehow doesn't, do NOT finalise as paid — treat
+          // it as a failed payment so we never confirm an order we can't tie to
+          // a real Razorpay transaction.
+          if (!result?.verified || !result?.paymentId) {
+            throw new Error("Payment could not be confirmed");
+          }
           payment = {
             transactionId: result.paymentId,
             method: "RAZORPAY",
@@ -262,11 +336,20 @@ const OrderSummary = () => {
         } catch (payErr) {
           // Cancelled or failed payment: the order is confirmed on the backend
           // but unpaid. Don't finalise — let the user retry the payment.
-          setIsProcessing(false);
+          releaseLock();
           if (payErr?.code === "PAYMENT_CANCELLED") {
             toast.error("Payment cancelled", { description: "Your order is held — try again to pay and confirm." });
-          } else {
+          } else if (payErr?.code === "PAYMENT_FAILED") {
+            // Razorpay reported the charge itself failed (declined, etc.) — no
+            // money moved, safe to retry.
             toast.error("Payment failed", { description: payErr?.message || "Please try again." });
+          } else {
+            // Verification-stage failure (e.g. verify said not-success, or the
+            // verify request errored). A charge MAY have gone through, so steer
+            // the user to support instead of blindly re-paying and double-charging.
+            toast.error("We couldn't confirm your payment", {
+              description: "If money was deducted, do not pay again — contact support and we'll sort it out.",
+            });
           }
           return;
         }
@@ -288,7 +371,7 @@ const OrderSummary = () => {
         ? "Something went out of sync with your basket. Please try placing the order again."
         : raw || "Couldn't place your order. Please try again.";
       toast.error(friendly);
-      setIsProcessing(false);
+      releaseLock();
     }
   };
 
