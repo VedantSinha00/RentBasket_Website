@@ -63,11 +63,44 @@ const StarRating = ({ size = 16 }) => (
   </div>
 );
 
+const HIGHLIGHT_CLASS = "text-primary font-semibold underline decoration-primary/20 decoration-2 underline-offset-4";
+
+// Trim the last N words of a string, keeping a leading ellipsis if trimmed.
+const tailWords = (text, n) => {
+  const words = text.trim().split(/\s+/);
+  if (words.length <= n) return text;
+  return "… " + words.slice(-n).join(" ");
+};
+
+// Keep the first N words of a string, adding a trailing ellipsis if trimmed.
+const headWords = (text, n) => {
+  const words = text.trim().split(/\s+/);
+  if (words.length <= n) return text;
+  return words.slice(0, n).join(" ") + " …";
+};
+
+// Build a short preview centered on the highlighted segment: a few words of
+// lead-in context, the full highlight, then a few words of trailing context.
+const previewSegments = (segments, { lead = 4, trail = 8 } = {}) => {
+  const hi = segments.findIndex((s) => s.highlight);
+  if (hi === -1) {
+    // No highlight: just show the opening.
+    return [{ text: headWords(segments.map((s) => s.text).join(""), 14) }];
+  }
+  const out = [];
+  const before = segments.slice(0, hi).map((s) => s.text).join("");
+  if (before.trim()) out.push({ text: tailWords(before, lead) + " " });
+  out.push({ ...segments[hi] });
+  const after = segments.slice(hi + 1).map((s) => s.text).join("");
+  if (after.trim()) out.push({ text: " " + headWords(after, trail) });
+  return out;
+};
+
 const ReviewText = ({ segments }) => (
   <p className="text-sm text-muted-foreground leading-relaxed font-sans">
     {segments.map((seg, i) =>
       seg.highlight ? (
-        <span key={i} className="text-primary font-semibold underline decoration-primary/20 decoration-2 underline-offset-4">{seg.text}</span>
+        <span key={i} className={HIGHLIGHT_CLASS}>{seg.text}</span>
       ) : (
         <span key={i}>{seg.text}</span>
       )
@@ -158,6 +191,45 @@ const bgCards = [
   [3, -8,   520,  10,  5, 0.25],
 ];
 
+const CollapsibleMobileCard = ({ review, expanded, onToggle, offsetX, rotate, zIndex, marginTop }) => (
+  <motion.div
+    layout
+    onClick={onToggle}
+    className="cursor-pointer"
+    animate={{
+      marginTop,
+      x: expanded ? 0 : offsetX,
+      rotate: expanded ? 0 : rotate,
+    }}
+    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+    style={{
+      zIndex: expanded ? 50 : zIndex,
+    }}
+  >
+    <div
+      className="bg-card border border-border/50 rounded-2xl p-5 w-[280px] flex flex-col shadow-xl"
+      style={{ boxShadow: "var(--shadow-card)" }}
+    >
+      <StarRating />
+      <ReviewText segments={expanded ? review.segments : previewSegments(review.segments)} />
+      <button
+        type="button"
+        className="self-start mt-3 text-xs font-semibold text-primary"
+        onClick={(e) => { e.stopPropagation(); onToggle(); }}
+      >
+        {expanded ? "Show less" : "Read more"}
+      </button>
+      <div className="flex items-center gap-3 mt-4 pt-3 border-t border-border/30">
+        <Avatar name={review.name} />
+        <div>
+          <p className="text-sm font-bold text-foreground leading-tight">{review.name}</p>
+          <p className="text-xs text-muted-foreground">{review.location}</p>
+        </div>
+      </div>
+    </div>
+  </motion.div>
+);
+
 // [reviewIndex, rotate, side, offset, top, blur, opacity]
 const mobileBgCards = [
   [3, -5, "left", "-30px", "120px", 2, 0.5],
@@ -167,6 +239,7 @@ const mobileBgCards = [
 
 const LovedByCustomers = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [expandedMobile, setExpandedMobile] = useState(null);
   const scrollRef = useRef(null);
 
   useEffect(() => {
@@ -221,22 +294,26 @@ const LovedByCustomers = () => {
           transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
         />
 
-        {/* Staggered review cards */}
+        {/* Staggered review cards (collapsible) */}
         <div className="relative z-20 flex flex-col items-center">
           {reviews.slice(0, 3).map((review, idx) => {
             const offsetX = [-24, 32, -16];
             const rotates = [-2, 2, -2];
+            // Cards overlap by -24px in the collapsed stack. Remove the overlap
+            // when the card directly above is expanded, so this card drops down
+            // clear of it instead of tucking underneath.
+            const overlap = idx === 0 || expandedMobile === idx - 1 ? 0 : -24;
             return (
-              <div
+              <CollapsibleMobileCard
                 key={idx}
-                className={idx > 0 ? "-mt-6" : ""}
-                style={{
-                  transform: `translateX(${offsetX[idx]}px) rotate(${rotates[idx]}deg)`,
-                  zIndex: 20 + idx,
-                }}
-              >
-                <ReviewCard review={review} className="shadow-xl" />
-              </div>
+                review={review}
+                expanded={expandedMobile === idx}
+                onToggle={() => setExpandedMobile((cur) => (cur === idx ? null : idx))}
+                offsetX={offsetX[idx]}
+                rotate={rotates[idx]}
+                zIndex={20 + idx}
+                marginTop={overlap}
+              />
             );
           })}
         </div>
