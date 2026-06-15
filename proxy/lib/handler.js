@@ -10,8 +10,8 @@
  *   CATALOG_API_KEY  read-only key for /get-amenity-types (Authorization-Key)
  *
  * Routing:
- *   /get-jwt-token, /update-kyc        → UPSTREAM_AWS  (testaws)
- *   everything else                    → UPSTREAM_API  (testapi)
+ *   /get-jwt-token, /update-kyc        → UPSTREAM_AWS  (main API host)
+ *   everything else                    → UPSTREAM_API  (main API host)
  *
  * Auth model (pre-build, minimal change to the client — see README):
  *   - The browser still mints a JWT via /get-jwt-token, but no longer sends the
@@ -26,10 +26,10 @@
  * Only /get-jwt-token decodes the body, to inject the app key into its JSON.
  */
 
-const UPSTREAM_API = process.env.UPSTREAM_API || "https://testapi.rentbasket.com";
+const UPSTREAM_API = process.env.UPSTREAM_API || "https://api.rentbasket.com";
 // JWT + KYC upstream. testaws is being retired; the backend serves these on
-// testapi now, so the default points there. Overridable via the UPSTREAM_AWS env.
-const UPSTREAM_AWS = process.env.UPSTREAM_AWS || "https://testapi.rentbasket.com";
+// the main API host now, so the default points there. Overridable via UPSTREAM_AWS.
+const UPSTREAM_AWS = process.env.UPSTREAM_AWS || "https://api.rentbasket.com";
 const APP_KEY = process.env.API_APP_KEY;
 const CATALOG_API_KEY = process.env.CATALOG_API_KEY;
 // Origin allowed to call the proxy. Comma-separated list supported (e.g. prod + localhost).
