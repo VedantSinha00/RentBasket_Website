@@ -126,19 +126,7 @@ const MarqueeRow = ({ items, duration, reverse = false }) => {
 };
 
 const Testimonials = () => (
-  <section className="py-14 md:py-20 overflow-hidden">
-    <div className="section-container mb-10">
-      <p className="text-primary font-sans font-semibold text-sm uppercase tracking-widest mb-3">
-        Our Reviews
-      </p>
-      <h2 className="font-display font-extrabold text-4xl md:text-6xl text-foreground leading-tight mb-3">
-        Loved by RentBasket homes.
-      </h2>
-      <p className="text-muted-foreground font-sans text-base">
-        Real reviews from real customers across Delhi NCR.
-      </p>
-    </div>
-
+  <section className="pb-14 md:pb-20 overflow-hidden">
     <div
       className="flex flex-col gap-4"
       style={{
