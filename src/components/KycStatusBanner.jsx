@@ -30,8 +30,8 @@ const VARIANTS = {
   none: {
     Icon: FileCheck2,
     title: "Complete your KYC",
-    subtitle: "Tap to verify your identity",
-    badge: "Pending",
+    subtitle: "Required to process your order — tap to verify your identity",
+    badge: "Required",
     to: "/kyc",
     view: false,
     card: "border-2 border-primary/30 bg-coral-surface hover:bg-coral-surface/70",

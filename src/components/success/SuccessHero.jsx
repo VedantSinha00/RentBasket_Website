@@ -1,7 +1,7 @@
 import { CheckCircle2, ChevronRight, ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const SuccessHero = ({ orderData, hasMoreGroups, kycBanner }) => {
+const SuccessHero = ({ orderData, hasMoreGroups, kycBanner, kycStatus }) => {
   return (
     <div className="w-full flex flex-col items-center text-center py-8">
       {/* Checkmark Illustration */}
@@ -14,7 +14,7 @@ const SuccessHero = ({ orderData, hasMoreGroups, kycBanner }) => {
 
       {/* Hero Text */}
       <h1 className="text-2xl md:text-4xl font-black text-foreground tracking-tight mb-3">
-        Your order has been confirmed
+        Your Payment has been received and order is registered
       </h1>
       <p className="text-sm md:text-base text-muted-foreground font-medium max-w-lg mx-auto leading-relaxed">
         Thank you for choosing RentBasket. Your rental booking has been successfully placed, and our team will coordinate the delivery and setup with you shortly.
@@ -56,29 +56,40 @@ const SuccessHero = ({ orderData, hasMoreGroups, kycBanner }) => {
         </div>
       )}
 
-      {/* Primary CTA */}
-      <div className="mt-8 flex flex-col w-full max-w-md gap-3">
-        {hasMoreGroups && (
-          <Link
-            to="/basket"
-            className="w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 bg-primary text-white shadow-md shadow-primary/20 hover:shadow-primary/30"
-          >
-            <ShoppingBag className="w-4 h-4" />
-            Checkout Remaining Items
-          </Link>
-        )}
-        <Link
-          to="/catalog"
-          className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 ${
-            hasMoreGroups
-              ? "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
-              : "bg-primary text-white shadow-md shadow-primary/20 hover:shadow-primary/30"
-          }`}
-        >
-          Continue Browsing
-          <ChevronRight className="w-4 h-4" />
-        </Link>
-      </div>
+      {/* Primary CTA.
+          KYC is mandatory after payment: while it's still pending/under review
+          (kycStatus !== "verified") the KYC banner above is the ONLY forward
+          action — we intentionally render no "Continue Browsing" escape here.
+          We surface a button only when there's a legitimate next step:
+            • more items left to check out (always actionable), or
+            • KYC already verified, so nothing is being short-circuited and the
+              page shouldn't be a dead end → send them to their orders. */}
+      {(hasMoreGroups || kycStatus === "verified") && (
+        <div className="mt-8 flex flex-col w-full max-w-md gap-3">
+          {hasMoreGroups && (
+            <Link
+              to="/basket"
+              className="w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 bg-primary text-white shadow-md shadow-primary/20 hover:shadow-primary/30"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              Checkout Remaining Items
+            </Link>
+          )}
+          {kycStatus === "verified" && (
+            <Link
+              to="/account/orders"
+              className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 ${
+                hasMoreGroups
+                  ? "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  : "bg-primary text-white shadow-md shadow-primary/20 hover:shadow-primary/30"
+              }`}
+            >
+              View My Orders
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          )}
+        </div>
+      )}
     </div>
   );
 };
