@@ -41,16 +41,14 @@ const OrderSuccess = () => {
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border py-4">
         <div className="section-container relative">
           <div className="flex items-center justify-between">
+            {/* The logo is the only (intentionally low-emphasis) way off this
+                page — no explicit "Browse More" link — so the user is nudged
+                toward completing KYC without being trapped. */}
             <Link to="/" className="flex items-center gap-2 group">
               <div className="w-10 h-10 flex items-center justify-center transition-transform group-hover:scale-105">
                 <img src={logo} alt="RentBasket logo" className="w-24 md:w-28" />
               </div>
             </Link>
-            <div className="flex items-center gap-4 text-sm font-medium">
-              <Link to="/catalog" className="text-primary font-bold hover:text-primary/80 transition-colors">
-                Browse More
-              </Link>
-            </div>
           </div>
         </div>
       </header>
@@ -62,6 +60,7 @@ const OrderSuccess = () => {
         <SuccessHero
           orderData={orderData}
           hasMoreGroups={hasMoreGroups}
+          kycStatus={kycStatus}
           kycBanner={<KycStatusBanner kycStatus={kycStatus} size="prominent" orderData={orderData} />}
         />
 
