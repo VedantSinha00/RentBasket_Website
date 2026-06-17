@@ -7,7 +7,7 @@ import { DURATION_OPTIONS } from "@/data/products";
 import { discountedRent } from "@/lib/pricing";
 import ProductImage from "@/components/ui/ProductImage";
 
-const ProductCard = forwardRef(({ product }, ref) => {
+const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
   const { isInWishlist, toggleWishlist } = useWishlist();
   const isFavorite = isInWishlist(product.id);
   const [showPricingLadder, setShowPricingLadder] = useState(false);
@@ -18,14 +18,25 @@ const ProductCard = forwardRef(({ product }, ref) => {
   // Duration chips — only durations with a real price
   const previewChips = DURATION_OPTIONS.filter((d) => (pricing[d.key] ?? 0) > 0);
 
-  const defaultDuration = (pricing["12_months"] ?? 0) > 0
-    ? "12_months"
-    : (previewChips[0]?.key || "12_months");
-  const [selectedDuration, setSelectedDuration] = useState(defaultDuration);
+  // Which duration's price to show. Driven by the catalog's duration filter
+  // (`displayDuration`); defaults to 12 months, falling back to the cheapest
+  // available duration if this product has no 12-month price.
+  const fallbackDuration =
+    (pricing["12_months"] ?? 0) > 0
+      ? "12_months"
+      : previewChips[0]?.key || "12_months";
+  const selectedDuration =
+    displayDuration && (pricing[displayDuration] ?? 0) > 0
+      ? displayDuration
+      : fallbackDuration;
 
   const disc = (key) => discountedRent(pricing[key], product.percent_discount);
   const currentPrice = disc(selectedDuration);
   const currentPriceList = pricing[selectedDuration];
+
+  // Human-readable label for the duration currently being priced.
+  const selectedDurationLabel =
+    DURATION_OPTIONS.find((d) => d.key === selectedDuration)?.label ?? null;
 
   // Pricing ladder for hover tooltip — only available durations
   const pricingLadder = previewChips.map((d) => ({
@@ -133,6 +144,11 @@ const ProductCard = forwardRef(({ product }, ref) => {
               </span>
             )}
           </div>
+          {selectedDurationLabel && (
+            <p className="text-center text-[11px] text-muted-foreground mt-1">
+              on {selectedDurationLabel} plan
+            </p>
+          )}
         </div>
 
         {/* CTA */}
