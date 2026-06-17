@@ -83,6 +83,21 @@ function normalizeProduct(item, meta = {}) {
   if ((item.rent_9 ?? 0) > 0) pricing["9_months"] = item.rent_9;
   if ((item.rent_12 ?? 0) > 0) pricing["12_months"] = item.rent_12;
 
+  // Short-term tiers (day/week-scale rent). Their presence is what makes a
+  // product eligible for the "Short-Term Rental" category — the API has no
+  // explicit flag, so we derive it from these rent fields actually existing.
+  const hasShortTerm = [
+    item.rent_01d, item.rent_08d, item.rent_15d, item.rent_30d, item.rent_60d,
+  ].some((v) => (v ?? 0) > 0);
+
+  // Catalog "tags" — derived from what the API does expose. is_trending is the
+  // only popularity signal available, so it doubles as the Bestseller marker.
+  // (best_for / "Complete Home Setup" have no API field yet, so those filters
+  // stay empty until the backend provides them.)
+  const tags = [];
+  if (item.is_trending === 1) tags.push("Bestseller");
+  if (hasShortTerm) tags.push("Event-ready");
+
   return {
     id: String(item.amenity_type_id),
     // Display name now comes from prod_title (DB field added in the catalog
@@ -103,6 +118,8 @@ function normalizeProduct(item, meta = {}) {
     // in_stock: 1 = In Stock, 2 = Out of Stock, 0 = DB error (treat as In Stock)
     stock_status: item.in_stock === 2 ? "out_of_stock" : "in_stock",
     is_trending: item.is_trending === 1,
+    tags,
+    has_short_term: hasShortTerm,
     category: meta.categoryName ?? null,
     subcategory: meta.subcategoryName ?? null,
     subcategory_id: meta.subcategoryId ?? null,

@@ -10,9 +10,16 @@ import FilterBar, { FilterSidebar } from "@/components/catalog/FilterBar";
 import ProductGrid from "@/components/catalog/ProductGrid";
 import TrustBenefits from "@/components/catalog/TrustBenefits";
 import CatalogCTA from "@/components/catalog/CatalogCTA";
-import { CATEGORIES } from "@/data/products";
+import { CATEGORIES, DURATION_OPTIONS } from "@/data/products";
 import { useProducts } from "@/hooks/useProducts";
 import { searchProducts } from "@/lib/search";
+
+// Map a duration filter LABEL ("12 Months") → pricing key ("12_months").
+const durationKeyForLabel = (label) =>
+  DURATION_OPTIONS.find((d) => d.label === label)?.key ?? null;
+
+// Default duration shown on the cards when no duration filter is active.
+const DEFAULT_DURATION_KEY = "12_months";
 
 /** Placeholder cards shown while the catalog is being fetched. */
 const CatalogGridSkeleton = () => (
@@ -85,6 +92,11 @@ const Catalog = () => {
   }, [searchParams]);
 
   const searchQuery = searchParams.get("q") || "";
+
+  // The duration whose price the cards display. Follows the active duration
+  // filter; falls back to 12 months when no duration is selected.
+  const displayDurationKey =
+    durationKeyForLabel(filters.duration) ?? DEFAULT_DURATION_KEY;
 
   // Filtered and sorted products
   const minPrice = (p) => {
@@ -165,6 +177,15 @@ const Catalog = () => {
       result = result.filter((p) => p.best_for?.includes(filters.bestFor));
     }
 
+    // Duration filter — only keep products that actually have a price for the
+    // chosen duration (the cards then render that duration's price).
+    const durationKey = durationKeyForLabel(filters.duration);
+    if (durationKey) {
+      result = result.filter(
+        (p) => (p.pricing_by_duration?.[durationKey] ?? 0) > 0
+      );
+    }
+
     // Skip sort when search is active — results are already ranked by relevance
     if (searchQuery.trim()) return result;
 
@@ -237,7 +258,10 @@ const Catalog = () => {
               ) : isError ? (
                 <CatalogGridError onRetry={() => refetch()} />
               ) : (
-                <ProductGrid products={filteredProducts} />
+                <ProductGrid
+                  products={filteredProducts}
+                  displayDuration={displayDurationKey}
+                />
               )}
             </div>
           </div>
