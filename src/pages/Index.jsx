@@ -10,7 +10,8 @@ import MythOrFact from "@/components/MythOrFact";
 import LovedByCustomers from "@/components/LovedByCustomers";
 import Testimonials from "@/components/Testimonials";
 import WhatMakesDifferent from "@/components/WhatMakesDifferent";
-import DownloadSection from "@/components/DownloadSection";
+// App branding removed from the homepage for now — DownloadSection hidden.
+// import DownloadSection from "@/components/DownloadSection";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -42,7 +43,8 @@ const Index = () => {
         <MythOrFact />
         <LovedByCustomers />
         <Testimonials />
-        <DownloadSection />
+        {/* App branding removed from homepage for now */}
+        {/* <DownloadSection /> */}
         <WhatMakesDifferent />
       </main>
       <Footer />
