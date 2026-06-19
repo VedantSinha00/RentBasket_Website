@@ -12,7 +12,6 @@ import Testimonials from "@/components/Testimonials";
 import WhatMakesDifferent from "@/components/WhatMakesDifferent";
 import DownloadSection from "@/components/DownloadSection";
 import Footer from "@/components/Footer";
-import AppDownloadCard from "@/components/AppDownloadCard";
 
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState("Furniture");
@@ -31,9 +30,8 @@ const Index = () => {
           activeCategory={activeCategory}
           onCategoryChange={handleCategoryChange}
         />
-        <AppDownloadCard />
         <div ref={galleryRef} className="-mt-2">
-          <FurnitureGallery activeCategory={activeCategory} />
+          <FurnitureGallery />
         </div>
         <FreeServices />
         <ResponsibilitySection />

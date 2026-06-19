@@ -1,98 +1,88 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useProducts } from "@/hooks/useProducts";
+import ProductImage from "@/components/ui/ProductImage";
 
-import img1 from "@/assets/Furniture/1.png";
-import img2 from "@/assets/Furniture/2.png";
-import img3 from "@/assets/Furniture/3.png";
-import img4 from "@/assets/Furniture/4.png";
-import img5 from "@/assets/Furniture/5.png";
-import img6 from "@/assets/Furniture/6.png";
-import img7 from "@/assets/Furniture/7.png";
-import img8 from "@/assets/Furniture/8.png";
-import img9 from "@/assets/Furniture/9.png";
-import img10 from "@/assets/Furniture/10.png";
+// Curated hero carousel — a fixed set of 8 real catalog products, pinned by their
+// live amenity_type_id (the API is the source of truth, so the images, names and
+// links stay in sync with the catalog instead of being hardcoded local assets).
+// Order here is the order shown in the strip.
+const FEATURED_PRODUCT_IDS = [
+  "1054", // Premium Upholstered Queen Double Bed - Storage
+  "36",   // Double Door Fridge
+  "1036", // 6-Seater Sheesham Wood Dining Table (Cushioned)
+  "13",   // Fully Automatic Washing Machine
+  "41",   // Premium Revolving Chair
+  "16",   // Microwave (Solo) 20 L
+  "1041", // 7-Seater L-Shaped Sofa with Center Table & 2 Puffies - Green
+  "15",   // Water Purifier
+];
 
-import app1 from "@/assets/Appliances/10.png";
-import app2 from "@/assets/Appliances/11.png";
-import app3 from "@/assets/Appliances/12.png";
-import app4 from "@/assets/Appliances/13.png";
-import app5 from "@/assets/Appliances/14.png";
-import app6 from "@/assets/Appliances/15.png";
+// Target number of cards in the strip — matches the curated list length.
+const TARGET_CARD_COUNT = FEATURED_PRODUCT_IDS.length;
 
-import best1 from "@/assets/Bestsellers/1.png";
-import best2 from "@/assets/Bestsellers/3.png";
-import best3 from "@/assets/Bestsellers/5.png";
-import best4 from "@/assets/Bestsellers/8.png";
-import best5 from "@/assets/Bestsellers/9.png";
-import best6 from "@/assets/Bestsellers/10.png";
-import best7 from "@/assets/Bestsellers/11.png";
-import best8 from "@/assets/Bestsellers/12.png";
+/** Square skeleton card shown per-slot while the catalog is loading. */
+const GallerySkeleton = () => (
+  <div className="flex gap-4 md:gap-6 overflow-hidden pb-4">
+    {Array.from({ length: 5 }).map((_, i) => (
+      <div
+        key={i}
+        className="shrink-0 w-[220px] md:w-[260px] aspect-square rounded-2xl bg-secondary animate-pulse shadow-elevated"
+      />
+    ))}
+  </div>
+);
 
-const categoryData = {
-  Furniture: [
-    { id: 1, src: img1, name: "Modern Chair" },
-    { id: 2, src: img2, name: "Wooden Chair" },
-    { id: 3, src: img3, name: "Office Chair" },
-    { id: 4, src: img4, name: "Dining Chair" },
-    { id: 5, src: img5, name: "Accent Chair" },
-    { id: 6, src: img6, name: "Comfort Sofa" },
-    { id: 7, src: img7, name: "Study Table" },
-    { id: 8, src: img8, name: "Bookshelf" },
-    { id: 9, src: img9, name: "Bed Frame" },
-    { id: 10, src: img10, name: "Wardrobe" },
-  ],
-  Appliances: [
-    { id: 1, src: app1, name: "Smart Blender" },
-    { id: 2, src: app2, name: "Coffee Maker" },
-    { id: 3, src: app3, name: "Air Purifier" },
-    { id: 4, src: app4, name: "Microwave Oven" },
-    { id: 5, src: app5, name: "4-Slice Toaster" },
-    { id: 6, src: app6, name: "Electric Kettle" },
-  ],
-  Combos: [
-    { id: 1, src: img2, name: "Living Room Combo" },
-    { id: 2, src: app1, name: "Kitchen Starter" },
-    { id: 3, src: img4, name: "Bedroom Combo" },
-    { id: 4, src: app2, name: "Studio Setup" },
-    { id: 5, src: img7, name: "Work-from-Home Combo" },
-  ],
-  Bestsellers: [
-    { id: 1, src: best1, name: "Best Seller Chair" },
-    { id: 2, src: best2, name: "Popular Sofa" },
-    { id: 3, src: best3, name: "Coffee Maker Pro" },
-    { id: 4, src: best4, name: "Premium Mirror" },
-    { id: 5, src: best5, name: "Luxury Accent Chair" },
-    { id: 6, src: best6, name: "Top-rated Sofa" },
-    { id: 7, src: best7, name: "Hero Bedframe" },
-    { id: 8, src: best8, name: "Customer Favourite" },
-  ],
-};
-
-/** Maps home hero tabs to catalog CategoryTabs values */
-const HOME_TO_CATALOG_CATEGORY = {
-  Furniture: "Furniture",
-  Appliances: "Appliances",
-  Combos: "Complete Home Setup",
-  Bestsellers: "Bestsellers",
-};
-
-const catalogHref = (homeCategory) => {
-  const catalogCategory =
-    HOME_TO_CATALOG_CATEGORY[homeCategory] ?? "Furniture";
-  return `/catalog?category=${encodeURIComponent(catalogCategory)}`;
-};
-
-const FurnitureGallery = ({ activeCategory = "Furniture" }) => {
+const FurnitureGallery = () => {
+  const { data: products = [], isLoading } = useProducts();
   const [autoScroll, setAutoScroll] = useState(true);
   const containerRef = useRef(null);
   const intervalRef = useRef(null);
 
-  const items = categoryData[activeCategory] || categoryData.Furniture;
+  // Resolve the curated list to real products, then make it fail-safe.
+  //
+  // Hardik's 8 pinned products are ALWAYS shown first, in order, whenever they
+  // exist in the catalog. The fallback below is purely a safety net for DB drift
+  // (a SKU retired, re-seeded, or renumbered): any pinned ID that's missing would
+  // otherwise leave the strip short — or empty if a bulk re-seed wipes all 8. So
+  // we backfill only the *missing* slots with trending products (skipping any
+  // already shown) to keep the strip full at 8. In the normal case where all 8
+  // exist, the backfill contributes nothing and you see exactly Hardik's list.
+  const items = useMemo(() => {
+    const byId = new Map(products.map((p) => [String(p.id), p]));
+
+    // 1. The curated picks that actually exist right now, in Hardik's order.
+    const curated = FEATURED_PRODUCT_IDS
+      .map((id) => byId.get(id))
+      .filter(Boolean);
+
+    if (curated.length >= TARGET_CARD_COUNT) return curated;
+
+    // 2. Backfill only the missing slots from trending products (the API's
+    //    is_trending flag), excluding anything already in the strip.
+    const shown = new Set(curated.map((p) => String(p.id)));
+    const backfill = products.filter(
+      (p) => p.is_trending && !shown.has(String(p.id))
+    );
+
+    // 3. Last-resort widen: if there still aren't enough trending products,
+    //    fall back to any remaining catalog product so the strip never goes
+    //    empty (API up but no trending items flagged).
+    if (curated.length + backfill.length < TARGET_CARD_COUNT) {
+      const backfillIds = new Set(backfill.map((p) => String(p.id)));
+      const rest = products.filter(
+        (p) => !shown.has(String(p.id)) && !backfillIds.has(String(p.id))
+      );
+      backfill.push(...rest);
+    }
+
+    return [...curated, ...backfill].slice(0, TARGET_CARD_COUNT);
+  }, [products]);
 
   // Auto-scroll horizontally; loops back to start when reaching the end.
   useEffect(() => {
-    if (!autoScroll) return;
+    if (!autoScroll || items.length === 0) return;
     intervalRef.current = setInterval(() => {
       const c = containerRef.current;
       if (!c) return;
@@ -101,12 +91,7 @@ const FurnitureGallery = ({ activeCategory = "Furniture" }) => {
       c.scrollTo({ left: next >= max - 4 ? 0 : next, behavior: "smooth" });
     }, 3500);
     return () => clearInterval(intervalRef.current);
-  }, [autoScroll, activeCategory]);
-
-  // Reset scroll position when switching categories.
-  useEffect(() => {
-    containerRef.current?.scrollTo({ left: 0, behavior: "smooth" });
-  }, [activeCategory]);
+  }, [autoScroll, items.length]);
 
   const nudge = (dir) => {
     setAutoScroll(false);
@@ -123,25 +108,30 @@ const FurnitureGallery = ({ activeCategory = "Furniture" }) => {
         <div className="relative">
           {/* Right-edge fade to hint at more content */}
           <div className="pointer-events-none absolute right-0 top-0 bottom-4 w-16 z-10 bg-gradient-to-l from-cream/60 to-transparent" />
-          <div
-            ref={containerRef}
-            className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {items.map((item) => (
-              <Link
-                to={catalogHref(activeCategory)}
-                key={`${activeCategory}-${item.id}`}
-                className="group shrink-0 snap-start w-[220px] md:w-[260px] h-[360px] md:h-[440px] rounded-2xl overflow-hidden shadow-elevated bg-white hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.18)] hover:-translate-y-1 transition-all duration-300"
-              >
-                <img
-                  src={item.src}
-                  alt={item.name}
-                  className="h-full w-full object-contain block group-hover:scale-[1.02] transition-transform duration-500"
-                />
-              </Link>
-            ))}
-          </div>
+
+          {isLoading ? (
+            <GallerySkeleton />
+          ) : (
+            <div
+              ref={containerRef}
+              className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {items.map((item) => (
+                <Link
+                  to={`/product/${item.id}`}
+                  key={item.id}
+                  className="group shrink-0 snap-start w-[220px] md:w-[260px] aspect-square rounded-2xl overflow-hidden shadow-elevated bg-white hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.18)] hover:-translate-y-1 transition-all duration-300"
+                >
+                  <ProductImage
+                    src={item.images?.[0] || item.image}
+                    alt={item.name}
+                    className="h-full w-full object-contain block group-hover:scale-[1.02] transition-transform duration-500"
+                  />
+                </Link>
+              ))}
+            </div>
+          )}
 
           {/* Scroll nudge buttons (desktop) */}
           <button
