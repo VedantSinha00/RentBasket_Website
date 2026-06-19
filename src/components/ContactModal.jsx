@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Phone, ArrowRight } from "lucide-react";
@@ -13,12 +13,20 @@ const locations = [
  * (Gurgaon / Noida). Tapping a row dials the number.
  */
 const ContactModal = ({ open, onClose }) => {
+  // Only portal once mounted — guards against createPortal receiving a null
+  // document.body on the first render pass (early render / fast HMR re-render),
+  // which throws "Target container is not a DOM element".
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   useEffect(() => {
     if (!open) return undefined;
     const onKey = (e) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
+
+  if (!mounted) return null;
 
   return createPortal(
     <AnimatePresence>
