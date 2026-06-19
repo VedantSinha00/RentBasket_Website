@@ -144,11 +144,6 @@ const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
               </span>
             )}
           </div>
-          {selectedDurationLabel && (
-            <p className="text-center text-[11px] text-muted-foreground mt-1">
-              on {selectedDurationLabel} plan
-            </p>
-          )}
         </div>
 
         {/* CTA */}
