@@ -104,6 +104,26 @@ const Catalog = () => {
     return vals.length ? Math.min(...vals) : Infinity;
   };
 
+  // Subcategories per category, derived live from the loaded products — the API
+  // (subcategory_label) is the source of truth, so chips auto-update when the
+  // backend adds/renames a subcategory instead of going stale against a hardcoded
+  // list. Order follows first appearance in the catalog. Only "real" categories
+  // (those matching a product's `category` field) get chips — the derived ones
+  // like Bestsellers / Short-Term Rental span categories and have none.
+  const subcategoriesByCategory = useMemo(() => {
+    const map = {};
+    for (const p of products) {
+      const cat = p.category;
+      const sub = p.subcategory;
+      if (!cat || !sub) continue;
+      if (!map[cat]) map[cat] = [];
+      if (!map[cat].includes(sub)) map[cat].push(sub);
+    }
+    return map;
+  }, [products]);
+
+  const activeSubcategories = subcategoriesByCategory[activeCategory] ?? [];
+
   const nonEmptyCategories = useMemo(() => {
     const set = new Set(["All"]);
     for (const cat of CATEGORIES) {
@@ -230,6 +250,7 @@ const Catalog = () => {
           activeSubcategory={activeSubcategory}
           onSubcategoryChange={setActiveSubcategory}
           nonEmptyCategories={isLoading ? null : nonEmptyCategories}
+          subcategories={activeSubcategories}
         />
         <div id="catalog-results" />
 

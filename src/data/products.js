@@ -35,6 +35,7 @@ export const CATEGORIES = [
   "All",
   "Furniture",
   "Appliances",
+  "Rugs & Mattresses",
   "Bestsellers",
   "Short-Term Rental",
   "Complete Home Setup",
