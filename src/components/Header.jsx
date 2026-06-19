@@ -93,6 +93,9 @@ const Header = () => {
                 className="w-24 md:w-32 md:block"
               />
             </div>
+            <span className="font-display text-lg md:text-xl font-bold text-foreground whitespace-nowrap leading-none">
+              Rent<span className="text-primary">Basket</span>
+            </span>
           </Link>
 
           {/* Mobile search — flex-1 fills the centre */}
