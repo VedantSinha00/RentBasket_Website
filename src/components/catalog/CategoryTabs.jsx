@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { CATEGORIES, SUBCATEGORIES } from "@/data/products";
+import { CATEGORIES } from "@/data/products";
 
 const CategoryTabs = ({
   activeCategory,
@@ -7,6 +7,7 @@ const CategoryTabs = ({
   activeSubcategory,
   onSubcategoryChange,
   nonEmptyCategories,
+  subcategories = [],
 }) => {
   const tabsRef = useRef(null);
   const chipsRef = useRef(null);
@@ -24,8 +25,6 @@ const CategoryTabs = ({
       }
     }
   }, [activeCategory]);
-
-  const subcategories = SUBCATEGORIES[activeCategory] || [];
 
   return (
     <div className="bg-background border-b border-border">

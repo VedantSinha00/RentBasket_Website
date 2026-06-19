@@ -53,6 +53,10 @@ const CustomerValidation = () => {
   // New users must pick their city — the backend keys the CRM lead to it.
   const [cities, setCities] = useState([]);
   const [cityId, setCityId] = useState("");
+  // True after a fresh account is created and we've sent a SECOND OTP for the
+  // login step. The signup OTP is single-use, so the user must enter the new
+  // code to finish logging in — the UI explains this when the flag is set.
+  const [awaitingLoginOtp, setAwaitingLoginOtp] = useState(false);
 
   // Countdown for the Resend OTP cooldown
   useEffect(() => {
@@ -103,8 +107,8 @@ const CustomerValidation = () => {
   };
 
   const handleOtpSubmit = async () => {
-    if (!otp.trim() || otp.length < 4) {
-      toast.error("Please enter a valid OTP");
+    if (!otp.trim() || otp.length !== 4) {
+      toast.error("Please enter the 4-digit OTP");
       return;
     }
     if (isRegistered === false && !cityId) {
@@ -115,19 +119,26 @@ const CustomerValidation = () => {
     }
 
     setIsLoading(true);
-    let signUpDone = false;
     try {
-      let userData;
-      if (isRegistered) {
-        userData = await loginWithOtp(phoneNumber, otp);
-      } else {
+      // New account: create it, then send a FRESH OTP for the login step. The
+      // signup endpoint doesn't return a token and its OTP is single-use, so we
+      // can't reuse it to log in — instead we trigger a new code and ask the
+      // user to enter it (the UI shows an explanatory line via awaitingLoginOtp).
+      if (isRegistered === false) {
         await signUpWithOtp(phoneNumber, otp, cityId);
-        signUpDone = true;
-        // The signup endpoint doesn't return a token. Re-use the same OTP to
-        // log in immediately after. If the backend treats OTPs as single-use
-        // this second call will fail and we tell the user to request a new one.
-        userData = await loginWithOtp(phoneNumber, otp);
+        await generateOtp(phoneNumber);
+        setOtp("");
+        setIsRegistered(true);        // now an existing account → login path
+        setAwaitingLoginOtp(true);    // drives the "enter the new OTP" message
+        setResendIn(RESEND_COOLDOWN);
+        toast.success("Account created!", {
+          description: "We've sent a fresh OTP — enter it to finish logging in.",
+        });
+        return;
       }
+
+      // Existing account (or the just-created one, on the second pass): log in.
+      const userData = await loginWithOtp(phoneNumber, otp);
       setAuth({
         phone: userData.mobile_no,
         token: userData.token,
@@ -144,17 +155,7 @@ const CustomerValidation = () => {
       });
       navigate(returnTo, { state: { verifiedPhone: phoneNumber } });
     } catch (err) {
-      if (signUpDone) {
-        // Signup succeeded but the immediate re-login failed (OTP single-use).
-        // Account exists — prompt for a fresh OTP.
-        toast.error("Account created! Please request a new OTP to log in.", {
-          description: "Tap 'Resend OTP' below to get a fresh code.",
-        });
-        setOtp("");
-        setIsRegistered(true);
-      } else {
-        toast.error(friendlyError(err, "Couldn't verify the OTP. Please try again."));
-      }
+      toast.error(friendlyError(err, "Couldn't verify the OTP. Please try again."));
     } finally {
       setIsLoading(false);
     }
@@ -201,6 +202,14 @@ const CustomerValidation = () => {
                 ? "Enter your mobile number to get started"
                 : `Enter the OTP sent to ${phoneNumber}`}
             </p>
+
+            {/* New account just created → a fresh OTP was sent for login */}
+            {step === "otp" && awaitingLoginOtp && (
+              <div className="-mt-5 mb-7 rounded-xl bg-success-muted border border-success-border px-4 py-3 text-center text-xs md:text-sm text-success font-medium">
+                Your account is created! You'll have received another OTP —
+                please enter that to finish logging in.
+              </div>
+            )}
 
             {/* Form */}
             <div className="space-y-5 mb-8">
@@ -249,10 +258,10 @@ const CustomerValidation = () => {
                       autoComplete="one-time-code"
                       placeholder="Enter OTP"
                       value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 4))}
                       onKeyDown={handleKeyDown}
                       disabled={isLoading}
-                      maxLength="6"
+                      maxLength="4"
                       className="w-full px-3.5 py-2.5 border border-primary/30 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/40 font-medium tracking-widest text-center"
                     />
                   </div>
@@ -317,6 +326,7 @@ const CustomerValidation = () => {
                         setResendIn(0);
                         setIsRegistered(null);
                         setCityId("");
+                        setAwaitingLoginOtp(false);
                       }}
                       disabled={isLoading}
                       className="text-muted-foreground hover:text-primary transition-colors underline disabled:opacity-60"

@@ -4,8 +4,10 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import ContactModal from "@/components/ContactModal";
 
 const Header = () => {
+  const [contactOpen, setContactOpen] = useState(false);
   const { getCartItemCount } = useCart();
   const cartCount = getCartItemCount();
   const { getWishlistCount } = useWishlist();
@@ -93,6 +95,9 @@ const Header = () => {
                 className="w-24 md:w-32 md:block"
               />
             </div>
+            <span className="font-display text-lg md:text-xl font-bold text-foreground whitespace-nowrap leading-none">
+              Rent<span className="text-primary">Basket</span>
+            </span>
           </Link>
 
           {/* Mobile search — flex-1 fills the centre */}
@@ -201,15 +206,17 @@ const Header = () => {
                 )}
               </div>
             )}
-            <a
-              href="#download"
+            <button
+              onClick={() => setContactOpen(true)}
               className="hidden lg:inline-flex btn-outline text-sm py-2 px-4 whitespace-nowrap"
             >
-              Download App
-            </a>
+              Contact Us
+            </button>
           </div>
         </div>
       </div>
+
+      <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
     </header>
   );
 };
