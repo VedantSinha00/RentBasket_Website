@@ -53,10 +53,6 @@ const CustomerValidation = () => {
   // New users must pick their city — the backend keys the CRM lead to it.
   const [cities, setCities] = useState([]);
   const [cityId, setCityId] = useState("");
-  // True after a fresh account is created and we've sent a SECOND OTP for the
-  // login step. The signup OTP is single-use, so the user must enter the new
-  // code to finish logging in — the UI explains this when the flag is set.
-  const [awaitingLoginOtp, setAwaitingLoginOtp] = useState(false);
 
   // Countdown for the Resend OTP cooldown
   useEffect(() => {
@@ -120,28 +116,19 @@ const CustomerValidation = () => {
 
     setIsLoading(true);
     try {
-      // New account: create it, then send a FRESH OTP for the login step. The
-      // signup endpoint doesn't return a token and its OTP is single-use, so we
-      // can't reuse it to log in — instead we trigger a new code and ask the
-      // user to enter it (the UI shows an explanatory line via awaitingLoginOtp).
-      if (isRegistered === false) {
-        await signUpWithOtp(phoneNumber, otp, cityId);
-        await generateOtp(phoneNumber);
-        setOtp("");
-        setIsRegistered(true);        // now an existing account → login path
-        setAwaitingLoginOtp(true);    // drives the "enter the new OTP" message
-        setResendIn(RESEND_COOLDOWN);
-        toast.success("Account created!", {
-          description: "We've sent a fresh OTP — enter it to finish logging in.",
-        });
-        return;
-      }
+      // Both endpoints return the same user object. /otp-sign-up returns it too
+      // (user_id, lead_id, mobile_no, ...) — its `token` is null, but that field
+      // is unused: every API call is authorised by the app-level JWT, and the app
+      // keys "logged in" off phone/user_id/lead_id. So a new user is logged in
+      // straight from the signup response — no second OTP needed.
+      const userData =
+        isRegistered === false
+          ? await signUpWithOtp(phoneNumber, otp, cityId)
+          : await loginWithOtp(phoneNumber, otp);
 
-      // Existing account (or the just-created one, on the second pass): log in.
-      const userData = await loginWithOtp(phoneNumber, otp);
       setAuth({
         phone: userData.mobile_no,
-        token: userData.token,
+        token: userData.token, // null on signup; unused — JWT does the auth
         userId: userData.user_id,
         leadId: userData.lead_id,
         // Join only the name parts that exist — a null/absent last_name must not
@@ -150,7 +137,7 @@ const CustomerValidation = () => {
         name: [userData.first_name, userData.last_name].filter(Boolean).join(" "),
         email: userData.email || "",
       });
-      toast.success("Mobile verified!", {
+      toast.success(isRegistered === false ? "Account created!" : "Mobile verified!", {
         description: "Let's complete your order details.",
       });
       navigate(returnTo, { state: { verifiedPhone: phoneNumber } });
@@ -202,14 +189,6 @@ const CustomerValidation = () => {
                 ? "Enter your mobile number to get started"
                 : `Enter the OTP sent to ${phoneNumber}`}
             </p>
-
-            {/* New account just created → a fresh OTP was sent for login */}
-            {step === "otp" && awaitingLoginOtp && (
-              <div className="-mt-5 mb-7 rounded-xl bg-success-muted border border-success-border px-4 py-3 text-center text-xs md:text-sm text-success font-medium">
-                Your account is created! You'll have received another OTP —
-                please enter that to finish logging in.
-              </div>
-            )}
 
             {/* Form */}
             <div className="space-y-5 mb-8">
@@ -326,7 +305,6 @@ const CustomerValidation = () => {
                         setResendIn(0);
                         setIsRegistered(null);
                         setCityId("");
-                        setAwaitingLoginOtp(false);
                       }}
                       disabled={isLoading}
                       className="text-muted-foreground hover:text-primary transition-colors underline disabled:opacity-60"
