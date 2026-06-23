@@ -13,13 +13,16 @@ function cspMeta(isProd) {
     // from cdn.razorpay.com. Wildcard *.razorpay.com covers checkout/api/cdn.
     // 'unsafe-inline' is required — Razorpay injects inline <script> blocks whose
     // hashes change per release, so hashing isn't viable.
-    "script-src 'self' 'unsafe-inline' https://*.razorpay.com",
+    // googletagmanager.com serves gtag.js (Google Analytics 4 loader).
+    "script-src 'self' 'unsafe-inline' https://*.razorpay.com https://www.googletagmanager.com",
     "style-src 'self' 'unsafe-inline'", // Tailwind / Radix / framer-motion inject inline styles
     "img-src 'self' data: https:", // product images come from the remote catalog/CDN
     "font-src 'self' data: https://*.razorpay.com", // Razorpay checkout fonts
     // API + proxy on a rentbasket subdomain, plus Razorpay's payment APIs (the
     // modal calls api/lumberjack.razorpay.com) and the address geocoder.
-    "connect-src 'self' https://*.rentbasket.com https://*.razorpay.com https://nominatim.openstreetmap.org",
+    // GA4 sends hits to google-analytics.com / *.analytics.google.com (regional
+    // endpoints), and gtag.js itself is fetched from googletagmanager.com.
+    "connect-src 'self' https://*.rentbasket.com https://*.razorpay.com https://nominatim.openstreetmap.org https://www.googletagmanager.com https://www.google-analytics.com https://*.analytics.google.com",
     // Razorpay opens its checkout in an iframe — frame-src must allow it.
     "frame-src https://*.razorpay.com",
     "media-src 'self'",
