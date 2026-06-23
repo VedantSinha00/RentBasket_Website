@@ -26,6 +26,9 @@ pipelines:
             - echo "VITE_API_BASE_URL=https://api.rentbasket.com" >> .env
             - echo "VITE_PROXY_URL=https://proxyapi.rentbasket.com" >> .env
             - echo "VITE_WHATSAPP_NUMBER=919999999999" >> .env
+            # GA4 Measurement ID for the live rentbasket.com property. Public
+            # client-side identifier (ships in the bundle by design), not a secret.
+            - echo "VITE_GA_ID=G-9GJ3QWXF29" >> .env
 
             - npm i
             - npm run build
