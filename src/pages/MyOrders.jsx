@@ -99,6 +99,7 @@ const OrderCard = ({ order }) => {
         const pricing = product.pricing_by_duration ?? {};
         const duration = pricing[orderedKey] != null ? orderedKey : Object.keys(pricing)[0];
         if (!duration) return; // product exists but has no rentable plan — skip
+        if (product.stock_status === "out_of_stock") return; // out of stock — skip
         addToCart({
           productId: product.id,
           name: product.name,
@@ -114,6 +115,7 @@ const OrderCard = ({ order }) => {
           rent: pricing[duration],
           percent_discount: product.percent_discount,
           security_multiple: product.security_multiple,
+          stock_status: product.stock_status,
         });
         added++;
       } else if (item.rent) {

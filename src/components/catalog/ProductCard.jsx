@@ -99,7 +99,12 @@ const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
               transition={{ duration: 0.2 }}
               className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-4 pt-8 hidden md:block"
             >
-              <div className="grid grid-cols-4 gap-1">
+              <div
+                className="grid gap-1"
+                style={{
+                  gridTemplateColumns: `repeat(${pricingLadder.length}, minmax(0, 1fr))`,
+                }}
+              >
                 {pricingLadder.map((item) => (
                   <div key={item.label} className="text-center">
                     <div className="text-[10px] text-white/70 mb-0.5">

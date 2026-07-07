@@ -1,6 +1,6 @@
 import { DURATION_OPTIONS } from "@/data/products";
 import { cartBreakdown } from "@/lib/pricing";
-import { CheckCircle, ShieldCheck } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 
 const PricingSummary = ({ product, selectedDuration, quantity }) => {
   const pricing = product.pricing_by_duration;
@@ -65,17 +65,6 @@ const PricingSummary = ({ product, selectedDuration, quantity }) => {
           </span>
         </div>
 
-        {/* Deposit */}
-        <div className="flex items-center justify-between border-t border-border/30 pt-2">
-          <span className="text-sm text-muted-foreground font-medium flex items-center gap-1">
-            Refundable Security
-            <ShieldCheck className="w-3.5 h-3.5 text-success" />
-          </span>
-          <span className="text-sm font-bold text-foreground">
-            ₹{b.security.toLocaleString("en-IN")}
-          </span>
-        </div>
-
         {/* Free items */}
         <div className="border-t border-border/50 pt-3 space-y-2">
           {["Delivery & Installation", "Maintenance & Support"].map((item) => (
@@ -96,7 +85,8 @@ const PricingSummary = ({ product, selectedDuration, quantity }) => {
               Total (First Month)
             </span>
             <span className="text-xl md:text-2xl font-black text-primary tracking-tight">
-              ₹{b.netFirstMonth.toLocaleString("en-IN")}
+              ₹{b.netMonthlyRent.toLocaleString("en-IN")}
+              {isMonthly ? "/mo" : ""}
             </span>
           </div>
         </div>

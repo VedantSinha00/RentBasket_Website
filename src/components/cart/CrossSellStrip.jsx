@@ -124,12 +124,19 @@ const CrossSellStrip = () => {
       : firstDuration(product);
 
   const handleQuickAdd = (product) => {
+    if (product.stock_status === "out_of_stock") {
+      toast.error(`${product.name} is out of stock`, {
+        description: "This item isn't available to rent right now.",
+      });
+      return;
+    }
     const defaultDuration = resolveDuration(product);
     const basePrice = discountedRent(product.pricing_by_duration[defaultDuration], product.percent_discount);
     const label = DURATION_OPTIONS.find((d) => d.key === defaultDuration)?.label || "3 Months";
     const depositWaived = basePrice < maxCartPrice;
 
     addToCart({
+      stock_status: product.stock_status,
       productId: product.id,
       name: product.name,
       duration: defaultDuration,

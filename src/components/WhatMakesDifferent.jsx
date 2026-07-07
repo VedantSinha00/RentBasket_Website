@@ -51,10 +51,10 @@ const WhatMakesDifferent = () => {
 
         {/* Editorial Title */}
         <div className="text-center max-w-xl mx-auto mb-6 md:mb-8 px-4">
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-foreground tracking-tight leading-[1.5]">
-            What makes RentBasket <span className="font-script normal-case font-normal text-[0.88em] tracking-normal inline-block ml-1 mt-2 mb-2">different</span>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-foreground tracking-tight leading-[1.25] sm:leading-[1.5]">
+            What makes RentBasket <span className="font-script normal-case font-normal text-[0.88em] tracking-normal inline-block ml-1 mt-0.5 mb-0.5 sm:mt-2 sm:mb-2">different</span>
           </h2>
-          <p className="font-sans text-sm text-muted-foreground mt-4">
+          <p className="font-sans text-sm text-muted-foreground mt-2 sm:mt-4">
             Zero hassle, transparent pricing, <span className="whitespace-nowrap">built for relocation.</span>
           </p>
         </div>

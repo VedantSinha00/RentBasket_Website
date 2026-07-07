@@ -170,6 +170,12 @@ export const CartProvider = ({ children }) => {
   }, [cartItems]);
 
   const addToCart = (item) => {
+    // Hard guard: never allow an out-of-stock product into the cart, no matter
+    // which UI path called us. Callers should also disable their buttons, but
+    // this is the single chokepoint that keeps a stray path from slipping through.
+    if (item?.stock_status === "out_of_stock") {
+      return { ok: false, reason: "out_of_stock" };
+    }
     setCartItems((prev) => {
       const existingIndex = prev.findIndex(
         (i) => i.productId === item.productId && i.duration === item.duration
@@ -184,6 +190,7 @@ export const CartProvider = ({ children }) => {
       }
       return [...prev, { ...item, cartItemId: makeCartItemId() }];
     });
+    return { ok: true };
   };
 
   const removeFromCart = (cartItemId) => {
