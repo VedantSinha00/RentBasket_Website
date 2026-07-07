@@ -14,18 +14,6 @@ const HeroSection = () => {
       {/* ── Mobile/Tablet View (Dual Layout) ─────────────────────── */}
       <section className="lg:hidden relative px-5 pt-8 sm:px-8 flex flex-col items-center text-center gap-6 overflow-hidden">
         <div className="bg-background -mx-5 sm:-mx-8 px-5 sm:px-8 w-[calc(100%+2.5rem)] sm:w-[calc(100%+4rem)] flex flex-col items-center text-center gap-6 pb-6">
-          {/* Centered Headline */}
-          <motion.h1
-            className="font-display font-semibold leading-[1.2] tracking-tight text-foreground text-[24px] sm:text-[32px] max-w-sm sm:max-w-md mx-auto z-10 relative"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-          >
-            <span className="font-script font-normal text-primary text-[1.1em] mr-1">Rent</span>{" "}
-            quality furniture &amp; appliances in{" "}
-            <span className="text-primary">Delhi&nbsp;NCR</span>
-          </motion.h1>
-
           {/* Mascot video container - full scene, shown uncropped */}
           <div className="relative flex items-center justify-center w-full mx-auto -mt-4 z-0">
             <video
@@ -87,18 +75,6 @@ const HeroSection = () => {
         <div className="flex flex-row w-full max-w-7xl mx-auto">
           {/* Content column */}
           <div className="flex flex-col justify-center px-16 xl:px-20 z-10 w-[44%] shrink-0 gap-6">
-            {/* Headline */}
-            <motion.h1
-              className="font-display font-semibold leading-[1.1] tracking-tight text-foreground lg:text-[40px] xl:text-[48px] 2xl:text-[54px]"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-            >
-              <span className="font-script font-normal text-primary mr-1 text-[1.15em]">Rent</span>{" "}
-              quality furniture &amp; appliances in{" "}
-              <span className="text-primary">Delhi&nbsp;NCR</span>
-            </motion.h1>
-
             {/* Stats */}
             <motion.div
               className="flex items-center gap-12"
