@@ -47,7 +47,7 @@ const FAQs = () => {
       <Header />
       <main className="section-container py-12 md:py-20 max-w-3xl">
         <div className="text-center mb-12">
-          <p className="text-primary font-sans font-semibold text-sm uppercase tracking-widest mb-3">
+          <p className="text-foreground/60 font-sans font-semibold text-sm uppercase tracking-widest mb-3">
             FAQ'S
           </p>
           <h1 className="font-display font-extrabold text-5xl md:text-7xl text-foreground leading-tight">
