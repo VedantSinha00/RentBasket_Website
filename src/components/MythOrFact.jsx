@@ -4,63 +4,71 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ── QUIZ CONTENT ──────────────────────────────────────────
-// Sourced from the founder's real customer objections. All myths are FALSE.
-// See docs/quiz-hidden-costs-spec.md §5 for the reasoning behind each.
+// Lens: "why RentBasket over other rental services" (not "why rent vs buy").
+// Each myth is a doubt about what a rental service can do; RentBasket does it.
+// All myths are FALSE. See docs/quiz-hidden-costs-spec.md §5 for reasoning.
 const QUIZ_QUESTIONS = [
   {
     id: 1,
-    // Q1 — furnished-home shopper. Villain = the furnished lease (cost + choice).
-    myth: "A fully furnished rental home is the cheaper, smarter option.",
+    // Q1 — speed. Differentiator: same-day / fast delivery.
+    myth: "Renting furniture means waiting days for it to arrive.",
     answer: false,
     explanation:
-      "Furnished homes bake inflated appliance rent into your lease, and you get zero say in what you're given. Renting your own furniture works out cheaper over a typical stay — and you choose every single piece.",
+      "RentBasket delivers in about 36 hours on average, and often the same day. No long waits.",
   },
   {
     id: 2,
-    // Q2 — outright buyer. Villain = ownership (upfront + depreciation + resale).
-    myth: "If you'll use it for a while, buying furniture is cheaper than renting.",
+    // Q2 — flexibility + free relocation.
+    myth: "Once you rent, you're locked in, and moving flats means paying to haul it all.",
     answer: false,
     explanation:
-      "Buying means a big upfront hit, and it starts losing resale value the moment you use it. For stays up to ~30 months, renting costs less overall — and when you move, you just hand it back instead of selling at a loss.",
+      "Flexible plans from 3 to 12 months, plus free relocation support. When you move, we move your rented furniture with you.",
   },
   {
     id: 3,
-    // Q3 — maintenance is included (customers don't know this).
-    myth: "If something breaks, repairs and maintenance cost you extra.",
+    // Q3 — free maintenance + quick service.
+    myth: "If a rented appliance stops working, repairs are slow and cost you extra.",
     answer: false,
     explanation:
-      "Maintenance and repairs are part of the rental — handled fast, at no additional cost to you.",
+      "Maintenance is included at no cost, and our service team resolves issues fast. No repair bills, no long waits.",
   },
   {
     id: 4,
-    // Q4 — product quality (a top blocker per the founder).
+    // Q4 — quality (still reassuring vs rivals who send worn stock).
     myth: "Rental furniture is always old, worn out, or second-rate.",
     answer: false,
     explanation:
-      "Every item is new or in mint condition — sanitized and quality-checked before it reaches your door.",
+      "Every RentBasket item is new or in mint condition, sanitized and quality-checked before it reaches you.",
   },
 ];
 
-// ── COMPARISON CHECKLIST ──────────────────────────────────
-// PLACEHOLDER NUMBERS. Real figures pending from the founder —
-// see docs/checklist-content-request.md. Swap the ₹[X] values.
+// ── COMPARISON CHECKLIST (vs BUYING) ──────────────────────
+// Real figures from the founder's Smart LED 43" TV example.
+// NOTE: renting takes a refundable deposit — do NOT claim "zero deposit".
+const COMPARISON_EXAMPLE = "Smart LED 43\" TV";
 const COMPARISON_ITEMS = [
   {
-    feature: "Upfront cash",
-    buying: "₹[X]+ paid up front",
-    renting: "₹0 down, pay monthly",
+    feature: "The product",
+    buying: "₹30,000+ to buy outright",
+    renting: "₹881/mo, no big upfront hit",
   },
   {
-    feature: "Maintenance & repairs",
-    buying: "You pay every time",
+    feature: "Delivery & installation",
+    buying: "₹500 delivery + ₹1,000 install",
+    renting: "Free. We deliver & set it up",
+  },
+  {
+    feature: "Maintenance",
+    buying: "~₹1,000/yr out of pocket",
     renting: "Included, free",
   },
-  {
-    feature: "When you move out",
-    buying: "Lose ₹[X] on resale",
-    renting: "Just hand it back",
-  },
 ];
+// Totals for the closing line (from the same TV example).
+const COMPARISON_TOTALS = {
+  buying: "₹41,500+",
+  renting: "₹881/mo",
+  breakEven: "48 months (4 years)",
+};
 // ──────────────────────────────────────────────────────────
 
 const Card = ({ belief, reality }) => {
@@ -253,10 +261,10 @@ const MythQuiz = () => {
             </div>
             <div className="flex flex-col gap-2">
               <h3 className="font-display text-2xl font-semibold text-foreground tracking-tight">
-                Think you know renting?
+                Think you know RentBasket?
               </h3>
               <p className="font-sans text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-                Take our 30-second myth-buster and see how many common beliefs about renting furniture you get right.
+                Take our 30-second myth-buster and see how much you really know about renting with RentBasket.
               </p>
             </div>
             <button
@@ -383,39 +391,56 @@ const MythQuiz = () => {
               </h3>
               <p className="font-sans text-sm text-muted-foreground leading-relaxed max-w-sm">
                 You got <span className="font-bold text-primary">{score} of {QUIZ_QUESTIONS.length}</span> right.
-                Renting isn't about hidden fees — it's about skipping the hidden costs of owning.
+                Now here's the part most people miss: how the numbers actually stack up against buying.
               </p>
             </div>
 
-            {/* Hidden-cost checklist */}
-            <div className="flex flex-col gap-3 text-left border-t border-border pt-6">
-              <h4 className="font-display font-semibold text-foreground text-lg mb-1 text-center">
-                The hidden-cost comparison
-              </h4>
-              {COMPARISON_ITEMS.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="bg-cream border border-border rounded-xl p-4 flex flex-col gap-2"
-                >
-                  <span className="font-sans text-xs font-bold text-foreground uppercase tracking-wide">
-                    {item.feature}
-                  </span>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div>
-                      <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                        Buying
-                      </span>
-                      <span className="block text-muted-foreground mt-0.5">{item.buying}</span>
+            {/* Buying-vs-RentBasket Price Comparison Table (compact invoice) */}
+            <div className="flex flex-col text-left border-t border-border pt-6">
+              <div className="text-center mb-4">
+                <h4 className="font-display font-semibold text-foreground text-lg">
+                  Buying vs RentBasket
+                </h4>
+                <p className="font-sans text-xs text-muted-foreground mt-0.5">
+                  Cost breakdown for a {COMPARISON_EXAMPLE}
+                </p>
+              </div>
+
+              {/* Compact invoice table. Label column gets slightly more room so
+                  the long buying/renting values stay readable at 375px. */}
+              <div className="border border-border rounded-xl bg-muted/5 overflow-hidden font-sans text-xs">
+                {/* Column headers */}
+                <div className="grid grid-cols-[1.1fr_1fr_1fr] gap-2 px-3 py-2 bg-muted/20 border-b border-border text-[9px] uppercase tracking-wider font-bold text-muted-foreground">
+                  <span>Cost Item</span>
+                  <span>Buying</span>
+                  <span className="text-primary font-extrabold">RentBasket</span>
+                </div>
+
+                {/* Rows */}
+                <div className="divide-y divide-border/40">
+                  {COMPARISON_ITEMS.map((item, idx) => (
+                    <div key={idx} className="grid grid-cols-[1.1fr_1fr_1fr] gap-2 px-3 py-2.5">
+                      <span className="font-medium text-foreground">{item.feature}</span>
+                      <span className="text-muted-foreground">{item.buying}</span>
+                      <span className="text-foreground font-semibold">{item.renting}</span>
                     </div>
-                    <div className="border-l border-border pl-4">
-                      <span className="block text-[10px] font-bold text-primary uppercase tracking-wider">
-                        RentBasket
-                      </span>
-                      <span className="block text-foreground font-semibold mt-0.5">{item.renting}</span>
-                    </div>
+                  ))}
+
+                  {/* Highlighted totals row */}
+                  <div className="grid grid-cols-[1.1fr_1fr_1fr] gap-2 px-3 py-3 bg-primary/5 border-t border-border">
+                    <span className="font-bold text-foreground">Total</span>
+                    <span className="font-bold text-muted-foreground">{COMPARISON_TOTALS.buying}</span>
+                    <span className="font-display font-bold text-primary text-sm leading-none">
+                      {COMPARISON_TOTALS.renting}
+                    </span>
                   </div>
                 </div>
-              ))}
+              </div>
+
+              {/* Summary sentence */}
+              <p className="font-sans text-xs text-muted-foreground text-center leading-relaxed mt-4">
+                That's <span className="font-bold text-foreground">{COMPARISON_TOTALS.breakEven}</span> of renting before buying even breaks even, with no hassle of selling or relocation charges.
+              </p>
             </div>
 
             {/* CTAs */}
@@ -455,7 +480,7 @@ const MythOrFact = () => {
     {
       belief: "Rentals have boring designs and limited options.",
       reality:
-        "RentBasket offers modern, stylish furniture with multiple designs and color options to match your home.",
+        "RentBasket offers modern, stylish furniture with multiple designs and color options, plus customization available to match your home.",
     },
     {
       belief: "Rental plans are full of hidden costs and traps.",

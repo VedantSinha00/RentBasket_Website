@@ -1,7 +1,7 @@
 import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import mascotVideo from "@/assets/ku-behind-sofa.mp4";
+import mascotVideo from "@/assets/ku_looping.webm";
 
 // SP-01: Mobile-first hero.
 // On mobile (375 px): content stacks vertically, CTA is always above the fold.
@@ -39,7 +39,7 @@ const HeroSection = () => {
               loop
               muted
               playsInline
-              aria-label="RentBasket mascot Ku behind a sofa"
+              aria-label="RentBasket mascot Ku animation"
             />
           </div>
 
@@ -110,7 +110,7 @@ const HeroSection = () => {
                 on your own terms.
               </h1>
               <p className="font-sans text-sm xl:text-base text-muted-foreground max-w-sm leading-relaxed">
-                Rent premium furniture &amp; appliances in Delhi NCR with zero deposit, free delivery, and maintenance.
+                Rent premium furniture &amp; appliances in Delhi NCR &mdash; with free delivery and maintenance.
               </p>
             </motion.div>
 
@@ -176,7 +176,7 @@ const HeroSection = () => {
               loop
               muted
               playsInline
-              aria-label="RentBasket mascot Ku behind a sofa"
+              aria-label="RentBasket mascot Ku animation"
             />
           </div>
         </div>
