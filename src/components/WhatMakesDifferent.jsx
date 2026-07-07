@@ -52,7 +52,7 @@ const WhatMakesDifferent = () => {
         {/* Editorial Title */}
         <div className="text-center max-w-xl mx-auto mb-6 md:mb-8 px-4">
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-foreground tracking-tight">
-            What makes RentBasket <span className="italic font-normal">different</span>
+            What makes RentBasket <span className="font-script normal-case font-normal text-[0.88em] tracking-normal inline-block ml-1">different</span>
           </h2>
           <p className="font-sans text-sm text-muted-foreground mt-1.5">
             Zero hassle, transparent pricing, <span className="whitespace-nowrap">built for relocation.</span>
@@ -113,18 +113,28 @@ const WhatMakesDifferent = () => {
                       {feature.title}
                     </h3>
                   </div>
-                  <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-350 shrink-0 ml-2 ${isActive ? "rotate-180" : ""}`} />
+                  <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ease-out shrink-0 ml-2 ${isActive ? "rotate-180" : ""}`} />
                 </button>
                 <AnimatePresence initial={false}>
                   {isActive && (
                     <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: "easeInOut" }}
-                      className="px-4 pb-4 font-sans text-sm text-muted-foreground leading-relaxed pl-[52px]"
+                      key="content"
+                      initial="collapsed"
+                      animate="open"
+                      exit="collapsed"
+                      variants={{
+                        open: { height: "auto", opacity: 1 },
+                        collapsed: { height: 0, opacity: 0 },
+                      }}
+                      transition={{
+                        height: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+                        opacity: { duration: 0.25, ease: "easeInOut", delay: isActive ? 0.05 : 0 },
+                      }}
+                      className="overflow-hidden"
                     >
-                      {feature.description}
+                      <p className="px-4 pb-4 font-sans text-sm text-muted-foreground leading-relaxed pl-[52px]">
+                        {feature.description}
+                      </p>
                     </motion.div>
                   )}
                 </AnimatePresence>
