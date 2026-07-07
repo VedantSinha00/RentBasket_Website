@@ -1,7 +1,7 @@
 import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import mascotVideo from "@/assets/kling_20260104_Image_to_Video_Just_Make__1408_0.mp4";
+import mascotVideo from "@/assets/ku-behind-sofa.mp4";
 
 // SP-01: Mobile-first hero.
 // On mobile (375 px): content stacks vertically, CTA is always above the fold.
@@ -35,7 +35,7 @@ const HeroSection = () => {
             loop
             muted
             playsInline
-            aria-label="RentBasket mascot Ku waving hello"
+            aria-label="RentBasket mascot Ku behind a sofa"
           />
         </div>
 
@@ -160,7 +160,7 @@ const HeroSection = () => {
             loop
             muted
             playsInline
-            aria-label="RentBasket mascot Ku waving hello"
+            aria-label="RentBasket mascot Ku behind a sofa"
           />
         </div>
         </div>
