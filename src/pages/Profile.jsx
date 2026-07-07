@@ -6,7 +6,7 @@ import KycStatusBanner from "@/components/KycStatusBanner";
 import { getAuth, clearAuth, isAuthenticated } from "@/lib/auth";
 import { useKycStatus } from "@/hooks/useKycStatus";
 
-const MenuItem = ({ to, state, icon: Icon, iconBg = "bg-primary/10", iconColor = "text-primary", title, subtitle }) => (
+const MenuItem = ({ to, state, icon: Icon, iconBg = "bg-secondary", iconColor = "text-foreground", title, subtitle }) => (
   <Link
     to={to}
     state={state}
@@ -41,8 +41,8 @@ const Profile = () => {
       <main className="flex-1 section-container py-10 md:py-16 max-w-lg mx-auto w-full">
         {/* Avatar block */}
         <div className="flex flex-col items-center gap-4 mb-10">
-          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-            <User className="w-9 h-9 text-primary" />
+          <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center">
+            <User className="w-9 h-9 text-foreground" />
           </div>
           <div className="text-center">
             <h1 className="text-2xl font-bold font-display text-foreground">My Profile</h1>
@@ -69,8 +69,6 @@ const Profile = () => {
               <MenuItem
                 to="/account/details"
                 icon={UserCircle}
-                iconBg="bg-violet-50"
-                iconColor="text-violet-500"
                 title="Personal Details"
                 subtitle="Your name and contact info"
               />
@@ -86,8 +84,6 @@ const Profile = () => {
                 to="/kyc"
                 state={{ view: true, returnTo: "/profile" }}
                 icon={ShieldCheck}
-                iconBg="bg-emerald-50"
-                iconColor="text-emerald-600"
                 title="Identity Verification"
                 subtitle="View or complete your KYC"
               />
@@ -96,24 +92,18 @@ const Profile = () => {
           <MenuItem
             to="/wishlist"
             icon={Heart}
-            iconBg="bg-rose-50"
-            iconColor="text-rose-500"
             title="Wishlist"
             subtitle="Your saved items"
           />
           <MenuItem
             to="/faqs"
             icon={HelpCircle}
-            iconBg="bg-blue-50"
-            iconColor="text-blue-500"
             title="FAQs"
             subtitle="Common questions answered"
           />
           <MenuItem
             to="/contact"
             icon={LifeBuoy}
-            iconBg="bg-amber-50"
-            iconColor="text-amber-500"
             title="Support"
             subtitle="Get help with your order"
           />
@@ -122,8 +112,6 @@ const Profile = () => {
               to="/customer-validation"
               state={{ returnTo: "/profile" }}
               icon={LogIn}
-              iconBg="bg-primary/10"
-              iconColor="text-primary"
               title="Login"
               subtitle="Sign in to your account"
             />
