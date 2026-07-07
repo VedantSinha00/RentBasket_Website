@@ -45,7 +45,7 @@ const CategoryTabs = ({
               }}
               className={`px-4 py-2 text-sm md:text-base font-medium whitespace-nowrap rounded-full transition-all duration-300 flex-shrink-0 ${
                 activeCategory === category
-                  ? "bg-primary text-primary-foreground shadow-soft"
+                  ? "bg-foreground text-background shadow-sm"
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >

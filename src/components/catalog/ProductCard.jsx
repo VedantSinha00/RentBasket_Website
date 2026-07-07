@@ -54,25 +54,18 @@ const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.3 }}
       whileHover={{ y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
-      className="group bg-card border border-border rounded-2xl overflow-hidden shadow-soft hover:shadow-elevated transition-shadow duration-200 cursor-pointer"
+      className="group bg-card border border-border/50 rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 cursor-pointer flex flex-col justify-between"
       onMouseEnter={() => setShowPricingLadder(true)}
       onMouseLeave={() => setShowPricingLadder(false)}
       onClick={() => navigate(`/product/${product.id}`)}
     >
       {/* Image Area */}
-      <div className="relative aspect-[4/3] bg-white overflow-hidden">
+      <div className="relative aspect-[4/3] bg-white overflow-hidden shrink-0 border-b border-border/20">
         <ProductImage
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover p-0 group-hover:scale-105 transition-transform duration-500"
         />
-
-        {/* Badge */}
-        {product.is_trending ? (
-          <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] md:text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
-            Trending
-          </span>
-        ) : null}
 
         {/* Wishlist button */}
         <button
@@ -80,11 +73,11 @@ const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
             e.stopPropagation();
             toggleWishlist(product);
           }}
-          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:scale-110 transition-transform"
+          className="absolute top-3 right-3 p-1 flex items-center justify-center hover:scale-110 transition-transform active:scale-95 focus-visible:outline-none"
         >
           <Heart
-            className={`w-4 h-4 transition-colors ${
-              isFavorite ? "fill-primary text-primary" : "text-muted-foreground"
+            className={`w-6 h-6 transition-colors filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)] ${
+              isFavorite ? "fill-primary text-primary" : "text-white"
             }`}
           />
         </button>
@@ -97,7 +90,7 @@ const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
               transition={{ duration: 0.2 }}
-              className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-4 pt-8 hidden md:block"
+              className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/85 via-black/60 to-transparent p-4 pt-8 hidden md:block"
             >
               <div
                 className="grid gap-1"
@@ -124,41 +117,36 @@ const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
         </AnimatePresence>
       </div>
 
-      {/* Card Content */}
-      <div className="p-4">
-        {/* Title */}
-        <h3 className="font-semibold text-sm md:text-base text-foreground leading-snug mb-2 line-clamp-1">
-          {product.name}
-        </h3>
-
-        {/* Pricing Preview */}
-        <div className="mb-3">
-          <div className="flex items-center justify-center gap-1.5 flex-wrap">
-            {currentPriceList > currentPrice && (
-              <span className="text-xs text-muted-foreground line-through">
-                ₹{currentPriceList.toLocaleString("en-IN")}
-              </span>
-            )}
-            <span className="text-lg md:text-xl font-bold text-primary leading-none">
-              ₹{currentPrice.toLocaleString("en-IN")}
-            </span>
-            <span className="text-xs text-muted-foreground">/month</span>
-            {currentPriceList > currentPrice && (
-              <span className="text-xs font-semibold text-success-muted-foreground bg-success-muted px-1.5 py-0.5 rounded-full">
-                {product.percent_discount}% off
-              </span>
-            )}
-          </div>
+      {/* Card Content (Left-aligned & serif-styled) */}
+      <div className="p-4 flex flex-col flex-1 justify-between gap-2.5 text-left">
+        <div className="flex flex-col gap-1">
+          {/* Category Tag */}
+          <span className="font-sans text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest leading-none">
+            {product.subcategory || product.category || "Rental"}
+          </span>
+          
+          {/* Title */}
+          <h3 className="font-display font-semibold text-sm md:text-base text-foreground leading-snug line-clamp-1 mt-0.5">
+            {product.name}
+          </h3>
         </div>
 
-        {/* CTA */}
-        <div className="max-h-0 opacity-0 overflow-hidden pointer-events-none group-hover:max-h-14 group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 ease-out mt-0 group-hover:mt-3">
-          <button
-            onClick={() => navigate(`/product/${product.id}`)}
-            className="w-full btn-outline text-sm py-2.5 hover:bg-primary hover:text-primary-foreground"
-          >
-            View Details
-          </button>
+        {/* Pricing Preview */}
+        <div className="flex items-baseline gap-1.5 flex-wrap leading-none">
+          <span className="text-base md:text-lg font-bold text-primary">
+            ₹{currentPrice.toLocaleString("en-IN")}
+          </span>
+          <span className="text-[11px] text-muted-foreground font-sans">/mo</span>
+          {currentPriceList > currentPrice && (
+            <span className="text-[10px] text-muted-foreground line-through font-sans ml-1">
+              ₹{currentPriceList.toLocaleString("en-IN")}
+            </span>
+          )}
+          {currentPriceList > currentPrice && (
+            <span className="text-[10px] font-semibold text-success bg-success-muted px-1.5 py-0.5 rounded-full font-sans ml-auto">
+              {product.percent_discount}% OFF
+            </span>
+          )}
         </div>
       </div>
     </motion.div>
