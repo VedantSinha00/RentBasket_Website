@@ -80,15 +80,51 @@ const FurnitureGallery = () => {
     return [...curated, ...backfill].slice(0, TARGET_CARD_COUNT);
   }, [products]);
 
-  // Auto-scroll horizontally; loops back to start when reaching the end.
+  // A trailing clone of the first card lets the strip keep scrolling forward
+  // past the "end" instead of jump-cutting backwards to restart. Once the
+  // clone scrolls into view, we snap (no animation) back to the real first
+  // card at scrollLeft 0 — same artwork in the same spot, so the reset is
+  // invisible — giving the illusion of an infinite forward loop with only
+  // one extra DOM node instead of duplicating the whole list.
+  const loopItems = useMemo(
+    () => (items.length > 0 ? [...items, items[0]] : items),
+    [items]
+  );
+
+  // Tracks where the strip is heading rather than reading scrollLeft off the
+  // DOM (which is unreliable mid-animation — smooth scrolls can take longer
+  // than the tick interval, so the previous approach read stale positions
+  // and drifted into a visible backward jump). targetRef is the single
+  // source of truth for "where we last told the browser to scroll to."
+  const targetRef = useRef(0);
+
+  const scrollToNext = (c, step) => {
+    const max = c.scrollWidth - c.clientWidth;
+    const next = targetRef.current + step;
+    if (next >= max - 4) {
+      // Glide onto the cloned first card, then swap to the real card 0 at
+      // the same visual position right as the animation finishes.
+      targetRef.current = max;
+      c.scrollTo({ left: max, behavior: "smooth" });
+      setTimeout(() => {
+        targetRef.current = 0;
+        c.scrollTo({ left: 0, behavior: "auto" });
+      }, 500);
+    } else {
+      targetRef.current = next;
+      c.scrollTo({ left: next, behavior: "smooth" });
+    }
+  };
+
+  // Auto-scroll horizontally; wraps forward through the trailing clone.
   useEffect(() => {
     if (!autoScroll || items.length === 0) return;
+    const c = containerRef.current;
+    if (c) targetRef.current = c.scrollLeft;
     intervalRef.current = setInterval(() => {
       const c = containerRef.current;
       if (!c) return;
-      const max = c.scrollWidth - c.clientWidth;
-      const next = c.scrollLeft + 320;
-      c.scrollTo({ left: next >= max - 4 ? 0 : next, behavior: "smooth" });
+      scrollToNext(c, 320);
     }, 3500);
     return () => clearInterval(intervalRef.current);
   }, [autoScroll, items.length]);
@@ -97,7 +133,19 @@ const FurnitureGallery = () => {
     setAutoScroll(false);
     const c = containerRef.current;
     if (!c) return;
-    c.scrollBy({ left: dir * 360, behavior: "smooth" });
+    const max = c.scrollWidth - c.clientWidth;
+    if (dir > 0) {
+      scrollToNext(c, 360);
+    } else if (targetRef.current <= 4) {
+      // Scrolling left from the very start wraps to the clone at the end,
+      // then silently snaps to the real last card underneath it.
+      targetRef.current = max;
+      c.scrollTo({ left: max, behavior: "auto" });
+    } else {
+      const next = Math.max(0, targetRef.current - 360);
+      targetRef.current = next;
+      c.scrollTo({ left: next, behavior: "smooth" });
+    }
     setTimeout(() => setAutoScroll(true), 8000);
   };
 
@@ -117,10 +165,10 @@ const FurnitureGallery = () => {
               className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
-              {items.map((item) => (
+              {loopItems.map((item, i) => (
                 <Link
                   to={`/product/${item.id}`}
-                  key={item.id}
+                  key={i === loopItems.length - 1 ? `${item.id}-clone` : item.id}
                   className="group shrink-0 snap-start w-[220px] md:w-[260px] aspect-square rounded-2xl overflow-hidden shadow-elevated bg-white hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.18)] hover:-translate-y-1 transition-all duration-300"
                 >
                   <ProductImage
