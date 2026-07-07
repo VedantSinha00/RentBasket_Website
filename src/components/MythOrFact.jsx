@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { HelpCircle, Check, X, ArrowRight, ShieldCheck, RefreshCw } from "lucide-react";
+import { HelpCircle, Check, X, ArrowRight, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -14,7 +14,7 @@ const QUIZ_QUESTIONS = [
     myth: "Renting furniture means waiting days for it to arrive.",
     answer: false,
     explanation:
-      "RentBasket delivers in about 36 hours on average, and often the same day. No long waits.",
+      "RentBasket delivers in about 48 hours on average, and often the same day. No long waits.",
   },
   {
     id: 2,
@@ -254,17 +254,14 @@ const MythQuiz = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
-            className="text-center bg-cream border border-border rounded-2xl p-6 sm:p-8 flex flex-col items-center gap-6 shadow-soft"
+            className="text-center bg-cream border border-border rounded-2xl p-6 sm:p-8 flex flex-col items-center gap-4 shadow-soft"
           >
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <HelpCircle className="w-6 h-6" />
-            </div>
             <div className="flex flex-col gap-2">
               <h3 className="font-display text-2xl font-semibold text-foreground tracking-tight">
-                Think you know RentBasket?
+                Is renting actually a waste of money?
               </h3>
               <p className="font-sans text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-                Take our 30-second myth-buster and see how much you really know about renting with RentBasket.
+                Take our 30-second cost quiz to see if buying upfront is cheaper than renting furniture &amp; appliances.
               </p>
             </div>
             <button
@@ -380,12 +377,9 @@ const MythQuiz = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
-            className="bg-background border border-border rounded-2xl p-6 sm:p-8 shadow-soft flex flex-col gap-8 text-center"
+            className="bg-background border border-border rounded-2xl p-6 sm:p-8 shadow-soft flex flex-col gap-5 text-center"
           >
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 rounded-full bg-success-muted flex items-center justify-center text-success">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
+            <div className="flex flex-col items-center gap-1.5">
               <h3 className="font-display font-semibold text-foreground text-xl sm:text-2xl mt-1">
                 Myths busted!
               </h3>
@@ -506,9 +500,6 @@ const MythOrFact = () => {
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold font-display mb-3 md:mb-4 tracking-tight">
           Belief or Reality?
         </h2>
-        <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-xl mx-auto">
-          Let's bust the most common myths about renting home furniture and appliances.
-        </p>
       </div>
       {/* Desktop (≥ lg): the original flip-card grid, untouched. */}
       <div className="hidden lg:block w-full max-w-5xl mx-auto">
