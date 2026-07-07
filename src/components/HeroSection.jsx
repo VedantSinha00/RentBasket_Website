@@ -12,12 +12,12 @@ const HeroSection = () => {
   return (
     <>
       {/* ── Mobile/Tablet View (Dual Layout) ─────────────────────── */}
-      <section className="lg:hidden relative px-5 pt-8 sm:px-8 flex flex-col items-center text-center gap-6 overflow-hidden">
-        <div className="bg-background -mx-5 sm:-mx-8 px-5 sm:px-8 w-[calc(100%+2.5rem)] sm:w-[calc(100%+4rem)] flex flex-col items-center text-center gap-6 pb-6">
+      <section className="lg:hidden relative px-5 pt-8 sm:px-8 flex flex-col items-center text-center gap-4 overflow-hidden">
+        <div className="bg-background -mx-5 sm:-mx-8 px-5 sm:px-8 w-[calc(100%+2.5rem)] sm:w-[calc(100%+4rem)] flex flex-col items-center text-center gap-4 pb-4">
 
           {/* Editorial Header */}
           <motion.div
-            className="flex flex-col gap-2 z-10"
+            className="flex flex-col gap-1.5 z-10"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
@@ -25,13 +25,13 @@ const HeroSection = () => {
             <span className="font-sans text-[10px] font-bold tracking-[0.15em] text-primary uppercase">
               Live Flexible
             </span>
-            <h1 className="font-display font-semibold text-foreground text-[24px] sm:text-[28px] leading-tight max-w-xs sm:max-w-sm mx-auto tracking-tight">
+            <h1 className="font-display font-semibold text-foreground text-[25px] sm:text-[28px] leading-[1.2] max-w-md sm:max-w-lg mx-auto tracking-tight">
               Furnish your home, <br />on your own terms
             </h1>
           </motion.div>
 
           {/* Mascot video container - full scene, shown uncropped */}
-          <div className="relative flex items-center justify-center w-full mx-auto -mt-4 z-0">
+          <div className="relative flex items-center justify-center w-full max-w-[320px] sm:max-w-[360px] mx-auto -mt-1.5 z-0">
             <video
               src={mascotVideo}
               className="w-full h-auto object-contain"
@@ -44,36 +44,36 @@ const HeroSection = () => {
           </div>
 
           {/* Stats below video */}
-          <div className="flex flex-col gap-6 w-full max-w-xs mx-auto z-10 relative">
+          <div className="flex flex-col gap-6 w-full max-w-md mx-auto z-10 relative">
             {/* Stats - divider row */}
             <motion.div
-              className="flex items-center justify-center gap-8 border-t border-border/60 pt-5"
+              className="flex items-center justify-center gap-6 border-t border-border/40 pt-4"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
             >
               <div className="text-left">
-                <div className="font-display font-bold text-foreground leading-none text-[30px] sm:text-[34px] tracking-tight">
+                <div className="font-display font-bold text-foreground leading-none text-[22px] sm:text-[24px] tracking-tight">
                   2000+
                 </div>
-                <div className="font-sans text-[11px] font-bold tracking-wider uppercase text-muted-foreground/80 mt-1.5">
+                <div className="font-sans text-[10px] font-bold tracking-widest uppercase text-muted-foreground/70 mt-1">
                   Happy Customers
                 </div>
               </div>
-              <div className="w-[1px] h-9 bg-border/60 shrink-0" />
+              <div className="w-[1px] h-7 bg-border/40 shrink-0" />
               <a
                 href="https://rentbasket.short.gy/reviews"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-left rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none"
+                className="flex items-center gap-1.5 text-left rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none"
                 aria-label="Read our 4.9 Google reviews"
               >
-                <span className="text-gold text-[24px] leading-none">★</span>
+                <span className="text-gold text-[22px] leading-none">★</span>
                 <div>
-                  <div className="font-display font-bold text-foreground leading-none text-[30px] sm:text-[34px] tracking-tight">
+                  <div className="font-display font-bold text-foreground leading-none text-[22px] sm:text-[24px] tracking-tight">
                     4.9
                   </div>
-                  <div className="font-sans text-[11px] font-bold tracking-wider uppercase text-muted-foreground/80 mt-1.5">
+                  <div className="font-sans text-[10px] font-bold tracking-widest uppercase text-muted-foreground/70 mt-1">
                     Google Rating
                   </div>
                 </div>
@@ -92,9 +92,9 @@ const HeroSection = () => {
           edge-to-edge (and de-align from the rest of the site) on wide / zoomed-
           out screens. The section stays full-bleed for the background. */}
       <section className="hidden lg:flex relative flex-row justify-center bg-background overflow-hidden lg:min-h-[440px] w-full">
-        <div className="flex flex-row w-full max-w-7xl mx-auto">
+        <div className="flex flex-row w-full max-w-6xl mx-auto px-8 xl:px-12">
           {/* Content column */}
-          <div className="flex flex-col justify-center px-16 xl:px-20 z-10 w-[46%] shrink-0 gap-8">
+          <div className="flex flex-col justify-center z-10 w-[48%] shrink-0 gap-8">
             {/* Editorial Header Tagline */}
             <motion.div
               className="flex flex-col gap-3"
@@ -168,10 +168,10 @@ const HeroSection = () => {
           </div>
 
           {/* Mascot video */}
-          <div className="relative flex items-center justify-center lg:flex-1">
+          <div className="relative flex items-center justify-end lg:flex-1">
             <video
               src={mascotVideo}
-              className="h-full w-full lg:scale-[1.075] xl:scale-[1.1] object-contain"
+              className="w-full max-w-[420px] xl:max-w-[460px] h-auto object-contain"
               autoPlay
               loop
               muted
