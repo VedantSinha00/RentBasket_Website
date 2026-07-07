@@ -18,7 +18,7 @@ const CheckoutProgress = ({ currentStep = "checkout" }) => {
 
         {/* Progress Line */}
         <div
-          className="absolute top-4 md:top-5 left-0 h-0.5 bg-primary -translate-y-1/2 transition-all duration-500"
+          className="absolute top-4 md:top-5 left-0 h-0.5 bg-foreground -translate-y-1/2 transition-all duration-500"
           style={{ width: `${(currentIndex / (STEPS.length - 1)) * 100}%` }}
         />
 
@@ -33,9 +33,9 @@ const CheckoutProgress = ({ currentStep = "checkout" }) => {
                 <div 
                   className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 z-10 ${
                     isCompleted 
-                      ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" 
+                      ? "bg-foreground border-foreground text-background shadow-md shadow-foreground/10" 
                       : isActive 
-                        ? "bg-background border-primary text-primary shadow-lg shadow-primary/10" 
+                        ? "bg-background border-foreground text-foreground shadow-md shadow-foreground/5" 
                         : "bg-background border-border text-muted-foreground"
                   }`}
                 >
@@ -47,7 +47,7 @@ const CheckoutProgress = ({ currentStep = "checkout" }) => {
                 </div>
                 
                 <span className={`mt-2 text-[10px] md:text-xs font-bold uppercase tracking-wider transition-colors hidden sm:block ${
-                  isActive ? "text-primary" : "text-muted-foreground"
+                  isActive ? "text-foreground" : "text-muted-foreground"
                 }`}>
                   {step.label}
                 </span>
@@ -61,7 +61,7 @@ const CheckoutProgress = ({ currentStep = "checkout" }) => {
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
             Step {currentIndex + 1} of {STEPS.length}:
           </span>
-          <span className="text-xs font-bold text-primary uppercase tracking-widest ml-1.5">
+          <span className="text-xs font-bold text-foreground uppercase tracking-widest ml-1.5">
             {STEPS[currentIndex].label}
           </span>
         </div>

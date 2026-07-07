@@ -20,7 +20,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
         {/* Header */}
         <div className="px-6 py-5 border-b border-border/50 bg-secondary/10">
           <h3 className="text-base font-bold flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-foreground/80" />
             Order Summary
           </h3>
           <p className="text-[11px] text-muted-foreground mt-1 font-medium uppercase tracking-wider">
@@ -44,7 +44,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
                       {item.durationLabel} • {item.quantity} {item.quantity === 1 ? "Unit" : "Units"}
                     </p>
                     <div className="flex items-center justify-between mt-1">
-                      <span className="text-[11px] font-bold text-primary flex items-center gap-1">
+                      <span className="text-[11px] font-bold text-foreground flex items-center gap-1">
                         {line.listRentTotal > line.rentTotal && (
                           <span className="text-muted-foreground text-[9px]">₹{line.listRentTotal.toLocaleString("en-IN")}</span>
                         )}
@@ -124,10 +124,10 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
           </div>
 
           {/* Grand Total */}
-          <div className="border-t-2 border-primary/10 pt-5 bg-primary/[0.01] -mx-6 px-6 pb-2">
+          <div className="border-t border-border pt-5 bg-secondary/10 -mx-6 px-6 pb-2">
             <div className="flex items-baseline justify-between mb-1">
               <span className="text-base font-bold text-foreground">Total (First Month)</span>
-              <span className="text-2xl font-black text-primary tracking-tight">
+              <span className="text-2xl font-black text-foreground tracking-tight">
                 ₹{b.netFirstMonth.toLocaleString("en-IN")}
               </span>
             </div>
@@ -158,28 +158,28 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
                     type="button"
                     onClick={() => onPaymentChoiceChange?.(opt.id)}
                     aria-pressed={isSelected}
-                    className={`w-full flex items-center justify-between gap-3 p-3.5 rounded-xl border-2 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-[0.99] ${
+                    className={`w-full flex items-center justify-between gap-3 p-3.5 rounded-xl border-2 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20 active:scale-[0.99] ${
                       isSelected
-                        ? "border-primary bg-primary/[0.04] ring-1 ring-primary/20"
-                        : "border-border bg-background hover:border-primary/30 hover:bg-secondary/20"
+                        ? "border-foreground bg-foreground/5 ring-1 ring-foreground/20"
+                        : "border-border bg-background hover:border-foreground/35 hover:bg-secondary/20"
                     }`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <span
                         className={`w-5 h-5 rounded-full flex items-center justify-center border-2 flex-shrink-0 transition-colors ${
-                          isSelected ? "bg-primary border-primary text-white" : "border-border text-transparent"
+                          isSelected ? "bg-foreground border-foreground text-background" : "border-border text-transparent"
                         }`}
                       >
                         <Check className="w-3 h-3 stroke-[3px]" />
                       </span>
                       <div className="min-w-0">
-                        <p className={`text-sm font-bold ${isSelected ? "text-primary" : "text-foreground"}`}>
+                        <p className="text-sm font-bold text-foreground">
                           {opt.title}
                         </p>
                         <p className="text-[10px] text-muted-foreground font-medium leading-tight">{opt.sub}</p>
                       </div>
                     </div>
-                    <span className={`text-base font-black tracking-tight flex-shrink-0 ${isSelected ? "text-primary" : "text-foreground"}`}>
+                    <span className="text-base font-black tracking-tight flex-shrink-0 text-foreground">
                       ₹{opt.amount.toLocaleString("en-IN")}
                     </span>
                   </button>
@@ -239,7 +239,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
           { icon: ShieldCheck, label: "Trust Guaranteed" },
         ].map((badg, idx) => (
           <div key={idx} className="flex items-center gap-2 p-3 bg-card border border-border rounded-2xl shadow-sm">
-            <div className="w-6 h-6 rounded-full bg-primary/5 flex items-center justify-center text-primary flex-shrink-0">
+            <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-foreground flex-shrink-0">
               <badg.icon className="w-3.5 h-3.5" />
             </div>
             <span className="text-[10px] font-bold text-foreground leading-tight uppercase tracking-wider">{badg.label}</span>
