@@ -52,7 +52,7 @@ const WhatMakesDifferent = () => {
         {/* Editorial Title */}
         <div className="text-center max-w-xl mx-auto mb-6 md:mb-8 px-4">
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-foreground tracking-tight">
-            What makes RentBasket different
+            What makes RentBasket <span className="italic font-normal">different</span>
           </h2>
           <p className="font-sans text-sm text-muted-foreground mt-1.5">
             Zero hassle, transparent pricing, <span className="whitespace-nowrap">built for relocation.</span>
