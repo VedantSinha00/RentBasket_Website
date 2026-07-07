@@ -53,7 +53,7 @@ const HeroSection = () => {
               transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
             >
               <div className="text-left">
-                <div className="font-display font-semibold text-foreground leading-none text-[24px] sm:text-[28px] tracking-tight">
+                <div className="font-display font-bold text-foreground leading-none text-[30px] sm:text-[34px] tracking-tight">
                   2000+
                 </div>
                 <div className="font-sans text-[11px] font-bold tracking-wider uppercase text-muted-foreground/80 mt-1.5">
@@ -70,7 +70,7 @@ const HeroSection = () => {
               >
                 <span className="text-gold text-[24px] leading-none">★</span>
                 <div>
-                  <div className="font-display font-semibold text-foreground leading-none text-[24px] sm:text-[28px] tracking-tight">
+                  <div className="font-display font-bold text-foreground leading-none text-[30px] sm:text-[34px] tracking-tight">
                     4.9
                   </div>
                   <div className="font-sans text-[11px] font-bold tracking-wider uppercase text-muted-foreground/80 mt-1.5">
@@ -139,7 +139,7 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.25, ease: "easeOut" }}
             >
               <div>
-                <span className="font-display font-semibold text-foreground leading-none block lg:text-[32px] xl:text-[38px] tracking-tight">
+                <span className="font-display font-bold text-foreground leading-none block lg:text-[40px] xl:text-[48px] tracking-tight">
                   2000+
                 </span>
                 <span className="font-sans text-[11px] font-bold tracking-wider uppercase text-muted-foreground/80 block mt-1.5">
@@ -156,7 +156,7 @@ const HeroSection = () => {
               >
                 <Star className="w-7 h-7 xl:w-8 xl:h-8 fill-gold text-gold shrink-0" />
                 <div>
-                  <span className="font-display font-semibold text-foreground leading-none block lg:text-[32px] xl:text-[38px] tracking-tight">
+                  <span className="font-display font-bold text-foreground leading-none block lg:text-[40px] xl:text-[48px] tracking-tight">
                     4.9
                   </span>
                   <span className="font-sans text-[11px] font-bold tracking-wider uppercase text-muted-foreground/80 block mt-1.5">
