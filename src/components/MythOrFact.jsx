@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { HelpCircle, Check, X, ArrowRight, RefreshCw } from "lucide-react";
+import { useState } from "react";
+import { Check, X, ArrowRight, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -71,144 +71,6 @@ const COMPARISON_TOTALS = {
 };
 // ──────────────────────────────────────────────────────────
 
-const Card = ({ belief, reality }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
-  // Mobile/tablet: card tilts to 30° (not a flip) while centred in the viewport
-  const [isCentered, setIsCentered] = useState(false);
-  const cardRef = useRef(null);
-
-  // Mirror the lg breakpoint (1024px) used throughout the catalog. Use matchMedia
-  // (not window.innerWidth) so this stays in lock-step with the CSS `lg:` classes
-  // under browser zoom / display scaling — reading innerWidth drifts out of sync
-  // with the media query at non-100% zoom and flips the layout at the wrong point.
-  const [isMobileLayout, setIsMobileLayout] = useState(
-    typeof window !== "undefined"
-      ? window.matchMedia("(max-width: 1023px)").matches
-      : false
-  );
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 1023px)");
-    const onChange = (e) => setIsMobileLayout(e.matches);
-    setIsMobileLayout(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
-
-  // Mobile/tablet: tilt (30°) when the card centre crosses the middle 40% of the viewport.
-  // This is only a passive peek — a full flip still requires a tap.
-  useEffect(() => {
-    if (!isMobileLayout) {
-      setIsCentered(false);
-      return;
-    }
-    const el = cardRef.current;
-    if (!el) return;
-
-    const check = () => {
-      const { top, height } = el.getBoundingClientRect();
-      const cardCenter = top + height / 2;
-      const vh = window.innerHeight;
-      setIsCentered(cardCenter > vh * 0.3 && cardCenter < vh * 0.7);
-    };
-
-    window.addEventListener("scroll", check, { passive: true });
-    check(); // run once on mount in case card is already centred
-    return () => window.removeEventListener("scroll", check);
-  }, [isMobileLayout]);
-
-  const handleInteraction = () => {
-    setIsFlipped((prev) => !prev);
-  };
-
-  // The tilt should never show while the card is flipped to the reality side.
-  const showTilt = isCentered && !isFlipped;
-
-  return (
-    <div
-      ref={cardRef}
-      className="group h-[260px] sm:h-[300px] md:h-[320px] w-full [perspective:1000px] cursor-pointer"
-      onClick={handleInteraction}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          handleInteraction();
-        }
-      }}
-    >
-      <div
-        className={`relative h-full w-full rounded-2xl transition-all duration-700 [transform-style:preserve-3d] shadow-soft group-hover:shadow-card ${
-          isFlipped
-            ? "[transform:rotateY(180deg)]"
-            : showTilt
-            ? "[transform:rotateY(30deg)] shadow-card"
-            : "lg:group-hover:[transform:rotateY(30deg)]"
-        }`}
-      >
-        {/* FRONT SIDE (BELIEF - RED GRADIENT) */}
-        <div
-          className="absolute inset-0 h-full w-full rounded-2xl bg-gradient-to-br from-[#DF252F] via-[#E61E2A] to-[#B51019] p-6 sm:p-8 flex flex-col items-center justify-center text-center overflow-hidden border border-primary/20"
-          style={{
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-            transform: "rotateY(0deg)",
-          }}
-        >
-          {/* Decorative faint background icon */}
-          <HelpCircle className="absolute -right-4 -bottom-4 w-24 h-24 text-white/[0.04] stroke-[1] pointer-events-none" />
-
-          {/* Belief Label - Absolutely positioned to sit exactly in the top gap */}
-          <div className="absolute top-6 sm:top-8 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 text-white rounded-full font-sans font-extrabold tracking-widest text-[11px] sm:text-xs uppercase border border-white/20 shadow-sm z-20">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            Belief
-          </div>
-
-          {/* Belief Text */}
-          <h3 className="text-white text-base sm:text-lg md:text-xl font-sans font-extrabold leading-snug px-2 sm:px-4 z-10 text-balance">
-            "{belief}"
-          </h3>
-
-          {/* Flip Hint */}
-          <p className="absolute bottom-4 text-[10px] font-sans font-bold text-white/70 tracking-wider uppercase">
-            {isMobileLayout ? "Tap to reveal truth ↗" : "Hover to reveal truth ↗"}
-          </p>
-        </div>
-
-        {/* BACK SIDE (REALITY - WARM CREAM) */}
-        <div
-          className="absolute inset-0 h-full w-full rounded-2xl bg-[#FCFAF7] border border-border/80 p-6 sm:p-8 flex flex-col items-center justify-center text-center overflow-hidden transition-colors group-hover:border-primary/20"
-          style={{
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-            transform: "rotateY(180deg)",
-          }}
-        >
-          {/* Decorative faint background check */}
-          <div className="absolute -right-6 -bottom-6 w-28 h-28 bg-primary/[0.02] rounded-full flex items-center justify-center pointer-events-none">
-            <Check className="w-16 h-16 text-primary stroke-[3]" />
-          </div>
-
-          {/* Reality Label - Symmetrical absolute positioning */}
-          <div className="absolute top-6 sm:top-8 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-3 py-1 bg-red-100/80 text-primary rounded-full font-sans font-extrabold tracking-widest text-[11px] sm:text-xs uppercase border border-primary/15 shadow-sm z-20">
-            ★ Reality
-          </div>
-
-          {/* Reality Text */}
-          <p className="text-neutral-900 text-sm sm:text-base md:text-[16px] leading-relaxed font-sans font-semibold z-10 px-2 text-balance">
-            {reality}
-          </p>
-
-          {/* Flip Hint */}
-          <p className="absolute bottom-4 text-[10px] font-sans font-bold text-muted-foreground/60 tracking-wider uppercase flex items-center gap-1 group-hover:text-primary transition-colors">
-            Click to flip back ↺
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 // ── MOBILE-ONLY QUIZ ──────────────────────────────────────
 // Shown < lg (see MythOrFact wrapper: `lg:hidden`). Desktop keeps the flip cards.
 // State machine: intro → quiz → results. See docs/quiz-hidden-costs-spec.md.
@@ -257,7 +119,7 @@ const MythQuiz = () => {
             className="text-center bg-cream border border-border rounded-2xl p-6 sm:p-8 flex flex-col items-center gap-4 shadow-soft"
           >
             <div className="flex flex-col gap-2">
-              <h3 className="font-display text-2xl font-semibold text-foreground tracking-tight">
+              <h3 className="font-sans text-xl sm:text-2xl font-bold text-foreground tracking-tight">
                 Is renting actually a waste of money?
               </h3>
               <p className="font-sans text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
@@ -494,24 +356,72 @@ const MythOrFact = () => {
   ];
 
   return (
-    <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8">
-      <div className="text-center mb-8 md:mb-12">
-        {/* Responsive Section Header */}
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold font-display mb-3 md:mb-4 tracking-tight">
-          Belief or Reality?
-        </h2>
-      </div>
-      {/* Desktop (≥ lg): the original flip-card grid, untouched. */}
-      <div className="hidden lg:block w-full max-w-5xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+    <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-background border-b border-border/20">
+
+      {/* ── Desktop (≥ lg): 2-column editorial split ── */}
+      <div className="hidden lg:grid grid-cols-[1fr_2fr] gap-16 max-w-7xl mx-auto">
+        {/* Left column: sticky title + CTA */}
+        <div className="flex flex-col items-start text-left gap-6 lg:sticky lg:top-28 h-fit max-w-sm">
+          <div className="flex flex-col gap-3">
+            <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-primary uppercase">
+              Belief or Reality?
+            </span>
+            <h2 className="font-display text-4xl xl:text-5xl font-semibold text-foreground tracking-tight leading-[1.15]">
+              Let's address the doubts.
+            </h2>
+            <p className="font-sans text-sm text-muted-foreground leading-relaxed mt-2">
+              Renting home furniture and appliances comes with common myths. Here is the math and the reality behind how we make relocation effortless.
+            </p>
+          </div>
+          <Link to="/catalog">
+            <button className="btn-primary px-8 h-12 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+              Browse Catalogue
+            </button>
+          </Link>
+        </div>
+
+        {/* Right column: comparative rows */}
+        <div className="flex flex-col gap-6">
           {data.map((item, index) => (
-            <Card key={index} belief={item.belief} reality={item.reality} />
+            <div
+              key={index}
+              className="flex flex-row gap-8 bg-cream/35 border border-border/40 rounded-2xl p-6 shadow-soft hover:shadow-card hover:-translate-y-0.5 transition-all duration-300"
+            >
+              {/* Belief */}
+              <div className="flex-1 flex flex-col gap-2">
+                <span className="font-sans text-[9px] font-bold text-destructive/80 uppercase tracking-widest leading-none">
+                  Belief
+                </span>
+                <p className="font-sans text-sm xl:text-base text-muted-foreground/70 font-medium line-through decoration-destructive/20 decoration-1">
+                  "{item.belief}"
+                </p>
+              </div>
+
+              {/* Divider */}
+              <div className="w-[1px] bg-border/40 shrink-0 self-stretch" />
+
+              {/* Reality */}
+              <div className="flex-1 flex flex-col gap-2">
+                <span className="font-sans text-[9px] font-bold text-success uppercase tracking-widest leading-none flex items-center gap-1.5">
+                  <Check className="w-3.5 h-3.5 stroke-[3.5] text-success" />
+                  Reality
+                </span>
+                <p className="font-sans text-sm xl:text-[15px] text-foreground font-semibold leading-relaxed">
+                  {item.reality}
+                </p>
+              </div>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Mobile & tablet (< lg): the interactive quiz. */}
-      <div className="lg:hidden">
+      {/* ── Mobile & tablet (< lg): interactive quiz ── */}
+      <div className="lg:hidden flex flex-col gap-8">
+        <div className="text-center">
+          <h2 className="text-3xl sm:text-4xl font-semibold font-display tracking-tight text-foreground">
+            Belief or Reality?
+          </h2>
+        </div>
         <MythQuiz />
       </div>
     </section>
