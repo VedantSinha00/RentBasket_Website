@@ -27,38 +27,53 @@ const HeroSection = () => {
             />
           </div>
 
-          {/* Stats - below the video in white space */}
+          {/* Floating Card - stats + CTA below the video */}
           <motion.div
-            className="flex items-center justify-center gap-14 w-full max-w-xs mx-auto pt-1"
-            initial={{ opacity: 0, y: 10 }}
+            className="bg-cream/50 border border-border/40 p-6 rounded-2xl shadow-soft flex flex-col gap-6 w-full max-w-xs mx-auto z-10 relative"
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
+            transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
           >
-            <div className="text-center">
-              <div className="font-sans font-extrabold italic text-primary leading-none text-[28px] sm:text-[32px] tracking-[-0.04em]">
-                2000+
+            {/* Stats row inside card */}
+            <div className="flex items-center justify-between gap-4 border-b border-border/40 pb-4 text-left">
+              <div>
+                <div className="font-sans font-extrabold text-foreground text-[18px] leading-none tracking-tight">
+                  2000+
+                </div>
+                <div className="font-sans text-[10px] text-muted-foreground mt-1 font-semibold uppercase tracking-wider">
+                  Customers
+                </div>
               </div>
-              <div className="font-sans font-semibold text-muted-foreground text-[11px] sm:text-xs mt-1.5 tracking-tight">
-                Happy Customers
-              </div>
+              <div className="w-[1px] h-7 bg-border/40 shrink-0" />
+              <a
+                href="https://rentbasket.short.gy/reviews"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none"
+                aria-label="Read our 4.9 Google reviews"
+              >
+                <span className="text-gold text-[16px] leading-none">★</span>
+                <div>
+                  <div className="font-sans font-extrabold text-foreground text-[18px] leading-none tracking-tight">
+                    4.9
+                  </div>
+                  <div className="font-sans text-[10px] text-muted-foreground mt-1 font-semibold uppercase tracking-wider">
+                    Google Rating
+                  </div>
+                </div>
+              </a>
             </div>
-            <a
-              href="https://rentbasket.short.gy/reviews"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-center block rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none"
-              aria-label="Read our 4.9 Google reviews"
-            >
-              <div className="flex items-center justify-center gap-1 leading-none">
-                <span className="text-gold text-[22px] leading-none">★</span>
-                <span className="font-sans font-extrabold italic text-primary text-[28px] sm:text-[32px] tracking-[-0.04em]">
-                  4.9
-                </span>
-              </div>
-              <div className="font-sans font-semibold text-muted-foreground text-[11px] sm:text-xs mt-1.5 tracking-tight">
-                Google Rating!
-              </div>
-            </a>
+
+            {/* Button inside card */}
+            <div>
+              <Link
+                to={catalogLink}
+                data-testid="hero-cta"
+                className="flex items-center justify-center h-[46px] w-full rounded-full border-[2px] border-primary text-primary font-sans font-bold text-[14px] bg-white hover:bg-primary/5 transition-colors active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              >
+                Browse Catalogue
+              </Link>
+            </div>
           </motion.div>
 
           {/* TODO: Once the backend supports category-based collection routing, restore the category tabs.
@@ -74,56 +89,56 @@ const HeroSection = () => {
       <section className="hidden lg:flex relative flex-row justify-center bg-background overflow-hidden lg:min-h-[440px] w-full">
         <div className="flex flex-row w-full max-w-7xl mx-auto">
           {/* Content column */}
-          <div className="flex flex-col justify-center px-16 xl:px-20 z-10 w-[44%] shrink-0 gap-6">
-            {/* Stats */}
+          <div className="flex flex-col justify-center px-16 xl:px-20 z-10 w-[44%] shrink-0">
+            {/* Floating Content Card */}
             <motion.div
-              className="flex items-center gap-12"
-              initial={{ opacity: 0, y: 10 }}
+              className="bg-cream/50 border border-border/40 p-8 xl:p-10 rounded-2xl shadow-soft flex flex-col gap-8 max-w-sm"
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              <div>
-                <div className="font-sans font-extrabold italic text-primary leading-none lg:text-[44px] xl:text-[52px] tracking-[-0.04em]">
-                  2000+
-                </div>
-                <div className="font-sans font-bold text-muted-foreground text-sm xl:text-base mt-1 tracking-tight">
-                  Happy Customers
-                </div>
-              </div>
-              <a
-                href="https://rentbasket.short.gy/reviews"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-                aria-label="Read our 4.9 Google reviews (opens in new tab)"
-              >
-                <div className="flex items-center gap-1.5 leading-none">
-                  <Star className="w-8 xl:w-10 xl:h-10 fill-gold text-gold shrink-0" />
-                  <span className="font-sans font-extrabold italic text-primary lg:text-[44px] xl:text-[52px] tracking-[-0.04em]">
-                    4.9
+              {/* Clean, Divided Stats Row */}
+              <div className="flex items-center justify-between gap-6 border-b border-border/40 pb-6">
+                <div>
+                  <span className="font-sans font-extrabold text-foreground text-2xl xl:text-3xl tracking-tight">
+                    2000+
+                  </span>
+                  <span className="font-sans text-xs text-muted-foreground block mt-1 font-semibold tracking-tight uppercase">
+                    Happy Customers
                   </span>
                 </div>
-                <div className="font-sans font-bold text-muted-foreground text-sm xl:text-base mt-1 tracking-tight">
-                  Google Rating
-                </div>
-              </a>
-            </motion.div>
+                <div className="w-[1px] h-10 bg-border/40 shrink-0" />
+                <a
+                  href="https://rentbasket.short.gy/reviews"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                  aria-label="Read our 4.9 Google reviews (opens in new tab)"
+                >
+                  <Star className="w-6 h-6 fill-gold text-gold shrink-0" />
+                  <div>
+                    <span className="font-sans font-extrabold text-foreground text-2xl xl:text-3xl tracking-tight">
+                      4.9
+                    </span>
+                    <span className="font-sans text-xs text-muted-foreground block mt-1 font-semibold tracking-tight uppercase">
+                      Google Rating
+                    </span>
+                  </div>
+                </a>
+              </div>
 
-            {/* TODO: Restore desktop category tabs once backend collections are built. */}
+              {/* TODO: Restore desktop category tabs once backend collections are built. */}
 
-            {/* CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-            >
-              <Link
-                to={catalogLink}
-                data-testid="hero-cta"
-                className="flex items-center justify-center h-[52px] sm:px-8 rounded-full border-[2.5px] border-primary text-primary font-sans font-bold lg:text-[16px] xl:text-[18px] tracking-tight bg-white hover:bg-primary/5 transition-colors shadow-soft active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              >
-                Browse Catalogue
-              </Link>
+              {/* Primary CTA Button */}
+              <div>
+                <Link
+                  to={catalogLink}
+                  data-testid="hero-cta"
+                  className="flex items-center justify-center h-[50px] w-full rounded-full border-[2.5px] border-primary text-primary font-sans font-bold text-[15px] xl:text-[16px] tracking-tight bg-white hover:bg-primary/5 transition-colors shadow-sm active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                >
+                  Browse Catalogue
+                </Link>
+              </div>
             </motion.div>
           </div>
 
