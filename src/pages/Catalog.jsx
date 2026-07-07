@@ -4,7 +4,6 @@ import { AlertCircle, RotateCw, ArrowUp } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CatalogHero from "@/components/catalog/CatalogHero";
 import CategoryTabs from "@/components/catalog/CategoryTabs";
 import FilterBar, { FilterSidebar } from "@/components/catalog/FilterBar";
 import ProductGrid from "@/components/catalog/ProductGrid";
@@ -243,7 +242,6 @@ const Catalog = () => {
     <div className="min-h-screen">
       <Header />
       <main>
-        <CatalogHero />
         <CategoryTabs
           activeCategory={activeCategory}
           onCategoryChange={setActiveCategory}
