@@ -171,7 +171,7 @@ const HeroSection = () => {
           <div className="relative flex items-center justify-center lg:flex-1">
             <video
               src={mascotVideo}
-              className="h-full w-full lg:w-[90%] lg:h-[90%] object-contain"
+              className="h-full w-full lg:scale-[1.075] xl:scale-[1.1] object-contain"
               autoPlay
               loop
               muted

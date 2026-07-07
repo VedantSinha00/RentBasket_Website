@@ -3,6 +3,18 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useProducts } from "@/hooks/useProducts";
 import ProductImage from "@/components/ui/ProductImage";
+import { discountedRent } from "@/lib/pricing";
+
+// Cheapest post-discount monthly rent across a product's available durations.
+// Mirrors ProductCard's pricing (pricing_by_duration + percent_discount).
+// Returns null if the product has no priced duration.
+const getStartingPrice = (product) => {
+  const pricing = product.pricing_by_duration ?? {};
+  const prices = Object.values(pricing)
+    .filter((v) => (v ?? 0) > 0)
+    .map((v) => discountedRent(v, product.percent_discount));
+  return prices.length ? Math.min(...prices) : null;
+};
 
 // Curated hero carousel — a fixed set of 8 real catalog products, pinned by their
 // live amenity_type_id (the API is the source of truth, so the images, names and
@@ -28,7 +40,7 @@ const GallerySkeleton = () => (
     {Array.from({ length: 5 }).map((_, i) => (
       <div
         key={i}
-        className="shrink-0 w-[220px] md:w-[260px] aspect-square rounded-2xl bg-secondary animate-pulse shadow-elevated"
+        className="shrink-0 w-[210px] md:w-[250px] h-[300px] md:h-[350px] rounded-2xl bg-secondary animate-pulse shadow-soft"
       />
     ))}
   </div>
@@ -203,21 +215,39 @@ const FurnitureGallery = () => {
                 onMouseUp={onDragEnd}
                 onMouseLeave={onDragEnd}
               >
-                {loopItems.map((item, i) => (
-                  <Link
-                    to={`/product/${item.id}`}
-                    key={i < items.length ? item.id : `${item.id}-dup`}
-                    draggable={false}
-                    className="group shrink-0 w-[220px] md:w-[260px] aspect-square rounded-2xl overflow-hidden shadow-elevated bg-white hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.18)] hover:-translate-y-1 transition-all duration-300"
-                  >
-                    <ProductImage
-                      src={item.images?.[0] || item.image}
-                      alt={item.name}
+                {loopItems.map((item, i) => {
+                  const startingPrice = getStartingPrice(item);
+                  return (
+                    <Link
+                      to={`/product/${item.id}`}
+                      key={i < items.length ? item.id : `${item.id}-dup`}
                       draggable={false}
-                      className="h-full w-full object-contain block group-hover:scale-[1.02] transition-transform duration-500 pointer-events-none"
-                    />
-                  </Link>
-                ))}
+                      className="group shrink-0 w-[210px] md:w-[250px] flex flex-col bg-white border border-border/40 rounded-2xl overflow-hidden shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300"
+                    >
+                      {/* Product image */}
+                      <div className="h-[220px] md:h-[260px] w-full bg-muted/5 flex items-center justify-center p-3 border-b border-border/20 overflow-hidden shrink-0">
+                        <ProductImage
+                          src={item.images?.[0] || item.image}
+                          alt={item.name}
+                          draggable={false}
+                          className="h-full w-full object-contain block group-hover:scale-[1.03] transition-transform duration-500 pointer-events-none"
+                        />
+                      </div>
+
+                      {/* Product info */}
+                      <div className="p-4 flex flex-col gap-1 text-left">
+                        <h3 className="font-display font-semibold text-foreground text-sm truncate leading-snug">
+                          {item.name}
+                        </h3>
+                        {startingPrice != null && (
+                          <span className="font-sans font-bold text-primary text-xs mt-1 leading-none">
+                            From ₹{startingPrice.toLocaleString("en-IN")}/mo
+                          </span>
+                        )}
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}
