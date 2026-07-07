@@ -23,7 +23,7 @@ const OrderSummary = ({ onCheckout }) => {
       {/* Header */}
       <div className="px-5 pt-5 pb-4 md:px-6 md:pt-6">
         <h3 className="text-lg font-bold flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-primary" />
+          <span className="w-2 h-2 rounded-full bg-foreground/80" />
           Order Summary
         </h3>
         <p className="text-xs text-muted-foreground mt-1">
@@ -131,10 +131,10 @@ const OrderSummary = ({ onCheckout }) => {
         </div>
 
         {/* Grand Total */}
-        <div className="border-t-2 border-primary/20 pt-4 bg-primary/[0.01] -mx-5 px-5 pb-2">
+        <div className="border-t border-border pt-4 bg-secondary/10 -mx-5 px-5 pb-2">
           <div className="flex items-baseline justify-between mb-1">
             <span className="text-base font-bold">Total (First Month)</span>
-            <span className="text-2xl font-black text-primary tracking-tight">
+            <span className="text-2xl font-black text-foreground tracking-tight">
               ₹{b.netFirstMonth.toLocaleString("en-IN")}
             </span>
           </div>
@@ -165,7 +165,7 @@ const OrderSummary = ({ onCheckout }) => {
           </Link>
           <a
             href="tel:+919958858473"
-            className="block text-center text-xs text-muted-foreground hover:text-primary transition-colors mt-1"
+            className="block text-center text-xs text-muted-foreground hover:text-foreground transition-colors mt-1"
           >
             Need help choosing more items?
           </a>

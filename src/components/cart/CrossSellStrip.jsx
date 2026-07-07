@@ -197,13 +197,13 @@ const CrossSellStrip = () => {
               </Link>
 
               <Link to={`/product/${product.id}`} className="flex-1">
-                <h4 className="text-[12px] font-bold text-foreground line-clamp-2 mb-1.5 hover:text-primary transition-colors leading-tight">
+                <h4 className="text-[12px] font-bold text-foreground line-clamp-2 mb-1.5 hover:text-foreground transition-colors leading-tight">
                   {product.name}
                 </h4>
               </Link>
 
               <div className="flex items-center gap-1.5 mb-2.5 flex-wrap">
-                <span className="text-[12px] font-extrabold text-primary">
+                <span className="text-[12px] font-extrabold text-foreground">
                   ₹{displayPrice.toLocaleString("en-IN")}/mo
                 </span>
                 {displayPrice < maxCartPrice && (
@@ -215,7 +215,7 @@ const CrossSellStrip = () => {
 
               <button
                 onClick={() => handleQuickAdd(product)}
-                className="w-full flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl border-2 border-primary/20 text-primary text-[11px] font-bold hover:bg-primary hover:text-white hover:border-primary transition-all active:scale-95"
+                className="w-full flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl border border-border text-foreground bg-secondary text-[11px] font-bold hover:bg-foreground hover:text-background hover:border-foreground transition-all active:scale-95"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Add

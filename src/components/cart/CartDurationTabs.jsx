@@ -26,8 +26,8 @@ const CartDurationTabs = () => {
     <div className="mb-5 rounded-2xl border border-border bg-card p-4 md:p-5 shadow-soft">
       {/* Intro line — the single source of the "split into plans" message */}
       <div className="flex items-start gap-2.5 mb-3.5">
-        <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-          <Clock className="w-4 h-4 text-primary" />
+        <div className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
+          <Clock className="w-4 h-4 text-foreground" />
         </div>
         <div className="min-w-0">
           <p className="text-sm font-bold text-foreground leading-tight">
@@ -56,13 +56,13 @@ const CartDurationTabs = () => {
               onClick={() => setSelectedDuration(key)}
               className={`group flex flex-shrink-0 snap-start items-center gap-2 rounded-xl border px-3.5 py-2.5 text-left transition-all ${
                 isSelected
-                  ? "border-primary bg-primary/5 ring-1 ring-primary/20 shadow-sm"
-                  : "border-border bg-background hover:border-primary/40 hover:bg-secondary/30"
+                  ? "border-foreground bg-foreground/5 shadow-sm"
+                  : "border-border bg-background hover:border-foreground/35 hover:bg-secondary/30"
               }`}
             >
               <span
                 className={`text-sm font-bold ${
-                  isSelected ? "text-primary" : "text-foreground"
+                  isSelected ? "text-foreground" : "text-foreground"
                 }`}
               >
                 {labelFor(key)}
@@ -70,7 +70,7 @@ const CartDurationTabs = () => {
               <span
                 className={`inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-[11px] font-bold ${
                   isSelected
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-foreground text-background"
                     : "bg-secondary text-muted-foreground"
                 }`}
               >

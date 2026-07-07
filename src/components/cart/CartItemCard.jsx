@@ -97,7 +97,7 @@ const CartItemCard = ({ item }) => {
             <div className="flex-1 min-w-0">
               <Link
                 to={`/product/${item.productId}`}
-                className="text-sm font-semibold text-foreground leading-snug line-clamp-2 hover:text-primary transition-colors block"
+                className="text-sm font-semibold text-foreground leading-snug line-clamp-2 hover:text-foreground transition-colors block"
               >
                 {item.name}
               </Link>
@@ -121,7 +121,7 @@ const CartItemCard = ({ item }) => {
               <button
                 onClick={() => setShowDurationPicker(!showDurationPicker)}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-xl border text-sm font-medium bg-background transition-colors ${
-                  showDurationPicker ? "border-primary ring-2 ring-primary/10" : "border-border"
+                  showDurationPicker ? "border-foreground ring-2 ring-foreground/10" : "border-border"
                 }`}
               >
                 <span>{item.durationLabel || "1 Month"}</span>
@@ -173,7 +173,7 @@ const CartItemCard = ({ item }) => {
             </div>
             <div className="flex justify-between text-sm pt-1.5 border-t border-border/50">
               <span className="font-bold">Total</span>
-              <span className="font-bold text-primary">₹{lineTotal.toLocaleString("en-IN")}</span>
+              <span className="font-bold text-foreground">₹{lineTotal.toLocaleString("en-IN")}</span>
             </div>
           </div>
         </div>
@@ -183,7 +183,7 @@ const CartItemCard = ({ item }) => {
           {/* Thumbnail */}
           <Link
             to={`/product/${item.productId}`}
-            className="w-28 h-28 bg-white rounded-xl overflow-hidden flex-shrink-0 border border-border/50 block hover:border-primary/30 transition-colors"
+            className="w-28 h-28 bg-white rounded-xl overflow-hidden flex-shrink-0 border border-border/50 block hover:border-foreground/35 transition-colors"
           >
             <img
               src={resolvedImage}
@@ -201,7 +201,7 @@ const CartItemCard = ({ item }) => {
               <div>
                 <Link
                   to={`/product/${item.productId}`}
-                  className="text-base font-semibold text-foreground leading-snug hover:text-primary transition-colors block"
+                  className="text-base font-semibold text-foreground leading-snug hover:text-foreground transition-colors block"
                 >
                   {item.name}
                 </Link>
@@ -224,7 +224,7 @@ const CartItemCard = ({ item }) => {
                 <button
                   onClick={() => setShowDurationPicker(!showDurationPicker)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-medium bg-background transition-all ${
-                    showDurationPicker ? "border-primary ring-2 ring-primary/10" : "border-border hover:border-primary/40"
+                    showDurationPicker ? "border-foreground ring-2 ring-foreground/10" : "border-border hover:border-foreground/35"
                   }`}
                 >
                   <span>{item.durationLabel || "1 Month"}</span>
@@ -285,7 +285,7 @@ const CartItemCard = ({ item }) => {
             </div>
             <div className="pt-2 border-t border-border/50 mt-2">
               <span className="text-[10px] text-muted-foreground block mb-0.5">Due Today</span>
-              <span className="text-xl font-bold text-primary">₹{lineTotal.toLocaleString("en-IN")}</span>
+              <span className="text-xl font-bold text-foreground">₹{lineTotal.toLocaleString("en-IN")}</span>
             </div>
           </div>
         </div>
@@ -319,8 +319,8 @@ const CartItemCard = ({ item }) => {
                         onClick={() => handleDurationChange(d.key)}
                         className={`relative flex flex-col items-center py-2.5 px-1.5 rounded-xl border text-center transition-all ${
                           isSelected
-                            ? "border-primary bg-primary/5 text-primary ring-1 ring-primary/20"
-                            : "border-border text-muted-foreground hover:border-primary/40 hover:bg-secondary/30"
+                            ? "border-foreground bg-foreground/5 text-foreground ring-1 ring-foreground/20"
+                            : "border-border text-muted-foreground hover:border-foreground/35 hover:bg-secondary/30"
                         }`}
                       >
                         {is12m && (
