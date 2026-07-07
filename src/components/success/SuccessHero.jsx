@@ -69,7 +69,7 @@ const SuccessHero = ({ orderData, hasMoreGroups, kycBanner, kycStatus }) => {
           {hasMoreGroups && (
             <Link
               to="/basket"
-              className="w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 bg-primary text-white shadow-md shadow-primary/20 hover:shadow-primary/30"
+              className="w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 bg-foreground text-background shadow-md hover:bg-foreground/90"
             >
               <ShoppingBag className="w-4 h-4" />
               Checkout Remaining Items
@@ -81,7 +81,7 @@ const SuccessHero = ({ orderData, hasMoreGroups, kycBanner, kycStatus }) => {
               className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 ${
                 hasMoreGroups
                   ? "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
-                  : "bg-primary text-white shadow-md shadow-primary/20 hover:shadow-primary/30"
+                  : "bg-foreground text-background shadow-md hover:bg-foreground/90"
               }`}
             >
               View My Orders

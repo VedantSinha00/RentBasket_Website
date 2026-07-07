@@ -34,10 +34,10 @@ const VARIANTS = {
     badge: "Required",
     to: "/kyc",
     view: false,
-    card: "border-2 border-primary/30 bg-coral-surface hover:bg-coral-surface/70",
-    iconBg: "bg-primary",
-    badgeCls: "bg-destructive-muted text-destructive",
-    chevron: "text-primary/70",
+    card: "border-2 border-foreground bg-foreground/[0.03] hover:bg-foreground/[0.06] shadow-sm",
+    iconBg: "bg-foreground text-background",
+    badgeCls: "bg-foreground text-background",
+    chevron: "text-foreground",
     titleCls: "text-foreground",
     subtitleCls: "text-muted-foreground",
   },
@@ -49,7 +49,7 @@ const VARIANTS = {
     to: "/kyc",
     view: true,
     card: "border border-amber-200 bg-amber-50 hover:bg-amber-100/70",
-    iconBg: "bg-amber-400",
+    iconBg: "bg-amber-400 text-white",
     badgeCls: "bg-amber-100 text-amber-700",
     chevron: "text-amber-700/70",
     titleCls: "text-amber-900",
@@ -63,7 +63,7 @@ const VARIANTS = {
     to: "/kyc",
     view: true,
     card: "border border-success-border bg-success-muted hover:bg-success-muted/70",
-    iconBg: "bg-success",
+    iconBg: "bg-success text-white",
     badgeCls: "",
     chevron: "text-success-muted-foreground/70",
     titleCls: "text-success-muted-foreground",
@@ -104,7 +104,7 @@ const KycStatusBanner = ({ kycStatus, size = "compact", orderData, returnTo, cla
       )}
       <div className="flex items-center gap-4">
         <div
-          className={`rounded-xl ${v.iconBg} text-white flex items-center justify-center flex-shrink-0 ${
+          className={`rounded-xl ${v.iconBg} flex items-center justify-center flex-shrink-0 ${
             prominent ? "w-12 h-12 md:rounded-2xl" : "w-10 h-10"
           }`}
         >

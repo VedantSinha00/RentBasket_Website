@@ -163,7 +163,7 @@ const CustomerValidation = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/35 flex flex-col">
       {/* Header */}
       <header className="bg-background/80 backdrop-blur-sm border-b border-border/50 py-2 sticky top-0 z-50">
         <div className="section-container">
@@ -209,7 +209,7 @@ const CustomerValidation = () => {
                       onKeyDown={handleKeyDown}
                       disabled={isLoading}
                       maxLength="10"
-                      className="w-full px-3.5 py-2.5 border border-primary/30 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/40 font-medium tracking-normal"
+                      className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/40 font-medium tracking-normal"
                     />
                   </div>
 
@@ -217,7 +217,7 @@ const CustomerValidation = () => {
                   <button
                     onClick={handlePhoneSubmit}
                     disabled={isLoading || !phoneNumber}
-                    className="w-full py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white text-sm font-semibold rounded-xl hover:shadow-md hover:shadow-primary/25 transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full py-2.5 gradient-coral text-white text-sm font-semibold rounded-xl hover:opacity-95 shadow-lg shadow-primary/20 transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {isLoading ? "Sending..." : "Generate OTP"}
                     {!isLoading && <ArrowRight className="w-5 h-5" />}
@@ -241,7 +241,7 @@ const CustomerValidation = () => {
                       onKeyDown={handleKeyDown}
                       disabled={isLoading}
                       maxLength="4"
-                      className="w-full px-3.5 py-2.5 border border-primary/30 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/40 font-medium tracking-widest text-center"
+                      className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/40 font-medium tracking-widest text-center"
                     />
                   </div>
 
@@ -255,7 +255,7 @@ const CustomerValidation = () => {
                         value={cityId}
                         onChange={(e) => setCityId(e.target.value)}
                         disabled={isLoading}
-                        className="w-full px-3.5 py-2.5 border border-primary/30 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-60 disabled:cursor-not-allowed bg-background font-medium"
+                        className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground disabled:opacity-60 disabled:cursor-not-allowed bg-background font-medium"
                       >
                         <option value="" disabled>
                           {cities.length ? "Select your city" : "Loading cities…"}
@@ -276,7 +276,7 @@ const CustomerValidation = () => {
                   <button
                     onClick={handleOtpSubmit}
                     disabled={isLoading || !otp}
-                    className="w-full py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white text-sm font-semibold rounded-xl hover:shadow-md hover:shadow-primary/25 transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full py-2.5 gradient-coral text-white text-sm font-semibold rounded-xl hover:opacity-95 shadow-lg shadow-primary/20 transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {isLoading ? "Verifying..." : "Verify & Continue"}
                     {!isLoading && <ArrowRight className="w-5 h-5" />}
@@ -291,7 +291,7 @@ const CustomerValidation = () => {
                         <button
                           onClick={handleResend}
                           disabled={isLoading}
-                          className="text-primary font-semibold hover:underline disabled:opacity-60"
+                          className="text-foreground font-semibold hover:underline disabled:opacity-60"
                         >
                           Resend OTP
                         </button>
@@ -307,7 +307,7 @@ const CustomerValidation = () => {
                         setCityId("");
                       }}
                       disabled={isLoading}
-                      className="text-muted-foreground hover:text-primary transition-colors underline disabled:opacity-60"
+                      className="text-muted-foreground hover:text-foreground transition-colors underline disabled:opacity-60"
                     >
                       Change number
                     </button>
@@ -319,7 +319,7 @@ const CustomerValidation = () => {
             {/* Verification Message */}
             <div className="text-center text-xs md:text-sm text-muted-foreground pb-6 border-b border-border/30">
               By continuing, I agree to the{" "}
-              <Link to="/terms-n-conditions" className="text-primary font-semibold hover:underline">
+              <Link to="/terms-n-conditions" className="text-foreground font-semibold hover:underline">
                 Terms & Conditions
               </Link>.
             </div>
@@ -349,7 +349,7 @@ const CustomerValidation = () => {
 
       {/* Footer Note */}
       <footer className="text-center text-xs md:text-sm text-muted-foreground py-6 border-t border-border/30">
-        <p>Need help? <a href="tel:+919958858473" className="text-primary font-semibold hover:underline">Call +91 9958858473</a></p>
+        <p>Need help? <a href="tel:+919958858473" className="text-foreground font-semibold hover:underline">Call +91 9958858473</a></p>
       </footer>
     </div>
   );
