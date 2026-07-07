@@ -38,7 +38,7 @@ const BottomTabBar = () => {
   };
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-t border-border/30 shadow-elevated">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-t border-border/40">
       <div className="flex items-center justify-around px-2 py-2 pb-safe">
         {tabs.map(({ to, icon: Icon, label }) => {
           const active = isActive(to);

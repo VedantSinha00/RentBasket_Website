@@ -23,9 +23,7 @@ const Header = () => {
 
   const urlQ = onCatalog ? (new URLSearchParams(search).get("q") || "") : "";
   const [query, setQuery] = useState(urlQ);
-  const [searchFocused, setSearchFocused] = useState(false);
   const lastUrlQ = useRef(urlQ);
-  const inputRef = useRef(null);
 
   useEffect(() => {
     if (urlQ !== lastUrlQ.current) {
@@ -68,7 +66,6 @@ const Header = () => {
     } else {
       setTimeout(scrollToResults, 150);
     }
-    inputRef.current?.blur();
   };
 
   return (
@@ -81,20 +78,16 @@ const Header = () => {
           {/* Logo */}
           <Link
             to="/"
-            className={`flex items-center gap-2 shrink-0 transition-opacity duration-200 ${
-              searchFocused
-                ? "opacity-20 pointer-events-none md:opacity-100 md:pointer-events-auto"
-                : "opacity-100"
-            }`}
+            className="flex items-center gap-1.5 md:gap-2 shrink-0 transition-opacity hover:opacity-90"
           >
-            <div className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center">
+            <div className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center">
               <img
                 src={logo}
                 alt="RentBasket mascot"
-                className="w-9 md:w-32"
+                className="w-8 md:w-32 object-contain"
               />
             </div>
-            <span className="hidden md:inline font-display text-lg md:text-xl font-bold text-foreground whitespace-nowrap leading-none">
+            <span className="font-display text-[15px] md:text-xl font-bold text-foreground whitespace-nowrap leading-none">
               Rent<span className="text-primary">Basket</span>
             </span>
           </Link>
@@ -128,13 +121,7 @@ const Header = () => {
           </nav>
 
           {/* Icons */}
-          <div
-            className={`ml-auto order-2 md:order-none flex items-center gap-1 md:gap-3 shrink-0 transition-opacity duration-200 ${
-              searchFocused
-                ? "opacity-20 pointer-events-none md:opacity-100 md:pointer-events-auto"
-                : "opacity-100"
-            }`}
-          >
+          <div className="hidden md:flex items-center gap-3 shrink-0 ml-auto">
             <Link
               to="/profile"
               className={`hidden md:flex relative p-1.5 md:p-2 rounded-xl transition-colors ${
@@ -190,28 +177,15 @@ const Header = () => {
             </button>
           </div>
 
-          {/* Mobile search — always inline with the logo mark now that the
-              "RentBasket" wordmark is hidden on mobile. */}
+          {/* Mobile search icon button on the right */}
           {showMobileSearch && (
-            <form
-              onSubmit={handleSubmit}
-              className="md:hidden relative min-w-0 flex-1 order-1 ml-3"
+            <Link
+              to="/catalog"
+              className="md:hidden p-1.5 rounded-xl text-muted-foreground hover:bg-secondary hover:text-primary transition-colors ml-auto"
+              title="Search Catalogue"
             >
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"
-                aria-hidden
-              />
-              <input
-                ref={inputRef}
-                type="search"
-                value={query}
-                onChange={handleChange}
-                onFocus={() => setSearchFocused(true)}
-                onBlur={() => setSearchFocused(false)}
-                placeholder={searchFocused ? "Search furniture, appliances..." : "Search..."}
-                className="w-full pl-9 pr-3 py-2 border border-border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background"
-              />
-            </form>
+              <Search className="w-5 h-5" />
+            </Link>
           )}
         </div>
       </div>
