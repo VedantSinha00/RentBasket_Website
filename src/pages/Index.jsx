@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import FurnitureGallery from "@/components/FurnitureGallery";
-import ResponsibilitySection from "@/components/ResponsibilitySection";
 // import HowItWorks from "@/components/HowItWorks";
 // import FoundersSection from "@/components/FoundersSection";
 import MythOrFact from "@/components/MythOrFact";
@@ -34,7 +33,6 @@ const Index = () => {
           <FurnitureGallery />
         </div>
         <WhatMakesDifferent />
-        <ResponsibilitySection />
         {/* v1: How it works — hidden for this release */}
         {/* <HowItWorks /> */}
         {/* v1: Founders — hidden for this release */}

@@ -183,7 +183,7 @@ const LovedByCustomers = () => {
   const [expandedMobile, setExpandedMobile] = useState(null);
 
   return (
-    <section className="pt-14 md:pt-20 bg-white">
+    <section className="pt-10 md:pt-14 bg-white">
       <div className="section-container text-center mb-[-8px] relative z-0">
         <h2 className="font-display font-bold text-4xl md:text-6xl text-foreground leading-tight">
           Loved by Customers
@@ -225,7 +225,7 @@ const LovedByCustomers = () => {
           centered flex column that reflows at any width. */}
       {/* TODO: mascot image restored once a permanent local asset is provided —
           the previous src pointed at a temporary Figma MCP asset URL that 404s. */}
-      <div className="hidden md:flex relative w-full max-w-7xl mx-auto items-end justify-center min-h-[560px] md:min-h-[680px] pb-8 overflow-x-clip">
+      <div className="hidden md:flex relative w-full max-w-7xl mx-auto items-end justify-center min-h-[440px] md:min-h-[520px] pb-8 overflow-x-clip">
         <motion.div
           className="relative flex flex-col items-center z-10 self-end"
           initial={{ opacity: 0, y: 40 }}
