@@ -181,7 +181,7 @@ const FurnitureGallery = () => {
   };
 
   return (
-    <section className="bg-cream/40 pt-0 pb-8 md:pb-10 -mt-1">
+    <section className="bg-cream/40 pt-0 pb-4 md:pb-10 -mt-1">
       <div className="section-container">
         {/* Catalog scroll */}
         <div className="relative">

@@ -71,7 +71,6 @@ const Header = () => {
     inputRef.current?.blur();
   };
 
-
   return (
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/40">
       <div className="section-container" style={{ width: "100%" }}>
@@ -88,40 +87,17 @@ const Header = () => {
                 : "opacity-100"
             }`}
           >
-            <div className="w-10 h-10 flex items-center justify-center">
+            <div className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center">
               <img
                 src={logo}
                 alt="RentBasket mascot"
-                className="w-24 md:w-32 md:block"
+                className="w-9 md:w-32"
               />
             </div>
-            <span className="font-display text-lg md:text-xl font-bold text-foreground whitespace-nowrap leading-none">
+            <span className="hidden md:inline font-display text-lg md:text-xl font-bold text-foreground whitespace-nowrap leading-none">
               Rent<span className="text-primary">Basket</span>
             </span>
           </Link>
-
-          {/* Mobile search — flex-1 fills the centre */}
-          {showMobileSearch && (
-            <form
-              onSubmit={handleSubmit}
-              className="md:hidden flex-1 min-w-0 relative mx-1"
-            >
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"
-                aria-hidden
-              />
-              <input
-                ref={inputRef}
-                type="search"
-                value={query}
-                onChange={handleChange}
-                onFocus={() => setSearchFocused(true)}
-                onBlur={() => setSearchFocused(false)}
-                placeholder={searchFocused ? "Search furniture, appliances..." : "Search..."}
-                className="w-full pl-9 pr-3 py-2 border border-border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background"
-              />
-            </form>
-          )}
 
           {/* Desktop Nav — gaps and search width scale up with the breakpoint so
               the whole bar fits in the tight md band (768–~830px) instead of
@@ -153,7 +129,7 @@ const Header = () => {
 
           {/* Icons */}
           <div
-            className={`ml-auto flex items-center gap-1 md:gap-3 shrink-0 transition-opacity duration-200 ${
+            className={`ml-auto order-2 md:order-none flex items-center gap-1 md:gap-3 shrink-0 transition-opacity duration-200 ${
               searchFocused
                 ? "opacity-20 pointer-events-none md:opacity-100 md:pointer-events-auto"
                 : "opacity-100"
@@ -213,6 +189,30 @@ const Header = () => {
               Contact Us
             </button>
           </div>
+
+          {/* Mobile search — always inline with the logo mark now that the
+              "RentBasket" wordmark is hidden on mobile. */}
+          {showMobileSearch && (
+            <form
+              onSubmit={handleSubmit}
+              className="md:hidden relative min-w-0 flex-1 order-1 ml-3"
+            >
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"
+                aria-hidden
+              />
+              <input
+                ref={inputRef}
+                type="search"
+                value={query}
+                onChange={handleChange}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setSearchFocused(false)}
+                placeholder={searchFocused ? "Search furniture, appliances..." : "Search..."}
+                className="w-full pl-9 pr-3 py-2 border border-border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background"
+              />
+            </form>
+          )}
         </div>
       </div>
 
