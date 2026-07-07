@@ -8,7 +8,7 @@ const CheckoutCard = ({ title, icon: Icon, children, subtitle }) => (
   <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-soft mb-6">
     <div className="px-5 py-4 border-b border-border/50 flex items-center justify-between bg-secondary/10">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+        <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center text-foreground">
           <Icon className="w-4 h-4" />
         </div>
         <div>
@@ -29,13 +29,13 @@ const InputField = ({ label, icon: Icon, placeholder, type = "text", hint, ...pr
       {label}
     </label>
     <div className="relative group">
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-foreground transition-colors">
         <Icon className="w-4 h-4" />
       </div>
       <input
         type={type}
         placeholder={placeholder}
-        className="w-full pl-11 pr-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-background transition-all"
+        className="w-full pl-11 pr-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground focus:bg-background transition-all"
         {...props}
       />
     </div>
@@ -44,10 +44,10 @@ const InputField = ({ label, icon: Icon, placeholder, type = "text", hint, ...pr
 );
 
 const ServiceabilityNote = () => (
-  <div className="p-3 bg-primary/5 border border-primary/10 rounded-xl flex gap-3 mt-2">
-    <Info className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+  <div className="p-3 bg-secondary/40 border border-border rounded-xl flex gap-3 mt-2">
+    <Info className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
     <p className="text-[11px] text-muted-foreground leading-relaxed">
-      <span className="font-bold text-primary">Serviceability Note:</span> If your pincode is outside our primary zone, our team will coordinate for a custom delivery quote.
+      <span className="font-bold text-foreground">Serviceability Note:</span> If your pincode is outside our primary zone, our team will coordinate for a custom delivery quote.
     </p>
   </div>
 );
@@ -190,7 +190,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
           <button
             type="button"
             onClick={() => setAddrEditing(true)}
-            className="w-full text-left p-4 bg-secondary/30 border border-border rounded-xl hover:border-primary/40 hover:bg-background transition-all group"
+            className="w-full text-left p-4 bg-secondary/30 border border-border rounded-xl hover:border-foreground/35 hover:bg-background transition-all group"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
@@ -202,7 +202,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
                   {[formData.city, formData.state, formData.pincode].filter(Boolean).join(" · ")}
                 </p>
               </div>
-              <span className="text-xs font-bold text-primary group-hover:underline whitespace-nowrap mt-0.5 shrink-0">
+              <span className="text-xs font-semibold text-foreground group-hover:underline whitespace-nowrap mt-0.5 shrink-0">
                 Edit
               </span>
             </div>
@@ -219,7 +219,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
                   ? "border-success/40 text-success bg-success/5"
                   : geoState === "denied"
                   ? "border-orange-300 text-orange-600 hover:border-orange-400 bg-orange-50/40"
-                  : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
+                  : "border-border text-muted-foreground hover:border-foreground/35 hover:text-foreground"
               }`}
             >
               {geoState === "loading" ? (
@@ -286,14 +286,14 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
                   City
                 </label>
                 <div className="relative group">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-foreground transition-colors">
                     <MapPin className="w-4 h-4" />
                   </div>
                   <select
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    className="w-full pl-11 pr-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-background transition-all appearance-none"
+                    className="w-full pl-11 pr-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground focus:bg-background transition-all appearance-none"
                   >
                     <option value="">Select city</option>
                     {SERVED_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -317,7 +317,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
               <button
                 type="button"
                 onClick={() => setAddrEditing(false)}
-                className="w-full py-2.5 bg-primary/10 border border-primary/20 text-primary text-sm font-semibold rounded-xl hover:bg-primary/15 transition-colors"
+                className="w-full py-2.5 bg-secondary border border-border text-foreground text-sm font-semibold rounded-xl hover:bg-secondary/80 transition-colors"
               >
                 Confirm Address
               </button>
@@ -356,8 +356,8 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
                       onClick={() => setFormData((prev) => ({ ...prev, timeSlot: slot.id }))}
                       className={`py-2.5 px-2 rounded-xl border text-[10px] md:text-xs font-bold transition-all ${
                         formData.timeSlot === slot.id
-                          ? "bg-primary border-primary text-white shadow-md shadow-primary/20"
-                          : "bg-secondary/30 border-border text-muted-foreground hover:border-primary/40"
+                          ? "bg-foreground border-foreground text-background shadow-sm"
+                          : "bg-secondary/30 border-border text-muted-foreground hover:border-foreground/35"
                       }`}
                     >
                       {slot.slot_name}
@@ -387,7 +387,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
               name="instructions"
               rows={3}
               placeholder="e.g. Entry via Gate 2, Lift access available, call after arriving at gate."
-              className="w-full px-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-background transition-all resize-none"
+              className="w-full px-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground focus:bg-background transition-all resize-none"
               value={formData.instructions}
               onChange={handleChange}
             />
