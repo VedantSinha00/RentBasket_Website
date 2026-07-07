@@ -12,7 +12,7 @@ const SplashScreen = () => (
     <img
       src={mascotsCouch}
       alt="RentBasket mascots carrying a couch"
-      className="w-72 sm:w-96 md:w-[32rem] mix-blend-multiply -translate-x-[3%]"
+      className="w-72 sm:w-96 md:w-[32rem] mix-blend-multiply translate-x-[1.8%]"
     />
     <span className="font-display text-2xl font-bold text-foreground">
       Rent<span className="text-primary">Basket</span>
