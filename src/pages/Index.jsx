@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import FurnitureGallery from "@/components/FurnitureGallery";
-import FreeServices from "@/components/FreeServices";
 import ResponsibilitySection from "@/components/ResponsibilitySection";
 // import HowItWorks from "@/components/HowItWorks";
 // import FoundersSection from "@/components/FoundersSection";
@@ -34,7 +33,7 @@ const Index = () => {
         <div ref={galleryRef} className="-mt-2">
           <FurnitureGallery />
         </div>
-        <FreeServices />
+        <WhatMakesDifferent />
         <ResponsibilitySection />
         {/* v1: How it works — hidden for this release */}
         {/* <HowItWorks /> */}
@@ -45,7 +44,6 @@ const Index = () => {
         <Testimonials />
         {/* App branding removed from homepage for now */}
         {/* <DownloadSection /> */}
-        <WhatMakesDifferent />
       </main>
       <Footer />
     </div>
