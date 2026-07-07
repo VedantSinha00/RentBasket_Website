@@ -43,22 +43,8 @@ const HeroSection = () => {
             />
           </div>
 
-          {/* CTA and Stats below video */}
+          {/* Stats below video */}
           <div className="flex flex-col gap-6 w-full max-w-xs mx-auto z-10 relative">
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-            >
-              <Link
-                to={catalogLink}
-                data-testid="hero-cta"
-                className="flex items-center justify-center h-[48px] w-full rounded-full border-[2px] border-primary text-primary font-sans font-bold text-[14px] bg-white hover:bg-primary/5 transition-colors active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              >
-                Browse Catalogue
-              </Link>
-            </motion.div>
-
             {/* Stats - divider row */}
             <motion.div
               className="flex items-center justify-center gap-8 border-t border-border/60 pt-5"
