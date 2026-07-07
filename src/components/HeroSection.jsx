@@ -25,7 +25,7 @@ const HeroSection = () => {
             <span className="font-sans text-[10px] font-bold tracking-[0.15em] text-primary uppercase">
               Live Flexible
             </span>
-            <h1 className="font-display font-light text-foreground text-[26px] sm:text-[32px] leading-tight max-w-xs sm:max-w-sm mx-auto">
+            <h1 className="font-display font-semibold text-foreground text-[24px] sm:text-[28px] leading-tight max-w-xs sm:max-w-sm mx-auto tracking-tight">
               Furnish your home, <br />on your own terms
             </h1>
           </motion.div>
@@ -67,14 +67,14 @@ const HeroSection = () => {
               transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
             >
               <div className="text-left">
-                <div className="font-sans font-extrabold text-foreground text-[18px] leading-none tracking-tight">
+                <div className="font-display font-semibold text-foreground leading-none text-[24px] sm:text-[28px] tracking-tight">
                   2000+
                 </div>
-                <div className="font-sans text-[11px] text-muted-foreground mt-1 font-medium">
+                <div className="font-sans text-[11px] font-bold tracking-wider uppercase text-muted-foreground/80 mt-1.5">
                   Happy Customers
                 </div>
               </div>
-              <div className="w-[1px] h-7 bg-border/60 shrink-0" />
+              <div className="w-[1px] h-9 bg-border/60 shrink-0" />
               <a
                 href="https://rentbasket.short.gy/reviews"
                 target="_blank"
@@ -82,12 +82,12 @@ const HeroSection = () => {
                 className="flex items-center gap-2 text-left rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none"
                 aria-label="Read our 4.9 Google reviews"
               >
-                <span className="text-gold text-[18px] leading-none">★</span>
+                <span className="text-gold text-[24px] leading-none">★</span>
                 <div>
-                  <div className="font-sans font-extrabold text-foreground text-[18px] leading-none tracking-tight">
+                  <div className="font-display font-semibold text-foreground leading-none text-[24px] sm:text-[28px] tracking-tight">
                     4.9
                   </div>
-                  <div className="font-sans text-[11px] text-muted-foreground mt-1 font-medium">
+                  <div className="font-sans text-[11px] font-bold tracking-wider uppercase text-muted-foreground/80 mt-1.5">
                     Google Rating
                   </div>
                 </div>
@@ -119,7 +119,7 @@ const HeroSection = () => {
               <span className="font-sans text-xs font-bold tracking-[0.15em] text-primary uppercase">
                 Live Flexible
               </span>
-              <h1 className="font-display font-light text-foreground text-3xl xl:text-4xl 2xl:text-[42px] leading-[1.2] text-balance">
+              <h1 className="font-display font-semibold text-foreground text-3xl xl:text-4xl 2xl:text-[40px] leading-[1.2] tracking-tight text-balance">
                 Furnish your home, <br />
                 on your own terms.
               </h1>
@@ -153,14 +153,14 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.25, ease: "easeOut" }}
             >
               <div>
-                <span className="font-sans font-extrabold text-foreground text-xl xl:text-2xl tracking-tight">
+                <span className="font-display font-semibold text-foreground leading-none block lg:text-[32px] xl:text-[38px] tracking-tight">
                   2000+
                 </span>
-                <span className="font-sans text-xs text-muted-foreground block mt-0.5 font-medium">
+                <span className="font-sans text-[11px] font-bold tracking-wider uppercase text-muted-foreground/80 block mt-1.5">
                   Happy Customers
                 </span>
               </div>
-              <div className="w-[1px] h-8 bg-border/60 shrink-0" />
+              <div className="w-[1px] h-10 bg-border/60 shrink-0" />
               <a
                 href="https://rentbasket.short.gy/reviews"
                 target="_blank"
@@ -168,12 +168,12 @@ const HeroSection = () => {
                 className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 aria-label="Read our 4.9 Google reviews (opens in new tab)"
               >
-                <Star className="w-5 h-5 fill-gold text-gold shrink-0" />
+                <Star className="w-7 h-7 xl:w-8 xl:h-8 fill-gold text-gold shrink-0" />
                 <div>
-                  <span className="font-sans font-extrabold text-foreground text-xl xl:text-2xl tracking-tight">
+                  <span className="font-display font-semibold text-foreground leading-none block lg:text-[32px] xl:text-[38px] tracking-tight">
                     4.9
                   </span>
-                  <span className="font-sans text-xs text-muted-foreground block mt-0.5 font-medium">
+                  <span className="font-sans text-[11px] font-bold tracking-wider uppercase text-muted-foreground/80 block mt-1.5">
                     Google Rating
                   </span>
                 </div>

@@ -177,7 +177,7 @@ const MythOrFact = () => {
     <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-8 md:mb-12">
         {/* Responsive Section Header */}
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display mb-3 md:mb-4 tracking-tight">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold font-display mb-3 md:mb-4 tracking-tight">
           Belief or Reality?
         </h2>
         <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-xl mx-auto">
