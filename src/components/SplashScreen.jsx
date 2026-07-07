@@ -75,7 +75,7 @@ const SplashScreen = () => {
           transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           className="font-display text-3xl sm:text-4xl font-bold text-foreground tracking-tight mb-2 whitespace-nowrap"
         >
-          Rent<span className="text-primary">Basket</span>
+          RentBasket
         </motion.h1>
 
         {/* Brand Headline/Tagline */}

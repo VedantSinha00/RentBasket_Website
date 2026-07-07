@@ -117,7 +117,7 @@ const Header = () => {
                 />
               </div>
               <span className="font-display text-[15px] md:text-xl font-bold text-foreground whitespace-nowrap leading-none">
-                Rent<span className="text-primary">Basket</span>
+                RentBasket
               </span>
             </Link>
 
