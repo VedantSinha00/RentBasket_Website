@@ -314,7 +314,7 @@ const Kyc = () => {
                           ? "border-success/40 bg-success-muted/40"
                           : uploaded
                           ? "border-amber-300 bg-amber-50/50"
-                          : "border-dashed border-border bg-card hover:border-foreground/35"
+                          : "border-dashed border-border bg-card hover:border-primary/40"
                       }`}
                     >
                       <div className="flex items-center justify-between mb-3">
@@ -325,7 +325,7 @@ const Kyc = () => {
                                 ? "bg-success text-white"
                                 : uploaded
                                 ? "bg-amber-500 text-white"
-                                : "bg-secondary text-foreground"
+                                : "bg-primary/10 text-primary"
                             }`}
                           >
                             {verified ? <Check className="w-4 h-4" /> : uploaded ? <Loader2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
