@@ -74,9 +74,9 @@ const CartItemCard = ({ item }) => {
 
   return (
     <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-shadow">
-      <div className="p-4 md:p-5" ref={pickerRef}>
+      <div className="relative" ref={pickerRef}>
         {/* ── MOBILE LAYOUT ── */}
-        <div className="md:hidden">
+        <div className="p-4 md:hidden">
           <div className="flex gap-3 mb-3">
             {/* Thumbnail */}
             <Link
@@ -179,7 +179,9 @@ const CartItemCard = ({ item }) => {
         </div>
 
         {/* ── DESKTOP LAYOUT ── */}
-        <div className="hidden md:flex gap-5">
+        <div className="hidden md:flex min-h-[140px]">
+          {/* Left: configuration section (white background, padded) */}
+          <div className="p-5 flex-1 flex gap-5">
           {/* Thumbnail */}
           <Link
             to={`/product/${item.productId}`}
@@ -264,9 +266,10 @@ const CartItemCard = ({ item }) => {
               </div>
             </div>
           </div>
+          </div>
 
-          {/* Right Pricing */}
-          <div className="w-48 flex-shrink-0 text-right space-y-1">
+          {/* Right: pricing invoice panel (gray background, padded, left border) */}
+          <div className="w-52 flex-shrink-0 bg-secondary/35 p-5 border-l border-border/50 text-right flex flex-col justify-between space-y-1">
             <div className="text-lg font-bold text-foreground flex flex-col items-end">
               {line.listRentTotal > line.rentTotal && (
                 <span className="text-muted-foreground text-xs font-normal">₹{line.listRentTotal.toLocaleString("en-IN")}/mo</span>

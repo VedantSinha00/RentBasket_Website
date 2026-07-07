@@ -30,7 +30,7 @@ const Basket = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="pb-20 lg:pb-0">
+      <main className="pb-20 lg:pb-0 bg-[#FAF9F6]/70 min-h-screen">
         <CartHeader />
 
         <div className="section-container pb-10 md:pb-16">
