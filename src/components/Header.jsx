@@ -1,5 +1,5 @@
 import logo from "@/assets/7 1.png";
-import { ShoppingBag, Search, Heart, User } from "lucide-react";
+import { ShoppingBag, Search, Heart, User, X } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/context/CartContext";
@@ -24,6 +24,34 @@ const Header = () => {
   const urlQ = onCatalog ? (new URLSearchParams(search).get("q") || "") : "";
   const [query, setQuery] = useState(urlQ);
   const lastUrlQ = useRef(urlQ);
+
+  // Mobile search: the header shows just a magnifying-glass icon by default;
+  // tapping it expands an inline, auto-focused input so the user can type.
+  // Each page renders its own <Header/>, so navigating remounts this component
+  // and would reset local state — we drive the open-state off a `search` URL
+  // param instead, so it survives the jump to /catalog.
+  const mobileSearchOpen =
+    new URLSearchParams(search).get("search") === "1";
+  const mobileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (mobileSearchOpen) mobileInputRef.current?.focus();
+  }, [mobileSearchOpen]);
+
+  // Tapping the magnifying glass takes the user to the catalog (where results
+  // live) and opens the inline search field to type in.
+  const openMobileSearch = () => {
+    const params = new URLSearchParams(onCatalog ? search : "");
+    params.set("search", "1");
+    navigate(`/catalog?${params.toString()}`);
+  };
+
+  const closeMobileSearch = () => {
+    const params = new URLSearchParams(search);
+    params.delete("search");
+    const qs = params.toString();
+    navigate(`/catalog${qs ? `?${qs}` : ""}`, { replace: true });
+  };
 
   useEffect(() => {
     if (urlQ !== lastUrlQ.current) {
@@ -72,7 +100,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/40">
       <div className="section-container" style={{ width: "100%" }}>
         <div
-          className="flex items-center justify-between h-12 md:h-14"
+          className="relative flex items-center justify-between h-12 md:h-14"
           style={{ width: "100%" }}
         >
           {/* Left Anchor: Logo + Navigation Links */}
@@ -184,13 +212,46 @@ const Header = () => {
 
           {/* Mobile search icon button on the right */}
           {showMobileSearch && (
-            <Link
-              to="/catalog"
+            <button
+              type="button"
+              onClick={openMobileSearch}
               className="md:hidden p-1.5 rounded-xl text-muted-foreground hover:bg-secondary hover:text-primary transition-colors ml-auto"
               title="Search Catalogue"
+              aria-label="Search"
             >
               <Search className="w-5 h-5" />
-            </Link>
+            </button>
+          )}
+
+          {/* Mobile expanding search — overlays the header row when open */}
+          {showMobileSearch && mobileSearchOpen && (
+            <form
+              onSubmit={(e) => {
+                handleSubmit(e);
+                mobileInputRef.current?.blur();
+              }}
+              className="md:hidden absolute inset-0 z-10 flex items-center gap-2 bg-background px-4"
+            >
+              <button
+                type="button"
+                onClick={closeMobileSearch}
+                className="p-1.5 -ml-1.5 rounded-xl text-muted-foreground hover:bg-secondary transition-colors shrink-0"
+                aria-label="Close search"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <div className="relative flex-1 min-w-0">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                <input
+                  ref={mobileInputRef}
+                  type="search"
+                  value={query}
+                  onChange={handleChange}
+                  placeholder="Search furniture, appliances..."
+                  className="w-full pl-9 pr-3 py-2 border border-border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background"
+                />
+              </div>
+            </form>
           )}
         </div>
       </div>
