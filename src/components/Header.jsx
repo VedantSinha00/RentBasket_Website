@@ -14,7 +14,7 @@ const Header = () => {
   const wishlistCount = getWishlistCount();
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
-  const onCatalog = pathname === "/catalog";
+  const onCatalog = pathname === "/catalog" || pathname === "/catalog/";
   const onCart = pathname === "/basket" || pathname === "/basket/";
   const onProfile = pathname === "/profile";
   const onWishlist = pathname === "/wishlist";
@@ -94,12 +94,14 @@ const Header = () => {
             </Link>
 
             <nav className="hidden md:flex items-center gap-6 xl:gap-8">
-              <Link
-                to="/catalog"
-                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
-              >
-                Browse Catalogue
-              </Link>
+              {!onCatalog && (
+                <Link
+                  to="/catalog"
+                  className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
+                >
+                  Browse Catalogue
+                </Link>
+              )}
               <Link
                 to="/faqs"
                 className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
