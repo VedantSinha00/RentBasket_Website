@@ -14,6 +14,22 @@ const HeroSection = () => {
       {/* ── Mobile/Tablet View (Dual Layout) ─────────────────────── */}
       <section className="lg:hidden relative px-5 pt-8 sm:px-8 flex flex-col items-center text-center gap-6 overflow-hidden">
         <div className="bg-background -mx-5 sm:-mx-8 px-5 sm:px-8 w-[calc(100%+2.5rem)] sm:w-[calc(100%+4rem)] flex flex-col items-center text-center gap-6 pb-6">
+
+          {/* Editorial Header */}
+          <motion.div
+            className="flex flex-col gap-2 z-10"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            <span className="font-sans text-[10px] font-bold tracking-[0.15em] text-primary uppercase">
+              Live Flexible
+            </span>
+            <h1 className="font-display font-light text-foreground text-[26px] sm:text-[32px] leading-tight max-w-xs sm:max-w-sm mx-auto">
+              Furnish your home, <br />on your own terms
+            </h1>
+          </motion.div>
+
           {/* Mascot video container - full scene, shown uncropped */}
           <div className="relative flex items-center justify-center w-full mx-auto -mt-4 z-0">
             <video
@@ -27,54 +43,57 @@ const HeroSection = () => {
             />
           </div>
 
-          {/* Floating Card - stats + CTA below the video */}
-          <motion.div
-            className="bg-cream/50 border border-border/40 p-6 rounded-2xl shadow-soft flex flex-col gap-6 w-full max-w-xs mx-auto z-10 relative"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
-          >
-            {/* Stats row inside card */}
-            <div className="flex items-center justify-between gap-4 border-b border-border/40 pb-4 text-left">
-              <div>
+          {/* CTA and Stats below video */}
+          <div className="flex flex-col gap-6 w-full max-w-xs mx-auto z-10 relative">
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+            >
+              <Link
+                to={catalogLink}
+                data-testid="hero-cta"
+                className="flex items-center justify-center h-[48px] w-full rounded-full border-[2px] border-primary text-primary font-sans font-bold text-[14px] bg-white hover:bg-primary/5 transition-colors active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              >
+                Browse Catalogue
+              </Link>
+            </motion.div>
+
+            {/* Stats - divider row */}
+            <motion.div
+              className="flex items-center justify-center gap-8 border-t border-border/60 pt-5"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
+            >
+              <div className="text-left">
                 <div className="font-sans font-extrabold text-foreground text-[18px] leading-none tracking-tight">
                   2000+
                 </div>
-                <div className="font-sans text-[10px] text-muted-foreground mt-1 font-semibold uppercase tracking-wider">
-                  Customers
+                <div className="font-sans text-[11px] text-muted-foreground mt-1 font-medium">
+                  Happy Customers
                 </div>
               </div>
-              <div className="w-[1px] h-7 bg-border/40 shrink-0" />
+              <div className="w-[1px] h-7 bg-border/60 shrink-0" />
               <a
                 href="https://rentbasket.short.gy/reviews"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none"
+                className="flex items-center gap-2 text-left rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none"
                 aria-label="Read our 4.9 Google reviews"
               >
-                <span className="text-gold text-[16px] leading-none">★</span>
+                <span className="text-gold text-[18px] leading-none">★</span>
                 <div>
                   <div className="font-sans font-extrabold text-foreground text-[18px] leading-none tracking-tight">
                     4.9
                   </div>
-                  <div className="font-sans text-[10px] text-muted-foreground mt-1 font-semibold uppercase tracking-wider">
+                  <div className="font-sans text-[11px] text-muted-foreground mt-1 font-medium">
                     Google Rating
                   </div>
                 </div>
               </a>
-            </div>
-
-            {/* Button inside card */}
-            <div>
-              <Link
-                to={catalogLink}
-                data-testid="hero-cta"
-                className="flex items-center justify-center h-[46px] w-full rounded-full border-[2px] border-primary text-primary font-sans font-bold text-[14px] bg-white hover:bg-primary/5 transition-colors active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              >
-                Browse Catalogue
-              </Link>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
 
           {/* TODO: Once the backend supports category-based collection routing, restore the category tabs.
             For now, since collection filtering is handled directly within the catalog, they are removed from the hero view. */}
@@ -89,56 +108,76 @@ const HeroSection = () => {
       <section className="hidden lg:flex relative flex-row justify-center bg-background overflow-hidden lg:min-h-[440px] w-full">
         <div className="flex flex-row w-full max-w-7xl mx-auto">
           {/* Content column */}
-          <div className="flex flex-col justify-center px-16 xl:px-20 z-10 w-[44%] shrink-0">
-            {/* Floating Content Card */}
+          <div className="flex flex-col justify-center px-16 xl:px-20 z-10 w-[46%] shrink-0 gap-8">
+            {/* Editorial Header Tagline */}
             <motion.div
-              className="bg-cream/50 border border-border/40 p-8 xl:p-10 rounded-2xl shadow-soft flex flex-col gap-8 max-w-sm"
+              className="flex flex-col gap-3"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              {/* Clean, Divided Stats Row */}
-              <div className="flex items-center justify-between gap-6 border-b border-border/40 pb-6">
+              <span className="font-sans text-xs font-bold tracking-[0.15em] text-primary uppercase">
+                Live Flexible
+              </span>
+              <h1 className="font-display font-light text-foreground text-3xl xl:text-4xl 2xl:text-[42px] leading-[1.2] text-balance">
+                Furnish your home, <br />
+                on your own terms.
+              </h1>
+              <p className="font-sans text-sm xl:text-base text-muted-foreground max-w-sm leading-relaxed">
+                Rent premium furniture &amp; appliances in Delhi NCR with zero deposit, free delivery, and maintenance.
+              </p>
+            </motion.div>
+
+            {/* TODO: Restore desktop category tabs once backend collections are built. */}
+
+            {/* CTA */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+            >
+              <Link
+                to={catalogLink}
+                data-testid="hero-cta"
+                className="flex items-center justify-center h-[52px] w-full max-w-[240px] rounded-full border-[2px] border-primary text-primary font-sans font-bold text-[15px] xl:text-[16px] tracking-tight bg-white hover:bg-primary/5 transition-all shadow-soft active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              >
+                Browse Catalogue
+              </Link>
+            </motion.div>
+
+            {/* Refined Stats (Subtle divider row below CTA) */}
+            <motion.div
+              className="flex items-center gap-8 border-t border-border/60 pt-6 mt-2 max-w-sm"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.25, ease: "easeOut" }}
+            >
+              <div>
+                <span className="font-sans font-extrabold text-foreground text-xl xl:text-2xl tracking-tight">
+                  2000+
+                </span>
+                <span className="font-sans text-xs text-muted-foreground block mt-0.5 font-medium">
+                  Happy Customers
+                </span>
+              </div>
+              <div className="w-[1px] h-8 bg-border/60 shrink-0" />
+              <a
+                href="https://rentbasket.short.gy/reviews"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                aria-label="Read our 4.9 Google reviews (opens in new tab)"
+              >
+                <Star className="w-5 h-5 fill-gold text-gold shrink-0" />
                 <div>
-                  <span className="font-sans font-extrabold text-foreground text-2xl xl:text-3xl tracking-tight">
-                    2000+
+                  <span className="font-sans font-extrabold text-foreground text-xl xl:text-2xl tracking-tight">
+                    4.9
                   </span>
-                  <span className="font-sans text-xs text-muted-foreground block mt-1 font-semibold tracking-tight uppercase">
-                    Happy Customers
+                  <span className="font-sans text-xs text-muted-foreground block mt-0.5 font-medium">
+                    Google Rating
                   </span>
                 </div>
-                <div className="w-[1px] h-10 bg-border/40 shrink-0" />
-                <a
-                  href="https://rentbasket.short.gy/reviews"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-                  aria-label="Read our 4.9 Google reviews (opens in new tab)"
-                >
-                  <Star className="w-6 h-6 fill-gold text-gold shrink-0" />
-                  <div>
-                    <span className="font-sans font-extrabold text-foreground text-2xl xl:text-3xl tracking-tight">
-                      4.9
-                    </span>
-                    <span className="font-sans text-xs text-muted-foreground block mt-1 font-semibold tracking-tight uppercase">
-                      Google Rating
-                    </span>
-                  </div>
-                </a>
-              </div>
-
-              {/* TODO: Restore desktop category tabs once backend collections are built. */}
-
-              {/* Primary CTA Button */}
-              <div>
-                <Link
-                  to={catalogLink}
-                  data-testid="hero-cta"
-                  className="flex items-center justify-center h-[50px] w-full rounded-full border-[2.5px] border-primary text-primary font-sans font-bold text-[15px] xl:text-[16px] tracking-tight bg-white hover:bg-primary/5 transition-colors shadow-sm active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-                >
-                  Browse Catalogue
-                </Link>
-              </div>
+              </a>
             </motion.div>
           </div>
 
