@@ -1,6 +1,8 @@
-import { Home, LayoutGrid, ShoppingBag, User } from "lucide-react";
+import { useState } from "react";
+import { Home, LayoutGrid, ShoppingBag, User, Phone } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
+import ContactModal from "@/components/ContactModal";
 
 const HIDDEN_ON = [
   "/product/",
@@ -17,9 +19,11 @@ const tabs = [
   { to: "/catalog", icon: LayoutGrid,   label: "Browse"  },
   { to: "/basket",  icon: ShoppingBag, label: "Cart"    },
   { to: "/profile", icon: User,        label: "Account" },
+  { to: "#contact", icon: Phone,       label: "Contact" },
 ];
 
 const BottomTabBar = () => {
+  const [contactOpen, setContactOpen] = useState(false);
   const { pathname } = useLocation();
   const { getCartItemCount } = useCart();
 
@@ -40,6 +44,23 @@ const BottomTabBar = () => {
           const active = isActive(to);
           const showBadge = to === "/basket" && cartCount > 0;
           const badgeCount = cartCount;
+
+          if (to === "#contact") {
+            return (
+              <button
+                key={to}
+                onClick={() => setContactOpen(true)}
+                className="relative flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-colors"
+              >
+                <div className="relative">
+                  <Icon className="w-5 h-5 text-muted-foreground" fill="none" />
+                </div>
+                <span className="text-[10px] font-semibold text-muted-foreground transition-colors">
+                  {label}
+                </span>
+              </button>
+            );
+          }
 
           return (
             <Link
@@ -65,6 +86,7 @@ const BottomTabBar = () => {
           );
         })}
       </div>
+      <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
     </nav>
   );
 };
