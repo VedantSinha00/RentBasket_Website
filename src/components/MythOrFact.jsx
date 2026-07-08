@@ -131,11 +131,13 @@ const MobileQuizSection = () => {
     offset: ["start start", "end end"],
   });
 
-  // Spring-smoothed scroll progress for organic deceleration
+  // Spring-smoothed scroll progress. Near-critical damping (ζ ≈ 1) so the
+  // card tracks the finger closely and coasts with fling velocity instead of
+  // trailing it — overdamped values here read as lag, not smoothness.
   const smoothScrollProgress = useSpring(scrollYProgress, {
-    stiffness: 80,
-    damping: 28,
-    mass: 0.5,
+    stiffness: 100,
+    damping: 12,
+    mass: 0.35,
     restDelta: 0.001
   });
 
@@ -172,20 +174,32 @@ const MobileQuizSection = () => {
   // from sticky and scrolls off like a normal full-width section.
   const MORPH = [0, 0.08, 0.5, 1];
 
-  // Viewport size in px so height/maxWidth interpolate within one unit.
+  // Viewport size in px so width/height interpolate within one unit.
   // Framer cannot mix "340px" -> "100vh": it lerps the numbers and keeps the
   // target's unit, blowing the card up to ~214vh mid-morph.
   const [viewport, setViewport] = useState({ w: window.innerWidth, h: window.innerHeight });
   useEffect(() => {
-    const onResize = () => setViewport({ w: window.innerWidth, h: window.innerHeight });
+    // rAF-coalesced: mobile browsers fire resize mid-scroll when the URL bar
+    // collapses/expands; re-rendering on every event stutters the morph.
+    let raf = 0;
+    const onResize = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() =>
+        setViewport({ w: window.innerWidth, h: window.innerHeight })
+      );
+    };
     window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
 
-  // Card scale transforms (driven by smoothed spring)
-  const cardWidth = useTransform(smoothScrollProgress, MORPH, ["90%", "90%", "100%", "100%"]);
+  // Card scale transforms (driven by smoothed spring). Width is resolved to px
+  // up front so only one width property animates (no separate maxWidth).
+  const collapsedWidth = Math.min(viewport.w * 0.9, 448);
+  const cardWidth = useTransform(smoothScrollProgress, MORPH, [`${collapsedWidth}px`, `${collapsedWidth}px`, `${viewport.w}px`, `${viewport.w}px`]);
   const cardHeight = useTransform(smoothScrollProgress, MORPH, ["340px", "340px", `${viewport.h}px`, `${viewport.h}px`]);
-  const cardMaxWidth = useTransform(smoothScrollProgress, MORPH, ["448px", "448px", `${viewport.w}px`, `${viewport.w}px`]);
   const cardBorderRadius = useTransform(smoothScrollProgress, MORPH, ["24px", "24px", "0px", "0px"]);
 
   // Content inside the card stays completely still while the shell morphs
@@ -214,8 +228,9 @@ const MobileQuizSection = () => {
 
   // Anchors the collapsed title+card near the stage top (no empty cream band
   // above or below the fold on entry); animates to 0 so the fullscreen card
-  // still fills the viewport exactly.
-  const stagePaddingTop = useTransform(smoothScrollProgress, MORPH, ["116px", "116px", "0px", "0px"]);
+  // still fills the viewport exactly. Applied as a translate on the card, not
+  // padding on the stage: transforms composite, padding reflows every frame.
+  const cardY = useTransform(smoothScrollProgress, MORPH, [116, 116, 0, 0]);
 
   const renderCardContent = () => {
     return (
@@ -456,7 +471,7 @@ const MobileQuizSection = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
-            className="lg:hidden fixed inset-0 z-[100] bg-background flex flex-col justify-between overflow-hidden pt-14 pb-12 px-8"
+            className="lg:hidden fixed inset-0 z-[120] bg-background flex flex-col justify-between overflow-hidden pt-14 pb-12 px-8"
           >
             <button
               onClick={() => setIsDismissed(true)}
@@ -487,8 +502,7 @@ const MobileQuizSection = () => {
       ) : (
         /* Dynamic Runway / Sticky View */
         <div ref={containerRef} className="lg:hidden relative w-full h-[220vh] bg-cream border-b border-border/20">
-          <motion.div
-            style={{ paddingTop: stagePaddingTop }}
+          <div
             className={`sticky top-0 w-full h-screen overflow-hidden flex items-start justify-center pointer-events-none ${
               isCurrentlyFullscreen ? "z-[100]" : "z-10"
             }`}
@@ -502,17 +516,22 @@ const MobileQuizSection = () => {
                 Belief or Reality?
               </h2>
             </motion.div>
-            {/* Morphing Card Wrapper */}
+            {/* Morphing Card Wrapper. Entrance is opacity-only: `y` belongs to
+                the scroll-driven morph and can't also be an enter target.
+                min-h-[100dvh] while fullscreen absorbs URL-bar collapse (the px
+                height target is stale until the next resize event lands). */}
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.45, ease: "easeOut" }}
-              className="border bg-background flex flex-col justify-between overflow-hidden pointer-events-auto relative shadow-soft p-6"
+              className={`border bg-background flex flex-col justify-between overflow-hidden pointer-events-auto relative shadow-soft p-6 ${
+                isCurrentlyFullscreen ? "min-h-[100dvh]" : ""
+              }`}
               style={{
+                y: cardY,
                 width: cardWidth,
                 height: cardHeight,
-                maxWidth: cardMaxWidth,
                 borderRadius: cardBorderRadius,
                 borderColor: borderColor,
                 boxShadow: cardShadow,
@@ -533,7 +552,7 @@ const MobileQuizSection = () => {
                   empty so buttons aren't duplicated in the a11y/focus order */}
               {!inOverlay && renderCardContent()}
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       )}
     </>
