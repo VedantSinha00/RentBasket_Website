@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -9,6 +9,7 @@ import { WishlistProvider } from "@/context/WishlistContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import BottomTabBar from "@/components/BottomTabBar";
+import SplashScreen from "@/components/SplashScreen";
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
 import ProductDetails from "./pages/ProductDetails";
@@ -30,6 +31,8 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+const SPLASH_DURATION_MS = 4000;
 
 /** GitHub Pages serves route folders as /path/ — match both forms. */
 const routePair = (path, element) => [
@@ -101,23 +104,35 @@ const RouterApp = () => {
   );
 };
 
-const App = () => (
-  <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <WishlistProvider>
-      <CartProvider>
-        <TooltipProvider>
-          <Sonner />
-          <BrowserRouter
-            basename={import.meta.env.BASE_URL.replace(/\/$/, "") || "/"}
-          >
-            <RouterApp />
-          </BrowserRouter>
-        </TooltipProvider>
-      </CartProvider>
-      </WishlistProvider>
-    </QueryClientProvider>
-  </ErrorBoundary>
-);
+const App = () => {
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), SPLASH_DURATION_MS);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <ErrorBoundary>
+      <AnimatePresence>
+        {showSplash && <SplashScreen key="splash" />}
+      </AnimatePresence>
+      <QueryClientProvider client={queryClient}>
+        <WishlistProvider>
+        <CartProvider>
+          <TooltipProvider>
+            <Sonner />
+            <BrowserRouter
+              basename={import.meta.env.BASE_URL.replace(/\/$/, "") || "/"}
+            >
+              <RouterApp />
+            </BrowserRouter>
+          </TooltipProvider>
+        </CartProvider>
+        </WishlistProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
+  );
+};
 
 export default App;

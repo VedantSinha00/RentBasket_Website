@@ -9,7 +9,7 @@ const fadeUp = {
 
 const FreeServices = () => {
   return (
-    <section className="bg-background pt-10 md:pt-14 pb-4 md:pb-6">
+    <section className="bg-background pt-4 md:pt-14 pb-4 md:pb-6">
       <div className="section-container">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
           {/* Left: Free + list + CTAs */}

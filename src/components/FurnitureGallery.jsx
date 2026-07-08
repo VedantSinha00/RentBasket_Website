@@ -34,11 +34,15 @@ const GallerySkeleton = () => (
   </div>
 );
 
+// Continuous auto-scroll speed, in px/second.
+const AUTO_SPEED = 40;
+
 const FurnitureGallery = () => {
   const { data: products = [], isLoading } = useProducts();
   const [autoScroll, setAutoScroll] = useState(true);
-  const containerRef = useRef(null);
-  const intervalRef = useRef(null);
+  const trackRef = useRef(null);
+  const rafRef = useRef(null);
+  const resumeTimeoutRef = useRef(null);
 
   // Resolve the curated list to real products, then make it fail-safe.
   //
@@ -80,29 +84,104 @@ const FurnitureGallery = () => {
     return [...curated, ...backfill].slice(0, TARGET_CARD_COUNT);
   }, [products]);
 
-  // Auto-scroll horizontally; loops back to start when reaching the end.
+  // True circular strip: the item list is rendered twice back-to-back and
+  // moved with a CSS transform (not scrollLeft). Because both halves are
+  // pixel-identical, the offset can be wrapped with a modulo the instant it
+  // passes one set's width — there's no "end" to reach and no reset to
+  // disguise, so the motion never has a seam to hide. This still renders a
+  // finite, fixed number of nodes (2x the list) rather than an unbounded/
+  // infinitely-growing DOM.
+  const loopItems = useMemo(
+    () => (items.length > 0 ? [...items, ...items] : items),
+    [items]
+  );
+
+  // Current transform offset, in px. A ref (not state) because it updates
+  // every animation frame — putting it in state would re-render constantly.
+  const offsetRef = useRef(0);
+  const setWidthRef = useRef(0);
+
+  const applyOffset = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.style.transform = `translateX(-${offsetRef.current}px)`;
+  };
+
+  // Measures one copy of the list (gap-inclusive) so the wrap point is exact.
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track || items.length === 0) return;
+    const cards = track.children;
+    if (cards.length < items.length * 2) return;
+    const first = cards[0];
+    const firstOfSecondSet = cards[items.length];
+    setWidthRef.current = firstOfSecondSet.offsetLeft - first.offsetLeft;
+  }, [items, loopItems]);
+
+  // Continuous rAF-driven scroll — no discrete jumps, so there's nothing to
+  // visibly "snap." The offset wraps via modulo against one set's width,
+  // which is invisible because both copies are identical.
   useEffect(() => {
     if (!autoScroll || items.length === 0) return;
-    intervalRef.current = setInterval(() => {
-      const c = containerRef.current;
-      if (!c) return;
-      const max = c.scrollWidth - c.clientWidth;
-      const next = c.scrollLeft + 320;
-      c.scrollTo({ left: next >= max - 4 ? 0 : next, behavior: "smooth" });
-    }, 3500);
-    return () => clearInterval(intervalRef.current);
+    let last = performance.now();
+    const tick = (now) => {
+      const dt = now - last;
+      last = now;
+      const setWidth = setWidthRef.current;
+      if (setWidth > 0) {
+        offsetRef.current = (offsetRef.current + AUTO_SPEED * (dt / 1000)) % setWidth;
+        applyOffset();
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
   }, [autoScroll, items.length]);
 
   const nudge = (dir) => {
     setAutoScroll(false);
-    const c = containerRef.current;
-    if (!c) return;
-    c.scrollBy({ left: dir * 360, behavior: "smooth" });
-    setTimeout(() => setAutoScroll(true), 8000);
+    clearTimeout(resumeTimeoutRef.current);
+    const setWidth = setWidthRef.current;
+    if (setWidth > 0) {
+      const cardStep = setWidth / items.length;
+      offsetRef.current =
+        ((offsetRef.current + dir * cardStep) % setWidth + setWidth) % setWidth;
+      applyOffset();
+    }
+    resumeTimeoutRef.current = setTimeout(() => setAutoScroll(true), 2000);
+  };
+
+  // Manual drag/swipe: same offset + modulo wrap as the auto-loop and the
+  // arrow buttons, so all three input methods move through the same
+  // seamless circular track.
+  const dragRef = useRef(null);
+
+  const pointerX = (e) => (e.touches ? e.touches[0].clientX : e.clientX);
+
+  const onDragStart = (e) => {
+    setAutoScroll(false);
+    clearTimeout(resumeTimeoutRef.current);
+    dragRef.current = { startX: pointerX(e), startOffset: offsetRef.current };
+  };
+
+  const onDragMove = (e) => {
+    if (!dragRef.current) return;
+    const setWidth = setWidthRef.current;
+    if (setWidth <= 0) return;
+    const delta = dragRef.current.startX - pointerX(e);
+    offsetRef.current =
+      ((dragRef.current.startOffset + delta) % setWidth + setWidth) % setWidth;
+    applyOffset();
+  };
+
+  const onDragEnd = () => {
+    if (!dragRef.current) return;
+    dragRef.current = null;
+    resumeTimeoutRef.current = setTimeout(() => setAutoScroll(true), 2000);
   };
 
   return (
-    <section className="bg-cream/40 pt-0 pb-8 md:pb-10 -mt-1">
+    <section className="bg-cream/40 pt-0 pb-4 md:pb-10 -mt-1">
       <div className="section-container">
         {/* Catalog scroll */}
         <div className="relative">
@@ -112,24 +191,34 @@ const FurnitureGallery = () => {
           {isLoading ? (
             <GallerySkeleton />
           ) : (
-            <div
-              ref={containerRef}
-              className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-            >
-              {items.map((item) => (
-                <Link
-                  to={`/product/${item.id}`}
-                  key={item.id}
-                  className="group shrink-0 snap-start w-[220px] md:w-[260px] aspect-square rounded-2xl overflow-hidden shadow-elevated bg-white hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.18)] hover:-translate-y-1 transition-all duration-300"
-                >
-                  <ProductImage
-                    src={item.images?.[0] || item.image}
-                    alt={item.name}
-                    className="h-full w-full object-contain block group-hover:scale-[1.02] transition-transform duration-500"
-                  />
-                </Link>
-              ))}
+            <div className="overflow-hidden pb-4">
+              <div
+                ref={trackRef}
+                className="flex gap-4 md:gap-6 w-max will-change-transform"
+                onTouchStart={onDragStart}
+                onTouchMove={onDragMove}
+                onTouchEnd={onDragEnd}
+                onMouseDown={onDragStart}
+                onMouseMove={onDragMove}
+                onMouseUp={onDragEnd}
+                onMouseLeave={onDragEnd}
+              >
+                {loopItems.map((item, i) => (
+                  <Link
+                    to={`/product/${item.id}`}
+                    key={i < items.length ? item.id : `${item.id}-dup`}
+                    draggable={false}
+                    className="group shrink-0 w-[220px] md:w-[260px] aspect-square rounded-2xl overflow-hidden shadow-elevated bg-white hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.18)] hover:-translate-y-1 transition-all duration-300"
+                  >
+                    <ProductImage
+                      src={item.images?.[0] || item.image}
+                      alt={item.name}
+                      draggable={false}
+                      className="h-full w-full object-contain block group-hover:scale-[1.02] transition-transform duration-500 pointer-events-none"
+                    />
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
 

@@ -2,7 +2,9 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 
-const mascotUrl = "https://www.figma.com/api/mcp/asset/16332cb1-7534-49d4-9463-03d9752cf0e1";
+// Mascot temporarily removed — the old src pointed at a Figma MCP asset URL
+// that has since 404'd. Restore with a local /src/assets import once a
+// permanent file is provided.
 
 const reviews = [
   {
@@ -136,60 +138,6 @@ const ReviewCard = ({ review, className = "" }) => (
   </div>
 );
 
-const FloatingBgCard = ({ review, rotate, tx, ty, blur, opacity, index }) => {
-  const duration = 6 + (index % 4) * 1.5;
-  const delay = (index % 3) * 0.8;
-  
-  return (
-    <motion.div
-      className="absolute bg-card border border-border/40 rounded-2xl p-4 w-[260px] pointer-events-none select-none"
-      style={{
-        filter: `blur(${blur}px)`,
-        boxShadow: "var(--shadow-soft)",
-        opacity,
-      }}
-      animate={{
-        transform: [
-          `rotate(${rotate}deg) translate(${tx}px, ${ty}px)`,
-          `rotate(${rotate}deg) translate(${tx}px, ${ty - 10}px)`,
-          `rotate(${rotate}deg) translate(${tx}px, ${ty}px)`
-        ]
-      }}
-      transition={{
-        repeat: Infinity,
-        duration: duration,
-        delay: delay,
-        ease: "easeInOut"
-      }}
-    >
-      <StarRating size={12} />
-      <p className="text-[11px] text-muted-foreground leading-relaxed font-sans line-clamp-4">
-        {review.segments.map((s) => s.text).join("")}
-      </p>
-      {review.name && (
-        <div className="flex justify-end mt-2 text-[10px] text-muted-foreground/60 font-medium font-sans">
-          — {review.name}, {review.location}
-        </div>
-      )}
-    </motion.div>
-  );
-};
-
-const bgCards = [
-  [3, -4,  -280,  30,  1, 0.65],
-  [4,  3,   280,  30,  1, 0.65],
-  [0, -3,  -160,  220,  2, 0.55],
-  [1,  4,   160,  220,  2, 0.55],
-  [2,  2,     0,  250,  2, 0.50],
-  [0,  5,  -420, -40,  3, 0.45],
-  [1, -5,   420, -40,  3, 0.45],
-  [3,  6,  -300,  330,  3, 0.35],
-  [4, -6,   300,  330,  3, 0.35],
-  [4,  3,  -200, -130,  2, 0.38],
-  [0, -3,   200, -130,  2, 0.38],
-  [2,  8,  -520,  10,  5, 0.25],
-  [3, -8,   520,  10,  5, 0.25],
-];
 
 const CollapsibleMobileCard = ({ review, expanded, onToggle, offsetX, rotate, zIndex, marginTop }) => (
   <motion.div
@@ -230,13 +178,6 @@ const CollapsibleMobileCard = ({ review, expanded, onToggle, offsetX, rotate, zI
   </motion.div>
 );
 
-// [reviewIndex, rotate, side, offset, top, blur, opacity]
-const mobileBgCards = [
-  [3, -5, "left", "-30px", "120px", 2, 0.5],
-  [4, 6, "right", "-30px", "260px", 2, 0.5],
-  [0, 4, "left", "-20px", "420px", 3, 0.4],
-];
-
 const LovedByCustomers = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [expandedMobile, setExpandedMobile] = useState(null);
@@ -249,38 +190,10 @@ const LovedByCustomers = () => {
         </h2>
       </div>
 
-      {/* Mobile layout: mascot-on-top + static staggered vertical card stack */}
+      {/* Mobile layout: static staggered vertical card stack */}
       <div className="md:hidden relative px-4 pt-2 pb-10 overflow-hidden">
-        {/* Blurred faded background cards */}
-        {mobileBgCards.map(([ri, rotate, side, offset, top, blur, opacity], i) => (
-          <div
-            key={i}
-            className="absolute bg-card border border-border/40 rounded-2xl p-4 w-[200px] pointer-events-none select-none"
-            style={{
-              transform: `rotate(${rotate}deg)`,
-              [side]: offset,
-              top,
-              filter: `blur(${blur}px)`,
-              boxShadow: "var(--shadow-soft)",
-              opacity,
-            }}
-          >
-            <StarRating size={12} />
-            <p className="text-[11px] text-muted-foreground leading-relaxed font-sans line-clamp-4">
-              {reviews[ri].segments.map((s) => s.text).join("")}
-            </p>
-          </div>
-        ))}
-
-        {/* Mascot sitting on the right, on top of the stack */}
-        <motion.img
-          src={mascotUrl}
-          alt="RentBasket mascot"
-          className="relative z-10 w-[30rem] max-w-none ml-auto -mr-10 -mt-2 -mb-4 pointer-events-none select-none"
-          draggable={false}
-          animate={{ y: [0, -8, 0] }}
-          transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-        />
+        {/* TODO: mascot image restored once a permanent local asset is provided —
+            the previous src pointed at a temporary Figma MCP asset URL that 404s. */}
 
         {/* Staggered review cards (collapsible) */}
         <div className="relative z-20 flex flex-col items-center">
@@ -308,36 +221,11 @@ const LovedByCustomers = () => {
       </div>
 
       {/* Desktop layout: fanned overlapping card cluster.
-          Built responsive-by-construction: the foreground (mascot + 3 cards) is a
-          normal centered flex column that reflows at any width; the decorative
-          blurred cards live in their own clipped layer (see below) so they crop at
-          the screen edges instead of forcing a fixed-width horizontal scroll or
-          bleeding into the next section. No more w-[1400px] stage / JS centering. */}
+          Built responsive-by-construction: the foreground (3 cards) is a normal
+          centered flex column that reflows at any width. */}
+      {/* TODO: mascot image restored once a permanent local asset is provided —
+          the previous src pointed at a temporary Figma MCP asset URL that 404s. */}
       <div className="hidden md:flex relative w-full max-w-7xl mx-auto items-end justify-center min-h-[560px] md:min-h-[680px] pb-8 overflow-x-clip">
-        {/* Decorative background layer — absolutely positioned, clipped by this
-            wrapper. The inner box keeps the authored 1400px-wide centered geometry
-            so the bgCards pixel translates stay correct; overflow-hidden crops
-            whatever spills past the viewport. pointer-events-none so it never
-            intercepts hover on the foreground cards. */}
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[1400px] h-full">
-            {bgCards.map(([ri, rotate, tx, ty, blur, opacity], i) => (
-              <FloatingBgCard
-                key={i}
-                review={reviews[ri]}
-                rotate={rotate}
-                tx={tx}
-                ty={ty}
-                blur={blur}
-                opacity={opacity}
-                index={i}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Mascot + foreground cards — normal flow, never clipped (so the mascot
-            head pokes up toward the heading freely). */}
         <motion.div
           className="relative flex flex-col items-center z-10 self-end"
           initial={{ opacity: 0, y: 40 }}
@@ -345,20 +233,6 @@ const LovedByCustomers = () => {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <motion.img
-            src={mascotUrl}
-            alt="RentBasket mascot"
-            className="w-80 md:w-[30rem] relative z-10 -mb-6 pointer-events-none select-none"
-            draggable={false}
-            animate={{
-              y: [0, -8, 0],
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 5,
-              ease: "easeInOut",
-            }}
-          />
           <div className="relative flex items-start justify-center mt-2 px-4">
             {reviews.slice(0, 3).map((review, idx) => {
               const isHovered = hoveredIndex === idx;
