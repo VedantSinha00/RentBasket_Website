@@ -134,7 +134,7 @@ const MobileQuizSection = () => {
   // Spring-smoothed scroll progress for organic deceleration
   const smoothScrollProgress = useSpring(scrollYProgress, {
     stiffness: 80,
-    damping: 24,
+    damping: 28,
     mass: 0.5,
     restDelta: 0.001
   });
@@ -172,20 +172,25 @@ const MobileQuizSection = () => {
   // from sticky and scrolls off like a normal full-width section.
   const MORPH = [0, 0.08, 0.5, 1];
 
+  // Viewport size in px so height/maxWidth interpolate within one unit.
+  // Framer cannot mix "340px" -> "100vh": it lerps the numbers and keeps the
+  // target's unit, blowing the card up to ~214vh mid-morph.
+  const [viewport, setViewport] = useState({ w: window.innerWidth, h: window.innerHeight });
+  useEffect(() => {
+    const onResize = () => setViewport({ w: window.innerWidth, h: window.innerHeight });
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   // Card scale transforms (driven by smoothed spring)
   const cardWidth = useTransform(smoothScrollProgress, MORPH, ["90%", "90%", "100%", "100%"]);
-  const cardHeight = useTransform(smoothScrollProgress, MORPH, ["340px", "340px", "100vh", "100vh"]);
-  const cardMaxWidth = useTransform(smoothScrollProgress, MORPH, ["448px", "448px", "100%", "100%"]);
+  const cardHeight = useTransform(smoothScrollProgress, MORPH, ["340px", "340px", `${viewport.h}px`, `${viewport.h}px`]);
+  const cardMaxWidth = useTransform(smoothScrollProgress, MORPH, ["448px", "448px", `${viewport.w}px`, `${viewport.w}px`]);
   const cardBorderRadius = useTransform(smoothScrollProgress, MORPH, ["24px", "24px", "0px", "0px"]);
 
-  // Padding transforms
-  const pTop = useTransform(smoothScrollProgress, MORPH, ["24px", "24px", "56px", "56px"]);
-  const pBottom = useTransform(smoothScrollProgress, MORPH, ["24px", "24px", "48px", "48px"]);
-  const pLeftRight = useTransform(smoothScrollProgress, MORPH, ["24px", "24px", "32px", "32px"]);
-
-  // Scaling transitions for layout
-  const mythFontSize = useTransform(smoothScrollProgress, MORPH, ["18px", "18px", "28px", "28px"]);
-  const contentGap = useTransform(smoothScrollProgress, MORPH, ["16px", "16px", "32px", "32px"]);
+  // Content inside the card stays completely still while the shell morphs
+  // ("container morphs, content stays") — padding, font size, and gaps are
+  // fixed; only the overlay uses the larger fullscreen typography.
 
   // Animate border color instead of border width to prevent sub-pixel layout
   // shifts. hsla values mirror the --border token (0 0% 90%) in index.css.
@@ -233,11 +238,11 @@ const MobileQuizSection = () => {
             {/* Middle Content Area */}
             <motion.div
               className="flex flex-col items-center text-center justify-center flex-1"
-              style={{ gap: inOverlay ? "32px" : isStatic ? "16px" : contentGap }}
+              style={{ gap: inOverlay ? "32px" : "16px" }}
             >
               <motion.h3
                 className="font-sans font-bold text-foreground tracking-tight leading-snug"
-                style={{ fontSize: inOverlay ? "28px" : isStatic ? "18px" : mythFontSize }}
+                style={{ fontSize: inOverlay ? "28px" : "18px" }}
               >
                 Is renting actually a waste of money?
               </motion.h3>
@@ -284,7 +289,7 @@ const MobileQuizSection = () => {
             {/* Middle Content Area */}
             <motion.div
               className="flex flex-col text-left justify-center flex-1 min-h-0 overflow-y-auto py-2"
-              style={{ gap: inOverlay ? "32px" : isStatic ? "16px" : contentGap }}
+              style={{ gap: inOverlay ? "32px" : "16px" }}
             >
               <div className="flex flex-col gap-1">
                 <span className="font-sans text-[11px] font-bold tracking-wider text-primary uppercase">
@@ -292,7 +297,7 @@ const MobileQuizSection = () => {
                 </span>
                 <motion.h3
                   className="font-display font-semibold text-foreground leading-snug"
-                  style={{ fontSize: inOverlay ? "28px" : isStatic ? "18px" : mythFontSize }}
+                  style={{ fontSize: inOverlay ? "28px" : "18px" }}
                 >
                   "{currentQuestion.myth}"
                 </motion.h3>
@@ -491,10 +496,6 @@ const MobileQuizSection = () => {
             {/* Title just above the top-anchored card; fades as it expands */}
             <motion.div
               style={{ opacity: titleOpacity }}
-              initial={{ y: 20 }}
-              whileInView={{ y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
               className="absolute top-[52px] left-0 right-0 text-center px-4"
             >
               <h2 className="text-3xl sm:text-4xl font-semibold font-display tracking-tight text-foreground">
@@ -503,20 +504,16 @@ const MobileQuizSection = () => {
             </motion.div>
             {/* Morphing Card Wrapper */}
             <motion.div
-              initial={{ opacity: 0, y: 28 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="border bg-background flex flex-col justify-between overflow-hidden pointer-events-auto relative shadow-soft"
+              transition={{ duration: 0.45, ease: "easeOut" }}
+              className="border bg-background flex flex-col justify-between overflow-hidden pointer-events-auto relative shadow-soft p-6"
               style={{
                 width: cardWidth,
                 height: cardHeight,
                 maxWidth: cardMaxWidth,
                 borderRadius: cardBorderRadius,
-                paddingTop: pTop,
-                paddingBottom: pBottom,
-                paddingLeft: pLeftRight,
-                paddingRight: pLeftRight,
                 borderColor: borderColor,
                 boxShadow: cardShadow,
               }}
