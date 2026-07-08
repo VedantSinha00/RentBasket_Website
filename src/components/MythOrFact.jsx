@@ -122,31 +122,33 @@ const MobileQuizSection = () => {
 
   // Monitor scroll progress to set z-index
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    const inRange = latest > 0.3 && latest < 0.7;
+    const inRange = latest > 0.4 && latest < 0.7;
     setIsCurrentlyFullscreen(inRange);
   });
 
   // Card scale transforms
-  const cardWidth = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], ["90%", "100%", "100%", "90%"]);
-  const cardHeight = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], ["390px", "100vh", "100vh", "390px"]);
-  const cardMaxWidth = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], ["448px", "100%", "100%", "448px"]);
-  const cardBorderRadius = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], ["24px", "0px", "0px", "24px"]);
+  const cardWidth = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["90%", "90%", "100%", "100%", "90%", "90%"]);
+  const cardHeight = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["390px", "390px", "100vh", "100vh", "390px", "390px"]);
+  const cardMaxWidth = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["448px", "448px", "100%", "100%", "448px", "448px"]);
+  const cardBorderRadius = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["24px", "24px", "0px", "0px", "24px", "24px"]);
 
   // Padding transforms
-  const pTop = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], ["24px", "56px", "56px", "24px"]);
-  const pBottom = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], ["24px", "48px", "48px", "24px"]);
-  const pLeftRight = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], ["24px", "32px", "32px", "24px"]);
+  const pTop = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["24px", "24px", "56px", "56px", "24px", "24px"]);
+  const pBottom = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["24px", "24px", "48px", "48px", "24px", "24px"]);
+  const pLeftRight = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["24px", "24px", "32px", "32px", "24px", "24px"]);
 
   // Scaling transitions for layout
-  const mythFontSize = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], ["18px", "28px", "28px", "18px"]);
-  const contentGap = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], ["16px", "32px", "32px", "16px"]);
+  const mythFontSize = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["18px", "18px", "28px", "28px", "18px", "18px"]);
+  const contentGap = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["16px", "16px", "32px", "32px", "16px", "16px"]);
 
   // Card outline / shadow fades
-  const borderWidth = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], ["1px", "0px", "0px", "1px"]);
-  const cardShadow = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [
+  const borderWidth = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["1px", "1px", "0px", "0px", "1px", "1px"]);
+  const cardShadow = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], [
+    "0px 4px 20px -4px rgba(0, 0, 0, 0.1)",
     "0px 4px 20px -4px rgba(0, 0, 0, 0.1)",
     "0px 0px 0px 0px rgba(0, 0, 0, 0)",
     "0px 0px 0px 0px rgba(0, 0, 0, 0)",
+    "0px 4px 20px -4px rgba(0, 0, 0, 0.1)",
     "0px 4px 20px -4px rgba(0, 0, 0, 0.1)"
   ]);
 
