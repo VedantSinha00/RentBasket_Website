@@ -120,15 +120,10 @@ const MobileQuizSection = () => {
     offset: ["start start", "end end"],
   });
 
-  // Monitor scroll progress to reset dismiss state and toggle z-index
+  // Monitor scroll progress to set z-index
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     const inRange = latest > 0.3 && latest < 0.7;
     setIsCurrentlyFullscreen(inRange);
-    
-    // Reset when scrolling out of range
-    if (latest === 0 || latest === 1) {
-      setIsDismissed(false);
-    }
   });
 
   // Card scale transforms
@@ -180,7 +175,11 @@ const MobileQuizSection = () => {
       }`}>
         {/* Morphing Card Wrapper */}
         <motion.div
-          className="border border-border bg-background flex flex-col justify-between overflow-hidden pointer-events-auto relative"
+          layout
+          onClick={isDismissed ? () => setIsDismissed(false) : undefined}
+          className={`border border-border bg-background flex flex-col justify-between overflow-hidden pointer-events-auto relative ${
+            isDismissed ? "cursor-pointer" : ""
+          }`}
           style={{
             width: finalWidth,
             height: finalHeight,
@@ -197,7 +196,10 @@ const MobileQuizSection = () => {
           {/* Top-Right Close Button */}
           {isCurrentlyFullscreen && !isDismissed && (
             <button
-              onClick={() => setIsDismissed(true)}
+              onClick={(e) => {
+                e.stopPropagation(); // prevent card container onClick from triggering
+                setIsDismissed(true);
+              }}
               className="absolute top-4 right-4 p-2 rounded-full bg-muted/40 hover:bg-muted text-foreground transition-all duration-200 active:scale-95 z-[110] pointer-events-auto"
               aria-label="Close quiz"
             >
