@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-route
 import { AnimatePresence, motion } from "framer-motion";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
+import { useProducts } from "@/hooks/useProducts";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import BottomTabBar from "@/components/BottomTabBar";
@@ -33,7 +34,28 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const SPLASH_DURATION_MS = 4000;
+// The splash stays up at least this long (so it never just flashes on a warm
+// cache) and at most this long (so a hung/slow backend can't strand the user
+// on the splash forever — the app falls through and shows its own skeletons).
+const SPLASH_MIN_MS = 1800;
+const SPLASH_MAX_MS = 6000;
+
+/**
+ * Kicks off the homepage's product fetch *while the splash is still showing*
+ * (it lives inside QueryClientProvider, alongside the real router, not after
+ * it) and reports back once that fetch has settled — success or error, so a
+ * dead backend can't hang the splash past SPLASH_MAX_MS. FurnitureGallery's
+ * useProducts() call below hits the same React Query cache key, so this is
+ * the same request, not a duplicate — the page then renders with data
+ * already in cache instead of showing its own skeleton after the splash.
+ */
+const ProductsPrefetchGate = ({ onSettled }) => {
+  const { isLoading, isError, isSuccess } = useProducts();
+  useEffect(() => {
+    if (!isLoading && (isSuccess || isError)) onSettled();
+  }, [isLoading, isSuccess, isError, onSettled]);
+  return null;
+};
 
 /** GitHub Pages serves route folders as /path/ — match both forms. */
 const routePair = (path, element) => [
@@ -108,18 +130,36 @@ const RouterApp = () => {
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+  const [dataSettled, setDataSettled] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), SPLASH_DURATION_MS);
-    return () => clearTimeout(timer);
+    const minTimer = setTimeout(() => setMinTimeElapsed(true), SPLASH_MIN_MS);
+    // Safety net: if the backend hangs (see the CORS-looking timeout we
+    // diagnosed earlier), don't stall the splash forever — drop through to
+    // the app's own skeletons/error states after SPLASH_MAX_MS regardless.
+    const maxTimer = setTimeout(() => setDataSettled(true), SPLASH_MAX_MS);
+    return () => {
+      clearTimeout(minTimer);
+      clearTimeout(maxTimer);
+    };
   }, []);
+
+  useEffect(() => {
+    if (minTimeElapsed && dataSettled) setShowSplash(false);
+  }, [minTimeElapsed, dataSettled]);
 
   return (
     <ErrorBoundary>
-      <AnimatePresence>
-        {showSplash && <SplashScreen key="splash" />}
-      </AnimatePresence>
       <QueryClientProvider client={queryClient}>
+        {/* Mounted immediately (not after the splash) so the product fetch
+            starts while the splash is still up — "internet used first" means
+            the request fires first, not that we wait for the splash to
+            finish before fetching. */}
+        <ProductsPrefetchGate onSettled={() => setDataSettled(true)} />
+        <AnimatePresence>
+          {showSplash && <SplashScreen key="splash" />}
+        </AnimatePresence>
         <WishlistProvider>
         <CartProvider>
           <TooltipProvider>
