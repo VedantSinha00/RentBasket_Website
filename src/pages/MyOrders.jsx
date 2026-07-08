@@ -24,7 +24,7 @@ import { discountedRent } from "@/lib/pricing";
 import { dateNDaysFromToday } from "@/lib/delivery";
 import AppNudge from "@/components/AppNudge";
 
-const SUPPORT_WHATSAPP = "https://wa.me/919958858473";
+const SUPPORT_WHATSAPP = "https://wa.me/919959858473";
 
 // Status buckets. The founder confirmed (2026-06-11) the order table will gain
 // explicit "Active rental" and "Completed" statuses. The "active" bucket is wired
@@ -34,7 +34,7 @@ const STATUS_CONFIG = {
   upcoming: {
     label: "Arriving Soon",
     icon: Truck,
-    badgeClass: "bg-coral-surface text-primary border-coral-border",
+    badgeClass: "bg-secondary text-foreground border-border",
   },
   active: {
     label: "Active Rental",
@@ -99,6 +99,7 @@ const OrderCard = ({ order }) => {
         const pricing = product.pricing_by_duration ?? {};
         const duration = pricing[orderedKey] != null ? orderedKey : Object.keys(pricing)[0];
         if (!duration) return; // product exists but has no rentable plan — skip
+        if (product.stock_status === "out_of_stock") return; // out of stock — skip
         addToCart({
           productId: product.id,
           name: product.name,
@@ -114,6 +115,7 @@ const OrderCard = ({ order }) => {
           rent: pricing[duration],
           percent_discount: product.percent_discount,
           security_multiple: product.security_multiple,
+          stock_status: product.stock_status,
         });
         added++;
       } else if (item.rent) {
@@ -150,8 +152,8 @@ const OrderCard = ({ order }) => {
       {/* Card Header */}
       <div className="px-5 py-4 md:px-6 border-b border-border/50 bg-secondary/10 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <Package className="w-4.5 h-4.5 text-primary" />
+          <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
+            <Package className="w-4.5 h-4.5 text-foreground" />
           </div>
           <div>
             <p className="text-sm font-bold text-foreground leading-tight">
@@ -174,7 +176,7 @@ const OrderCard = ({ order }) => {
           <div key={idx} className="flex gap-4 pb-4 border-b border-border/30 last:border-0 last:pb-0">
             <Link
               to={`/product/${item.amenity_type_id}`}
-              className="w-16 h-16 bg-gray-50 rounded-xl border border-border/50 flex-shrink-0 p-1.5 hover:border-primary/30 transition-colors group flex items-center justify-center"
+              className="w-16 h-16 bg-gray-50 rounded-xl border border-border/50 flex-shrink-0 p-1.5 hover:border-foreground/35 transition-colors group flex items-center justify-center"
             >
               {item.image ? (
                 <img
@@ -189,7 +191,7 @@ const OrderCard = ({ order }) => {
             </Link>
             <div className="flex-1 min-w-0">
               <Link to={`/product/${item.amenity_type_id}`}>
-                <p className="text-sm font-bold text-foreground line-clamp-1 hover:text-primary transition-colors">
+                <p className="text-sm font-bold text-foreground line-clamp-1 hover:text-foreground transition-colors">
                   {item.name}
                 </p>
               </Link>
@@ -200,7 +202,7 @@ const OrderCard = ({ order }) => {
                 <span className="w-1 h-1 rounded-full bg-border" />
                 <span>Qty: {item.quantity}</span>
               </div>
-              <span className="text-sm font-black text-primary mt-1.5 inline-block">
+              <span className="text-sm font-black text-foreground mt-1.5 inline-block">
                 ₹{item.rent.toLocaleString("en-IN")}/mo
               </span>
             </div>
@@ -255,15 +257,15 @@ const OrderCard = ({ order }) => {
           {order.status === "completed" ? (
             <button
               onClick={handleRentAgain}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-primary/30 text-xs font-bold text-primary hover:bg-primary/5 transition-colors active:scale-95"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-foreground bg-secondary hover:bg-foreground hover:text-background transition-all border border-border/80 active:scale-95"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Rent Again
             </button>
           ) : order.status === "active" ? (
             <a
-              href="tel:+919958858473"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-primary/30 text-xs font-bold text-primary hover:bg-primary/5 transition-colors active:scale-95"
+              href="tel:+919959858473"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-foreground bg-secondary hover:bg-foreground hover:text-background transition-all border border-border/80 active:scale-95"
             >
               <Headset className="w-3.5 h-3.5" />
               Get Support
@@ -273,7 +275,7 @@ const OrderCard = ({ order }) => {
               href={SUPPORT_WHATSAPP}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-primary/30 text-xs font-bold text-primary hover:bg-primary/5 transition-colors active:scale-95"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-foreground bg-secondary hover:bg-foreground hover:text-background transition-all border border-border/80 active:scale-95"
             >
               <Truck className="w-3.5 h-3.5" />
               Track Delivery
@@ -346,7 +348,7 @@ const MyOrders = () => {
                 <img src={logo} alt="RentBasket logo" className="w-24 md:w-28" />
               </div>
             </Link>
-            <Link to="/catalog" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            <Link to="/catalog" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               Browse More
             </Link>
           </div>
@@ -357,15 +359,15 @@ const MyOrders = () => {
         <div className="max-w-4xl mx-auto">
           <Link
             to="/profile"
-            className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest mb-5"
+            className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest mb-5"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             Profile
           </Link>
 
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center">
-              <ShoppingBag className="w-5 h-5 text-primary" />
+            <div className="w-11 h-11 rounded-2xl bg-secondary flex items-center justify-center">
+              <ShoppingBag className="w-5 h-5 text-foreground" />
             </div>
             <div>
               <h1 className="text-2xl md:text-4xl font-black font-display text-foreground tracking-tight">
@@ -386,7 +388,7 @@ const MyOrders = () => {
                   key={f.key}
                   onClick={() => setFilter(f.key)}
                   className={`flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all active:scale-95 ${
-                    isActive ? "bg-primary text-white shadow-soft" : "bg-secondary/40 text-muted-foreground hover:bg-secondary/70"
+                    isActive ? "bg-foreground text-background shadow-sm" : "bg-secondary/40 text-muted-foreground hover:bg-secondary/70"
                   }`}
                 >
                   {f.label}
@@ -407,7 +409,7 @@ const MyOrders = () => {
           />
 
           {loadError && !isLoading && (
-            <div className="mb-5 rounded-xl border border-coral-border bg-coral-surface px-4 py-3 text-xs font-medium text-primary">
+            <div className="mb-5 rounded-xl border border-border bg-secondary px-4 py-3 text-xs font-medium text-foreground">
               We couldn't refresh your orders just now. Showing recent activity from this device — pull up again in a bit.
             </div>
           )}
@@ -442,8 +444,8 @@ const MyOrders = () => {
 
           <div className="mt-10 text-center text-xs md:text-sm text-muted-foreground py-6 border-t border-border/50">
             Need help with an order?{" "}
-            <a href="tel:+919958858473" className="text-primary font-bold hover:underline">
-              Call +91 9958858473
+            <a href="tel:+919959858473" className="text-foreground font-semibold hover:underline">
+              Call +91 9959858473
             </a>
           </div>
         </div>

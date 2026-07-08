@@ -2,12 +2,9 @@ import { useState, useRef } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import FurnitureGallery from "@/components/FurnitureGallery";
-import FreeServices from "@/components/FreeServices";
-import ResponsibilitySection from "@/components/ResponsibilitySection";
 // import HowItWorks from "@/components/HowItWorks";
 // import FoundersSection from "@/components/FoundersSection";
 import MythOrFact from "@/components/MythOrFact";
-import LovedByCustomers from "@/components/LovedByCustomers";
 import Testimonials from "@/components/Testimonials";
 import WhatMakesDifferent from "@/components/WhatMakesDifferent";
 // App branding removed from the homepage for now — DownloadSection hidden.
@@ -34,18 +31,15 @@ const Index = () => {
         <div ref={galleryRef} className="-mt-2">
           <FurnitureGallery />
         </div>
-        <FreeServices />
-        <ResponsibilitySection />
+        <WhatMakesDifferent />
         {/* v1: How it works — hidden for this release */}
         {/* <HowItWorks /> */}
         {/* v1: Founders — hidden for this release */}
         {/* <FoundersSection /> */}
         <MythOrFact />
-        <LovedByCustomers />
         <Testimonials />
         {/* App branding removed from homepage for now */}
         {/* <DownloadSection /> */}
-        <WhatMakesDifferent />
       </main>
       <Footer />
     </div>

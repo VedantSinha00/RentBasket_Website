@@ -34,7 +34,7 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
         onClick={() => toggleDropdown(name)}
         className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all duration-200 ${
           value
-            ? "border-primary text-primary bg-primary/5"
+            ? "bg-foreground text-background border-foreground shadow-sm"
             : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
         }`}
       >
@@ -62,7 +62,7 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
               }}
               className={`w-full text-left px-4 py-2 text-sm transition-colors ${
                 !value
-                  ? "text-primary font-medium bg-primary/5"
+                  ? "bg-secondary text-foreground font-semibold border-b border-border/10"
                   : "text-muted-foreground hover:bg-secondary hover:text-foreground"
               }`}
             >
@@ -79,7 +79,7 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
                   }}
                   className={`w-full text-left px-4 py-2 text-sm transition-colors ${
                     value === optValue
-                      ? "text-primary font-medium bg-primary/5"
+                      ? "bg-secondary text-foreground font-semibold border-b border-border/10"
                       : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                   }`}
                 >
@@ -139,14 +139,14 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
                 }
                 className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all duration-200 ${
                   filters.availability
-                    ? "border-primary text-primary bg-primary/5"
-                    : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    ? "bg-foreground text-background border-foreground shadow-sm"
+                    : "border-border text-muted-foreground hover:border-foreground/35 hover:text-foreground"
                 }`}
               >
                 <span
                   className={`w-3 h-3 rounded-full border-2 transition-colors ${
                     filters.availability
-                      ? "bg-primary border-primary"
+                      ? "bg-background border-background"
                       : "border-muted-foreground"
                   }`}
                 />
@@ -182,7 +182,7 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
                       [f.key]: f.key === "availability" ? false : null,
                     })
                   }
-                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-foreground text-background text-xs font-medium hover:bg-foreground/80 transition-colors border border-foreground/10 shadow-sm"
                 >
                   {f.label}
                   <X className="w-3 h-3" />
@@ -190,7 +190,7 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
               ))}
               <button
                 onClick={clearAllFilters}
-                className="text-xs text-muted-foreground hover:text-primary transition-colors underline ml-1"
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors underline ml-1"
               >
                 Clear all
               </button>
@@ -217,7 +217,7 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
                       [f.key]: f.key === "availability" ? false : null,
                     })
                   }
-                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium whitespace-nowrap flex-shrink-0"
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-foreground text-background text-xs font-medium whitespace-nowrap flex-shrink-0 shadow-sm border border-foreground/10"
                 >
                   {f.label}
                   <X className="w-3 h-3" />
@@ -231,12 +231,12 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
           {/* Filter & Sort button — pinned right */}
           <button
             onClick={() => setMobileOpen(true)}
-            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-primary text-primary text-xs font-medium bg-primary/5 hover:bg-primary/10 transition-colors"
+            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-foreground text-xs font-semibold bg-secondary hover:bg-secondary/80 transition-colors"
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
             Filter &amp; Sort
             {(activeFilterCount > 0 || (sortBy && sortBy !== "Popular")) && (
-              <span className="w-4 h-4 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center font-bold">
+              <span className="w-4 h-4 rounded-full bg-foreground text-background text-[10px] flex items-center justify-center font-bold">
                 {activeFilterCount + (sortBy && sortBy !== "Popular" ? 1 : 0)}
               </span>
             )}
@@ -292,7 +292,7 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
                           onClick={() => onSortChange(val)}
                           className={`w-full text-left px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${
                             isActive
-                              ? "border-primary text-primary bg-primary/5"
+                              ? "bg-secondary text-foreground font-medium border border-border/60"
                               : "border-border text-muted-foreground hover:border-primary/30"
                           }`}
                         >
@@ -320,7 +320,7 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
                         }
                         className={`px-3 py-1.5 rounded-full border text-sm transition-all ${
                           filters.duration === d.label
-                            ? "border-primary text-primary bg-primary/5 font-medium"
+                            ? "bg-foreground text-background border-foreground font-medium shadow-sm"
                             : "border-border text-muted-foreground"
                         }`}
                       >
@@ -345,7 +345,7 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
                         }
                         className={`px-3 py-1.5 rounded-full border text-sm transition-all ${
                           filters.bestFor === bf
-                            ? "border-primary text-primary bg-primary/5 font-medium"
+                            ? "bg-foreground text-background border-foreground font-medium shadow-sm"
                             : "border-border text-muted-foreground"
                         }`}
                       >
@@ -364,13 +364,13 @@ const FilterBar = ({ filters, onFilterChange, sortBy, onSortChange }) => {
                     }
                     className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm transition-all ${
                       filters.availability
-                        ? "border-primary text-primary bg-primary/5 font-medium"
+                        ? "bg-foreground text-background border-foreground font-medium shadow-sm"
                         : "border-border text-muted-foreground"
                     }`}
                   >
                     <span
                       className={`w-3 h-3 rounded-full border-2 transition-colors ${
-                        filters.availability ? "bg-primary border-primary" : "border-muted-foreground"
+                        filters.availability ? "bg-background border-background" : "border-muted-foreground"
                       }`}
                     />
                     In Stock Only
@@ -425,7 +425,7 @@ export const FilterSidebar = ({ filters, onFilterChange, sortBy, onSortChange })
               onClick={() => onChange(active ? null : val)}
               className={`px-3 py-1.5 rounded-full border text-sm transition-all ${
                 active
-                  ? "border-primary text-primary bg-primary/5 font-semibold"
+                  ? "bg-foreground text-background border-foreground font-medium shadow-sm"
                   : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
               }`}
             >
@@ -449,7 +449,7 @@ export const FilterSidebar = ({ filters, onFilterChange, sortBy, onSortChange })
           {hasActiveFilters && (
             <button
               onClick={clearAllFilters}
-              className="text-xs text-primary hover:underline font-medium"
+              className="text-xs text-foreground/80 hover:text-primary hover:underline font-medium"
             >
               Clear all
             </button>
@@ -469,7 +469,7 @@ export const FilterSidebar = ({ filters, onFilterChange, sortBy, onSortChange })
                   onClick={() => onSortChange(val)}
                   className={`flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all text-left ${
                     active
-                      ? "bg-primary/5 text-primary font-semibold border border-primary/20"
+                      ? "bg-secondary text-foreground font-semibold border border-border"
                       : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                   }`}
                 >
@@ -510,12 +510,12 @@ export const FilterSidebar = ({ filters, onFilterChange, sortBy, onSortChange })
             onClick={() => onFilterChange({ ...filters, availability: !filters.availability })}
             className={`flex items-center gap-2 px-3 py-2 rounded-full border text-sm transition-all ${
               filters.availability
-                ? "border-primary text-primary bg-primary/5 font-semibold"
+                ? "bg-foreground text-background border-foreground font-medium shadow-sm"
                 : "border-border text-muted-foreground hover:border-primary/30"
             }`}
           >
             <span className={`w-3 h-3 rounded-full border-2 transition-colors ${
-              filters.availability ? "bg-primary border-primary" : "border-muted-foreground"
+              filters.availability ? "bg-background border-background" : "border-muted-foreground"
             }`} />
             In Stock Only
           </button>

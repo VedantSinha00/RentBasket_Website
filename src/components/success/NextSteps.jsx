@@ -81,7 +81,7 @@ const NextSteps = ({ kycStatus = "none" }) => {
                 <div
                   className={`rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-all ${
                     isCurrent
-                      ? "w-14 h-14 bg-primary border-primary text-white shadow-lg shadow-primary/30 ring-4 ring-primary/15 animate-pulse"
+                      ? "w-14 h-14 bg-foreground border-foreground text-white shadow-lg shadow-foreground/20 ring-4 ring-foreground/15 animate-pulse"
                       : isDone
                       ? "w-10 h-10 bg-success border-success text-white shadow-md shadow-success/20"
                       : "w-10 h-10 bg-background border-border text-muted-foreground"
@@ -97,14 +97,14 @@ const NextSteps = ({ kycStatus = "none" }) => {
                 {/* Text */}
                 <div className={`md:text-center mt-1 md:mt-0 ${isCurrent ? "md:max-w-[220px]" : "md:max-w-[140px]"} md:mx-auto`}>
                   {isCurrent && (
-                    <span className="inline-block mb-1.5 text-[9px] font-black uppercase tracking-widest text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full">
+                    <span className="inline-block mb-1.5 text-[9px] font-black uppercase tracking-widest text-foreground bg-secondary border border-border/80 px-2 py-0.5 rounded-full">
                       {step.currentBadge || "In Progress"}
                     </span>
                   )}
                   <h4
                     className={`font-bold ${
                       isCurrent
-                        ? "text-base md:text-lg text-primary"
+                        ? "text-base md:text-lg text-foreground"
                         : isDone
                         ? "text-sm text-foreground"
                         : "text-sm text-muted-foreground"

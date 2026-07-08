@@ -290,7 +290,7 @@ const AccountDetails = () => {
       <main className="flex-1 section-container py-10 md:py-14 max-w-lg mx-auto w-full">
         <Link
           to="/profile"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest mb-6"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest mb-6"
         >
           <ChevronLeft className="w-3.5 h-3.5" /> Profile
         </Link>
@@ -300,8 +300,8 @@ const AccountDetails = () => {
         )}
 
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-            <User className="w-5 h-5 text-primary" />
+          <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center">
+            <User className="w-5 h-5 text-foreground" />
           </div>
           <h1 className="text-2xl font-bold font-display text-foreground">Personal Details</h1>
         </div>
@@ -319,7 +319,7 @@ const AccountDetails = () => {
               onChange={(e) => setName(e.target.value)}
               onBlur={handleNameBlur}
               disabled={isSaving}
-              className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background placeholder-muted-foreground/40 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40 disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -337,7 +337,7 @@ const AccountDetails = () => {
                 onChange={handleEmailChange}
                 onBlur={handleEmailBlur}
                 disabled={isSaving || emailStep === "otp" || emailStep === "verifying"}
-                className="w-full pl-9 pr-28 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background placeholder-muted-foreground/40 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full pl-9 pr-28 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40 disabled:opacity-60 disabled:cursor-not-allowed"
               />
               <div className="absolute right-2 top-1/2 -translate-y-1/2">
                 {emailVerified ? (
@@ -348,7 +348,7 @@ const AccountDetails = () => {
                   <button
                     type="button"
                     onClick={handleSendEmailOtp}
-                    className="text-[11px] font-semibold text-primary hover:underline"
+                    className="text-[11px] font-semibold text-foreground hover:underline"
                   >
                     Verify Email
                   </button>
@@ -378,13 +378,13 @@ const AccountDetails = () => {
                     onChange={(e) => setEmailOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     onKeyDown={(e) => e.key === "Enter" && handleVerifyEmailOtp()}
                     disabled={emailStep === "verifying"}
-                    className="flex-1 px-3 py-2 border border-primary/30 rounded-lg text-sm text-center tracking-widest font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background disabled:opacity-60"
+                    className="flex-1 px-3 py-2 border border-border rounded-lg text-sm text-center tracking-widest font-medium focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background disabled:opacity-60"
                   />
                   <button
                     type="button"
                     onClick={handleVerifyEmailOtp}
                     disabled={emailStep === "verifying" || !emailOtp}
-                    className="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-1.5"
+                    className="px-4 py-2 bg-foreground text-background text-sm font-semibold rounded-lg hover:bg-foreground/90 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-1.5"
                   >
                     {emailStep === "verifying" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
                     {emailStep === "verifying" ? "Verifying…" : "Confirm"}
@@ -399,7 +399,7 @@ const AccountDetails = () => {
                     <button
                       type="button"
                       onClick={handleResendEmailOtp}
-                      className="text-primary font-semibold hover:underline"
+                      className="text-foreground font-semibold hover:underline"
                     >
                       Resend OTP
                     </button>
@@ -454,7 +454,7 @@ const AccountDetails = () => {
             <button
               type="button"
               onClick={() => setAddrEditing(true)}
-              className="w-full text-left bg-white rounded-2xl border border-border shadow-sm px-5 py-4 hover:border-primary/40 hover:shadow-md transition-all group"
+              className="w-full text-left bg-white rounded-2xl border border-border shadow-sm px-5 py-4 hover:border-foreground/35 hover:shadow-md transition-all group"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -466,7 +466,7 @@ const AccountDetails = () => {
                     {[addr.city, addr.state, addr.pincode].filter(Boolean).join(" · ")}
                   </p>
                 </div>
-                <span className="text-xs font-semibold text-primary group-hover:underline whitespace-nowrap mt-0.5 shrink-0">
+                <span className="text-xs font-semibold text-foreground group-hover:underline whitespace-nowrap mt-0.5 shrink-0">
                   Edit
                 </span>
               </div>
@@ -485,7 +485,7 @@ const AccountDetails = () => {
                     placeholder="e.g. Rahul Sharma"
                     value={addr.contact_name}
                     onChange={setAddrField("contact_name")}
-                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background placeholder-muted-foreground/40"
+                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40"
                   />
                 </div>
                 <div>
@@ -497,7 +497,7 @@ const AccountDetails = () => {
                     onChange={setAddrField("contact_phone")}
                     maxLength={10}
                     inputMode="numeric"
-                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background placeholder-muted-foreground/40"
+                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40"
                   />
                 </div>
               </div>
@@ -512,7 +512,7 @@ const AccountDetails = () => {
                     ? "border-success/40 text-success bg-success/5"
                     : geoState === "denied"
                     ? "border-orange-300 text-orange-600 hover:border-orange-400 bg-orange-50/40"
-                    : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
+                    : "border-border text-muted-foreground hover:border-foreground/35 hover:text-foreground"
                 }`}
               >
                 {geoState === "loading" ? (
@@ -536,7 +536,7 @@ const AccountDetails = () => {
                   placeholder="House / Flat / Block No."
                   value={addr.address_line_1}
                   onChange={setAddrField("address_line_1")}
-                  className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background placeholder-muted-foreground/40"
+                  className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40"
                 />
               </div>
               <div>
@@ -546,7 +546,7 @@ const AccountDetails = () => {
                   placeholder="Street, Colony, Area"
                   value={addr.address_line_2}
                   onChange={setAddrField("address_line_2")}
-                  className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background placeholder-muted-foreground/40"
+                  className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40"
                 />
               </div>
 
@@ -559,7 +559,7 @@ const AccountDetails = () => {
                     placeholder="Near metro, school, etc."
                     value={addr.landmark}
                     onChange={setAddrField("landmark")}
-                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background placeholder-muted-foreground/40"
+                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40"
                   />
                 </div>
                 <div>
@@ -573,7 +573,7 @@ const AccountDetails = () => {
                     onChange={handlePincodeChange}
                     maxLength={6}
                     inputMode="numeric"
-                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background placeholder-muted-foreground/40"
+                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40"
                   />
                   {pincodeState === "done" && (
                     <p className="text-[10px] mt-1 text-success flex items-center gap-1">
@@ -595,7 +595,7 @@ const AccountDetails = () => {
                   <select
                     value={addr.city}
                     onChange={setAddrField("city")}
-                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background appearance-none"
+                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background appearance-none"
                   >
                     <option value="">Select city</option>
                     {SERVED_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -610,7 +610,7 @@ const AccountDetails = () => {
                     placeholder="State"
                     value={addr.state}
                     onChange={setAddrField("state")}
-                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background placeholder-muted-foreground/40"
+                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40"
                   />
                 </div>
               </div>
@@ -629,7 +629,7 @@ const AccountDetails = () => {
                   type="button"
                   onClick={handleSaveAddress}
                   disabled={addrSaving}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-primary to-primary/90 text-white text-sm font-semibold rounded-xl hover:shadow-md hover:shadow-primary/25 transition-all active:scale-95 disabled:opacity-60"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 gradient-coral text-white text-sm font-semibold rounded-xl hover:opacity-95 shadow-lg shadow-primary/20 transition-all active:scale-95 disabled:opacity-60"
                 >
                   {addrSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   {addrSaving ? "Saving…" : "Save Address"}

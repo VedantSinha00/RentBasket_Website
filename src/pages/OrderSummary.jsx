@@ -384,43 +384,44 @@ const OrderSummary = () => {
     : "";
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background">
       <CheckoutHeader />
 
-      <main className="section-container mt-4 md:mt-6">
-        {/* Back to details */}
-        <div className="mb-6 md:mb-8">
-          <Link
-            to="/checkout"
-            state={{ verifiedPhone, formData }}
-            className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest"
-          >
-            <ChevronLeft className="w-3.5 h-3.5" />
-            Edit Details
-          </Link>
-          <div className="mt-4">
-            <h1 className="text-2xl md:text-4xl font-black text-foreground tracking-tight">
-              Order Summary
-            </h1>
-            <p className="text-[11px] md:text-sm text-muted-foreground font-medium mt-1">
-              Review your rental, then confirm and pay.
-            </p>
+      <main className="pb-20 bg-[#FAF9F6]/70 min-h-[calc(100vh-73px)]">
+        <div className="section-container pt-4 md:pt-6">
+          {/* Back to details */}
+          <div className="mb-6 md:mb-8">
+            <Link
+              to="/checkout"
+              state={{ verifiedPhone, formData }}
+              className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+              Edit Details
+            </Link>
+            <div className="mt-4">
+              <h1 className="text-2xl md:text-4xl font-black text-foreground tracking-tight">
+                Order Summary
+              </h1>
+              <p className="text-[11px] md:text-sm text-muted-foreground font-medium mt-1">
+                Review your rental, then confirm and pay.
+              </p>
+            </div>
           </div>
-        </div>
 
-        <CheckoutProgress currentStep="payment" />
+          <CheckoutProgress currentStep="payment" />
 
-        <div className="max-w-xl mx-auto mt-4 md:mt-8 space-y-6">
-          {/* Delivery recap */}
-          {formData && (
-            <div className="bg-card border border-border rounded-2xl shadow-soft overflow-hidden">
-              <div className="px-5 py-4 border-b border-border/50 bg-secondary/10 flex items-center justify-between">
-                <h3 className="text-sm font-bold text-foreground">Delivering To</h3>
-                <Link
-                  to="/checkout"
-                  state={{ verifiedPhone, formData }}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
-                >
+          <div className="max-w-xl mx-auto mt-4 md:mt-8 space-y-6">
+            {/* Delivery recap */}
+            {formData && (
+              <div className="bg-card border border-border rounded-2xl shadow-soft overflow-hidden">
+                <div className="px-5 py-4 border-b border-border/50 bg-secondary/10 flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-foreground">Delivering To</h3>
+                  <Link
+                    to="/checkout"
+                    state={{ verifiedPhone, formData }}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-foreground hover:underline"
+                  >
                   <Pencil className="w-3 h-3" />
                   Edit
                 </Link>
@@ -459,8 +460,9 @@ const OrderSummary = () => {
             onPaymentChoiceChange={setPaymentChoice}
           />
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
+  </div>
   );
 };
 

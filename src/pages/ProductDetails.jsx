@@ -123,6 +123,12 @@ const ProductDetails = () => {
   const durationLabel = DURATION_OPTIONS.find((d) => d.key === selectedDuration)?.label || "";
 
   const handleMobileAddToCart = () => {
+    if (product.stock_status === "out_of_stock") {
+      toast.error(`${product.name} is out of stock`, {
+        description: "This item isn't available to rent right now.",
+      });
+      return;
+    }
     addToCart({
       productId: product.id,
       name: product.name,
@@ -138,6 +144,7 @@ const ProductDetails = () => {
       rent: product.pricing_by_duration[selectedDuration],
       percent_discount: product.percent_discount,
       security_multiple: product.security_multiple,
+      stock_status: product.stock_status,
     });
     toast.success(`${product.name} added to basket`, {
       description: `${durationLabel} plan · ₹${price.toLocaleString("en-IN")}`,

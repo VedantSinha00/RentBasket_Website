@@ -200,7 +200,7 @@ const Kyc = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-[#FAF9F6]/70 pb-20">
       {/* Minimal Navbar */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border py-4">
         <div className="section-container flex items-center justify-between">
@@ -222,7 +222,7 @@ const Kyc = () => {
           <Link
             to={returnTo}
             state={returnTo === "/order-success" ? { orderData } : undefined}
-            className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest"
+            className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             {backLabel}
@@ -267,7 +267,7 @@ const Kyc = () => {
               </p>
               <button
                 onClick={loadKycState}
-                className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-2xl border border-primary/30 text-sm font-bold text-primary hover:bg-primary/5 transition-colors active:scale-95"
+                className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-2xl border border-border text-sm font-bold text-foreground hover:bg-secondary transition-colors active:scale-95"
               >
                 <RefreshCw className="w-4 h-4" />
                 Try Again
@@ -369,7 +369,7 @@ const Kyc = () => {
                           <span className="text-xs font-medium text-foreground truncate flex-1">{uploaded.name}</span>
                           {/* Re-upload allowed while not yet verified. */}
                           {!verified && (
-                            <label className="text-[11px] font-bold text-primary hover:underline cursor-pointer shrink-0">
+                            <label className="text-[11px] font-semibold text-foreground hover:underline cursor-pointer shrink-0">
                               Replace
                               <input
                                 type="file"
@@ -383,7 +383,7 @@ const Kyc = () => {
                       ) : (
                         <label className="flex flex-col items-center justify-center gap-1.5 rounded-xl bg-secondary/30 border border-border/50 py-5 cursor-pointer hover:bg-secondary/50 transition-colors">
                           <Upload className="w-5 h-5 text-muted-foreground" />
-                          <span className="text-xs font-bold text-primary">Upload</span>
+                          <span className="text-xs font-semibold text-foreground">Upload</span>
                           <span className="text-[10px] text-muted-foreground">
                             {accept.includes("pdf") ? "Image or PDF" : "JPG / PNG"}
                           </span>
@@ -401,8 +401,8 @@ const Kyc = () => {
               </div>
 
               {/* Privacy note */}
-              <div className="mt-5 flex items-start gap-2 text-[11px] text-muted-foreground bg-primary/5 border border-primary/10 rounded-xl p-3">
-                <Lock className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5" />
+              <div className="mt-5 flex items-start gap-2 text-[11px] text-muted-foreground bg-secondary/40 border border-border/50 rounded-xl p-3">
+                <Lock className="w-3.5 h-3.5 text-foreground flex-shrink-0 mt-0.5" />
                 <span>
                   Your documents are encrypted and used only for identity verification as per RentBasket's rental terms.
                 </span>

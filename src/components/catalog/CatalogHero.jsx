@@ -18,8 +18,8 @@ const CatalogHero = () => {
       <div className="section-container py-2 md:py-3">
         <div className="flex flex-row items-center justify-between gap-4 lg:gap-10">
           <div className="min-w-0 flex-1">
-            <span className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full mb-3 lg:mb-4">
-              <MapPin className="w-3 h-3 shrink-0" />
+            <span className="inline-flex items-center gap-1.5 bg-secondary text-muted-foreground text-xs font-medium px-3 py-1 rounded-full mb-3 lg:mb-4">
+              <MapPin className="w-3 h-3 shrink-0" aria-hidden="true" />
               Delhi NCR
             </span>
 

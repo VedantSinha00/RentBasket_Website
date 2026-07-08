@@ -14,7 +14,7 @@ const Wishlist = () => {
         {/* Back link */}
         <Link
           to="/catalog"
-          className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest mb-6"
+          className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest mb-6"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
           Browse Catalogue
@@ -23,8 +23,8 @@ const Wishlist = () => {
         {/* Heading */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center">
-              <Heart className="w-5 h-5 text-primary" />
+            <div className="w-11 h-11 rounded-2xl bg-secondary flex items-center justify-center">
+              <Heart className="w-5 h-5 text-foreground" />
             </div>
             <div>
               <h1 className="text-2xl md:text-4xl font-black font-display text-foreground tracking-tight">
@@ -50,8 +50,8 @@ const Wishlist = () => {
         {items.length === 0 ? (
           /* Empty state */
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-20 h-20 rounded-3xl bg-primary/5 border border-primary/10 flex items-center justify-center mb-5">
-              <Heart className="w-9 h-9 text-primary/30" />
+            <div className="w-20 h-20 rounded-3xl bg-secondary border border-border/50 flex items-center justify-center mb-5">
+              <Heart className="w-9 h-9 text-foreground/40" />
             </div>
             <h3 className="text-lg font-bold text-foreground mb-2">Nothing saved yet</h3>
             <p className="text-sm text-muted-foreground max-w-xs mb-7">

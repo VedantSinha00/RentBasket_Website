@@ -16,7 +16,7 @@ const StickyCheckoutBar = ({ onCheckout }) => {
       <div className="flex items-center justify-between px-4 py-3 gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline gap-1.5">
-            <span className="text-lg font-bold text-primary">
+            <span className="text-lg font-black text-foreground">
               ₹{b.upfront.toLocaleString("en-IN")}
             </span>
             <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
