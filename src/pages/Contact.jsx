@@ -34,8 +34,8 @@ const Contact = () => {
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-5 h-5 text-muted-foreground shrink-0" />
-                <a href="tel:+919958858473" className="hover:text-foreground transition-colors">
-                  +91 99588 58473
+                <a href="tel:+919959858473" className="hover:text-foreground transition-colors">
+                  +91 99598 58473
                 </a>
               </div>
             </div>
@@ -101,13 +101,13 @@ const Contact = () => {
             </a>
             <span className="hidden sm:inline text-border">|</span>
             <a
-              href="https://wa.me/919958858473"
+              href="https://wa.me/919959858473"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 hover:text-foreground transition-colors"
             >
               <MessageSquare className="w-5 h-5 text-[#2E7D32]" />
-              WhatsApp Support (+91 99588 58473)
+              WhatsApp Support (+91 99598 58473)
             </a>
           </div>
         </div>

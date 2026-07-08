@@ -110,14 +110,14 @@ const FAQs = () => {
           </div>
           <div className="flex gap-3 w-full md:w-auto">
             <a
-              href="tel:+919958858473"
+              href="tel:+919959858473"
               className="flex-1 md:flex-none whitespace-nowrap flex items-center justify-center gap-2 h-11 px-5 rounded-full border border-border text-foreground font-sans font-bold text-sm bg-white hover:bg-secondary transition-colors"
             >
               <Phone className="w-4 h-4 text-muted-foreground" />
               Call Gurgaon
             </a>
             <a
-              href="https://wa.me/919958858473"
+              href="https://wa.me/919959858473"
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 md:flex-none whitespace-nowrap flex items-center justify-center gap-2 h-11 px-5 rounded-full text-white font-sans font-bold text-sm bg-[#2E7D32] hover:bg-[#2E7D32]/90 transition-colors"

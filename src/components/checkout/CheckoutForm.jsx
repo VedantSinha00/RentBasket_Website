@@ -170,7 +170,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
                 label="Mobile Number"
                 icon={Phone}
                 name="phone"
-                placeholder="e.g. 99588 58473"
+                placeholder="e.g. 99598 58473"
                 value={formData.phone}
                 onChange={handleChange}
               />

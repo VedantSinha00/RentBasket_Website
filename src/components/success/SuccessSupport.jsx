@@ -40,10 +40,10 @@ export const SupportHelp = () => (
       Our support team can help coordinate delivery timings, answer rental queries, or assist with installation.
     </p>
     <div className="flex flex-col w-full gap-3 mt-auto">
-      <a href="tel:+919958858473" className="w-full py-3.5 px-4 rounded-2xl text-foreground font-extrabold text-[13px] bg-secondary hover:bg-white border border-border shadow-sm transition-all flex items-center justify-center gap-2">
+      <a href="tel:+919959858473" className="w-full py-3.5 px-4 rounded-2xl text-foreground font-extrabold text-[13px] bg-secondary hover:bg-white border border-border shadow-sm transition-all flex items-center justify-center gap-2">
         <Phone className="w-4 h-4" /> Call Us
       </a>
-      <a href="https://wa.me/919958858473" target="_blank" rel="noopener noreferrer" className="w-full py-3.5 px-4 rounded-2xl text-success font-extrabold text-[13px] bg-success-muted transition-all hover:brightness-95 flex items-center justify-center gap-2">
+      <a href="https://wa.me/919959858473" target="_blank" rel="noopener noreferrer" className="w-full py-3.5 px-4 rounded-2xl text-success font-extrabold text-[13px] bg-success-muted transition-all hover:brightness-95 flex items-center justify-center gap-2">
         <MessageCircle className="w-4 h-4" /> WhatsApp
       </a>
     </div>

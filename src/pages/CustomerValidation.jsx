@@ -349,7 +349,7 @@ const CustomerValidation = () => {
 
       {/* Footer Note */}
       <footer className="text-center text-xs md:text-sm text-muted-foreground py-6 border-t border-border/30">
-        <p>Need help? <a href="tel:+919958858473" className="text-foreground font-semibold hover:underline">Call +91 9958858473</a></p>
+        <p>Need help? <a href="tel:+919959858473" className="text-foreground font-semibold hover:underline">Call +91 9959858473</a></p>
       </footer>
     </div>
   );

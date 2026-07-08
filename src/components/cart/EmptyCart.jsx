@@ -25,8 +25,8 @@ const EmptyCart = () => {
       </Link>
       <p className="text-xs text-muted-foreground mt-4">
         Have a question?{" "}
-        <a href="tel:+919958858473" className="text-foreground font-semibold hover:underline">
-          Call us at +91 9958858473
+        <a href="tel:+919959858473" className="text-foreground font-semibold hover:underline">
+          Call us at +91 9959858473
         </a>
       </p>
     </div>

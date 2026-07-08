@@ -94,11 +94,11 @@ const Footer = () => {
                   </span>
                 </Link>
                 <a
-                  href="tel:+919958858473"
+                  href="tel:+919959858473"
                   className="flex items-center gap-2 hover:text-primary transition-colors"
                 >
                   <Phone className="w-4 h-4 flex-shrink-0" />
-                  <span className="font-sans">+91 9958858473</span>
+                  <span className="font-sans">+91 9959858473</span>
                 </a>
               </div>
             </div>

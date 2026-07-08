@@ -239,7 +239,7 @@ const Checkout = () => {
 
             {/* Bottom Note */}
             <p className="text-xs text-muted-foreground text-center py-4 mt-3 bg-secondary/20 rounded-2xl border border-dashed border-border/50 font-medium">
-              Need help with your order? <a href="tel:+919958858473" className="text-foreground font-semibold hover:underline">Chat with us</a> for instant setup support.
+              Need help with your order? <a href="tel:+919959858473" className="text-foreground font-semibold hover:underline">Chat with us</a> for instant setup support.
             </p>
           </div>
         </div>

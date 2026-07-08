@@ -24,7 +24,7 @@ import { discountedRent } from "@/lib/pricing";
 import { dateNDaysFromToday } from "@/lib/delivery";
 import AppNudge from "@/components/AppNudge";
 
-const SUPPORT_WHATSAPP = "https://wa.me/919958858473";
+const SUPPORT_WHATSAPP = "https://wa.me/919959858473";
 
 // Status buckets. The founder confirmed (2026-06-11) the order table will gain
 // explicit "Active rental" and "Completed" statuses. The "active" bucket is wired
@@ -264,7 +264,7 @@ const OrderCard = ({ order }) => {
             </button>
           ) : order.status === "active" ? (
             <a
-              href="tel:+919958858473"
+              href="tel:+919959858473"
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-foreground bg-secondary hover:bg-foreground hover:text-background transition-all border border-border/80 active:scale-95"
             >
               <Headset className="w-3.5 h-3.5" />
@@ -444,8 +444,8 @@ const MyOrders = () => {
 
           <div className="mt-10 text-center text-xs md:text-sm text-muted-foreground py-6 border-t border-border/50">
             Need help with an order?{" "}
-            <a href="tel:+919958858473" className="text-foreground font-semibold hover:underline">
-              Call +91 9958858473
+            <a href="tel:+919959858473" className="text-foreground font-semibold hover:underline">
+              Call +91 9959858473
             </a>
           </div>
         </div>

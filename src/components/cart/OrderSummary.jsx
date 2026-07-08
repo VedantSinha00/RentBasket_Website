@@ -164,7 +164,7 @@ const OrderSummary = ({ onCheckout }) => {
             Continue Browsing
           </Link>
           <a
-            href="tel:+919958858473"
+            href="tel:+919959858473"
             className="block text-center text-xs text-muted-foreground hover:text-foreground transition-colors mt-1"
           >
             Need help choosing more items?
