@@ -53,9 +53,9 @@ const BottomTabBar = () => {
                 className="relative flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-colors"
               >
                 <div className="relative">
-                  <Icon className="w-5 h-5 text-muted-foreground" fill="none" />
+                  <Icon className="w-5 h-5 text-primary" fill="none" />
                 </div>
-                <span className="text-[10px] font-semibold text-muted-foreground transition-colors">
+                <span className="text-[10px] font-semibold text-primary transition-colors">
                   {label}
                 </span>
               </button>

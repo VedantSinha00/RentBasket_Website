@@ -163,7 +163,7 @@ const Header = () => {
                 className="flex relative p-1.5 md:p-2 rounded-xl hover:bg-secondary transition-colors"
                 title="Contact Support"
               >
-                <Phone className="w-5 h-5 text-muted-foreground" />
+                <Phone className="w-5 h-5 text-primary" />
               </button>
               {!onCart && (
                 <Link
