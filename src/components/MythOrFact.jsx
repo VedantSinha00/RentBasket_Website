@@ -14,7 +14,7 @@ const QUIZ_QUESTIONS = [
     myth: "Renting furniture means waiting days for it to arrive.",
     answer: false,
     explanation:
-      "RentBasket delivers in about 48 hours on average, and often the same day. No long waits.",
+      "RentBasket delivers in about 36 hours on average, and often the same day. No long waits.",
   },
   {
     id: 2,
