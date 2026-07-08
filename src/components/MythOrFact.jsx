@@ -128,7 +128,7 @@ const MobileQuizSection = () => {
 
   // Card scale transforms
   const cardWidth = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["90%", "90%", "100%", "100%", "90%", "90%"]);
-  const cardHeight = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["390px", "390px", "100vh", "100vh", "390px", "390px"]);
+  const cardHeight = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["340px", "340px", "100vh", "100vh", "340px", "340px"]);
   const cardMaxWidth = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["448px", "448px", "100%", "100%", "448px", "448px"]);
   const cardBorderRadius = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["24px", "24px", "0px", "0px", "24px", "24px"]);
 
@@ -412,14 +412,14 @@ const MobileQuizSection = () => {
           <motion.div
             layout
             onClick={() => setIsDismissed(false)}
-            className="border border-border bg-background flex flex-col justify-between overflow-hidden cursor-pointer shadow-soft w-[90%] max-w-[448px] h-[390px] rounded-[24px] p-[24px]"
+            className="border border-border bg-background flex flex-col justify-between overflow-hidden cursor-pointer shadow-soft w-[90%] max-w-[448px] h-[340px] rounded-[24px] p-[24px]"
           >
             {renderCardContent()}
           </motion.div>
         </div>
       ) : (
         /* Dynamic Runway / Sticky View */
-        <div ref={containerRef} className="lg:hidden relative w-full h-[180vh] bg-cream border-b border-border/20">
+        <div ref={containerRef} className="lg:hidden relative w-full h-[140vh] bg-cream border-b border-border/20">
           {/* Title that scrolls out of view naturally */}
           <div className="absolute top-20 left-0 right-0 text-center px-4 pointer-events-none">
             <h2 className="text-3xl sm:text-4xl font-semibold font-display tracking-tight text-foreground">
