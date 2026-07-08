@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Check, X, ArrowRight, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 
 // ── QUIZ CONTENT ──────────────────────────────────────────
 // Lens: "why RentBasket over other rental services" (not "why rent vs buy").
@@ -84,6 +84,10 @@ const MobileQuizSection = () => {
   const [selected, setSelected] = useState(null); // null | boolean (the tapped answer)
   const [score, setScore] = useState(0);
 
+  // Dismissal states
+  const [isDismissed, setIsDismissed] = useState(false);
+  const [isCurrentlyFullscreen, setIsCurrentlyFullscreen] = useState(false);
+
   const currentQuestion = QUIZ_QUESTIONS[qIndex];
   const answered = selected !== null;
   const isLastQuestion = qIndex === QUIZ_QUESTIONS.length - 1;
@@ -116,6 +120,17 @@ const MobileQuizSection = () => {
     offset: ["start start", "end end"],
   });
 
+  // Monitor scroll progress to reset dismiss state and toggle z-index
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    const inRange = latest > 0.3 && latest < 0.7;
+    setIsCurrentlyFullscreen(inRange);
+    
+    // Reset when scrolling out of range
+    if (latest === 0 || latest === 1) {
+      setIsDismissed(false);
+    }
+  });
+
   // Card scale transforms
   const cardWidth = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], ["90%", "100%", "100%", "90%"]);
   const cardHeight = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], ["390px", "100vh", "100vh", "390px"]);
@@ -140,6 +155,17 @@ const MobileQuizSection = () => {
     "0px 4px 20px -4px rgba(0, 0, 0, 0.1)"
   ]);
 
+  // Dimension overrides if dismissed by user
+  const finalWidth = isDismissed ? "90%" : cardWidth;
+  const finalHeight = isDismissed ? "390px" : cardHeight;
+  const finalMaxWidth = isDismissed ? "448px" : cardMaxWidth;
+  const finalBorderRadius = isDismissed ? "24px" : cardBorderRadius;
+  const finalPTop = isDismissed ? "24px" : pTop;
+  const finalPBottom = isDismissed ? "24px" : pBottom;
+  const finalPLeftRight = isDismissed ? "24px" : pLeftRight;
+  const finalBorderWidth = isDismissed ? "1px" : borderWidth;
+  const finalCardShadow = isDismissed ? "0px 4px 20px -4px rgba(0, 0, 0, 0.1)" : cardShadow;
+
   return (
     <div ref={containerRef} className="lg:hidden relative w-full h-[300vh] bg-background border-b border-border/20">
       {/* Title that scrolls out of view naturally */}
@@ -149,23 +175,36 @@ const MobileQuizSection = () => {
         </h2>
       </div>
 
-      <div className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center z-[100] pointer-events-none">
+      <div className={`sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center pointer-events-none ${
+        isCurrentlyFullscreen && !isDismissed ? "z-[100]" : "z-10"
+      }`}>
         {/* Morphing Card Wrapper */}
         <motion.div
-          className="border border-border bg-background flex flex-col justify-between overflow-hidden pointer-events-auto"
+          className="border border-border bg-background flex flex-col justify-between overflow-hidden pointer-events-auto relative"
           style={{
-            width: cardWidth,
-            height: cardHeight,
-            maxWidth: cardMaxWidth,
-            borderRadius: cardBorderRadius,
-            paddingTop: pTop,
-            paddingBottom: pBottom,
-            paddingLeft: pLeftRight,
-            paddingRight: pLeftRight,
-            borderWidth: borderWidth,
-            boxShadow: cardShadow,
+            width: finalWidth,
+            height: finalHeight,
+            maxWidth: finalMaxWidth,
+            borderRadius: finalBorderRadius,
+            paddingTop: finalPTop,
+            paddingBottom: finalPBottom,
+            paddingLeft: finalPLeftRight,
+            paddingRight: finalPLeftRight,
+            borderWidth: finalBorderWidth,
+            boxShadow: finalCardShadow,
           }}
         >
+          {/* Top-Right Close Button */}
+          {isCurrentlyFullscreen && !isDismissed && (
+            <button
+              onClick={() => setIsDismissed(true)}
+              className="absolute top-4 right-4 p-2 rounded-full bg-muted/40 hover:bg-muted text-foreground transition-all duration-200 active:scale-95 z-[110] pointer-events-auto"
+              aria-label="Close quiz"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
+
           <AnimatePresence mode="wait">
             {phase === "intro" && (
               <motion.div
