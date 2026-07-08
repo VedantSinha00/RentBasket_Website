@@ -10,6 +10,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import BottomTabBar from "@/components/BottomTabBar";
 import SplashScreen from "@/components/SplashScreen";
+import WhatsAppBubble from "@/components/WhatsAppBubble";
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
 import ProductDetails from "./pages/ProductDetails";
@@ -63,6 +64,7 @@ const RouterApp = () => {
     <>
       <ScrollToTop />
       <BottomTabBar />
+      <WhatsAppBubble />
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={location.pathname}

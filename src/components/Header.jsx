@@ -1,23 +1,19 @@
 import logo from "@/assets/7 1.png";
-import { ShoppingBag, Search, Heart, User, X } from "lucide-react";
+import { ShoppingBag, Search, User, X } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/context/CartContext";
-import { useWishlist } from "@/context/WishlistContext";
 import ContactModal from "@/components/ContactModal";
 
 const Header = () => {
   const [contactOpen, setContactOpen] = useState(false);
   const { getCartItemCount } = useCart();
   const cartCount = getCartItemCount();
-  const { getWishlistCount } = useWishlist();
-  const wishlistCount = getWishlistCount();
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const onCatalog = pathname === "/catalog" || pathname === "/catalog/";
   const onCart = pathname === "/basket" || pathname === "/basket/";
   const onProfile = pathname === "/profile";
-  const onWishlist = pathname === "/wishlist";
   const showMobileSearch =
     pathname === "/" || pathname === "/catalog" || pathname.startsWith("/product");
 
@@ -161,20 +157,6 @@ const Header = () => {
                 title="My Profile"
               >
                 <User className={`w-5 h-5 ${onProfile ? "text-primary" : "text-muted-foreground"}`} />
-              </Link>
-              <Link
-                to="/wishlist"
-                className={`flex relative p-1.5 md:p-2 rounded-xl transition-colors ${
-                  onWishlist ? "bg-primary/10" : "hover:bg-secondary"
-                }`}
-                title="My Wishlist"
-              >
-                <Heart className={`w-5 h-5 ${onWishlist ? "text-primary fill-primary" : "text-muted-foreground"}`} />
-                {wishlistCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
-                    {wishlistCount > 9 ? "9+" : wishlistCount}
-                  </span>
-                )}
               </Link>
               {!onCart && (
                 <Link
