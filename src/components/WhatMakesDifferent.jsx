@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Truck, Wrench, Home, Package, ChevronDown } from "lucide-react";
+import { Sliders, Wrench, Phone, Sparkles, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const containerVariants = {
@@ -21,24 +21,24 @@ const cardVariants = {
 
 const features = [
   {
-    icon: Truck,
-    title: "Free Delivery & Installation",
-    description: "Move in faster. We deliver and install at no extra cost in Delhi NCR.",
+    icon: Sliders,
+    title: "Customizations",
+    description: "Tailor your furniture to your space and style — make it truly yours.",
   },
   {
     icon: Wrench,
-    title: "Free Maintenance & Repair",
-    description: "If something stops working, we fix or replace it — quickly and responsibly.",
+    title: "Free Maintenance and Repair",
+    description: "If something stops working, we fix or replace it — quickly and responsibly, with no hidden cost.",
   },
   {
-    icon: Home,
-    title: "Complete Home Setup under ₹6,000/mo",
-    description: "Set up your entire home with smart, affordable combinations and essentials.",
+    icon: Phone,
+    title: "Consultation on Call",
+    description: "Not sure what you need? Talk to us and we'll help you plan the perfect setup.",
   },
   {
-    icon: Package,
-    title: "Free Relocation Support",
-    description: "Life changes. Your furniture plan should too. Relocate hassle-free.",
+    icon: Sparkles,
+    title: "Try First, Pay Later",
+    description: "Try it before you commit and pay later — on selected products.",
   },
 ];
 
@@ -72,7 +72,7 @@ const WhatMakesDifferent = () => {
             return (
               <motion.div
                 key={index}
-                className="bg-background border border-border/40 rounded-2xl p-5 shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300 flex flex-col gap-3"
+                className="h-full bg-background border border-border/40 rounded-2xl p-5 shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300 flex flex-col gap-3"
                 variants={cardVariants}
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center text-primary shrink-0 border border-primary/10">
