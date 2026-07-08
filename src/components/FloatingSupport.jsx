@@ -26,7 +26,7 @@ const FloatingSupport = () => {
       <button
         onClick={() => setContactOpen(true)}
         className={`fixed right-4 md:right-6 z-50 flex items-center justify-center w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-elevated hover:scale-105 active:scale-95 transition-all duration-300
-          ${isTabBarHidden ? "bottom-24" : "bottom-38 md:bottom-24"}
+          ${isTabBarHidden ? "bottom-24" : "bottom-36 md:bottom-24"}
         `}
         title="Call Support"
         aria-label="Call Support"
