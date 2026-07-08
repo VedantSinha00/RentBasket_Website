@@ -419,9 +419,9 @@ const MobileQuizSection = () => {
         </div>
       ) : (
         /* Dynamic Runway / Sticky View */
-        <div ref={containerRef} className="lg:hidden relative w-full h-[300vh] bg-cream/35 border-b border-border/20">
+        <div ref={containerRef} className="lg:hidden relative w-full h-[180vh] bg-cream border-b border-border/20">
           {/* Title that scrolls out of view naturally */}
-          <div className="absolute top-12 left-0 right-0 text-center px-4 pointer-events-none">
+          <div className="absolute top-20 left-0 right-0 text-center px-4 pointer-events-none">
             <h2 className="text-3xl sm:text-4xl font-semibold font-display tracking-tight text-foreground">
               Belief or Reality?
             </h2>
