@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Check, X, ArrowRight, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useSpring } from "framer-motion";
 
 // ── QUIZ CONTENT ──────────────────────────────────────────
 // Lens: "why RentBasket over other rental services" (not "why rent vs buy").
@@ -120,30 +120,47 @@ const MobileQuizSection = () => {
     offset: ["start start", "end end"],
   });
 
+  // Spring-smoothed scroll progress for organic deceleration
+  const smoothScrollProgress = useSpring(scrollYProgress, {
+    stiffness: 80,
+    damping: 24,
+    mass: 0.5,
+    restDelta: 0.001
+  });
+
   // Monitor scroll progress to set z-index
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+  useMotionValueEvent(smoothScrollProgress, "change", (latest) => {
     const inRange = latest > 0.4 && latest < 0.7;
     setIsCurrentlyFullscreen(inRange);
   });
 
-  // Card scale transforms
-  const cardWidth = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["90%", "90%", "100%", "100%", "90%", "90%"]);
-  const cardHeight = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["340px", "340px", "100vh", "100vh", "340px", "340px"]);
-  const cardMaxWidth = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["448px", "448px", "100%", "100%", "448px", "448px"]);
-  const cardBorderRadius = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["24px", "24px", "0px", "0px", "24px", "24px"]);
+  // Card scale transforms (driven by smoothed spring)
+  const cardWidth = useTransform(smoothScrollProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["90%", "90%", "100%", "100%", "90%", "90%"]);
+  const cardHeight = useTransform(smoothScrollProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["340px", "340px", "100vh", "100vh", "340px", "340px"]);
+  const cardMaxWidth = useTransform(smoothScrollProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["448px", "448px", "100%", "100%", "448px", "448px"]);
+  const cardBorderRadius = useTransform(smoothScrollProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["24px", "24px", "0px", "0px", "24px", "24px"]);
 
   // Padding transforms
-  const pTop = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["24px", "24px", "56px", "56px", "24px", "24px"]);
-  const pBottom = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["24px", "24px", "48px", "48px", "24px", "24px"]);
-  const pLeftRight = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["24px", "24px", "32px", "32px", "24px", "24px"]);
+  const pTop = useTransform(smoothScrollProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["24px", "24px", "56px", "56px", "24px", "24px"]);
+  const pBottom = useTransform(smoothScrollProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["24px", "24px", "48px", "48px", "24px", "24px"]);
+  const pLeftRight = useTransform(smoothScrollProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["24px", "24px", "32px", "32px", "24px", "24px"]);
 
   // Scaling transitions for layout
-  const mythFontSize = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["18px", "18px", "28px", "28px", "18px", "18px"]);
-  const contentGap = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["16px", "16px", "32px", "32px", "16px", "16px"]);
+  const mythFontSize = useTransform(smoothScrollProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["18px", "18px", "28px", "28px", "18px", "18px"]);
+  const contentGap = useTransform(smoothScrollProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["16px", "16px", "32px", "32px", "16px", "16px"]);
 
-  // Card outline / shadow fades
-  const borderWidth = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], ["1px", "1px", "0px", "0px", "1px", "1px"]);
-  const cardShadow = useTransform(scrollYProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], [
+  // Animate border color instead of border width to prevent sub-pixel layout shifts
+  const borderColor = useTransform(smoothScrollProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], [
+    "rgba(228, 228, 231, 1)",
+    "rgba(228, 228, 231, 1)",
+    "rgba(228, 228, 231, 0)",
+    "rgba(228, 228, 231, 0)",
+    "rgba(228, 228, 231, 1)",
+    "rgba(228, 228, 231, 1)"
+  ]);
+
+  // Card shadow fades
+  const cardShadow = useTransform(smoothScrollProgress, [0, 0.15, 0.4, 0.7, 0.95, 1.0], [
     "0px 4px 20px -4px rgba(0, 0, 0, 0.1)",
     "0px 4px 20px -4px rgba(0, 0, 0, 0.1)",
     "0px 0px 0px 0px rgba(0, 0, 0, 0)",
@@ -151,6 +168,9 @@ const MobileQuizSection = () => {
     "0px 4px 20px -4px rgba(0, 0, 0, 0.1)",
     "0px 4px 20px -4px rgba(0, 0, 0, 0.1)"
   ]);
+
+  // Absolute title opacity fades out as the card expands
+  const titleOpacity = useTransform(smoothScrollProgress, [0.15, 0.35], [1, 0]);
 
   const renderCardContent = () => {
     return (
@@ -421,11 +441,14 @@ const MobileQuizSection = () => {
         /* Dynamic Runway / Sticky View */
         <div ref={containerRef} className="lg:hidden relative w-full h-[140vh] bg-cream border-b border-border/20">
           {/* Title that scrolls out of view naturally */}
-          <div className="absolute top-20 left-0 right-0 text-center px-4 pointer-events-none">
+          <motion.div 
+            style={{ opacity: titleOpacity }}
+            className="absolute top-20 left-0 right-0 text-center px-4 pointer-events-none"
+          >
             <h2 className="text-3xl sm:text-4xl font-semibold font-display tracking-tight text-foreground">
               Belief or Reality?
             </h2>
-          </div>
+          </motion.div>
 
           <div className={`sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center pointer-events-none ${
             isCurrentlyFullscreen ? "z-[100]" : "z-10"
@@ -433,7 +456,7 @@ const MobileQuizSection = () => {
             {/* Morphing Card Wrapper */}
             <motion.div
               layout
-              className="border border-border bg-background flex flex-col justify-between overflow-hidden pointer-events-auto relative shadow-soft"
+              className="border bg-background flex flex-col justify-between overflow-hidden pointer-events-auto relative shadow-soft"
               style={{
                 width: cardWidth,
                 height: cardHeight,
@@ -443,7 +466,7 @@ const MobileQuizSection = () => {
                 paddingBottom: pBottom,
                 paddingLeft: pLeftRight,
                 paddingRight: pLeftRight,
-                borderWidth: borderWidth,
+                borderColor: borderColor,
                 boxShadow: cardShadow,
               }}
             >
