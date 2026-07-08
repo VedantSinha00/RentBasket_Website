@@ -94,7 +94,11 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/40">
-      <div className="section-container" style={{ width: "100%" }}>
+      {/* Wider than .section-container's 1600px cap and with its own edge
+          padding — the header anchors to the actual viewport edges on
+          ultra-wide screens instead of sitting in the same narrow centered
+          column as the page content below it. */}
+      <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8" style={{ width: "100%" }}>
         <div
           className="relative flex items-center justify-between h-12 md:h-14"
           style={{ width: "100%" }}

@@ -161,7 +161,10 @@
   }
 
   .section-container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    /* Wider cap past 2xl (1536px+) so content keeps filling the screen on
+       ultra-wide monitors instead of floating in a fixed 1280px column with
+       ever-growing blank gutters either side. */
+    @apply max-w-7xl 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8;
   }
 
   .headline-accent {
