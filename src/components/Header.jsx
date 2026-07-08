@@ -1,5 +1,5 @@
 import logo from "@/assets/7 1.png";
-import { ShoppingBag, Search, User, X, Phone } from "lucide-react";
+import { ShoppingBag, Search, User, X } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/context/CartContext";
@@ -158,13 +158,6 @@ const Header = () => {
               >
                 <User className={`w-5 h-5 ${onProfile ? "text-primary" : "text-muted-foreground"}`} />
               </Link>
-              <button
-                onClick={() => setContactOpen(true)}
-                className="flex relative p-1.5 md:p-2 rounded-xl hover:bg-secondary transition-colors"
-                title="Contact Support"
-              >
-                <Phone className="w-5 h-5 text-primary" />
-              </button>
               {!onCart && (
                 <Link
                   to="/basket"
