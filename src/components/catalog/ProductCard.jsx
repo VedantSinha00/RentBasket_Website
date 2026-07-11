@@ -2,16 +2,15 @@ import { forwardRef, useState } from "react";
 import { Heart } from "lucide-react";
 import { useWishlist } from "@/context/WishlistContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import { DURATION_OPTIONS } from "@/data/products";
 import { discountedRent } from "@/lib/pricing";
+import { productUrl } from "@/lib/share";
 import ProductImage from "@/components/ui/ProductImage";
 
 const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
   const { isInWishlist, toggleWishlist } = useWishlist();
   const isFavorite = isInWishlist(product.id);
   const [showPricingLadder, setShowPricingLadder] = useState(false);
-  const navigate = useNavigate();
 
   const pricing = product.pricing_by_duration ?? {};
 
@@ -46,18 +45,23 @@ const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
   }));
 
   return (
-    <motion.div
+    // A real anchor, not a click-handler on a div: that is what lets the browser
+    // open the product in a new tab, and it makes the card keyboard-focusable
+    // and legible to screen readers.
+    <motion.a
       ref={ref}
+      href={productUrl(product.id)}
+      target="_blank"
+      rel="noopener noreferrer"
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.3 }}
       whileHover={{ y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
-      className="group bg-card border border-border/50 rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 cursor-pointer flex flex-col justify-between"
+      className="group bg-card border border-border/50 rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 cursor-pointer flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       onMouseEnter={() => setShowPricingLadder(true)}
       onMouseLeave={() => setShowPricingLadder(false)}
-      onClick={() => navigate(`/product/${product.id}`)}
     >
       {/* Image Area */}
       <div className="relative aspect-[4/3] bg-white overflow-hidden shrink-0 border-b border-border/20">
@@ -69,7 +73,12 @@ const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
 
         {/* Wishlist button */}
         <button
+          type="button"
+          aria-label={isFavorite ? "Remove from wishlist" : "Add to wishlist"}
           onClick={(e) => {
+            // Nested inside the card's anchor — must also preventDefault, or
+            // toggling the wishlist would navigate to the product.
+            e.preventDefault();
             e.stopPropagation();
             toggleWishlist(product);
           }}
@@ -149,7 +158,7 @@ const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
           )}
         </div>
       </div>
-    </motion.div>
+    </motion.a>
   );
 });
 
