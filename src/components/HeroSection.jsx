@@ -2,6 +2,8 @@ import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import mascotVideo from "@/assets/ku_looping.webm";
+import mascotVideoPacked from "@/assets/ku_looping_packed.mp4?url";
+import AlphaVideo from "@/components/AlphaVideo";
 
 // SP-01: Mobile-first hero.
 // On mobile (375 px): content stacks vertically, CTA is always above the fold.
@@ -32,14 +34,11 @@ const HeroSection = () => {
 
           {/* Mascot video container - full scene, shown uncropped */}
           <div className="relative flex items-center justify-center w-full max-w-[320px] sm:max-w-[360px] mx-auto -mt-1.5 z-0">
-            <video
-              src={mascotVideo}
+            <AlphaVideo
+              webmSrc={mascotVideo}
+              packedSrc={mascotVideoPacked}
               className="w-full h-auto object-contain"
-              autoPlay
-              loop
-              muted
-              playsInline
-              aria-label="RentBasket mascot Ku animation"
+              ariaLabel="RentBasket mascot Ku animation"
             />
           </div>
 
@@ -169,14 +168,11 @@ const HeroSection = () => {
 
           {/* Mascot video */}
           <div className="relative flex items-center justify-end lg:flex-1">
-            <video
-              src={mascotVideo}
+            <AlphaVideo
+              webmSrc={mascotVideo}
+              packedSrc={mascotVideoPacked}
               className="w-full max-w-[420px] xl:max-w-[460px] h-auto object-contain"
-              autoPlay
-              loop
-              muted
-              playsInline
-              aria-label="RentBasket mascot Ku animation"
+              ariaLabel="RentBasket mascot Ku animation"
             />
           </div>
         </div>
