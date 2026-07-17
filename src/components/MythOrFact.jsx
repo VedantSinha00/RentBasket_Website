@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Check, X, ArrowRight, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useSpring, useReducedMotion } from "framer-motion";
+import kuMascot from "@/assets/ku-pondering.png";
 
 // ── QUIZ CONTENT ──────────────────────────────────────────
 // Lens: "why RentBasket over other rental services" (not "why rent vs buy").
@@ -232,6 +233,8 @@ const MobileQuizSection = () => {
   // padding on the stage: transforms composite, padding reflows every frame.
   const cardY = useTransform(smoothScrollProgress, MORPH, [116, 116, 0, 0]);
 
+  const introFullscreen = isCurrentlyFullscreen && phase === "intro";
+
   const renderCardContent = () => {
     return (
       <AnimatePresence mode="wait">
@@ -241,40 +244,39 @@ const MobileQuizSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col justify-between h-full w-full flex-1"
+            className="flex flex-col items-center justify-center text-center h-full w-full flex-1 gap-6"
           >
-            {/* Header Area */}
-            <div className="flex flex-col items-center text-center">
-              <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-primary uppercase">
-                Belief or Reality?
-              </span>
-            </div>
+            {introFullscreen && (
+              <img
+                src={kuMascot}
+                alt=""
+                aria-hidden="true"
+                className="w-28 h-28 object-contain -mb-2"
+                loading="eager"
+                decoding="async"
+              />
+            )}
 
-            {/* Middle Content Area */}
-            <motion.div
-              className="flex flex-col items-center text-center justify-center flex-1"
-              style={{ gap: inOverlay ? "32px" : "16px" }}
+            <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-primary uppercase">
+              Belief or Reality?
+            </span>
+
+            <motion.h3
+              className="font-sans font-bold text-foreground tracking-tight leading-snug"
+              style={{ fontSize: introFullscreen ? "28px" : "18px" }}
             >
-              <motion.h3
-                className="font-sans font-bold text-foreground tracking-tight leading-snug"
-                style={{ fontSize: inOverlay ? "28px" : "18px" }}
-              >
-                Is renting actually a waste of money?
-              </motion.h3>
-              <p className="font-sans text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-                Take our 30-second cost quiz to see if buying upfront is cheaper than renting furniture &amp; appliances.
-              </p>
-            </motion.div>
+              Is renting actually a waste of money?
+            </motion.h3>
+            <p className="font-sans text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed -mt-2">
+              Take our 30-second cost quiz to see if buying upfront is cheaper than renting furniture &amp; appliances.
+            </p>
 
-            {/* Bottom Action Area */}
-            <div className="flex justify-center w-full pt-4">
-              <button
-                onClick={handleStart}
-                className="btn-primary w-full max-w-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              >
-                Start Quiz
-              </button>
-            </div>
+            <button
+              onClick={handleStart}
+              className="btn-primary w-full max-w-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 mt-2"
+            >
+              Start Quiz
+            </button>
           </motion.div>
         )}
 
