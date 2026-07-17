@@ -19,17 +19,17 @@ const HeroSection = () => {
 
           {/* Editorial Header */}
           <motion.div
-            className="flex flex-col gap-1.5 z-10"
+            className="flex flex-col gap-2 z-10"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
-            <span className="font-sans text-[10px] font-bold tracking-[0.15em] text-primary uppercase">
-              Live Flexible
-            </span>
             <h1 className="font-display font-semibold text-foreground text-[25px] sm:text-[28px] leading-[1.2] max-w-md sm:max-w-lg mx-auto tracking-tight">
               Furnish your home, <br />on your own terms
             </h1>
+            <p className="font-sans text-sm text-muted-foreground max-w-xs sm:max-w-sm mx-auto leading-relaxed">
+              Rent premium furniture &amp; appliances in Delhi NCR &mdash; with free delivery and maintenance.
+            </p>
           </motion.div>
 
           {/* Mascot video container - full scene, shown uncropped */}
@@ -101,9 +101,6 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              <span className="font-sans text-xs font-bold tracking-[0.15em] text-primary uppercase">
-                Live Flexible
-              </span>
               <h1 className="font-display font-semibold text-foreground text-3xl xl:text-4xl 2xl:text-[40px] leading-[1.2] tracking-tight text-balance">
                 Furnish your home, <br />
                 on your own terms.

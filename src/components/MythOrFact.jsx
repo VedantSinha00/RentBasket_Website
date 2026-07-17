@@ -257,10 +257,6 @@ const MobileQuizSection = () => {
               />
             )}
 
-            <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-primary uppercase">
-              Belief or Reality?
-            </span>
-
             <motion.h3
               className="font-sans font-bold text-foreground tracking-tight leading-snug"
               style={{ fontSize: introFullscreen ? "28px" : "18px" }}
@@ -309,9 +305,6 @@ const MobileQuizSection = () => {
               style={{ gap: inOverlay ? "32px" : "16px" }}
             >
               <div className="flex flex-col gap-1">
-                <span className="font-sans text-[11px] font-bold tracking-wider text-primary uppercase">
-                  Myth or Reality?
-                </span>
                 <motion.h3
                   className="font-display font-semibold text-foreground leading-snug"
                   style={{ fontSize: inOverlay ? "28px" : "18px" }}
@@ -495,7 +488,7 @@ const MobileQuizSection = () => {
           className="lg:hidden flex flex-col gap-5 items-center py-10 px-4 w-full bg-background border-b border-border/20"
         >
           <h2 className="text-3xl sm:text-4xl font-semibold font-display tracking-tight text-foreground text-center">
-            Belief or Reality?
+            Myth or Reality?
           </h2>
           <div className="border border-border bg-background flex flex-col justify-between overflow-hidden shadow-soft w-[90%] max-w-[448px] min-h-[340px] rounded-[24px] p-[24px]">
             {renderCardContent()}
@@ -515,7 +508,7 @@ const MobileQuizSection = () => {
               className="absolute top-[52px] left-0 right-0 text-center px-4"
             >
               <h2 className="text-3xl sm:text-4xl font-semibold font-display tracking-tight text-foreground">
-                Belief or Reality?
+                Myth or Reality?
               </h2>
             </motion.div>
             {/* Morphing Card Wrapper. Entrance is opacity-only: `y` belongs to
@@ -603,11 +596,8 @@ const MythOrFact = () => {
           {/* Left column: sticky title + CTA */}
           <div className="flex flex-col items-start text-left gap-6 lg:sticky lg:top-28 h-fit max-w-sm">
             <div className="flex flex-col gap-3">
-              <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-primary uppercase">
-                Belief or Reality?
-              </span>
               <h2 className="font-display text-4xl xl:text-5xl font-semibold text-foreground tracking-tight leading-[1.15]">
-                Let's address the doubts.
+                Myth or reality? Let's address the doubts.
               </h2>
               <p className="font-sans text-sm text-muted-foreground leading-relaxed mt-2">
                 Renting home furniture and appliances comes with common myths. Here is the math and the reality behind how we make relocation effortless.
