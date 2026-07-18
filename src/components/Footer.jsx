@@ -133,7 +133,7 @@ const Footer = () => {
         {/* Social Icons & Copyright */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pt-8 border-t border-border">
           <p className="text-sm text-muted-foreground text-center sm:text-left font-sans order-2 sm:order-1">
-            © 2023-2026 IG RentOK Private Limited. All rights reserved.
+            © 2023-2026 RentBasket, a brand of IG RentOK Private Limited. All rights reserved.
           </p>
           <div className="order-1 sm:order-2 shrink-0">
             <img

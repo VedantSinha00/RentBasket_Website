@@ -195,6 +195,9 @@ const FurnitureGallery = () => {
   return (
     <section className="bg-cream/40 pt-0 pb-4 md:pb-10 -mt-1">
       <div className="section-container">
+        <h2 className="font-display text-xl sm:text-2xl font-semibold text-foreground tracking-tight mb-4 md:mb-6">
+          What people are renting in Gurgaon &amp; Noida
+        </h2>
         {/* Catalog scroll */}
         <div className="relative">
           {/* Right-edge fade to hint at more content */}

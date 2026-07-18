@@ -149,8 +149,8 @@ const MobileQuizSection = () => {
   });
 
   // While the quiz overlay is open, freeze page scroll so the takeover can't
-  // slide away mid-question. Exits are explicit: the X button, navigating
-  // via the results CTA, or dismissing to the static card.
+  // slide away mid-question. Exits: the X button, Escape key, navigating via
+  // the results CTA, or dismissing to the static card.
   useEffect(() => {
     if (!inOverlay) return;
     const prevBody = document.body.style.overflow;
@@ -162,6 +162,17 @@ const MobileQuizSection = () => {
       document.documentElement.style.overflow = prevHtml;
     };
   }, [isStatic, phase]);
+
+  // Escape key dismisses the overlay, same as the X button — a keyboard/
+  // screen-reader user should never be trapped in the takeover.
+  useEffect(() => {
+    if (!inOverlay) return;
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setIsDismissed(true);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [inOverlay]);
 
   // Dismissing mid-runway collapses the page height; keep the static card in
   // view instead of dropping the user into whatever section lands there.
@@ -463,9 +474,15 @@ const MobileQuizSection = () => {
           <motion.div
             key="quiz-overlay"
             initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
+            drag={prefersReducedMotion ? false : "y"}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.5 }}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 120) setIsDismissed(true);
+            }}
             className="lg:hidden fixed inset-0 z-[120] bg-background flex flex-col justify-between overflow-hidden pt-14 pb-12 px-8"
           >
             <button

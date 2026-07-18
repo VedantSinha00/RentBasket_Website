@@ -188,7 +188,7 @@ const Header = () => {
               onClick={() => setContactOpen(true)}
               className="hidden lg:inline-flex btn-outline text-xs xl:text-sm py-2 px-4 whitespace-nowrap"
             >
-              Contact Us
+              Talk to Us
             </button>
           </div>
 
