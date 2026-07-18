@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Check, X, ArrowRight, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useSpring, useReducedMotion } from "framer-motion";
+import kuMascot from "@/assets/ku-pondering.png";
 
 // ── QUIZ CONTENT ──────────────────────────────────────────
 // Lens: "why RentBasket over other rental services" (not "why rent vs buy").
@@ -148,8 +149,8 @@ const MobileQuizSection = () => {
   });
 
   // While the quiz overlay is open, freeze page scroll so the takeover can't
-  // slide away mid-question. Exits are explicit: the X button, navigating
-  // via the results CTA, or dismissing to the static card.
+  // slide away mid-question. Exits: the X button, Escape key, navigating via
+  // the results CTA, or dismissing to the static card.
   useEffect(() => {
     if (!inOverlay) return;
     const prevBody = document.body.style.overflow;
@@ -161,6 +162,17 @@ const MobileQuizSection = () => {
       document.documentElement.style.overflow = prevHtml;
     };
   }, [isStatic, phase]);
+
+  // Escape key dismisses the overlay, same as the X button — a keyboard/
+  // screen-reader user should never be trapped in the takeover.
+  useEffect(() => {
+    if (!inOverlay) return;
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setIsDismissed(true);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [inOverlay]);
 
   // Dismissing mid-runway collapses the page height; keep the static card in
   // view instead of dropping the user into whatever section lands there.
@@ -232,6 +244,8 @@ const MobileQuizSection = () => {
   // padding on the stage: transforms composite, padding reflows every frame.
   const cardY = useTransform(smoothScrollProgress, MORPH, [116, 116, 0, 0]);
 
+  const introFullscreen = isCurrentlyFullscreen && phase === "intro";
+
   const renderCardContent = () => {
     return (
       <AnimatePresence mode="wait">
@@ -241,40 +255,35 @@ const MobileQuizSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col justify-between h-full w-full flex-1"
+            className="flex flex-col items-center justify-center text-center h-full w-full flex-1 gap-6"
           >
-            {/* Header Area */}
-            <div className="flex flex-col items-center text-center">
-              <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-primary uppercase">
-                Belief or Reality?
-              </span>
-            </div>
+            {introFullscreen && (
+              <img
+                src={kuMascot}
+                alt=""
+                aria-hidden="true"
+                className="w-28 h-28 object-contain -mb-2"
+                loading="eager"
+                decoding="async"
+              />
+            )}
 
-            {/* Middle Content Area */}
-            <motion.div
-              className="flex flex-col items-center text-center justify-center flex-1"
-              style={{ gap: inOverlay ? "32px" : "16px" }}
+            <motion.h3
+              className="font-sans font-bold text-foreground tracking-tight leading-snug"
+              style={{ fontSize: introFullscreen ? "28px" : "18px" }}
             >
-              <motion.h3
-                className="font-sans font-bold text-foreground tracking-tight leading-snug"
-                style={{ fontSize: inOverlay ? "28px" : "18px" }}
-              >
-                Is renting actually a waste of money?
-              </motion.h3>
-              <p className="font-sans text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-                Take our 30-second cost quiz to see if buying upfront is cheaper than renting furniture &amp; appliances.
-              </p>
-            </motion.div>
+              Is renting actually a waste of money?
+            </motion.h3>
+            <p className="font-sans text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed -mt-2">
+              Take our 30-second cost quiz to see if buying upfront is cheaper than renting furniture &amp; appliances.
+            </p>
 
-            {/* Bottom Action Area */}
-            <div className="flex justify-center w-full pt-4">
-              <button
-                onClick={handleStart}
-                className="btn-primary w-full max-w-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              >
-                Start Quiz
-              </button>
-            </div>
+            <button
+              onClick={handleStart}
+              className="btn-primary w-full max-w-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 mt-2"
+            >
+              Start Quiz
+            </button>
           </motion.div>
         )}
 
@@ -307,9 +316,6 @@ const MobileQuizSection = () => {
               style={{ gap: inOverlay ? "32px" : "16px" }}
             >
               <div className="flex flex-col gap-1">
-                <span className="font-sans text-[11px] font-bold tracking-wider text-primary uppercase">
-                  Myth or Reality?
-                </span>
                 <motion.h3
                   className="font-display font-semibold text-foreground leading-snug"
                   style={{ fontSize: inOverlay ? "28px" : "18px" }}
@@ -468,9 +474,15 @@ const MobileQuizSection = () => {
           <motion.div
             key="quiz-overlay"
             initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
+            drag={prefersReducedMotion ? false : "y"}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.5 }}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 120) setIsDismissed(true);
+            }}
             className="lg:hidden fixed inset-0 z-[120] bg-background flex flex-col justify-between overflow-hidden pt-14 pb-12 px-8"
           >
             <button
@@ -493,7 +505,7 @@ const MobileQuizSection = () => {
           className="lg:hidden flex flex-col gap-5 items-center py-10 px-4 w-full bg-background border-b border-border/20"
         >
           <h2 className="text-3xl sm:text-4xl font-semibold font-display tracking-tight text-foreground text-center">
-            Belief or Reality?
+            Myth or Reality?
           </h2>
           <div className="border border-border bg-background flex flex-col justify-between overflow-hidden shadow-soft w-[90%] max-w-[448px] min-h-[340px] rounded-[24px] p-[24px]">
             {renderCardContent()}
@@ -513,7 +525,7 @@ const MobileQuizSection = () => {
               className="absolute top-[52px] left-0 right-0 text-center px-4"
             >
               <h2 className="text-3xl sm:text-4xl font-semibold font-display tracking-tight text-foreground">
-                Belief or Reality?
+                Myth or Reality?
               </h2>
             </motion.div>
             {/* Morphing Card Wrapper. Entrance is opacity-only: `y` belongs to
@@ -601,11 +613,8 @@ const MythOrFact = () => {
           {/* Left column: sticky title + CTA */}
           <div className="flex flex-col items-start text-left gap-6 lg:sticky lg:top-28 h-fit max-w-sm">
             <div className="flex flex-col gap-3">
-              <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-primary uppercase">
-                Belief or Reality?
-              </span>
               <h2 className="font-display text-4xl xl:text-5xl font-semibold text-foreground tracking-tight leading-[1.15]">
-                Let's address the doubts.
+                Myth or reality? Let's address the doubts.
               </h2>
               <p className="font-sans text-sm text-muted-foreground leading-relaxed mt-2">
                 Renting home furniture and appliances comes with common myths. Here is the math and the reality behind how we make relocation effortless.

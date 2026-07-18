@@ -31,3 +31,6 @@ vite.config.js.timestamp-*
 
 # Local Netlify folder
 .netlify
+
+# Local Claude Code skills (not shared with the team)
+.claude/skills/impeccable/
