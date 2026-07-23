@@ -1,6 +1,32 @@
 import { Star } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import VideoTestimonial from "@/components/VideoTestimonial";
+import lakshayWebm from "@/assets/testimonial-lakshay.webm";
+import lakshayMp4 from "@/assets/testimonial-lakshay.mp4";
+import lakshayPoster from "@/assets/testimonial-lakshay-poster.jpg";
+import manasviWebm from "@/assets/testimonial-manasvi.webm";
+import manasviMp4 from "@/assets/testimonial-manasvi.mp4";
+import manasviPoster from "@/assets/testimonial-manasvi-poster.jpg";
+
+// City is pending from the user for both — renders name-only until filled.
+// A third entry (data-only) slots in here once its final web-ready cut arrives.
+const videoTestimonials = [
+  {
+    name: "Lakshay",
+    city: "",
+    webmSrc: lakshayWebm,
+    mp4Src: lakshayMp4,
+    poster: lakshayPoster,
+  },
+  {
+    name: "Manasvi",
+    city: "",
+    webmSrc: manasviWebm,
+    mp4Src: manasviMp4,
+    poster: manasviPoster,
+  },
+];
 
 const reviews = [
   {
@@ -178,6 +204,42 @@ const MarqueeRow = ({ items, duration, reverse = false }) => {
   );
 };
 
+// Staggered vertical offsets so the row reads as rhythm, not a card grid.
+// Indexed by position so it holds for both 2 and 3 videos: with 2 the pair
+// centers with a light offset; with 3 the middle one sits lower.
+const staggerClass = (index, total) => {
+  if (total === 2) return index === 0 ? "md:mt-6" : "md:-mt-2";
+  return index === 1 ? "md:mt-6" : "md:-mt-2";
+};
+
+const VideoTestimonialRow = ({ items }) => {
+  const [activeIndex, setActiveIndex] = useState(null);
+
+  const toggle = (index) => setActiveIndex((current) => (current === index ? null : index));
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 mb-12 md:mb-16">
+      {/* Mobile: horizontal scroll-snap, next card peeking to signal swipeability.
+          Desktop: centered flex row with per-item vertical stagger. */}
+      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 md:overflow-visible md:justify-center md:gap-10">
+        {items.map((item, index) => (
+          <div
+            key={item.name}
+            className={`w-[68vw] sm:w-[60vw] shrink-0 snap-center md:w-[300px] lg:w-[340px] ${staggerClass(index, items.length)}`}
+          >
+            <VideoTestimonial
+              {...item}
+              active={activeIndex === index}
+              dimmed={activeIndex !== null && activeIndex !== index}
+              onToggle={() => toggle(index)}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const Testimonials = () => (
   <section className="pt-4 pb-14 md:pt-6 md:pb-20 overflow-hidden bg-white">
     {/* Section heading (moved here from the removed LovedByCustomers fan) */}
@@ -186,6 +248,8 @@ const Testimonials = () => (
         Loved by Customers
       </h2>
     </div>
+
+    <VideoTestimonialRow items={videoTestimonials} />
 
     {/* Cap + center the marquee within the same max width the rest of the site
         uses (max-w-7xl). The overflow clip + edge-fade mask apply only on

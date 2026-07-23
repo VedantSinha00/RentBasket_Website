@@ -37,3 +37,8 @@ export function initAnalytics() {
   gtag("js", new Date());
   gtag("config", GA_ID);
 }
+
+/** Fire a GA4 event; no-op when analytics is disabled (local dev). */
+export function trackEvent(name, params = {}) {
+  if (typeof window.gtag === "function") window.gtag("event", name, params);
+}
