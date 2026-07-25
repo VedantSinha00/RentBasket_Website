@@ -193,15 +193,15 @@ const FurnitureGallery = () => {
   };
 
   return (
-    <section className="bg-cream/40 pt-0 pb-4 md:pb-10 -mt-1">
+    <section className="bg-white py-12 md:py-16">
       <div className="section-container">
-        <h2 className="font-display text-xl sm:text-2xl font-semibold text-foreground tracking-tight mb-4 md:mb-6">
+        <h2 className="font-display text-xl sm:text-2xl font-semibold text-ink tracking-tight mb-4 md:mb-6">
           Real homes, set up by us
         </h2>
         {/* Catalog scroll */}
         <div className="relative">
           {/* Right-edge fade to hint at more content */}
-          <div className="pointer-events-none absolute right-0 top-0 bottom-4 w-16 z-10 bg-gradient-to-l from-cream/60 to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-4 w-16 z-10 bg-gradient-to-l from-white to-transparent" />
 
           {isLoading ? (
             <GallerySkeleton />
@@ -225,10 +225,10 @@ const FurnitureGallery = () => {
                       to={`/product/${item.id}`}
                       key={i < items.length ? item.id : `${item.id}-dup`}
                       draggable={false}
-                      className="group shrink-0 w-[210px] md:w-[250px] flex flex-col bg-white border border-border/40 rounded-2xl overflow-hidden shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300"
+                      className="group shrink-0 w-[210px] md:w-[250px] flex flex-col bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-elevated hover:-translate-y-1 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     >
                       {/* Product image */}
-                      <div className="h-[220px] md:h-[260px] w-full bg-muted/5 flex items-center justify-center p-3 border-b border-border/20 overflow-hidden shrink-0">
+                      <div className="h-[220px] md:h-[260px] w-full bg-mint-pale flex items-center justify-center p-3 overflow-hidden shrink-0">
                         <ProductImage
                           src={item.images?.[0] || item.image}
                           alt={item.name}
@@ -239,11 +239,11 @@ const FurnitureGallery = () => {
 
                       {/* Product info */}
                       <div className="p-4 flex flex-col gap-1 text-left">
-                        <h3 className="font-display font-semibold text-foreground text-sm truncate leading-snug">
+                        <h3 className="font-display font-semibold text-ink text-sm truncate leading-snug">
                           {item.name}
                         </h3>
                         {startingPrice != null && (
-                          <span className="font-sans font-bold text-primary text-xs mt-1 leading-none">
+                          <span className="font-sans font-semibold text-jade-ink text-xs mt-1 leading-none">
                             From ₹{startingPrice.toLocaleString("en-IN")}/mo
                           </span>
                         )}
@@ -258,17 +258,17 @@ const FurnitureGallery = () => {
           {/* Scroll nudge buttons (desktop) */}
           <button
             onClick={() => nudge(-1)}
-            className="hidden md:flex absolute -left-4 lg:-left-6 top-1/2 -translate-y-1/2 bg-white hover:bg-cream w-11 h-11 rounded-full shadow-elevated items-center justify-center transition-all hover:scale-105 z-10"
+            className="hidden md:flex absolute -left-4 lg:-left-6 top-1/2 -translate-y-1/2 bg-white hover:bg-mint-pale w-11 h-11 rounded-full shadow-elevated items-center justify-center transition-all hover:scale-105 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             aria-label="Scroll left"
           >
-            <ChevronLeft className="w-5 h-5 text-foreground" />
+            <ChevronLeft className="w-5 h-5 text-jade-ink" />
           </button>
           <button
             onClick={() => nudge(1)}
-            className="hidden md:flex absolute -right-4 lg:-right-6 top-1/2 -translate-y-1/2 bg-white hover:bg-cream w-11 h-11 rounded-full shadow-elevated items-center justify-center transition-all hover:scale-105 z-10"
+            className="hidden md:flex absolute -right-4 lg:-right-6 top-1/2 -translate-y-1/2 bg-white hover:bg-mint-pale w-11 h-11 rounded-full shadow-elevated items-center justify-center transition-all hover:scale-105 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             aria-label="Scroll right"
           >
-            <ChevronRight className="w-5 h-5 text-foreground" />
+            <ChevronRight className="w-5 h-5 text-jade-ink" />
           </button>
         </div>
       </div>

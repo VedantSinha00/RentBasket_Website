@@ -147,10 +147,10 @@ const VideoTestimonial = ({
       <div className="text-center flex flex-col items-center">
         <div className="flex gap-0.5 mb-0.5">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} size={12} fill="currentColor" className="text-gold" />
+            <Star key={i} size={12} fill="currentColor" className="text-jade-ink" />
           ))}
         </div>
-        <p className="text-sm font-bold text-foreground leading-tight">{caption}</p>
+        <p className="text-sm font-bold text-ink leading-tight">{caption}</p>
       </div>
     </div>
   );

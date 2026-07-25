@@ -107,7 +107,7 @@ const row2 = reviews.slice(6, 12);
 const StarRating = () => (
   <div className="flex gap-1 mb-3">
     {[...Array(5)].map((_, i) => (
-      <Star key={i} size={14} fill="currentColor" className="text-gold" />
+      <Star key={i} size={14} fill="currentColor" className="text-jade-ink" />
     ))}
   </div>
 );
@@ -115,21 +115,21 @@ const StarRating = () => (
 const Avatar = ({ name }) => {
   const initial = name.charAt(0).toUpperCase();
   return (
-    <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
-      <span className="text-sm font-bold text-primary">{initial}</span>
+    <div className="w-9 h-9 rounded-full bg-mint-pale flex items-center justify-center shrink-0">
+      <span className="text-sm font-bold text-jade-ink">{initial}</span>
     </div>
   );
 };
 
 const TestimonialCard = ({ text, name, location }) => (
-  <div className="w-[280px] md:w-[320px] shrink-0 bg-card border border-border rounded-2xl p-5 flex flex-col gap-3 mx-3">
+  <div className="w-[280px] md:w-[320px] shrink-0 bg-white rounded-2xl shadow-card p-5 flex flex-col gap-3 mx-3">
     <StarRating />
-    <p className="text-sm text-muted-foreground leading-relaxed flex-1">"{text}"</p>
+    <p className="text-sm text-ink-muted leading-relaxed flex-1">"{text}"</p>
     <div className="flex items-center gap-3 mt-1">
       <Avatar name={name} />
       <div>
-        <p className="text-sm font-bold text-foreground leading-tight">{name}</p>
-        <p className="text-xs text-muted-foreground">{location}</p>
+        <p className="text-sm font-bold text-ink leading-tight">{name}</p>
+        <p className="text-xs text-ink-muted">{location}</p>
       </div>
     </div>
   </div>
@@ -287,10 +287,10 @@ const Testimonials = () => (
   <section className="pt-4 pb-14 md:pt-6 md:pb-20 overflow-hidden bg-white">
     {/* Section heading (moved here from the removed LovedByCustomers fan) */}
     <div className="text-center mb-6 md:mb-8 px-4">
-      <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-foreground tracking-tight leading-tight">
+      <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-ink tracking-tight leading-tight">
         Loved by Customers
       </h2>
-      <p className="text-sm text-muted-foreground mt-2">
+      <p className="text-sm text-ink-muted mt-2">
         Real customers across Gurgaon &amp; Noida
       </p>
     </div>

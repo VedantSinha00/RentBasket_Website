@@ -607,21 +607,21 @@ const MythOrFact = () => {
 
   return (
     <>
-      {/* ── Desktop (≥ lg): 2-column editorial split ── */}
-      <section className="hidden lg:block py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-background border-b border-border/20">
+      {/* ── Desktop (≥ lg): 2-column editorial split, drenched pine (§5.6) ── */}
+      <section className="hidden lg:block py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-pine">
         <div className="grid grid-cols-[1fr_2fr] gap-16 max-w-7xl mx-auto">
           {/* Left column: sticky title + CTA */}
           <div className="flex flex-col items-start text-left gap-6 lg:sticky lg:top-28 h-fit max-w-sm">
             <div className="flex flex-col gap-3">
-              <h2 className="font-display text-4xl xl:text-5xl font-semibold text-foreground tracking-tight leading-[1.15]">
+              <h2 className="font-display text-4xl xl:text-5xl font-semibold text-white tracking-tight leading-[1.15]">
                 Myth or reality? Let's address the doubts.
               </h2>
-              <p className="font-sans text-sm text-muted-foreground leading-relaxed mt-2">
+              <p className="font-sans text-sm text-mint leading-relaxed mt-2">
                 Renting home furniture and appliances comes with common myths. Here is the math and the reality behind how we make relocation effortless.
               </p>
             </div>
             <Link to="/catalog">
-              <button className="btn-primary px-8 h-12 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+              <button className="btn-jade px-8 h-12 text-sm">
                 Browse Catalogue
               </button>
             </Link>
@@ -632,28 +632,28 @@ const MythOrFact = () => {
             {data.map((item, index) => (
               <div
                 key={index}
-                className="flex flex-row gap-8 bg-cream/35 border border-border/40 rounded-2xl p-6 shadow-soft hover:shadow-card hover:-translate-y-0.5 transition-all duration-300"
+                className="flex flex-row gap-8 bg-white rounded-2xl p-6 shadow-elevated hover:-translate-y-0.5 transition-all duration-300"
               >
                 {/* Belief */}
                 <div className="flex-1 flex flex-col gap-2">
                   <span className="font-sans text-[9px] font-bold text-destructive/80 uppercase tracking-widest leading-none">
                     Belief
                   </span>
-                  <p className="font-sans text-sm xl:text-base text-muted-foreground/70 font-medium line-through decoration-destructive/20 decoration-1">
+                  <p className="font-sans text-sm xl:text-base text-ink-muted font-medium line-through decoration-destructive/20 decoration-1">
                     "{item.belief}"
                   </p>
                 </div>
 
                 {/* Divider */}
-                <div className="w-[1px] bg-border/40 shrink-0 self-stretch" />
+                <div className="w-[1px] bg-border shrink-0 self-stretch" />
 
                 {/* Reality */}
                 <div className="flex-1 flex flex-col gap-2">
-                  <span className="font-sans text-[9px] font-bold text-success uppercase tracking-widest leading-none flex items-center gap-1.5">
-                    <Check className="w-3.5 h-3.5 stroke-[3.5] text-success" />
+                  <span className="font-sans text-[9px] font-bold text-jade-ink uppercase tracking-widest leading-none flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5 stroke-[3.5] text-jade-ink" />
                     Reality
                   </span>
-                  <p className="font-sans text-sm xl:text-[15px] text-foreground font-semibold leading-relaxed">
+                  <p className="font-sans text-sm xl:text-[15px] text-ink font-semibold leading-relaxed">
                     {item.reality}
                   </p>
                 </div>
