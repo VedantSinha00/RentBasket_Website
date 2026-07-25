@@ -1,14 +1,6 @@
-import { useState } from "react";
-import { Sliders, Wrench, Phone, Sparkles, ChevronDown } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-};
+import { SlidersHorizontal, Settings, Sparkles, PhoneCall } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import mascotPeek from "@/assets/mascot-peek.png";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -19,130 +11,139 @@ const cardVariants = {
   },
 };
 
-const features = [
-  {
-    icon: Sliders,
-    title: "Customizations",
-    description: "Tailor your furniture to your space and style — make it truly yours.",
-  },
-  {
-    icon: Wrench,
-    title: "Free Maintenance and Repair",
-    description: "If something stops working, we fix or replace it — quickly and responsibly, with no hidden cost.",
-  },
-  {
-    icon: Phone,
-    title: "Consultation on Call",
-    description: "Not sure what you need? Talk to us and we'll help you plan the perfect setup.",
-  },
-  {
-    icon: Sparkles,
-    title: "Try First, Pay Later",
-    description: "Try it before you commit and pay later — on selected products.",
-  },
-];
-
 const WhatMakesDifferent = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
+
+  const containerVariants = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: prefersReducedMotion ? 0 : 0.08 },
+    },
+  };
 
   return (
-    <section className="bg-cream/35 py-8 md:py-12 border-t border-b border-border/20">
+    <section className="bg-white py-16 md:py-24">
       <div className="section-container">
-
-        {/* Editorial Title */}
-        <div className="text-center max-w-xl mx-auto mb-6 md:mb-8 px-4">
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-foreground tracking-tight leading-[1.25] sm:leading-[1.5]">
-            What makes RentBasket <span className="font-script normal-case font-normal text-[0.88em] tracking-normal inline-block ml-1 mt-0.5 mb-0.5 sm:mt-2 sm:mb-2">different</span>
+        <div className="text-center max-w-xl mx-auto mb-10 md:mb-14 px-4">
+          <h2
+            className="font-display font-semibold text-ink tracking-tight text-balance"
+            style={{ fontSize: "clamp(1.875rem, 3.5vw, 2.75rem)", lineHeight: 1.1, letterSpacing: "-0.01em" }}
+          >
+            What makes Rentbasket <mark className="marker">different</mark>
           </h2>
-          <p className="font-sans text-sm text-muted-foreground mt-2 sm:mt-4">
-            Zero hassle, transparent pricing, <span className="whitespace-nowrap">built for relocation.</span>
+          <p className="font-sans text-base text-ink-muted mt-3">
+            Zero hassle, transparent pricing, built for relocation.
           </p>
         </div>
 
-        {/* ── Laptop/Desktop Layout (4-Column Grid) ── */}
         <motion.div
-          className="hidden md:grid grid-cols-4 gap-5 max-w-7xl mx-auto"
+          className="relative grid grid-cols-1 md:grid-cols-12 gap-5 max-w-6xl mx-auto"
           variants={containerVariants}
-          initial="hidden"
+          initial={prefersReducedMotion ? "visible" : "hidden"}
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
         >
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
-            return (
-              <motion.div
-                key={index}
-                className="h-full bg-background border border-border/40 rounded-2xl p-5 shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300 flex flex-col gap-3"
-                variants={cardVariants}
-              >
-                <div className="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center text-primary shrink-0 border border-primary/10">
-                  <Icon className="w-6 h-6 stroke-[2]" />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <h3 className="font-display font-semibold text-foreground text-lg leading-snug">
-                    {feature.title}
-                  </h3>
-                  <p className="font-sans text-[15px] text-muted-foreground leading-snug">
-                    {feature.description}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
+          {/* Customizations — tall left, jade fill */}
+          <motion.div
+            variants={cardVariants}
+            className="md:col-span-4 md:row-span-2 bg-jade rounded-3xl p-6 flex flex-col justify-between min-h-[220px] md:min-h-[420px] overflow-hidden relative"
+          >
+            <div className="w-12 h-12 rounded-xl bg-pine/15 flex items-center justify-center text-pine shrink-0">
+              <SlidersHorizontal className="w-6 h-6 stroke-[2]" />
+            </div>
+            <div className="flex flex-col gap-2 mt-8">
+              <h3 className="font-display font-semibold text-pine text-xl leading-snug">
+                Customizations
+              </h3>
+              <p className="font-sans text-[15px] text-pine/90 leading-snug max-w-[220px]">
+                Tailor pieces to your space and style — make the place truly yours.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Free maintenance — mid, mint-pale */}
+          <motion.div
+            variants={cardVariants}
+            className="md:col-span-4 bg-mint-pale rounded-3xl p-6 flex flex-col justify-between min-h-[200px]"
+          >
+            <div className="w-12 h-12 rounded-xl bg-jade/15 flex items-center justify-center text-jade-ink shrink-0">
+              <Settings className="w-6 h-6 stroke-[2]" />
+            </div>
+            <div className="flex flex-col gap-2 mt-8">
+              <h3 className="font-display font-semibold text-ink text-xl leading-snug">
+                Free maintenance &amp; repair
+              </h3>
+              <p className="font-sans text-[15px] text-ink-muted leading-snug">
+                If something stops working, we fix or replace it. Quickly, and with no
+                hidden cost.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Decorative tile — hidden on mobile, blush shapes, aria-hidden */}
+          <motion.div
+            variants={cardVariants}
+            aria-hidden="true"
+            className="hidden md:block md:col-span-4 md:row-span-2 bg-blush rounded-3xl relative overflow-hidden min-h-[420px]"
+          >
+            <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/20" />
+            <div className="absolute bottom-8 left-6 w-24 h-24 rounded-3xl bg-white/25 rotate-12" />
+            <div className="absolute top-1/3 left-1/4 w-16 h-16 rounded-full bg-white/15" />
+
+            {/* Mascot peeks over this card's top-right edge; pops in after
+                cards settle. Static under reduced motion (still visible by
+                default — initial state only strips the scale, not opacity). */}
+            <motion.img
+              src={mascotPeek}
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none select-none absolute -top-16 right-2 w-32 h-32 object-contain drop-shadow-lg"
+              initial={prefersReducedMotion ? false : { scale: 0.92, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.3, delay: 0.4, ease: "easeOut" }}
+              style={{ scaleX: -1 }}
+            />
+          </motion.div>
+
+          {/* Try first, pay later — wide right, sand */}
+          <motion.div
+            variants={cardVariants}
+            className="md:col-span-4 bg-sand rounded-3xl p-6 flex flex-col justify-between min-h-[200px]"
+          >
+            <div className="w-12 h-12 rounded-xl bg-terracotta/20 flex items-center justify-center text-terracotta shrink-0">
+              <Sparkles className="w-6 h-6 stroke-[2]" />
+            </div>
+            <div className="flex flex-col gap-2 mt-8">
+              <h3 className="font-display font-semibold text-ink text-xl leading-snug">
+                Try first, pay later
+              </h3>
+              <p className="font-sans text-[15px] text-ink-muted leading-snug">
+                Try selected products at home before you commit a rupee.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Consultation on call — wide bottom, ivory */}
+          <motion.div
+            variants={cardVariants}
+            className="md:col-span-8 bg-ivory rounded-3xl p-6 flex flex-col justify-between min-h-[200px]"
+          >
+            <div className="w-12 h-12 rounded-xl bg-terracotta/20 flex items-center justify-center text-terracotta shrink-0">
+              <PhoneCall className="w-6 h-6 stroke-[2]" />
+            </div>
+            <div className="flex flex-col gap-2 mt-8">
+              <h3 className="font-display font-semibold text-ink text-xl leading-snug">
+                Consultation on call
+              </h3>
+              <p className="font-sans text-[15px] text-ink-muted leading-snug max-w-md">
+                Not sure what you need? We'll help you plan the full setup for your floor
+                plan and budget.
+              </p>
+            </div>
+          </motion.div>
         </motion.div>
-
-        {/* ── Mobile Viewport Layout (Compact Vertical Accordion) ── */}
-        <div className="md:hidden flex flex-col gap-3 w-full max-w-sm mx-auto px-2">
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
-            const isActive = activeIndex === index;
-            return (
-              <div
-                key={index}
-                className="bg-background border border-border/40 rounded-xl overflow-hidden transition-all duration-300 shadow-soft"
-              >
-                <button
-                  onClick={() => setActiveIndex(isActive ? -1 : index)}
-                  className="w-full flex items-center justify-between p-4 text-left"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center text-primary shrink-0">
-                      <Icon className="w-5 h-5 stroke-[2]" />
-                    </div>
-                    <h3 className="font-display font-semibold text-foreground text-base sm:text-lg leading-none">
-                      {feature.title}
-                    </h3>
-                  </div>
-                  <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ease-out shrink-0 ml-2 ${isActive ? "rotate-180" : ""}`} />
-                </button>
-                <AnimatePresence initial={false}>
-                  {isActive && (
-                    <motion.div
-                      key="content"
-                      initial="collapsed"
-                      animate="open"
-                      exit="collapsed"
-                      variants={{
-                        open: { height: "auto", opacity: 1 },
-                        collapsed: { height: 0, opacity: 0 },
-                      }}
-                      transition={{
-                        height: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
-                        opacity: { duration: 0.25, ease: "easeInOut", delay: isActive ? 0.05 : 0 },
-                      }}
-                      className="overflow-hidden"
-                    >
-                      <p className="px-4 pb-4 font-sans text-sm text-muted-foreground leading-relaxed pl-[52px]">
-                        {feature.description}
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          })}
-        </div>
-
       </div>
     </section>
   );
