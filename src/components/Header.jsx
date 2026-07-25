@@ -124,14 +124,14 @@ const Header = () => {
               {!onCatalog && (
                 <Link
                   to="/catalog"
-                  className="text-sm font-medium text-ink-muted hover:text-jade-ink transition-colors whitespace-nowrap"
+                  className="text-sm font-medium text-ink-muted hover:text-jade-ink transition-colors whitespace-nowrap rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   Browse Catalogue
                 </Link>
               )}
               <Link
                 to="/faqs"
-                className={`relative text-sm font-medium transition-colors pb-1 ${
+                className={`relative text-sm font-medium transition-colors pb-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                   pathname === "/faqs"
                     ? "text-jade-ink after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-0.5 after:bg-jade after:rounded-full"
                     : "text-ink-muted hover:text-jade-ink"
