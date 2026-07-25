@@ -1,180 +1,164 @@
 import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import mascotVideo from "@/assets/ku_looping.webm";
-import mascotVideoPacked from "@/assets/ku_looping_packed.mp4?url";
-import AlphaVideo from "@/components/AlphaVideo";
+import { motion, useReducedMotion } from "framer-motion";
+import heroLifestylePhoto from "@/assets/Home/gallery-2.jpg";
 
-// SP-01: Mobile-first hero.
-// On mobile (375 px): content stacks vertically, CTA is always above the fold.
-// On desktop (lg+): original two-column layout with mascot video alongside.
-const HeroSection = () => {
+// SP-01: Mobile-first hero (§5.2). On mobile (375px): content stacks
+// vertically, CTAs are always above the fold. On desktop (lg+): two-column
+// split with the pine-framed lifestyle photo on the right.
+const HeroSection = ({ onScrollToCarousel }) => {
   const catalogLink = "/catalog";
+  const prefersReducedMotion = useReducedMotion();
+
+  // Orchestrated entrance (§5.2): H1 -> sub+CTAs -> photo card -> chips,
+  // staggered, <900ms total. Reduced motion: instant single 200ms fade.
+  const stagger = prefersReducedMotion
+    ? { hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: 0.2 } } }
+    : {
+        hidden: {},
+        show: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
+      };
+  const riseFade = prefersReducedMotion
+    ? { hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: 0.2 } } }
+    : {
+        hidden: { opacity: 0, y: 18 },
+        show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+      };
+  const photoReveal = prefersReducedMotion
+    ? { hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: 0.2 } } }
+    : {
+        hidden: { opacity: 0, clipPath: "inset(0 0 0 100%)" },
+        show: {
+          opacity: 1,
+          clipPath: "inset(0 0 0 0%)",
+          transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.15 },
+        },
+      };
+
+  const handleBrowseProducts = (e) => {
+    if (onScrollToCarousel) {
+      e.preventDefault();
+      onScrollToCarousel();
+    }
+  };
+
+  const StatChips = ({ className = "" }) => (
+    <motion.div variants={riseFade} className={`grid grid-cols-2 gap-3 ${className}`}>
+      <div className="rounded-2xl bg-cream px-5 py-4">
+        <div className="font-display font-bold text-ink text-2xl md:text-3xl leading-none tracking-tight">
+          2000+
+        </div>
+        <div className="font-sans text-xs font-semibold text-ink-muted mt-1.5">
+          Happy customers
+        </div>
+      </div>
+      <a
+        href="https://rentbasket.short.gy/reviews"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="rounded-2xl bg-mint-pale px-5 py-4 transition-colors hover:bg-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        aria-label="Read our 4.9 Google reviews (opens in new tab)"
+      >
+        <div className="flex items-center gap-1.5">
+          <Star className="w-5 h-5 md:w-6 md:h-6 fill-jade-ink text-jade-ink shrink-0" />
+          <span className="font-display font-bold text-ink text-2xl md:text-3xl leading-none tracking-tight">
+            4.9
+          </span>
+        </div>
+        <div className="font-sans text-xs font-semibold text-ink-muted mt-1.5">
+          Google rating
+        </div>
+      </a>
+    </motion.div>
+  );
 
   return (
-    <>
-      {/* ── Mobile/Tablet View (Dual Layout) ─────────────────────── */}
-      <section className="lg:hidden relative px-5 pt-8 sm:px-8 flex flex-col items-center text-center gap-4 overflow-hidden">
-        <div className="bg-background -mx-5 sm:-mx-8 px-5 sm:px-8 w-[calc(100%+2.5rem)] sm:w-[calc(100%+4rem)] flex flex-col items-center text-center gap-4 pb-4">
-
-          {/* Editorial Header */}
-          <motion.div
-            className="flex flex-col gap-2 z-10"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-          >
-            <h1 className="font-display font-semibold text-foreground text-[25px] sm:text-[28px] leading-[1.2] max-w-md sm:max-w-lg mx-auto tracking-tight">
-              Furnish your home, <br />on your own terms
-            </h1>
-            <p className="font-sans text-sm text-muted-foreground max-w-xs sm:max-w-sm mx-auto leading-relaxed">
-              Rent premium furniture &amp; appliances in Delhi NCR &mdash; with free delivery and maintenance.
-            </p>
-          </motion.div>
-
-          {/* Mascot video container - full scene, shown uncropped */}
-          <div className="relative flex items-center justify-center w-full max-w-[320px] sm:max-w-[360px] mx-auto -mt-1.5 z-0">
-            <AlphaVideo
-              webmSrc={mascotVideo}
-              packedSrc={mascotVideoPacked}
-              className="w-full h-auto object-contain"
-              ariaLabel="RentBasket mascot Ku animation"
-            />
-          </div>
-
-          {/* Stats below video */}
-          <div className="flex flex-col gap-6 w-full max-w-md mx-auto z-10 relative">
-            {/* Stats - divider row */}
-            <motion.div
-              className="flex items-center justify-center gap-6 border-t border-border/40 pt-4"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
+    <section className="bg-white pt-8 pb-12 md:pt-14 md:pb-20">
+      <div className="section-container">
+        <motion.div
+          className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center"
+          variants={stagger}
+          initial="hidden"
+          animate="show"
+        >
+          {/* Left column */}
+          <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
+            <motion.h1
+              variants={riseFade}
+              className="font-display font-bold text-ink tracking-tight text-balance"
+              style={{
+                fontSize: "clamp(2.5rem, 5.5vw, 4.25rem)",
+                lineHeight: 1.05,
+                letterSpacing: "-0.02em",
+              }}
             >
-              <div className="text-left">
-                <div className="font-display font-semibold text-foreground leading-none text-[22px] sm:text-[24px] tracking-tight">
-                  2000+
-                </div>
-                <div className="font-sans text-[10px] font-semibold tracking-widest uppercase text-muted-foreground/70 mt-1">
-                  Happy Customers
-                </div>
-              </div>
-              <div className="w-[1px] h-7 bg-border/40 shrink-0" />
-              <a
-                href="https://rentbasket.short.gy/reviews"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-left rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none"
-                aria-label="Read our 4.9 Google reviews"
-              >
-                <span className="text-gold text-[22px] leading-none">★</span>
-                <div>
-                  <div className="font-display font-semibold text-foreground leading-none text-[22px] sm:text-[24px] tracking-tight">
-                    4.9
-                  </div>
-                  <div className="font-sans text-[10px] font-semibold tracking-widest uppercase text-muted-foreground/70 mt-1">
-                    Google Rating
-                  </div>
-                </div>
-              </a>
-            </motion.div>
-          </div>
+              Furnish your home, on your <mark className="marker">own</mark> terms.
+            </motion.h1>
 
-          {/* TODO: Once the backend supports category-based collection routing, restore the category tabs.
-            For now, since collection filtering is handled directly within the catalog, they are removed from the hero view. */}
-        </div>
-
-      </section>
-
-      {/* ── Desktop View (Dual Layout) ───────────────────────────── */}
-      {/* Inner row capped to max-w-7xl and centered so the hero doesn't sprawl
-          edge-to-edge (and de-align from the rest of the site) on wide / zoomed-
-          out screens. The section stays full-bleed for the background. */}
-      <section className="hidden lg:flex relative flex-row justify-center bg-background overflow-hidden lg:min-h-[440px] w-full">
-        <div className="flex flex-row w-full max-w-6xl mx-auto px-8 xl:px-12">
-          {/* Content column */}
-          <div className="flex flex-col justify-center z-10 w-[48%] shrink-0 gap-8">
-            {/* Editorial Header Tagline */}
-            <motion.div
-              className="flex flex-col gap-3"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+            <motion.p
+              variants={riseFade}
+              className="font-sans font-medium text-ink-muted text-lg leading-relaxed max-w-md"
             >
-              <h1 className="font-display font-semibold text-foreground text-3xl xl:text-4xl 2xl:text-[40px] leading-[1.2] tracking-tight text-balance">
-                Furnish your home, <br />
-                on your own terms.
-              </h1>
-              <p className="font-sans text-sm xl:text-base text-muted-foreground max-w-sm leading-relaxed">
-                Rent premium furniture &amp; appliances in Delhi NCR &mdash; with free delivery and maintenance.
-              </p>
-            </motion.div>
+              Rent premium furniture &amp; appliances in Delhi NCR — free delivery, free
+              maintenance, and swaps when life changes.
+            </motion.p>
 
-            {/* TODO: Restore desktop category tabs once backend collections are built. */}
-
-            {/* CTA */}
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.15 }}
+              variants={riseFade}
+              className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto"
             >
               <Link
                 to={catalogLink}
                 data-testid="hero-cta"
-                className="flex items-center justify-center h-[52px] w-full max-w-[240px] rounded-full border-[2px] border-primary text-primary font-sans font-bold text-[15px] xl:text-[16px] tracking-tight bg-white hover:bg-primary/5 transition-all shadow-soft active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                className="btn-pine justify-center"
               >
-                Browse Catalogue
+                Start Renting
+              </Link>
+              <Link
+                to={catalogLink}
+                onClick={handleBrowseProducts}
+                className="btn-outline-pine justify-center"
+              >
+                Browse Products
               </Link>
             </motion.div>
 
-            {/* Refined Stats (Subtle divider row below CTA) */}
-            <motion.div
-              className="flex items-center gap-8 border-t border-border/60 pt-6 mt-2 max-w-sm"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.25, ease: "easeOut" }}
-            >
-              <div>
-                <span className="font-display font-semibold text-foreground leading-none block lg:text-[40px] xl:text-[48px] tracking-tight">
-                  2000+
-                </span>
-                <span className="font-sans text-[11px] font-semibold tracking-wider uppercase text-muted-foreground/80 block mt-1.5">
-                  Happy Customers
-                </span>
-              </div>
-              <div className="w-[1px] h-10 bg-border/60 shrink-0" />
-              <a
-                href="https://rentbasket.short.gy/reviews"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-                aria-label="Read our 4.9 Google reviews (opens in new tab)"
-              >
-                <Star className="w-7 h-7 xl:w-8 xl:h-8 fill-gold text-gold shrink-0" />
-                <div>
-                  <span className="font-display font-semibold text-foreground leading-none block lg:text-[40px] xl:text-[48px] tracking-tight">
-                    4.9
-                  </span>
-                  <span className="font-sans text-[11px] font-semibold tracking-wider uppercase text-muted-foreground/80 block mt-1.5">
-                    Google Rating
-                  </span>
-                </div>
-              </a>
-            </motion.div>
+            <StatChips className="w-full max-w-sm lg:hidden mt-2" />
           </div>
 
-          {/* Mascot video */}
-          <div className="relative flex items-center justify-end lg:flex-1">
-            <AlphaVideo
-              webmSrc={mascotVideo}
-              packedSrc={mascotVideoPacked}
-              className="w-full max-w-[420px] xl:max-w-[460px] h-auto object-contain"
-              ariaLabel="RentBasket mascot Ku animation"
-            />
-          </div>
-        </div>
-      </section>
-    </>
+          {/* Right column: pine-framed lifestyle photo */}
+          <motion.div variants={photoReveal} className="relative">
+            <div className="rounded-3xl bg-pine p-2.5 md:p-3 shadow-elevated">
+              <div className="relative rounded-[20px] overflow-hidden">
+                <img
+                  src={heroLifestylePhoto}
+                  alt="A styled living room chair, part of RentBasket's furniture catalogue"
+                  className="w-full h-[280px] sm:h-[340px] md:h-[400px] object-cover"
+                />
+              </div>
+              <div className="flex items-center justify-between gap-4 px-4 py-4 md:px-5 md:py-5">
+                <div>
+                  <h3 className="font-display font-semibold text-white text-lg md:text-xl leading-snug">
+                    Modern living starts here
+                  </h3>
+                  <p className="font-sans text-sm text-mint mt-1 max-w-[220px]">
+                    Discover furniture that brings comfort and flexibility to every space.
+                  </p>
+                </div>
+                <Link
+                  to={catalogLink}
+                  className="btn-jade shrink-0 py-2.5 px-5 text-sm"
+                >
+                  Rent Now
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+
+          <StatChips className="hidden lg:grid max-w-sm" />
+        </motion.div>
+      </div>
+    </section>
   );
 };
 

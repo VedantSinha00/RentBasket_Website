@@ -24,10 +24,7 @@ const Index = () => {
     <div className="min-h-screen">
       <Header />
       <main>
-        <HeroSection
-          activeCategory={activeCategory}
-          onCategoryChange={handleCategoryChange}
-        />
+        <HeroSection onScrollToCarousel={handleCategoryChange} />
         <div ref={galleryRef} className="-mt-2">
           <FurnitureGallery />
         </div>
