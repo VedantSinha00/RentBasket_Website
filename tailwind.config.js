@@ -58,6 +58,28 @@ export default {
         coral: "hsl(var(--coral))",
         gold: "hsl(var(--gold))",
         cream: "hsl(var(--cream))",
+        pine: {
+          DEFAULT: "hsl(var(--pine))",
+          hover: "hsl(var(--pine-hover))",
+        },
+        jade: {
+          DEFAULT: "hsl(var(--jade))",
+          ink: "hsl(var(--jade-ink))",
+        },
+        mint: {
+          DEFAULT: "hsl(var(--mint))",
+          pale: "hsl(var(--mint-pale))",
+        },
+        sky: "hsl(var(--sky))",
+        terracotta: "hsl(var(--terracotta))",
+        blush: "hsl(var(--blush))",
+        sand: "hsl(var(--sand))",
+        ivory: "hsl(var(--ivory))",
+        butter: "hsl(var(--butter))",
+        ink: {
+          DEFAULT: "hsl(var(--ink))",
+          muted: "hsl(var(--ink-muted))",
+        },
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",

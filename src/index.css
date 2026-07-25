@@ -13,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 13%;
 
-    --primary: 4 77% 55%;
+    --primary: 173 59% 15%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 30 10% 96%;
@@ -30,19 +30,35 @@
 
     --border: 0 0% 90%;
     --input: 0 0% 90%;
-    --ring: 4 77% 55%;
+    --ring: 154 50% 30%;
 
     --radius: 0.75rem;
 
-    /* Custom brand colors */
+    /* Custom brand colors (legacy — still used by pages not yet migrated) */
     --coral: 4 77% 55%;
     --coral-light: 4 77% 65%;
     --coral-dark: 4 77% 45%;
     --gold: 45 100% 51%;
     --gold-light: 45 100% 70%;
-    --cream: 40 33% 97%;
+    --cream: 45 50% 94%;
     --dark: 0 0% 13%;
     --gray-text: 0 0% 45%;
+
+    /* ==== Redesign v2 brand (July 2026) ==== */
+    --pine:        173 59% 15%;   /* #0F3B36 — primary dark: CTAs, footer, dark panels */
+    --pine-hover:  173 41% 19%;   /* #1D4641 — hover/lift state for pine fills */
+    --jade:        154 44% 53%;   /* #51BB8D — brand green: logo, accent fills, marks. NEVER text on light bg */
+    --jade-ink:    154 50% 30%;   /* ~#26734F — accessible green for text/icons on white & tints (5.7:1 on white) */
+    --mint:        155 45% 89%;   /* #D5EFE4 — light accent tint */
+    --mint-pale:   120 33% 94%;   /* #EBF5EB — section band background */
+    --sky:         202 80% 92%;   /* #DAEFFB — pastel image-block tint */
+    --terracotta:  17 64% 67%;    /* #E09274 — pastel accent (small doses) */
+    --blush:       11 63% 79%;    /* #EBB4A8 — pastel image-block tint */
+    --sand:        36 53% 84%;    /* #ECDBC1 — pastel card/image tint */
+    --ivory:       46 48% 89%;    /* #F1EBD7 — pastel card tint */
+    --butter:      49 80% 80%;    /* #F5E6A4 — pastel accent (small doses) */
+    --ink:         173 20% 10%;   /* near-black with a green cast — all headings/body on light */
+    --ink-muted:   170 10% 32%;   /* secondary text — 6.5:1 on mint-pale, 7.3:1 on white */
 
     /* Semantic success (replaces generic greens in cart/checkout) */
     --success: 145 63% 35%;
@@ -148,15 +164,59 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-primary-foreground px-6 py-3 rounded-full font-medium 
-           hover:bg-coral-dark transition-all duration-300 shadow-soft hover:shadow-elevated
-           active:scale-[0.98];
+    @apply bg-primary text-primary-foreground px-6 py-3 rounded-full font-medium
+           hover:bg-pine-hover transition-all duration-300 shadow-soft hover:shadow-elevated
+           active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
   }
 
   .btn-outline {
-    @apply border-2 border-primary text-primary px-6 py-3 rounded-full font-medium 
+    @apply border-2 border-primary text-primary px-6 py-3 rounded-full font-medium
            hover:bg-primary hover:text-primary-foreground transition-all duration-300
-           active:scale-[0.98];
+           active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  /* ==== Redesign v2 button primitives (§4) ==== */
+  .btn-pine {
+    @apply inline-flex items-center justify-center gap-2 bg-pine text-white px-6 py-3 rounded-full font-display font-semibold
+           transition-all duration-300 shadow-soft hover:bg-pine-hover hover:shadow-elevated
+           active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  .btn-jade {
+    @apply inline-flex items-center justify-center gap-2 bg-jade text-pine px-6 py-3 rounded-full font-display font-semibold
+           transition-all duration-300 shadow-soft hover:bg-jade/90 hover:shadow-elevated
+           active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  .btn-outline-pine {
+    @apply inline-flex items-center justify-center gap-2 border-2 border-pine text-pine px-6 py-3 rounded-full font-display font-semibold
+           transition-all duration-300 hover:bg-pine hover:text-white
+           active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  /* ==== The Marker — one reserved emphasis device (§3) ==== */
+  .marker {
+    @apply relative inline-block bg-mint-pale text-ink;
+    padding: 0 0.15em;
+    border-radius: 4px;
+  }
+
+  .marker::before,
+  .marker::after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    width: 2px;
+    background: hsl(var(--jade));
+  }
+
+  .marker::before {
+    left: -1px;
+  }
+
+  .marker::after {
+    right: -1px;
   }
 
   .btn-gradient-coral {
