@@ -140,12 +140,6 @@
   }
 }
 
-@layer utilities {
-  h1, h2, h3, h4, h5, h6 {
-    font-weight: 500 !important;
-  }
-}
-
 @layer components {
   .btn-primary {
     @apply bg-primary text-primary-foreground px-6 py-3 rounded-full font-medium 
@@ -214,12 +208,11 @@
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
   .font-display {
-    font-family: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+    font-family: 'Playfair Display', Georgia, serif;
   }
 
   .font-sans {
-    font-family: 'Quicksand Variable', system-ui, sans-serif;
-    font-weight: 500;
+    font-family: 'Inter Variable', system-ui, sans-serif;
   }
 
   .text-balance {

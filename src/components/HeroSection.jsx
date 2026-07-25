@@ -52,10 +52,10 @@ const HeroSection = () => {
               transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
             >
               <div className="text-left">
-                <div className="font-display font-semibold text-foreground leading-none text-[22px] sm:text-[24px] tracking-tight">
+                <div className="font-display font-bold text-foreground leading-none text-[22px] sm:text-[24px] tracking-tight">
                   2000+
                 </div>
-                <div className="font-sans text-[10px] font-semibold tracking-widest uppercase text-muted-foreground/70 mt-1">
+                <div className="font-sans text-[10px] font-bold tracking-widest uppercase text-muted-foreground/70 mt-1">
                   Happy Customers
                 </div>
               </div>
@@ -69,10 +69,10 @@ const HeroSection = () => {
               >
                 <span className="text-gold text-[22px] leading-none">★</span>
                 <div>
-                  <div className="font-display font-semibold text-foreground leading-none text-[22px] sm:text-[24px] tracking-tight">
+                  <div className="font-display font-bold text-foreground leading-none text-[22px] sm:text-[24px] tracking-tight">
                     4.9
                   </div>
-                  <div className="font-sans text-[10px] font-semibold tracking-widest uppercase text-muted-foreground/70 mt-1">
+                  <div className="font-sans text-[10px] font-bold tracking-widest uppercase text-muted-foreground/70 mt-1">
                     Google Rating
                   </div>
                 </div>
@@ -135,10 +135,10 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.25, ease: "easeOut" }}
             >
               <div>
-                <span className="font-display font-semibold text-foreground leading-none block lg:text-[40px] xl:text-[48px] tracking-tight">
+                <span className="font-display font-bold text-foreground leading-none block lg:text-[40px] xl:text-[48px] tracking-tight">
                   2000+
                 </span>
-                <span className="font-sans text-[11px] font-semibold tracking-wider uppercase text-muted-foreground/80 block mt-1.5">
+                <span className="font-sans text-[11px] font-bold tracking-wider uppercase text-muted-foreground/80 block mt-1.5">
                   Happy Customers
                 </span>
               </div>
@@ -152,10 +152,10 @@ const HeroSection = () => {
               >
                 <Star className="w-7 h-7 xl:w-8 xl:h-8 fill-gold text-gold shrink-0" />
                 <div>
-                  <span className="font-display font-semibold text-foreground leading-none block lg:text-[40px] xl:text-[48px] tracking-tight">
+                  <span className="font-display font-bold text-foreground leading-none block lg:text-[40px] xl:text-[48px] tracking-tight">
                     4.9
                   </span>
-                  <span className="font-sans text-[11px] font-semibold tracking-wider uppercase text-muted-foreground/80 block mt-1.5">
+                  <span className="font-sans text-[11px] font-bold tracking-wider uppercase text-muted-foreground/80 block mt-1.5">
                     Google Rating
                   </span>
                 </div>
