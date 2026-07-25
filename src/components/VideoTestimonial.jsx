@@ -42,14 +42,8 @@ const VideoTestimonial = ({
     return () => observer.disconnect();
   }, []);
 
-  // Tracks the active flag's previous value so the effect below can tell a
-  // fresh activation (false -> true, needs a currentTime reset) apart from a
-  // re-run while already active (e.g. inView flickering) that must not seek.
-  const wasActiveRef = useRef(false);
-
-  // Single effect drives all playback state from the props/state above:
-  // active -> unmuted single play (deactivates instead if scrolled offscreen);
-  // otherwise (ambient) -> muted loop, paused when dimmed/offscreen/reduced-motion.
+  // Tap for sound just unmutes wherever the video already is — no seek, no
+  // restart. Sound turns off the same way: mute in place, keep playing.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -59,17 +53,11 @@ const VideoTestimonial = ({
         onDeactivate();
         return;
       }
-      if (!wasActiveRef.current) video.currentTime = 0;
       video.muted = false;
       video.loop = false;
       video.play().catch(() => {});
-      wasActiveRef.current = true;
       return;
     }
-
-    // Re-arm the ambient loop's start position whenever we drop out of active.
-    if (wasActiveRef.current) video.currentTime = 0;
-    wasActiveRef.current = false;
 
     video.muted = true;
     video.loop = true;

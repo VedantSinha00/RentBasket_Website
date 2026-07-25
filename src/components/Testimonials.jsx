@@ -1,5 +1,5 @@
 import { Star } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import VideoTestimonial from "@/components/VideoTestimonial";
@@ -240,11 +240,11 @@ const VideoTestimonialRow = ({ items }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  const toggle = (index) => {
-    setShowTapHint(false);
-    setActiveIndex((current) => (current === index ? null : index));
-  };
-  const deactivate = () => setActiveIndex(null);
+  // Stable across renders (empty deps + functional updater) so the child's
+  // playback effect — which depends on onDeactivate's identity — doesn't
+  // spuriously re-fire (and re-call play()) on every click in the row, e.g.
+  // when a sibling's tap changes showTapHint/activeIndex and re-renders here.
+  const deactivate = useCallback(() => setActiveIndex(null), []);
 
   return (
     <div className="max-w-7xl mx-auto px-4">
@@ -261,7 +261,10 @@ const VideoTestimonialRow = ({ items }) => {
               active={activeIndex === index}
               dimmed={activeIndex !== null && activeIndex !== index}
               showTapHint={showTapHint}
-              onToggle={() => toggle(index)}
+              onToggle={() => {
+                setShowTapHint(false);
+                setActiveIndex((current) => (current === index ? null : index));
+              }}
               onDeactivate={deactivate}
             />
           </div>
