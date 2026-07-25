@@ -1,18 +1,14 @@
 import { MapPin, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
-import logo from "@/assets/7 1.png";
 
 const Footer = () => {
   return (
-    <footer className="bg-background">
-      {/* Wave decoration */}
-      <div className="h-6 bg-gradient-to-b from-secondary to-transparent" />
-
-      <div className="section-container pt-2 pb-8">
+    <footer className="bg-pine text-white">
+      <div className="section-container pt-16 pb-2 md:pt-24">
         {/* Brand */}
         <div className="mb-10 text-center">
-          <h3 className="font-bold text-lg mb-1 font-sans">RentBasket</h3>
-          <p className="text-sm text-muted-foreground font-sans leading-relaxed">
+          <h3 className="font-display font-bold text-lg mb-1">RentBasket</h3>
+          <p className="text-sm text-mint leading-relaxed">
             Comfort for your home,<br />without the hassle of ownership.
           </p>
         </div>
@@ -20,12 +16,12 @@ const Footer = () => {
           {/* Quick Links & Policies */}
           <div className="space-y-6">
             <div>
-              <h4 className="font-bold text-sm mb-4 font-sans">Quick Links</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <h4 className="font-display font-bold text-sm mb-4">Quick Links</h4>
+              <ul className="space-y-2 text-sm text-mint">
                 <li>
                   <Link
                     to="/catalog"
-                    className="hover:text-primary hover:translate-x-0.5 transition-all duration-200 font-sans inline-block"
+                    className="hover:text-white hover:underline underline-offset-4 transition-colors duration-200 inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
                   >
                     Browse Products
                   </Link>
@@ -33,7 +29,7 @@ const Footer = () => {
                 <li>
                   <Link
                     to="/about"
-                    className="hover:text-primary hover:translate-x-0.5 transition-all duration-200 font-sans inline-block"
+                    className="hover:text-white hover:underline underline-offset-4 transition-colors duration-200 inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
                   >
                     About Us
                   </Link>
@@ -41,7 +37,7 @@ const Footer = () => {
                 <li>
                   <Link
                     to="/faqs"
-                    className="hover:text-primary hover:translate-x-0.5 transition-all duration-200 font-sans inline-block"
+                    className="hover:text-white hover:underline underline-offset-4 transition-colors duration-200 inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
                   >
                     FAQs
                   </Link>
@@ -49,7 +45,7 @@ const Footer = () => {
                 <li>
                   <Link
                     to="/terms-n-conditions"
-                    className="hover:text-primary hover:translate-x-0.5 transition-all duration-200 font-sans inline-block"
+                    className="hover:text-white hover:underline underline-offset-4 transition-colors duration-200 inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
                   >
                     Terms &amp; Conditions
                   </Link>
@@ -57,7 +53,7 @@ const Footer = () => {
                 <li>
                   <Link
                     to="/shipping-returns"
-                    className="hover:text-primary hover:translate-x-0.5 transition-all duration-200 font-sans inline-block"
+                    className="hover:text-white hover:underline underline-offset-4 transition-colors duration-200 inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
                   >
                     Shipping &amp; Returns
                   </Link>
@@ -65,7 +61,7 @@ const Footer = () => {
                 <li>
                   <Link
                     to="/contact"
-                    className="hover:text-primary hover:translate-x-0.5 transition-all duration-200 font-sans inline-block"
+                    className="hover:text-white hover:underline underline-offset-4 transition-colors duration-200 inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
                   >
                     Contact Us
                   </Link>
@@ -78,16 +74,16 @@ const Footer = () => {
           <div className="space-y-6 ml-auto w-fit">
             {/* Gurgaon */}
             <div>
-              <h4 className="font-bold text-sm mb-2 font-sans">
+              <h4 className="font-display font-bold text-sm mb-2">
                 Gurgaon Office
               </h4>
-              <div className="text-sm text-muted-foreground space-y-2">
+              <div className="text-sm text-mint space-y-2">
                 <Link
                   to="/contact"
-                  className="flex items-start gap-2 hover:text-primary transition-colors group"
+                  className="flex items-start gap-2 hover:text-white transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
                 >
-                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 group-hover:text-primary" />
-                  <span className="text-left leading-snug font-sans">
+                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <span className="text-left leading-snug">
                     C9/2, Lower Ground Floor,<br />
                     Ardee City, Sector 52,<br />
                     Gurugram, Haryana 122003
@@ -95,24 +91,24 @@ const Footer = () => {
                 </Link>
                 <a
                   href="tel:+919959858473"
-                  className="flex items-center gap-2 hover:text-primary transition-colors"
+                  className="flex items-center gap-2 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
                 >
                   <Phone className="w-4 h-4 flex-shrink-0" />
-                  <span className="font-sans">+91 9959858473</span>
+                  <span>+91 9959858473</span>
                 </a>
               </div>
             </div>
 
             {/* Noida */}
             <div>
-              <h4 className="font-bold text-sm mb-2 font-sans">Noida Office</h4>
-              <div className="text-sm text-muted-foreground space-y-2">
+              <h4 className="font-display font-bold text-sm mb-2">Noida Office</h4>
+              <div className="text-sm text-mint space-y-2">
                 <Link
                   to="/contact"
-                  className="flex items-start gap-2 hover:text-primary transition-colors group"
+                  className="flex items-start gap-2 hover:text-white transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
                 >
-                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 group-hover:text-primary" />
-                  <span className="text-left leading-snug font-sans">
+                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <span className="text-left leading-snug">
                     Plot No B.L.K 15, Basement,<br />
                     Sector 116, Noida,<br />
                     UP 201301
@@ -120,27 +116,37 @@ const Footer = () => {
                 </Link>
                 <a
                   href="tel:+919958004438"
-                  className="flex items-center gap-2 hover:text-primary transition-colors"
+                  className="flex items-center gap-2 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
                 >
                   <Phone className="w-4 h-4 flex-shrink-0" />
-                  <span className="font-sans">+91 9958004438</span>
+                  <span>+91 9958004438</span>
                 </a>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Social Icons & Copyright */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pt-8 border-t border-border">
-          <p className="text-sm text-muted-foreground text-center sm:text-left font-sans order-2 sm:order-1">
+        {/* Copyright */}
+        <div className="flex flex-col items-center justify-center gap-2 mt-12 pt-8 border-t border-white/15">
+          <p className="text-sm text-mint text-center">
             © 2023-2026 RentBasket, a brand of IG RentOK Private Limited. All rights reserved.
           </p>
-          <div className="order-1 sm:order-2 shrink-0">
-            <img
-              src={logo}
-              alt="RentBasket mascot"
-              className="w-16 h-16 md:w-20 md:h-20 object-contain"
-            />
+        </div>
+
+        {/* Signature wordmark — bleeds off the bottom edge, decorative only */}
+        <div
+          aria-hidden="true"
+          className="mt-6 -mb-2 md:-mb-4 overflow-hidden select-none pointer-events-none"
+          style={{ userSelect: "none" }}
+        >
+          <div
+            className="font-display font-bold text-jade text-center leading-none whitespace-nowrap"
+            style={{
+              fontSize: "clamp(4.5rem, 16vw, 11rem)",
+              transform: "translateY(25%)",
+            }}
+          >
+            Rentbasket
           </div>
         </div>
       </div>
