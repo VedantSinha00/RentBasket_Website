@@ -1,6 +1,33 @@
 import { Star } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import VideoTestimonial from "@/components/VideoTestimonial";
+import lakshayWebm from "@/assets/testimonial-lakshay.webm";
+import lakshayMp4 from "@/assets/testimonial-lakshay.mp4";
+import lakshayPoster from "@/assets/testimonial-lakshay-poster.jpg";
+import manasviWebm from "@/assets/testimonial-manasvi.webm";
+import manasviMp4 from "@/assets/testimonial-manasvi.mp4";
+import manasviPoster from "@/assets/testimonial-manasvi-poster.jpg";
+
+// City is pending from the user for both — renders name-only until filled.
+// A third entry (data-only) slots in here once its final web-ready cut arrives.
+const videoTestimonials = [
+  {
+    name: "Lakshay",
+    city: "",
+    webmSrc: lakshayWebm,
+    mp4Src: lakshayMp4,
+    poster: lakshayPoster,
+  },
+  {
+    name: "Manasvi",
+    city: "",
+    webmSrc: manasviWebm,
+    mp4Src: manasviMp4,
+    poster: manasviPoster,
+  },
+];
 
 const reviews = [
   {
@@ -107,6 +134,12 @@ const TestimonialCard = ({ text, name, location }) => (
 const MobileScrollRow = ({ items, speed = 0.4, reverse = false }) => {
   const scrollRef = useRef(null);
   const pausedRef = useRef(false);
+  // The browser rounds/quantizes scrollLeft to integer pixels, so sub-pixel
+  // steps (0.4px) written then immediately read back from el.scrollLeft get
+  // rounded away every frame and the row never visibly moves. Keeping the
+  // true position in a float ref (only ever written to the DOM, never read
+  // back except to re-sync after a manual swipe) avoids that.
+  const posRef = useRef(0);
   const doubled = [...items, ...items];
 
   useEffect(() => {
@@ -114,14 +147,17 @@ const MobileScrollRow = ({ items, speed = 0.4, reverse = false }) => {
     if (!el) return;
     // Reverse rows start at the halfway point and drift left; forward rows
     // start at 0 and drift right. Both wrap seamlessly across one card set.
-    if (reverse) el.scrollLeft = el.scrollWidth / 2;
+    const half = el.scrollWidth / 2;
+    posRef.current = reverse ? half : 0;
+    el.scrollLeft = posRef.current;
+
     let frame;
     const step = () => {
       if (!pausedRef.current) {
-        const half = el.scrollWidth / 2;
-        let next = el.scrollLeft + (reverse ? -speed : speed);
+        let next = posRef.current + (reverse ? -speed : speed);
         if (next >= half) next -= half; // forward: loop back to first set
         if (next < 0) next += half;      // reverse: loop back to second set
+        posRef.current = next;
         el.scrollLeft = next;
       }
       frame = requestAnimationFrame(step);
@@ -130,13 +166,20 @@ const MobileScrollRow = ({ items, speed = 0.4, reverse = false }) => {
     return () => cancelAnimationFrame(frame);
   }, [speed, reverse]);
 
+  // Re-sync the float position from the real scroll offset after a manual
+  // swipe, so auto-scroll resumes from where the user actually left it.
+  const resync = () => {
+    pausedRef.current = false;
+    if (scrollRef.current) posRef.current = scrollRef.current.scrollLeft;
+  };
+
   return (
     <div
       ref={scrollRef}
       className="flex overflow-x-auto no-scrollbar"
       onTouchStart={() => { pausedRef.current = true; }}
-      onTouchEnd={() => { pausedRef.current = false; }}
-      onTouchCancel={() => { pausedRef.current = false; }}
+      onTouchEnd={resync}
+      onTouchCancel={resync}
     >
       {doubled.map((r, i) => (
         <TestimonialCard key={i} {...r} />
@@ -178,6 +221,59 @@ const MarqueeRow = ({ items, duration, reverse = false }) => {
   );
 };
 
+// Staggered vertical offsets so the row reads as rhythm, not a card grid.
+// Indexed by position so it holds for both 2 and 3 videos: with 2 the pair
+// centers with a light offset; with 3 the middle one sits lower.
+const staggerClass = (index, total) => {
+  if (total === 2) return index === 0 ? "md:mt-6" : "md:-mt-2";
+  return index === 1 ? "md:mt-6" : "md:-mt-2";
+};
+
+const VideoTestimonialRow = ({ items }) => {
+  const [activeIndex, setActiveIndex] = useState(null);
+  // One "tap for sound" hint for the whole row, not per-card: retires on the
+  // first tap anywhere, or after 4s, whichever comes first.
+  const [showTapHint, setShowTapHint] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowTapHint(false), 4000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Stable across renders (empty deps + functional updater) so the child's
+  // playback effect — which depends on onDeactivate's identity — doesn't
+  // spuriously re-fire (and re-call play()) on every click in the row, e.g.
+  // when a sibling's tap changes showTapHint/activeIndex and re-renders here.
+  const deactivate = useCallback(() => setActiveIndex(null), []);
+
+  return (
+    <div className="max-w-7xl mx-auto px-4">
+      {/* Mobile: horizontal scroll-snap, next card peeking to signal swipeability.
+          Desktop: centered flex row with per-item vertical stagger. */}
+      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 md:overflow-visible md:justify-center md:gap-10">
+        {items.map((item, index) => (
+          <div
+            key={item.name}
+            className={`w-[58vw] sm:w-[52vw] shrink-0 snap-center md:w-[300px] lg:w-[340px] ${staggerClass(index, items.length)}`}
+          >
+            <VideoTestimonial
+              {...item}
+              active={activeIndex === index}
+              dimmed={activeIndex !== null && activeIndex !== index}
+              showTapHint={showTapHint}
+              onToggle={() => {
+                setShowTapHint(false);
+                setActiveIndex((current) => (current === index ? null : index));
+              }}
+              onDeactivate={deactivate}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const Testimonials = () => (
   <section className="pt-4 pb-14 md:pt-6 md:pb-20 overflow-hidden bg-white">
     {/* Section heading (moved here from the removed LovedByCustomers fan) */}
@@ -185,6 +281,20 @@ const Testimonials = () => (
       <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-foreground tracking-tight leading-tight">
         Loved by Customers
       </h2>
+      <p className="text-sm text-muted-foreground mt-2">
+        Real customers across Gurgaon &amp; Noida
+      </p>
+    </div>
+
+    <VideoTestimonialRow items={videoTestimonials} />
+
+    {/* CTA bridge: answers "where does a persuaded viewer go" without
+        competing with the marquee below for attention. Owns all the spacing
+        between the video row and the marquee (tightened per D12). */}
+    <div className="text-center mt-4 mb-8 md:mt-8 md:mb-16">
+      <Link to="/catalog/" className="btn-outline inline-block">
+        Browse the catalogue
+      </Link>
     </div>
 
     {/* Cap + center the marquee within the same max width the rest of the site
