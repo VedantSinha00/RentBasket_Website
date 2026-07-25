@@ -1,42 +1,32 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
+import RentingCarousel from "@/components/RentingCarousel";
 import FurnitureGallery from "@/components/FurnitureGallery";
-// import HowItWorks from "@/components/HowItWorks";
-// import FoundersSection from "@/components/FoundersSection";
+import WhatMakesDifferent from "@/components/WhatMakesDifferent";
 import MythOrFact from "@/components/MythOrFact";
 import Testimonials from "@/components/Testimonials";
-import WhatMakesDifferent from "@/components/WhatMakesDifferent";
-// App branding removed from the homepage for now — DownloadSection hidden.
-// import DownloadSection from "@/components/DownloadSection";
+import FAQsTeaser from "@/components/FAQsTeaser";
 import Footer from "@/components/Footer";
 
 const Index = () => {
-  const [activeCategory, setActiveCategory] = useState("Furniture");
-  const galleryRef = useRef(null);
+  const carouselRef = useRef(null);
 
-  const handleCategoryChange = (cat) => {
-    setActiveCategory(cat);
-    galleryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const scrollToCarousel = () => {
+    carouselRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
     <div className="min-h-screen">
       <Header />
       <main>
-        <HeroSection onScrollToCarousel={handleCategoryChange} />
-        <div ref={galleryRef} className="-mt-2">
-          <FurnitureGallery />
-        </div>
+        <HeroSection onScrollToCarousel={scrollToCarousel} />
+        <RentingCarousel innerRef={carouselRef} />
+        <FurnitureGallery />
         <WhatMakesDifferent />
-        {/* v1: How it works — hidden for this release */}
-        {/* <HowItWorks /> */}
-        {/* v1: Founders — hidden for this release */}
-        {/* <FoundersSection /> */}
         <MythOrFact />
         <Testimonials />
-        {/* App branding removed from homepage for now */}
-        {/* <DownloadSection /> */}
+        <FAQsTeaser />
       </main>
       <Footer />
     </div>
