@@ -9,9 +9,11 @@ import lakshayPoster from "@/assets/testimonial-lakshay-poster.jpg";
 import manasviWebm from "@/assets/testimonial-manasvi.webm";
 import manasviMp4 from "@/assets/testimonial-manasvi.mp4";
 import manasviPoster from "@/assets/testimonial-manasvi-poster.jpg";
+import reel01Webm from "@/assets/testimonial-reel01.webm";
+import reel01Mp4 from "@/assets/testimonial-reel01.mp4";
+import reel01Poster from "@/assets/testimonial-reel01-poster.jpg";
 
-// City is pending from the user for both — renders name-only until filled.
-// A third entry (data-only) slots in here once its final web-ready cut arrives.
+// City is pending from the user — renders name-only until filled.
 const videoTestimonials = [
   {
     name: "Lakshay",
@@ -26,6 +28,13 @@ const videoTestimonials = [
     webmSrc: manasviWebm,
     mp4Src: manasviMp4,
     poster: manasviPoster,
+  },
+  {
+    name: "Pranjal & Sejal",
+    city: "",
+    webmSrc: reel01Webm,
+    mp4Src: reel01Mp4,
+    poster: reel01Poster,
   },
 ];
 
