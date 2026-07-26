@@ -34,17 +34,21 @@ const Header = () => {
     if (mobileSearchOpen) mobileInputRef.current?.focus();
   }, [mobileSearchOpen]);
 
-  // Desktop-only: the header inverts to pine while the dark "Myth or Reality"
-  // section is behind it. rootMargin pulls the trigger line up to where the
-  // sticky header actually sits, so the flip lines up with the section edge
-  // instead of firing a full viewport-height late.
+  // Desktop-only: the header inverts to pine the moment the dark "Myth or
+  // Reality" section's top edge actually reaches the bottom of the sticky
+  // header (~64px), not just whenever the section is anywhere on screen.
+  // Shrinking the root to a thin line at that height (both margins negative,
+  // leaving just a 1px band) means "intersecting" only becomes true right
+  // when the section touches the header — same trigger point on the way in
+  // and the way out.
   const [isPineTheme, setIsPineTheme] = useState(false);
   useEffect(() => {
     const target = document.getElementById("myth-section");
     if (!target) return;
+    const headerHeight = 64;
     const observer = new IntersectionObserver(
       ([entry]) => setIsPineTheme(entry.isIntersecting && window.innerWidth >= 1024),
-      { rootMargin: "-80px 0px -70% 0px" }
+      { rootMargin: `-${headerHeight}px 0px -${window.innerHeight - headerHeight - 1}px 0px` }
     );
     observer.observe(target);
     return () => observer.disconnect();
