@@ -610,7 +610,7 @@ const MythOrFact = () => {
   return (
     <>
       {/* ── Desktop (≥ lg): 2-column editorial split, drenched pine (§5.6) ── */}
-      <section className="hidden lg:block py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-pine">
+      <section id="myth-section" className="hidden lg:block py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-pine">
         <div className="grid grid-cols-[1fr_2fr] gap-16 max-w-7xl mx-auto">
           {/* Left column: sticky title + CTA */}
           <div className="flex flex-col items-start text-left gap-6 lg:sticky lg:top-28 h-fit max-w-sm">

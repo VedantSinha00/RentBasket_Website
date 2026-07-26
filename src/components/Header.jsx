@@ -34,6 +34,22 @@ const Header = () => {
     if (mobileSearchOpen) mobileInputRef.current?.focus();
   }, [mobileSearchOpen]);
 
+  // Desktop-only: the header inverts to pine while the dark "Myth or Reality"
+  // section is behind it. rootMargin pulls the trigger line up to where the
+  // sticky header actually sits, so the flip lines up with the section edge
+  // instead of firing a full viewport-height late.
+  const [isPineTheme, setIsPineTheme] = useState(false);
+  useEffect(() => {
+    const target = document.getElementById("myth-section");
+    if (!target) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsPineTheme(entry.isIntersecting && window.innerWidth >= 1024),
+      { rootMargin: "-80px 0px -70% 0px" }
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
+
   // Tapping the magnifying glass takes the user to the catalog (where results
   // live) and opens the inline search field to type in.
   const openMobileSearch = () => {
@@ -93,7 +109,11 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-border">
+    <header
+      className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
+        isPineTheme ? "bg-pine border-white/10" : "bg-white border-border"
+      }`}
+    >
       {/* Wider than .section-container's 1600px cap and with its own edge
           padding — the header anchors to the actual viewport edges on
           ultra-wide screens instead of sitting in the same narrow centered
@@ -113,7 +133,9 @@ const Header = () => {
               <img
                 src={logoWordmark}
                 alt="RentBasket"
-                className="h-7 md:h-9 w-auto object-contain"
+                className={`h-7 md:h-9 w-auto object-contain transition-[filter] duration-300 ${
+                  isPineTheme ? "brightness-0 invert" : ""
+                }`}
               />
             </Link>
 
@@ -121,7 +143,9 @@ const Header = () => {
               {!onCatalog && (
                 <Link
                   to="/catalog"
-                  className="text-sm font-medium text-ink-muted hover:text-jade-ink transition-colors whitespace-nowrap rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className={`text-sm font-medium transition-colors whitespace-nowrap rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                    isPineTheme ? "text-white hover:text-mint" : "text-ink-muted hover:text-jade-ink"
+                  }`}
                 >
                   Browse Catalogue
                 </Link>
@@ -130,8 +154,12 @@ const Header = () => {
                 to="/faqs"
                 className={`relative text-sm font-medium transition-colors pb-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                   pathname === "/faqs"
-                    ? "text-jade-ink after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-0.5 after:bg-jade after:rounded-full"
-                    : "text-ink-muted hover:text-jade-ink"
+                    ? isPineTheme
+                      ? "text-white after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-0.5 after:bg-mint after:rounded-full"
+                      : "text-jade-ink after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-0.5 after:bg-jade after:rounded-full"
+                    : isPineTheme
+                      ? "text-white hover:text-mint"
+                      : "text-ink-muted hover:text-jade-ink"
                 }`}
               >
                 FAQs
@@ -142,13 +170,19 @@ const Header = () => {
           {/* Right Anchor: Search Input + Icons + Action Button */}
           <div className="hidden md:flex items-center gap-4 xl:gap-6 shrink-0 ml-auto">
             <form onSubmit={handleSubmit} className="relative w-60 xl:w-72">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-jade-ink pointer-events-none" />
+              <Search className={`absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors ${
+                isPineTheme ? "text-white/70" : "text-jade-ink"
+              }`} />
               <input
                 type="text"
                 value={query}
                 onChange={handleChange}
                 placeholder="Search furniture..."
-                className="w-full pl-10 pr-4 py-2 rounded-full text-xs xl:text-sm bg-mint-pale placeholder:text-ink-muted text-ink border-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all"
+                className={`w-full pl-10 pr-4 py-2 rounded-full text-xs xl:text-sm border-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all ${
+                  isPineTheme
+                    ? "bg-white/10 text-white placeholder:text-white/60 focus:bg-white/20"
+                    : "bg-mint-pale placeholder:text-ink-muted text-ink"
+                }`}
               />
             </form>
 
@@ -156,31 +190,43 @@ const Header = () => {
               <Link
                 to="/profile"
                 className={`flex relative p-1.5 md:p-2 rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-                  onProfile ? "bg-mint-pale" : "hover:bg-mint-pale"
+                  isPineTheme
+                    ? onProfile ? "bg-white/10" : "hover:bg-white/10"
+                    : onProfile ? "bg-mint-pale" : "hover:bg-mint-pale"
                 }`}
                 title="My Profile"
               >
-                <User className={`w-5 h-5 ${onProfile ? "text-jade-ink" : "text-ink-muted"}`} />
+                <User className={`w-5 h-5 ${
+                  isPineTheme
+                    ? onProfile ? "text-mint" : "text-white hover:text-mint"
+                    : onProfile ? "text-jade-ink" : "text-ink-muted"
+                }`} />
               </Link>
               {!onCart && (
                 <Link
                   to="/basket"
-                  className="flex relative p-1.5 md:p-2 rounded-xl hover:bg-mint-pale transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className={`flex relative p-1.5 md:p-2 rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                    isPineTheme ? "hover:bg-white/10" : "hover:bg-mint-pale"
+                  }`}
                   title="View Basket"
                 >
-                  <ShoppingBag className="w-5 h-5 text-ink-muted" />
+                  <ShoppingBag className={`w-5 h-5 ${isPineTheme ? "text-white" : "text-ink-muted"}`} />
                   {cartCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-jade text-pine text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
+                    <span className={`absolute -top-0.5 -right-0.5 w-5 h-5 text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm ${
+                      isPineTheme ? "bg-mint text-pine" : "bg-jade text-pine"
+                    }`}>
                       {cartCount > 9 ? "9+" : cartCount}
                     </span>
                   )}
                 </Link>
               )}
               {onCart && (
-                <div className="flex relative p-1.5 md:p-2 rounded-xl bg-mint-pale">
-                  <ShoppingBag className="w-5 h-5 text-jade-ink" />
+                <div className={`flex relative p-1.5 md:p-2 rounded-xl ${isPineTheme ? "bg-white/10" : "bg-mint-pale"}`}>
+                  <ShoppingBag className={`w-5 h-5 ${isPineTheme ? "text-mint" : "text-jade-ink"}`} />
                   {cartCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-jade text-pine text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
+                    <span className={`absolute -top-0.5 -right-0.5 w-5 h-5 text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm ${
+                      isPineTheme ? "bg-mint text-pine" : "bg-jade text-pine"
+                    }`}>
                       {cartCount > 9 ? "9+" : cartCount}
                     </span>
                   )}
