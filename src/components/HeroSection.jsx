@@ -123,7 +123,7 @@ const HeroSection = ({ onScrollToCarousel }) => {
               </Link>
             </motion.div>
 
-            <StatChips className="w-full max-w-sm lg:hidden mt-2" />
+            <StatChips className="w-full max-w-sm mt-2" />
           </div>
 
           {/* Right column: pine-framed lifestyle photo */}
@@ -133,7 +133,7 @@ const HeroSection = ({ onScrollToCarousel }) => {
                 <img
                   src={heroLifestylePhoto}
                   alt="A styled living room chair, part of RentBasket's furniture catalogue"
-                  className="w-full h-[280px] sm:h-[340px] md:h-[400px] object-cover"
+                  className="w-full h-[320px] sm:h-[400px] md:h-[480px] object-cover"
                 />
               </div>
               <div className="flex items-center justify-between gap-4 px-4 py-4 md:px-5 md:py-5">
@@ -154,8 +154,6 @@ const HeroSection = ({ onScrollToCarousel }) => {
               </div>
             </div>
           </motion.div>
-
-          <StatChips className="hidden lg:grid max-w-sm" />
         </motion.div>
       </div>
     </section>

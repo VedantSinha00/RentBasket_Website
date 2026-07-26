@@ -1,4 +1,4 @@
-import logoIcon from "@/assets/rentbasket-icon.png";
+import logoWordmark from "@/assets/rentbasket-wordmark.svg";
 import { ShoppingBag, Search, User, X, ArrowRight } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
@@ -107,17 +107,14 @@ const Header = () => {
           <div className="flex items-center gap-6 xl:gap-8 shrink-0">
             <Link
               to="/"
-              className="flex items-center gap-1.5 shrink-0 transition-opacity hover:opacity-90 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="flex items-center shrink-0 transition-opacity hover:opacity-90 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               aria-label="RentBasket home"
             >
               <img
-                src={logoIcon}
-                alt=""
+                src={logoWordmark}
+                alt="RentBasket"
                 className="h-7 md:h-9 w-auto object-contain"
               />
-              <span className="font-display font-semibold text-lg md:text-2xl text-jade-ink tracking-tight">
-                RentBasket
-              </span>
             </Link>
 
             <nav className="hidden md:flex items-center gap-6 xl:gap-8">
