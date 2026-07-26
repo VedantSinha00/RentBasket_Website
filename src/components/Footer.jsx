@@ -1,9 +1,10 @@
 import { MapPin, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
+import footerLogo from "@/assets/rentbasket-footer-logo.svg";
 
 const Footer = () => {
   return (
-    <footer className="bg-pine text-white">
+    <footer className="bg-pine text-white overflow-hidden">
       <div className="section-container pt-16 pb-2 md:pt-24">
         {/* Brand */}
         <div className="mb-10 text-center">
@@ -136,18 +137,15 @@ const Footer = () => {
         {/* Signature wordmark — bleeds off the bottom edge, decorative only */}
         <div
           aria-hidden="true"
-          className="mt-6 -mb-2 md:-mb-4 overflow-hidden select-none pointer-events-none"
+          className="mt-6 select-none pointer-events-none flex justify-center"
           style={{ userSelect: "none" }}
         >
-          <div
-            className="font-display font-bold text-jade text-center leading-none whitespace-nowrap"
-            style={{
-              fontSize: "clamp(4.5rem, 16vw, 11rem)",
-              transform: "translateY(25%)",
-            }}
-          >
-            Rentbasket
-          </div>
+          <img
+            src={footerLogo}
+            alt=""
+            className="w-full max-w-4xl"
+            style={{ transform: "translateY(25%)" }}
+          />
         </div>
       </div>
     </footer>
