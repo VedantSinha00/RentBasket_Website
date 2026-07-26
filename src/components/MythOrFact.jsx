@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Check, X, ArrowRight, RefreshCw } from "lucide-react";
+import { Check, X, ArrowRight, RefreshCw, Zap, Truck, Wrench, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useSpring, useReducedMotion } from "framer-motion";
 import kuMascot from "@/assets/ku-pondering.png";
@@ -39,6 +39,41 @@ const QUIZ_QUESTIONS = [
     myth: "Rental furniture is always old, worn out, or second-rate.",
     answer: false,
     explanation:
+      "Every RentBasket item is new or in mint condition, sanitized and quality-checked before it reaches you.",
+  },
+];
+
+// ── DESKTOP MYTH CARDS ─────────────────────────────────────
+// Same 4 themes as the mobile quiz (QUIZ_QUESTIONS above), reworded as
+// belief/reality pairs with a stat badge so desktop readers get the same
+// hard numbers mobile users get after answering.
+const DESKTOP_MYTHS = [
+  {
+    icon: Zap,
+    statBadge: "~36h Delivery",
+    belief: "Renting furniture means waiting days for it to arrive.",
+    reality:
+      "RentBasket delivers in about 36 hours on average, and often the same day. No long waits.",
+  },
+  {
+    icon: Truck,
+    statBadge: "₹0 Relocation Fee",
+    belief: "Once you rent, you're locked in, and moving flats means paying to haul it all.",
+    reality:
+      "Flexible plans from 3 to 12 months, plus free relocation support. When you move, we move your rented furniture with you.",
+  },
+  {
+    icon: Wrench,
+    statBadge: "₹0 Maintenance Cost",
+    belief: "If a rented appliance stops working, repairs are slow and cost you extra.",
+    reality:
+      "Maintenance is included at no cost, and our service team resolves issues fast. No repair bills, no long waits.",
+  },
+  {
+    icon: Sparkles,
+    statBadge: "Mint Condition",
+    belief: "Rental furniture is always old, worn out, or second-rate.",
+    reality:
       "Every RentBasket item is new or in mint condition, sanitized and quality-checked before it reaches you.",
   },
 ];
@@ -572,39 +607,6 @@ const MobileQuizSection = () => {
 };
 
 const MythOrFact = () => {
-  const data = [
-    {
-      belief: "Buying is always cheaper than renting.",
-      reality:
-        "Renting is more economical for usage up to ~30 months compared to buying - plus you avoid resale hassles and depreciation.",
-    },
-    {
-      belief: "Rental furniture is always old or broken.",
-      reality:
-        "RentBasket products are either new or in mint condition. Every item goes through sanitization and strict quality checks before delivery.",
-    },
-    {
-      belief: "Rentals have boring designs and limited options.",
-      reality:
-        "RentBasket offers modern, stylish furniture with multiple designs and color options, plus customization available to match your home.",
-    },
-    {
-      belief: "Rental plans are full of hidden costs and traps.",
-      reality:
-        "RentBasket believes in transparent pricing with no hidden costs - what you see is what you pay.",
-    },
-    {
-      belief: "Repairs are slow when you rent.",
-      reality:
-        "RentBasket has a proven track record of fast service, and repairs are handled quickly and at no additional cost.",
-    },
-    {
-      belief: "You must be locked in for long periods.",
-      reality:
-        "RentBasket offers flexible lock-in options ranging from just 3 months to 12 months, so you can rent for exactly as long as you need.",
-    },
-  ];
-
   return (
     <>
       {/* ── Desktop (≥ lg): 2-column editorial split, drenched pine (§5.6) ── */}
@@ -629,36 +631,87 @@ const MythOrFact = () => {
 
           {/* Right column: comparative rows */}
           <div className="flex flex-col gap-6">
-            {data.map((item, index) => (
-              <div
-                key={index}
-                className="flex flex-row gap-8 bg-white rounded-2xl p-6 shadow-elevated hover:-translate-y-0.5 transition-all duration-300"
-              >
-                {/* Belief */}
-                <div className="flex-1 flex flex-col gap-2">
-                  <span className="font-sans text-[9px] font-bold text-destructive/80 uppercase tracking-widest leading-none">
-                    Belief
-                  </span>
-                  <p className="font-sans text-sm xl:text-base text-ink-muted font-medium line-through decoration-destructive/20 decoration-1">
-                    "{item.belief}"
-                  </p>
+            {DESKTOP_MYTHS.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={index}
+                  className="group relative flex flex-row gap-8 bg-white rounded-2xl p-6 pt-8 shadow-elevated border border-transparent hover:-translate-y-1 hover:border-mint/60 transition-all duration-300"
+                >
+                  {/* Icon + Stat chip */}
+                  <div className="absolute top-4 right-6 flex items-center gap-1.5 bg-mint-pale text-jade-ink pl-2 pr-3 py-1 rounded-full">
+                    <Icon className="w-3.5 h-3.5 stroke-[2.5]" />
+                    <span className="font-sans text-[11px] font-bold tracking-tight">
+                      {item.statBadge}
+                    </span>
+                  </div>
+
+                  {/* Belief */}
+                  <div className="flex-1 flex flex-col gap-2">
+                    <span className="inline-flex items-center gap-1 w-fit font-sans text-[9px] font-bold text-destructive bg-destructive/10 uppercase tracking-widest leading-none px-2 py-1 rounded-full">
+                      Myth
+                    </span>
+                    <p className="font-sans text-sm xl:text-base text-ink-muted font-medium leading-relaxed">
+                      "{item.belief}"
+                    </p>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="w-[1px] bg-border shrink-0 self-stretch" />
+
+                  {/* Reality */}
+                  <div className="flex-1 flex flex-col gap-2">
+                    <span className="inline-flex items-center gap-1 w-fit font-sans text-[9px] font-bold text-white bg-jade-ink uppercase tracking-widest leading-none px-2 py-1 rounded-full">
+                      <Check className="w-3 h-3 stroke-[3.5]" />
+                      Reality
+                    </span>
+                    <p className="font-sans text-sm xl:text-[15px] text-ink font-semibold leading-relaxed">
+                      {item.reality}
+                    </p>
+                  </div>
                 </div>
+              );
+            })}
 
-                {/* Divider */}
-                <div className="w-[1px] bg-border shrink-0 self-stretch" />
+            {/* 5th card: the math promised in the left-column subtitle */}
+            <div className="flex flex-col gap-5 bg-pine rounded-2xl p-6 shadow-elevated">
+              <div className="flex items-center justify-between">
+                <h3 className="font-display text-lg font-semibold text-white tracking-tight">
+                  The math, worked out
+                </h3>
+                <span className="font-sans text-[10px] font-bold text-mint uppercase tracking-widest">
+                  {COMPARISON_EXAMPLE}
+                </span>
+              </div>
 
-                {/* Reality */}
-                <div className="flex-1 flex flex-col gap-2">
-                  <span className="font-sans text-[9px] font-bold text-jade-ink uppercase tracking-widest leading-none flex items-center gap-1.5">
-                    <Check className="w-3.5 h-3.5 stroke-[3.5] text-jade-ink" />
-                    Reality
-                  </span>
-                  <p className="font-sans text-sm xl:text-[15px] text-ink font-semibold leading-relaxed">
-                    {item.reality}
-                  </p>
+              <div className="border border-white/10 rounded-xl overflow-hidden font-sans text-sm">
+                <div className="grid grid-cols-[1.1fr_1fr_1fr] gap-2 px-4 py-2.5 bg-white/5 text-[10px] uppercase tracking-wider font-bold text-mint">
+                  <span>Cost Item</span>
+                  <span>Buying</span>
+                  <span>RentBasket</span>
+                </div>
+                <div className="divide-y divide-white/10">
+                  {COMPARISON_ITEMS.map((item, idx) => (
+                    <div key={idx} className="grid grid-cols-[1.1fr_1fr_1fr] gap-2 px-4 py-3">
+                      <span className="font-medium text-white/90">{item.feature}</span>
+                      <span className="text-white/50">{item.buying}</span>
+                      <span className="text-mint font-semibold">{item.renting}</span>
+                    </div>
+                  ))}
+                  <div className="grid grid-cols-[1.1fr_1fr_1fr] gap-2 px-4 py-3.5 bg-white/5 border-t border-white/10">
+                    <span className="font-bold text-white">Total</span>
+                    <span className="font-bold text-white/60">{COMPARISON_TOTALS.buying}</span>
+                    <span className="font-display font-bold text-jade text-base leading-none">
+                      {COMPARISON_TOTALS.renting}
+                    </span>
+                  </div>
                 </div>
               </div>
-            ))}
+
+              <p className="font-sans text-xs text-mint/80 leading-relaxed">
+                That's <span className="font-bold text-white">{COMPARISON_TOTALS.breakEven}</span> of renting before buying even breaks even — no hassle of selling or relocation charges.
+              </p>
+            </div>
           </div>
         </div>
       </section>
