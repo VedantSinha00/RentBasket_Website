@@ -286,13 +286,20 @@ const VideoTestimonialRow = ({ items }) => {
 const Testimonials = () => (
   <section className="pt-4 pb-14 md:pt-6 md:pb-20 overflow-hidden bg-white">
     {/* Section heading (moved here from the removed LovedByCustomers fan) */}
-    <div className="text-center mb-6 md:mb-8 px-4">
+    <div className="text-center mb-6 md:mb-8 px-4 flex flex-col items-center gap-2">
       <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-ink tracking-tight leading-tight">
         Loved by Customers
       </h2>
-      <p className="text-sm text-ink-muted mt-2">
-        Real customers across Gurgaon &amp; Noida
-      </p>
+      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/5 border border-primary/15 text-xs sm:text-sm font-sans font-medium text-foreground">
+        <span className="font-bold text-primary">4.9</span>
+        <div className="flex text-gold">
+          {[...Array(5)].map((_, i) => (
+            <Star key={i} size={13} fill="currentColor" />
+          ))}
+        </div>
+        <span className="text-muted-foreground">•</span>
+        <span className="text-muted-foreground">500+ Verified Homes in NCR</span>
+      </div>
     </div>
 
     <VideoTestimonialRow items={videoTestimonials} />
