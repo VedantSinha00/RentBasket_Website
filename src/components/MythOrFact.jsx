@@ -292,16 +292,14 @@ const MobileQuizSection = () => {
             exit={{ opacity: 0 }}
             className="flex flex-col items-center justify-center text-center h-full w-full flex-1 gap-6"
           >
-            {introFullscreen && (
-              <img
-                src={kuMascot}
-                alt=""
-                aria-hidden="true"
-                className="w-28 h-28 object-contain -mb-2"
-                loading="eager"
-                decoding="async"
-              />
-            )}
+            <img
+              src={kuMascot}
+              alt=""
+              aria-hidden="true"
+              className="w-28 h-28 object-contain -mb-2"
+              loading="eager"
+              decoding="async"
+            />
 
             <motion.h3
               className="font-sans font-bold text-foreground tracking-tight leading-snug"
@@ -548,7 +546,7 @@ const MobileQuizSection = () => {
         </div>
       ) : (
         /* Dynamic Runway / Sticky View */
-        <div ref={containerRef} className="lg:hidden relative w-full h-[220vh] bg-cream border-b border-border/20">
+        <div ref={containerRef} className="lg:hidden relative w-full h-[130vh] bg-cream border-b border-border/20">
           <div
             className={`sticky top-0 w-full h-screen overflow-hidden flex items-start justify-center pointer-events-none ${
               isCurrentlyFullscreen ? "z-[100]" : "z-10"
@@ -572,7 +570,7 @@ const MobileQuizSection = () => {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.45, ease: "easeOut" }}
-              className={`border bg-background flex flex-col justify-between overflow-hidden pointer-events-auto relative shadow-soft p-6 ${
+              className={`border bg-cream flex flex-col justify-between overflow-hidden pointer-events-auto relative shadow-soft p-6 ${
                 isCurrentlyFullscreen ? "min-h-[100dvh]" : ""
               }`}
               style={{

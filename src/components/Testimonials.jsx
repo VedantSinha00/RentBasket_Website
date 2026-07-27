@@ -159,7 +159,7 @@ const Avatar = ({ name }) => {
   );
 };
 
-const TestimonialCard = ({ text, name, location, className = "w-[280px] md:w-[320px] shrink-0 mx-3" }) => (
+const TestimonialCard = ({ text, name, location, className = "w-[78vw] max-w-[320px] md:w-[320px] shrink-0 mx-2" }) => (
   <div className={`bg-white rounded-2xl shadow-card p-5 flex flex-col gap-3 ${className}`}>
     <StarRating />
     <p className="text-sm text-ink-muted leading-relaxed flex-1">"{text}"</p>
@@ -223,7 +223,7 @@ const MobileScrollRow = ({ items, speed = 0.4, reverse = false }) => {
   return (
     <div
       ref={scrollRef}
-      className="flex overflow-x-auto no-scrollbar"
+      className="flex overflow-x-auto no-scrollbar px-4 md:px-0"
       onTouchStart={() => { pausedRef.current = true; }}
       onTouchEnd={resync}
       onTouchCancel={resync}

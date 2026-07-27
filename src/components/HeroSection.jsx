@@ -90,7 +90,14 @@ const HeroSection = () => {
 
             <motion.p
               variants={riseFade}
-              className="font-sans font-medium text-ink-muted text-lg leading-relaxed max-w-md"
+              className="font-sans font-medium text-ink-muted text-lg leading-relaxed max-w-md sm:hidden"
+            >
+              Rent premium furniture &amp; appliances in Delhi NCR — free delivery,
+              maintenance, and swaps.
+            </motion.p>
+            <motion.p
+              variants={riseFade}
+              className="hidden sm:block font-sans font-medium text-ink-muted text-lg leading-relaxed max-w-md"
             >
               Rent premium furniture &amp; appliances in Delhi NCR — free delivery, free
               maintenance, and swaps when life changes.
@@ -122,18 +129,18 @@ const HeroSection = () => {
                   className="w-full h-[320px] sm:h-[400px] md:h-[480px] object-cover"
                 />
               </div>
-              <div className="flex items-center justify-between gap-4 px-4 py-4 md:px-5 md:py-5">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-4 py-4 md:px-5 md:py-5">
                 <div>
-                  <h3 className="font-display font-semibold text-white text-lg md:text-xl leading-snug">
+                  <h3 className="font-display font-semibold text-white text-lg md:text-xl leading-snug whitespace-nowrap md:whitespace-normal">
                     Modern living starts here
                   </h3>
-                  <p className="font-sans text-sm text-mint mt-1 max-w-[220px]">
+                  <p className="font-sans text-sm text-mint mt-1 max-w-[220px] hidden sm:block">
                     Discover furniture that brings comfort and flexibility to every space.
                   </p>
                 </div>
                 <Link
                   to={catalogLink}
-                  className="btn-jade shrink-0 py-2.5 px-5 text-sm"
+                  className="btn-jade shrink-0 py-2.5 px-5 text-sm w-full md:w-auto justify-center"
                 >
                   Browse Products
                 </Link>

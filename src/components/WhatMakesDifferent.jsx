@@ -96,7 +96,7 @@ const WhatMakesDifferent = () => {
                 Customizations
               </h3>
               <p className="font-sans text-sm font-medium text-white/90 leading-snug max-w-[240px]">
-                Tailor your furniture to your space and style — make it truly
+                Tailor your furniture to your space and style — make it truly yours.
               </p>
             </div>
           </motion.div>
@@ -104,11 +104,29 @@ const WhatMakesDifferent = () => {
           {/* 2. Free Maintenance & Repair — tall middle column */}
           <motion.div
             variants={cardVariants}
-            className="md:col-span-3 md:row-span-2 bg-mint-pale rounded-[28px] p-7 flex flex-col justify-between min-h-[410px] md:min-h-0 overflow-hidden relative shadow-sm"
+            className="md:col-span-3 md:row-span-2 bg-mint-pale rounded-[28px] p-7 flex flex-col justify-between min-h-0 overflow-hidden relative shadow-sm"
           >
-            {/* Background organic curves */}
+            {/* Background organic curves — a smaller mobile-only viewBox so the
+                blobs don't force the tall desktop card's ~410px gap */}
             <svg
-              className="absolute inset-0 w-full h-full pointer-events-none"
+              className="absolute inset-0 w-full h-full pointer-events-none md:hidden"
+              viewBox="0 0 300 220"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M 0 0 L 170 0 C 120 60, 170 110, 300 125 L 300 0 Z"
+                fill="hsl(var(--mint))"
+                fillOpacity="0.5"
+              />
+              <path
+                d="M 0 100 C 100 110, 110 170, 190 220 L 0 220 Z"
+                fill="hsl(var(--mint))"
+                fillOpacity="0.35"
+              />
+            </svg>
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none hidden md:block"
               viewBox="0 0 300 420"
               preserveAspectRatio="none"
               aria-hidden="true"
@@ -125,8 +143,8 @@ const WhatMakesDifferent = () => {
               />
             </svg>
 
-            {/* Icon placed in middle section */}
-            <div className="pt-24 md:pt-28">
+            {/* Icon placed in middle section on desktop; mobile sits at natural top */}
+            <div className="pt-0 md:pt-28">
               <div className="w-13 h-13 p-3.5 rounded-2xl bg-jade text-white flex items-center justify-center shrink-0 relative z-10 shadow-sm w-fit">
                 <Settings className="w-6 h-6 stroke-[2.2]" />
               </div>

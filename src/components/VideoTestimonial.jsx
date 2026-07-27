@@ -124,6 +124,11 @@ const VideoTestimonial = ({
           }`}
         />
 
+        {/* Bottom scrim (mobile only, desktop untouched) so any burned-in
+            caption text near the foot of the clip stays legible over
+            lighter video frames. */}
+        <div className="lg:hidden absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+
         {reducedMotion && !active && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/20">
             <span className="flex items-center justify-center w-14 h-14 rounded-full bg-white/90 text-foreground shadow-soft">

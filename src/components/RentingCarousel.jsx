@@ -169,10 +169,14 @@ const RentingCarousel = () => {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <h2 className="font-display font-semibold text-ink tracking-tight text-center mb-8 md:mb-10"
+          <h2 className="font-display font-semibold text-ink tracking-tight text-center mb-2 md:mb-10"
               style={{ fontSize: "clamp(1.875rem, 3.5vw, 2.75rem)", lineHeight: 1.1, letterSpacing: "-0.01em" }}>
-            What people are renting in Gurgaon &amp; Noida
+            <span className="md:hidden">What people are renting</span>
+            <span className="hidden md:inline">What people are renting in Gurgaon &amp; Noida</span>
           </h2>
+          <p className="md:hidden text-center text-ink-muted font-sans text-sm mb-8">
+            in Gurgaon &amp; Noida
+          </p>
 
           {isLoading ? (
             <CardSkeleton />
