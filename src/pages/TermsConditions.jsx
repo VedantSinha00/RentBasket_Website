@@ -1,19 +1,45 @@
+import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+
+const sections = [
+  { id: "terms-termination", label: "1. Terms and Termination" },
+  { id: "payment-modalities", label: "2. Payment Modalities" },
+  { id: "security-deposit", label: "3. Security Deposit" },
+  { id: "delivery-process", label: "4. Delivery Process" },
+  { id: "pick-up-process", label: "5. Pick-Up Process" },
+  { id: "damage-policy", label: "6. Damage Policy" },
+  { id: "refund-policy", label: "7. Refund Policy" },
+  { id: "maintenance-policy", label: "8. Maintenance Policy" },
+  { id: "unauthorized-movement", label: "9. Unauthorized Movement" },
+];
 
 const TermsConditions = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Header />
       <main className="section-container py-12 md:py-20 max-w-4xl">
-        <h1 className="font-display font-semibold text-3xl md:text-4xl text-foreground mb-4">
+        <h1 className="font-display font-semibold text-3xl md:text-4xl text-ink mb-4">
           Terms &amp; Conditions
         </h1>
-        <p className="text-sm text-muted-foreground mb-8">
+        <p className="text-sm text-ink-muted mb-8">
           Last updated: June 19, 2026
         </p>
 
-        <div className="space-y-8 text-foreground/90 font-sans leading-relaxed text-[15px] sm:text-base">
-          <section className="space-y-3">
-            <h2 className="font-display font-semibold text-xl sm:text-2xl text-foreground">
+        <nav aria-label="Section jump links" className="mb-10 max-w-[70ch]">
+          <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+            {sections.map((s) => (
+              <li key={s.id}>
+                <a href={`#${s.id}`} className="text-jade-ink hover:underline">
+                  {s.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="space-y-8 max-w-[70ch] text-ink/90 font-sans leading-relaxed text-[15px] sm:text-base">
+          <section id="terms-termination" className="space-y-3 scroll-mt-24">
+            <h2 className="font-display font-semibold text-xl sm:text-2xl text-ink">
               1. Terms and Termination
             </h2>
             <p>
@@ -24,8 +50,8 @@ const TermsConditions = () => {
             </p>
           </section>
 
-          <section className="space-y-3">
-            <h2 className="font-display font-semibold text-xl sm:text-2xl text-foreground">
+          <section id="payment-modalities" className="space-y-3 scroll-mt-24">
+            <h2 className="font-display font-semibold text-xl sm:text-2xl text-ink">
               2. Payment Modalities
             </h2>
             <p>
@@ -36,8 +62,8 @@ const TermsConditions = () => {
             </p>
           </section>
 
-          <section className="space-y-3">
-            <h2 className="font-display font-semibold text-xl sm:text-2xl text-foreground">
+          <section id="security-deposit" className="space-y-3 scroll-mt-24">
+            <h2 className="font-display font-semibold text-xl sm:text-2xl text-ink">
               3. Security Deposit
             </h2>
             <p>
@@ -45,8 +71,8 @@ const TermsConditions = () => {
             </p>
           </section>
 
-          <section className="space-y-3">
-            <h2 className="font-display font-semibold text-xl sm:text-2xl text-foreground">
+          <section id="delivery-process" className="space-y-3 scroll-mt-24">
+            <h2 className="font-display font-semibold text-xl sm:text-2xl text-ink">
               4. Delivery Process
             </h2>
             <p>
@@ -57,8 +83,8 @@ const TermsConditions = () => {
             </p>
           </section>
 
-          <section className="space-y-3">
-            <h2 className="font-display font-semibold text-xl sm:text-2xl text-foreground">
+          <section id="pick-up-process" className="space-y-3 scroll-mt-24">
+            <h2 className="font-display font-semibold text-xl sm:text-2xl text-ink">
               5. Pick-Up Process
             </h2>
             <p>
@@ -69,8 +95,8 @@ const TermsConditions = () => {
             </p>
           </section>
 
-          <section className="space-y-3">
-            <h2 className="font-display font-semibold text-xl sm:text-2xl text-foreground">
+          <section id="damage-policy" className="space-y-3 scroll-mt-24">
+            <h2 className="font-display font-semibold text-xl sm:text-2xl text-ink">
               6. Damage Policy
             </h2>
             <p>
@@ -81,8 +107,8 @@ const TermsConditions = () => {
             </p>
           </section>
 
-          <section className="space-y-3">
-            <h2 className="font-display font-semibold text-xl sm:text-2xl text-foreground">
+          <section id="refund-policy" className="space-y-3 scroll-mt-24">
+            <h2 className="font-display font-semibold text-xl sm:text-2xl text-ink">
               7. Refund Policy
             </h2>
             <p>
@@ -93,8 +119,8 @@ const TermsConditions = () => {
             </p>
           </section>
 
-          <section className="space-y-3">
-            <h2 className="font-display font-semibold text-xl sm:text-2xl text-foreground">
+          <section id="maintenance-policy" className="space-y-3 scroll-mt-24">
+            <h2 className="font-display font-semibold text-xl sm:text-2xl text-ink">
               8. Maintenance Policy
             </h2>
             <p>
@@ -105,8 +131,8 @@ const TermsConditions = () => {
             </p>
           </section>
 
-          <section className="space-y-3">
-            <h2 className="font-display font-semibold text-xl sm:text-2xl text-foreground">
+          <section id="unauthorized-movement" className="space-y-3 scroll-mt-24">
+            <h2 className="font-display font-semibold text-xl sm:text-2xl text-ink">
               9. Unauthorized Movement of Rented Furniture and Appliances
             </h2>
             <p>
