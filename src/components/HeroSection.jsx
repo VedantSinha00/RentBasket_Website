@@ -73,7 +73,7 @@ const HeroSection = ({ onScrollToCarousel }) => {
   );
 
   return (
-    <section className="bg-white pt-8 pb-12 md:pt-14 md:pb-20">
+    <section className="bg-white pt-4 pb-12 md:pt-6 md:pb-20">
       <div className="section-container">
         <motion.div
           className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center"

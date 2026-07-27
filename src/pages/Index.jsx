@@ -2,7 +2,6 @@ import { useRef } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import RentingCarousel from "@/components/RentingCarousel";
-import FurnitureGallery from "@/components/FurnitureGallery";
 import WhatMakesDifferent from "@/components/WhatMakesDifferent";
 import MythOrFact from "@/components/MythOrFact";
 import Testimonials from "@/components/Testimonials";
@@ -22,7 +21,6 @@ const Index = () => {
       <main>
         <HeroSection onScrollToCarousel={scrollToCarousel} />
         <RentingCarousel innerRef={carouselRef} />
-        <FurnitureGallery />
         <WhatMakesDifferent />
         <MythOrFact />
         <Testimonials />

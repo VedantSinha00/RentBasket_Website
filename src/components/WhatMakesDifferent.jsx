@@ -60,123 +60,190 @@ const WhatMakesDifferent = () => {
 
         {/* Bento Grid */}
         <motion.div
-          className="relative grid grid-cols-1 md:grid-cols-12 gap-5 max-w-6xl mx-auto md:grid-rows-[310px_110px]"
+          className="relative grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-5 max-w-6xl mx-auto md:grid-rows-[275px_125px]"
           variants={containerVariants}
           initial={prefersReducedMotion ? "visible" : "hidden"}
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
         >
-          {/* 1. Customizations — top-left, green fill */}
+          {/* 1. Customizations — top-left green card */}
           <motion.div
             variants={cardVariants}
-            className="md:col-span-4 bg-[#3eb37c] rounded-[28px] p-7 flex flex-col justify-between min-h-[280px] md:min-h-0 overflow-hidden relative"
+            className="md:col-span-3 bg-[#43b67d] rounded-[28px] p-7 flex flex-col justify-between min-h-[260px] md:min-h-0 overflow-hidden relative shadow-sm"
           >
-            {/* Background shape */}
-            <div className="absolute top-1/3 right-0 w-64 h-64 rounded-full bg-white/15 translate-x-1/4 pointer-events-none" />
-            
-            {/* Icon */}
-            <div className="w-13 h-13 p-3.5 rounded-2xl bg-[#0b332d] text-white flex items-center justify-center shrink-0 relative shadow-sm w-fit">
-              <SlidersHorizontal className="w-6 h-6 stroke-[2.5]" />
+            {/* Organic top-right background wave curve */}
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              viewBox="0 0 300 275"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M 100 0 C 160 50, 140 145, 300 165 L 300 0 Z"
+                fill="#7ed3a9"
+                fillOpacity="0.45"
+              />
+            </svg>
+
+            {/* Dark icon tile */}
+            <div className="w-12 h-12 rounded-2xl bg-[#0c2b22] text-white flex items-center justify-center shrink-0 relative z-10 shadow-sm">
+              <SlidersHorizontal className="w-6 h-6 stroke-[2.2]" />
             </div>
 
             {/* Content */}
             <div className="flex flex-col gap-2 relative z-10">
-              <h3 className="font-display font-bold text-white text-2xl leading-tight">
+              <h3 className="font-display font-bold text-white text-2xl sm:text-3xl leading-tight">
                 Customizations
               </h3>
               <p className="font-sans text-sm font-medium text-white/90 leading-snug max-w-[240px]">
-                Tailor your furniture to your space and style — make it truly yours
+                Tailor your furniture to your space and style — make it truly
               </p>
             </div>
           </motion.div>
 
-          {/* 2. Free Maintenance & Repair — tall middle column (spans 2 rows) */}
+          {/* 2. Free Maintenance & Repair — tall middle column */}
           <motion.div
             variants={cardVariants}
-            className="md:col-span-4 md:row-span-2 bg-[#eaf5ed] rounded-[28px] p-7 flex flex-col justify-end min-h-[420px] md:min-h-0 overflow-hidden relative"
+            className="md:col-span-3 md:row-span-2 bg-[#e9f5ec] rounded-[28px] p-7 flex flex-col justify-between min-h-[410px] md:min-h-0 overflow-hidden relative shadow-sm"
           >
-            {/* Abstract curved background shapes */}
-            <div className="absolute top-0 right-0 w-52 h-52 rounded-bl-[6rem] bg-[#3eb37c]/10 pointer-events-none" />
-            <div className="absolute bottom-12 -left-12 w-48 h-48 rounded-full bg-[#3eb37c]/10 pointer-events-none" />
+            {/* Background organic curves */}
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              viewBox="0 0 300 420"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M 0 0 L 170 0 C 120 110, 170 210, 300 240 L 300 0 Z"
+                fill="#d5ebd9"
+                fillOpacity="0.5"
+              />
+              <path
+                d="M 0 190 C 100 210, 110 320, 190 420 L 0 420 Z"
+                fill="#d5ebd9"
+                fillOpacity="0.35"
+              />
+            </svg>
 
-            {/* Middle Icon */}
-            <div className="w-14 h-14 rounded-2xl bg-[#3eb37c]/20 text-[#2e7d32] flex items-center justify-center shrink-0 relative mb-6 shadow-sm">
-              <Settings className="w-7 h-7 stroke-[2.2]" />
+            {/* Icon placed in middle section */}
+            <div className="pt-24 md:pt-28">
+              <div className="w-13 h-13 p-3.5 rounded-2xl bg-[#43b67d] text-white flex items-center justify-center shrink-0 relative z-10 shadow-sm w-fit">
+                <Settings className="w-6 h-6 stroke-[2.2]" />
+              </div>
             </div>
 
             {/* Content */}
-            <div className="flex flex-col gap-3 relative z-10">
-              <h3 className="font-display font-bold text-gray-900 text-2xl leading-tight">
+            <div className="flex flex-col gap-3 relative z-10 pb-1">
+              <h3 className="font-display font-bold text-[#1b3327] text-2xl sm:text-3xl leading-tight">
                 Free Maintenance<br />&amp; Repair
               </h3>
-              <p className="font-sans text-sm font-medium text-gray-600 leading-relaxed max-w-[260px]">
+              <p className="font-sans text-xs sm:text-sm font-medium text-[#4d6056] leading-relaxed max-w-[250px]">
                 If something stops working, we fix or replace it — quickly and responsibly, with no hidden cost
               </p>
             </div>
           </motion.div>
 
-          {/* 3. Decorative Sky Blue Sliver — top-middle-right */}
+          {/* 3. Sky Blue Sliver — top row narrow sliver */}
           <motion.div
             variants={cardVariants}
             aria-hidden="true"
-            className="hidden md:block md:col-span-1 bg-[#d9effb] rounded-[28px] relative overflow-hidden min-h-[280px] md:min-h-0"
+            className="hidden md:block md:col-span-1 bg-[#d9effb] rounded-[28px] relative overflow-hidden shadow-sm"
           >
-            <div className="absolute -top-4 -left-4 w-28 h-28 rounded-full bg-white/40 pointer-events-none" />
-            <div className="absolute bottom-8 right-0 w-24 h-24 rounded-full bg-[#bae6fd]/50 pointer-events-none" />
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              viewBox="0 0 100 275"
+              preserveAspectRatio="none"
+            >
+              <path
+                d="M 0 0 L 100 0 L 100 80 C 60 70, 30 110, 0 140 Z"
+                fill="#ebf6fe"
+                fillOpacity="0.8"
+              />
+              <path
+                d="M 0 150 C 40 170, 60 210, 100 230 L 100 275 L 0 275 Z"
+                fill="#bde4f9"
+                fillOpacity="0.6"
+              />
+            </svg>
           </motion.div>
 
-          {/* 4. Try First, Pay Later — top-right */}
+          {/* 4. Try First, Pay Later — top-right landscape card */}
           <motion.div
             variants={cardVariants}
-            className="md:col-span-3 bg-[#eedecb] rounded-[28px] p-7 flex flex-col justify-between min-h-[280px] md:min-h-0 overflow-hidden relative"
+            className="md:col-span-5 bg-[#ebd7c1] rounded-[28px] p-7 flex flex-col justify-between min-h-[260px] md:min-h-0 overflow-hidden relative shadow-sm"
           >
-            {/* Top-Left Icon */}
-            <div className="w-12 h-12 rounded-2xl bg-white/90 text-[#e07a5f] flex items-center justify-center shrink-0 relative shadow-sm">
-              <Sparkles className="w-6 h-6 stroke-[2.2]" />
+            {/* Top-Left White Icon Tile with Coral Sparkle */}
+            <div className="w-12 h-12 rounded-2xl bg-white/90 text-[#d86e52] flex items-center justify-center shrink-0 relative z-10 shadow-sm">
+              <Sparkles className="w-6 h-6 stroke-[2.2] fill-[#d86e52]/20" />
             </div>
 
             {/* Content */}
             <div className="flex flex-col gap-2 relative z-10 mt-6">
-              <h3 className="font-display font-bold text-gray-900 text-2xl leading-tight">
+              <h3 className="font-display font-bold text-[#1c1c1c] text-2xl sm:text-3xl leading-tight">
                 Try First, Pay Later
               </h3>
-              <p className="font-sans text-sm font-medium text-gray-600 leading-snug max-w-[210px]">
+              <p className="font-sans text-xs sm:text-sm font-medium text-[#4f4a45] leading-snug max-w-[260px]">
                 Try it before you commit and pay later on selected products.
               </p>
             </div>
           </motion.div>
 
-          {/* 5. Blush Pink Decorative Block — bottom-left */}
+          {/* 5. Blush Pink Block — bottom-left decorative card */}
           <motion.div
             variants={cardVariants}
             aria-hidden="true"
-            className="hidden md:block md:col-span-4 bg-[#efa899] rounded-[28px] relative overflow-hidden min-h-[100px] md:min-h-0"
+            className="hidden md:block md:col-span-3 bg-[#ea9f8f] rounded-[28px] relative overflow-hidden shadow-sm"
           >
-            <div className="absolute top-0 left-0 w-44 h-44 rounded-full bg-white/20 -translate-x-10 -translate-y-10 pointer-events-none" />
-            <div className="absolute bottom-0 right-0 w-36 h-36 rounded-full bg-[#f8c8be]/40 translate-x-6 translate-y-6 pointer-events-none" />
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              viewBox="0 0 300 125"
+              preserveAspectRatio="none"
+            >
+              <path
+                d="M 120 0 C 180 30, 220 70, 300 125 L 300 0 Z"
+                fill="#f3bcae"
+                fillOpacity="0.7"
+              />
+              <path
+                d="M 0 35 C 80 35, 140 75, 200 125 L 0 125 Z"
+                fill="#e38c7b"
+                fillOpacity="0.5"
+              />
+            </svg>
           </motion.div>
 
-          {/* 6. Consultation on Call — bottom-right */}
+          {/* 6. Consultation on Call — bottom-right wide card (spans col 7..12) */}
           <motion.div
             variants={cardVariants}
-            className="md:col-span-4 bg-[#f8f2e9] rounded-[28px] px-7 py-5 flex items-center justify-between min-h-[100px] md:min-h-0 overflow-hidden relative"
+            className="md:col-span-6 bg-[#f7f1e7] rounded-[28px] p-7 flex items-center justify-between min-h-[120px] md:min-h-0 overflow-hidden relative shadow-sm"
           >
-            {/* Background shape */}
-            <div className="absolute -bottom-6 -right-6 w-32 h-32 rounded-full bg-white/50 pointer-events-none" />
+            {/* Bottom right soft beige wave */}
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              viewBox="0 0 500 125"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M 280 125 C 320 60, 400 40, 500 45 L 500 125 Z"
+                fill="#efe4d3"
+                fillOpacity="0.9"
+              />
+            </svg>
 
             {/* Content Left */}
-            <div className="flex flex-col gap-1 relative z-10 max-w-[320px]">
-              <h3 className="font-display font-bold text-gray-900 text-xl leading-snug">
+            <div className="flex flex-col gap-1 relative z-10 max-w-[340px]">
+              <h3 className="font-display font-bold text-[#1c1c1c] text-xl sm:text-2xl leading-snug">
                 Consultation on Call
               </h3>
-              <p className="font-sans text-xs sm:text-sm font-medium text-gray-600 leading-snug">
+              <p className="font-sans text-xs sm:text-sm font-medium text-[#57534e] leading-snug">
                 Not sure what you need? Talk to us and we'll help you plan the perfect setup.
               </p>
             </div>
 
             {/* Icon Right */}
-            <div className="w-12 h-12 rounded-2xl bg-[#f4b6a6]/60 text-[#d96b52] flex items-center justify-center shrink-0 relative shadow-sm ml-3">
-              <PhoneCall className="w-6 h-6 stroke-[2]" />
+            <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-[#eba697] text-white flex items-center justify-center shrink-0 relative z-10 shadow-sm ml-3">
+              <PhoneCall className="w-6 h-6 stroke-[2.2]" />
             </div>
           </motion.div>
         </motion.div>
@@ -186,4 +253,5 @@ const WhatMakesDifferent = () => {
 };
 
 export default WhatMakesDifferent;
+
 
