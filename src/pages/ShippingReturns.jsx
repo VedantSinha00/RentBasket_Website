@@ -1,19 +1,21 @@
+import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 const ShippingReturns = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Header />
       <main className="section-container py-12 md:py-20 max-w-4xl">
-        <h1 className="font-display font-semibold text-3xl md:text-4xl text-foreground mb-4">
+        <h1 className="font-display font-semibold text-3xl md:text-4xl text-ink mb-4">
           Shipping &amp; Returns Policy
         </h1>
-        <p className="text-sm text-muted-foreground mb-8">
+        <p className="text-sm text-ink-muted mb-8">
           Last updated: June 2, 2026
         </p>
 
-        <div className="space-y-8 text-foreground/90 font-sans leading-relaxed text-[15px] sm:text-base">
+        <div className="space-y-8 max-w-[70ch] text-ink/90 font-sans leading-relaxed text-[15px] sm:text-base">
           <section className="space-y-3">
-            <h2 className="font-display font-semibold text-xl sm:text-2xl text-foreground">
+            <h2 className="font-display font-semibold text-xl sm:text-2xl text-ink">
               1. Delivery &amp; Professional Installation
             </h2>
             <p>
@@ -25,7 +27,7 @@ const ShippingReturns = () => {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display font-semibold text-xl sm:text-2xl text-foreground">
+            <h2 className="font-display font-semibold text-xl sm:text-2xl text-ink">
               2. Returns &amp; Asset Inspection
             </h2>
             <p>
@@ -37,24 +39,24 @@ const ShippingReturns = () => {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display font-semibold text-xl sm:text-2xl text-foreground">
+            <h2 className="font-display font-semibold text-xl sm:text-2xl text-ink">
               3. Damage Policy (Wear &amp; Tear vs. Damage)
             </h2>
             <p>
               We understand that furniture and appliances will experience use. 
             </p>
-            <ul className="list-disc pl-5 space-y-1.5 text-muted-foreground">
+            <ul className="list-disc pl-5 space-y-1.5 text-ink-muted">
               <li>
-                <strong>Normal Wear &amp; Tear (No Charge):</strong> Subtle fabric scuffs, tiny scratches, minor color fading from sunlight, and regular mechanical wear are fully covered.
+                <strong className="text-success-muted-foreground">Normal Wear &amp; Tear (No Charge):</strong> Subtle fabric scuffs, tiny scratches, minor color fading from sunlight, and regular mechanical wear are fully covered.
               </li>
               <li>
-                <strong>Major/Structural Damage (Charged):</strong> Deep burns, torn upholstery, water damage due to negligence, broken panels, cracked appliance screens, or missing parts are not covered. Repair or replacement costs will be deducted from the refundable security deposit.
+                <strong className="text-destructive">Major/Structural Damage (Charged):</strong> Deep burns, torn upholstery, water damage due to negligence, broken panels, cracked appliance screens, or missing parts are not covered. Repair or replacement costs will be deducted from the refundable security deposit.
               </li>
             </ul>
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display font-semibold text-xl sm:text-2xl text-foreground">
+            <h2 className="font-display font-semibold text-xl sm:text-2xl text-ink">
               4. Security Deposit Refund Timeline
             </h2>
             <p>
@@ -66,7 +68,7 @@ const ShippingReturns = () => {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display font-semibold text-xl sm:text-2xl text-foreground">
+            <h2 className="font-display font-semibold text-xl sm:text-2xl text-ink">
               5. Lease Extensions &amp; Late Returns
             </h2>
             <p>
