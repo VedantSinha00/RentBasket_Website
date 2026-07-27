@@ -14,7 +14,7 @@ import {
   RefreshCw,
   AlertCircle,
 } from "lucide-react";
-import logo from "@/assets/7 1.png";
+import logoWordmark from "@/assets/rentbasket-wordmark.svg";
 import { toast } from "sonner";
 import { getAuth } from "@/lib/auth";
 import { getKycStatus, getKycDocList, submitKycDoc } from "@/api/kyc";
@@ -204,10 +204,8 @@ const Kyc = () => {
       {/* Minimal Navbar */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border py-4">
         <div className="section-container flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 flex items-center justify-center transition-transform group-hover:scale-105">
-              <img src={logo} alt="RentBasket logo" className="w-24 md:w-28" />
-            </div>
+          <Link to="/" className="flex items-center transition-opacity hover:opacity-90">
+            <img src={logoWordmark} alt="RentBasket" className="h-7 md:h-9 w-auto object-contain" />
           </Link>
           <div className="hidden md:flex items-center gap-2 text-success bg-success-muted px-3 py-1.5 rounded-full border border-success-border">
             <ShieldCheck className="w-4 h-4" />

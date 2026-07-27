@@ -1,4 +1,4 @@
-import logo from "@/assets/7 1.png";
+import logoWordmark from "@/assets/rentbasket-wordmark.svg";
 import { PhoneCall, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -8,14 +8,12 @@ const CheckoutHeader = () => {
       <div className="section-container relative">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 flex items-center justify-center transition-transform group-hover:scale-105">
-              <img
-                src={logo}
-                alt="RentBasket mascot"
-                className="w-24 md:w-28"
-              />
-            </div>
+          <Link to="/" className="flex items-center transition-opacity hover:opacity-90">
+            <img
+              src={logoWordmark}
+              alt="RentBasket"
+              className="h-7 md:h-9 w-auto object-contain"
+            />
           </Link>
 
           {/* Secure Trust Badge (Center-rightish on desktop) */}

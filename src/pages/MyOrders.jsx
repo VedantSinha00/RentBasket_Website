@@ -12,7 +12,7 @@ import {
   Headset,
   ShoppingBag,
 } from "lucide-react";
-import logo from "@/assets/7 1.png";
+import logoWordmark from "@/assets/rentbasket-wordmark.svg";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
 import { getRecentOrders } from "@/lib/recentOrders";
@@ -344,10 +344,8 @@ const MyOrders = () => {
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border py-4">
         <div className="section-container">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-10 h-10 flex items-center justify-center transition-transform group-hover:scale-105">
-                <img src={logo} alt="RentBasket logo" className="w-24 md:w-28" />
-              </div>
+            <Link to="/" className="flex items-center transition-opacity hover:opacity-90">
+              <img src={logoWordmark} alt="RentBasket" className="h-7 md:h-9 w-auto object-contain" />
             </Link>
             <Link to="/catalog" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">
               Browse More

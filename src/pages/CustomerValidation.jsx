@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
-import logo from "@/assets/7 1.png";
+import logoWordmark from "@/assets/rentbasket-wordmark.svg";
 import kuMascot from "@/assets/Ku_standing_proud.png";
 import { toast } from "sonner";
 import { setAuth } from "@/lib/auth";
@@ -168,8 +168,8 @@ const CustomerValidation = () => {
       {/* Header */}
       <header className="bg-background/80 backdrop-blur-sm border-b border-border/50 py-2 sticky top-0 z-50">
         <div className="section-container">
-          <Link to="/">
-            <img src={logo} alt="RentBasket" className="w-10 md:w-28" />
+          <Link to="/" className="inline-flex items-center transition-opacity hover:opacity-90">
+            <img src={logoWordmark} alt="RentBasket" className="h-6 md:h-8 w-auto object-contain" />
           </Link>
         </div>
       </header>
