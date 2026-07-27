@@ -51,8 +51,7 @@ const CatalogGridError = ({ onRetry }) => (
       </div>
       <h3 className="text-lg font-semibold mb-2">Couldn't load products</h3>
       <p className="text-sm text-muted-foreground max-w-sm mb-5">
-        Something went wrong fetching the catalog. Please check your connection
-        and try again.
+        We couldn't load the catalog. Check your connection and try again.
       </p>
       <button onClick={onRetry} className="btn-outline inline-flex items-center gap-2 text-sm px-5 py-2.5">
         <RotateCw className="w-4 h-4" />

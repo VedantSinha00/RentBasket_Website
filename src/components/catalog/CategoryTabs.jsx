@@ -43,10 +43,10 @@ const CategoryTabs = ({
                 onCategoryChange(category);
                 onSubcategoryChange(null);
               }}
-              className={`px-4 py-2 text-sm md:text-base font-medium whitespace-nowrap rounded-full transition-all duration-300 flex-shrink-0 ${
+              className={`px-4 py-2 text-sm md:text-base font-medium whitespace-nowrap rounded-full transition-all duration-300 flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                 activeCategory === category
-                  ? "bg-foreground text-background shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  ? "bg-pine text-white shadow-sm"
+                  : "bg-secondary text-ink-muted hover:bg-mint-pale hover:text-ink"
               }`}
             >
               {category}
@@ -63,10 +63,10 @@ const CategoryTabs = ({
           >
             <button
               onClick={() => onSubcategoryChange(null)}
-              className={`px-3 py-1.5 text-xs md:text-sm font-medium whitespace-nowrap rounded-full border transition-all duration-300 flex-shrink-0 ${
+              className={`px-3 py-1.5 text-xs md:text-sm font-medium whitespace-nowrap rounded-full border transition-all duration-300 flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                 activeSubcategory === null
-                  ? "border-primary text-primary bg-primary/5"
-                  : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                  ? "border-jade-ink text-jade-ink bg-mint-pale"
+                  : "border-border text-ink-muted hover:border-jade-ink/40 hover:text-ink"
               }`}
             >
               All {activeCategory}
@@ -75,10 +75,10 @@ const CategoryTabs = ({
               <button
                 key={sub}
                 onClick={() => onSubcategoryChange(sub)}
-                className={`px-3 py-1.5 text-xs md:text-sm font-medium whitespace-nowrap rounded-full border transition-all duration-300 flex-shrink-0 ${
+                className={`px-3 py-1.5 text-xs md:text-sm font-medium whitespace-nowrap rounded-full border transition-all duration-300 flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                   activeSubcategory === sub
-                    ? "border-primary text-primary bg-primary/5"
-                    : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    ? "border-jade-ink text-jade-ink bg-mint-pale"
+                    : "border-border text-ink-muted hover:border-jade-ink/40 hover:text-ink"
                 }`}
               >
                 {sub}

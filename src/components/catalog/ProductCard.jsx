@@ -7,7 +7,12 @@ import { discountedRent } from "@/lib/pricing";
 import { productUrl } from "@/lib/share";
 import ProductImage from "@/components/ui/ProductImage";
 
-const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
+// Rotating pastel tints behind the product photo — same family and order as
+// the homepage carousel (RentingCarousel.jsx), so catalog cards read as part
+// of the same visual system. One tint per card, never mixed.
+const IMAGE_TINTS = ["bg-sky", "bg-sand", "bg-mint-pale", "bg-blush"];
+
+const ProductCard = forwardRef(({ product, displayDuration, index = 0 }, ref) => {
   const { isInWishlist, toggleWishlist } = useWishlist();
   const isFavorite = isInWishlist(product.id);
   const [showPricingLadder, setShowPricingLadder] = useState(false);
@@ -59,12 +64,12 @@ const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.3 }}
       whileHover={{ y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
-      className="group bg-card border border-border/50 rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 cursor-pointer flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+      className="group bg-card border border-border/50 rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 cursor-pointer flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       onMouseEnter={() => setShowPricingLadder(true)}
       onMouseLeave={() => setShowPricingLadder(false)}
     >
       {/* Image Area */}
-      <div className="relative aspect-[4/3] bg-white overflow-hidden shrink-0 border-b border-border/20">
+      <div className={`relative aspect-[4/3] overflow-hidden shrink-0 border-b border-border/20 ${IMAGE_TINTS[index % IMAGE_TINTS.length]}`}>
         <ProductImage
           src={product.image}
           alt={product.name}
@@ -86,7 +91,7 @@ const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
         >
           <Heart
             className={`w-6 h-6 transition-colors filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)] ${
-              isFavorite ? "fill-primary text-primary" : "text-white"
+              isFavorite ? "fill-jade-ink text-jade-ink" : "text-white"
             }`}
           />
         </button>
@@ -109,12 +114,12 @@ const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
               >
                 {pricingLadder.map((item) => (
                   <div key={item.label} className="text-center">
-                    <div className="text-[10px] text-white/70 mb-0.5">
+                    <div className="text-xs text-white/70 mb-0.5">
                       {item.label}
                     </div>
                     <div className="text-xs text-white font-semibold">
                       ₹{item.price.toLocaleString("en-IN")}
-                      <span className="text-[9px] font-normal">
+                      <span className="text-xs font-normal">
                         {item.suffix}
                       </span>
                     </div>
@@ -130,7 +135,7 @@ const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
       <div className="p-4 flex flex-col flex-1 justify-between gap-2.5 text-left">
         <div className="flex flex-col gap-1">
           {/* Category Tag */}
-          <span className="font-sans text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest leading-none">
+          <span className="font-sans text-xs font-semibold text-ink-muted leading-none">
             {product.subcategory || product.category || "Rental"}
           </span>
           
@@ -142,17 +147,17 @@ const ProductCard = forwardRef(({ product, displayDuration }, ref) => {
 
         {/* Pricing Preview */}
         <div className="flex items-baseline gap-1.5 flex-wrap leading-none">
-          <span className="text-base md:text-lg font-bold text-primary">
+          <span className="text-base md:text-lg font-semibold text-jade-ink">
             ₹{currentPrice.toLocaleString("en-IN")}
           </span>
-          <span className="text-[11px] text-muted-foreground font-sans">/mo</span>
+          <span className="text-xs text-muted-foreground font-sans">/mo</span>
           {currentPriceList > currentPrice && (
-            <span className="text-[10px] text-muted-foreground line-through font-sans ml-1">
+            <span className="text-xs text-muted-foreground line-through font-sans ml-1">
               ₹{currentPriceList.toLocaleString("en-IN")}
             </span>
           )}
           {currentPriceList > currentPrice && (
-            <span className="text-[10px] font-semibold text-success bg-success-muted px-1.5 py-0.5 rounded-full font-sans ml-auto">
+            <span className="text-xs font-semibold text-success bg-success-muted px-1.5 py-0.5 rounded-full font-sans ml-auto">
               {product.percent_discount}% OFF
             </span>
           )}
