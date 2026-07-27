@@ -2,11 +2,12 @@ import { SlidersHorizontal, Settings, Sparkles, PhoneCall } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 32, scale: 0.96 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: "easeOut" },
+    scale: 1,
+    transition: { duration: 0.55, ease: "easeOut" },
   },
 };
 
@@ -17,7 +18,10 @@ const WhatMakesDifferent = () => {
     hidden: { opacity: 1 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: prefersReducedMotion ? 0 : 0.08 },
+      transition: {
+        staggerChildren: prefersReducedMotion ? 0 : 0.15,
+        delayChildren: prefersReducedMotion ? 0 : 0.05,
+      },
     },
   };
 
