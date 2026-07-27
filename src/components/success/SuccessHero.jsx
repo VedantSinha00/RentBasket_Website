@@ -6,15 +6,14 @@ const SuccessHero = ({ orderData, hasMoreGroups, kycBanner, kycStatus }) => {
     <div className="w-full flex flex-col items-center text-center py-8">
       {/* Checkmark Illustration */}
       <div className="relative mb-6">
-        <div className="absolute inset-0 bg-success blur-[32px] rounded-full opacity-20" />
-        <div className="w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-success-muted to-success rounded-full flex items-center justify-center shadow-xl shadow-success/25 relative z-10">
-          <CheckCircle2 className="w-10 h-10 md:w-12 md:h-12 text-white" />
+        <div className="w-20 h-20 md:w-24 md:h-24 bg-mint rounded-full flex items-center justify-center relative z-10">
+          <CheckCircle2 className="w-10 h-10 md:w-12 md:h-12 text-jade-ink" />
         </div>
       </div>
 
       {/* Hero Text */}
-      <h1 className="text-2xl md:text-4xl font-black text-foreground tracking-tight mb-3">
-        Your Payment has been received and order is registered
+      <h1 className="text-2xl md:text-4xl font-bold text-foreground tracking-tight mb-3">
+        Order confirmed — payment received.
       </h1>
       <p className="text-sm md:text-base text-muted-foreground font-medium max-w-lg mx-auto leading-relaxed">
         Thank you for choosing RentBasket. Your rental booking has been successfully placed, and our team will coordinate the delivery and setup with you shortly.
@@ -24,15 +23,15 @@ const SuccessHero = ({ orderData, hasMoreGroups, kycBanner, kycStatus }) => {
       <div className="mt-8 bg-card border border-border rounded-2xl p-5 md:p-6 w-full max-w-md shadow-soft">
         <div className="grid grid-cols-2 gap-y-4 gap-x-2 text-left">
           <div>
-            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Booking ID</p>
-            <p className="text-sm font-black text-foreground">{orderData.orderId}</p>
+            <p className="text-xs font-semibold text-ink-muted mb-1">Booking ID</p>
+            <p className="text-sm font-bold text-ink">{orderData.orderId}</p>
           </div>
           <div>
-            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Date</p>
-            <p className="text-sm font-bold text-foreground">{orderData.bookingDate}</p>
+            <p className="text-xs font-semibold text-ink-muted mb-1">Date</p>
+            <p className="text-sm font-bold text-ink">{orderData.bookingDate}</p>
           </div>
           <div className="col-span-2 pt-4 border-t border-border/50 text-center">
-            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Payment Status</p>
+            <p className="text-xs font-semibold text-ink-muted mb-1">Payment Status</p>
             <div className="flex items-center justify-center gap-1.5 text-success">
               <CheckCircle2 className="w-4 h-4" />
               <span className="text-sm font-bold">Successful</span>
@@ -67,10 +66,7 @@ const SuccessHero = ({ orderData, hasMoreGroups, kycBanner, kycStatus }) => {
       {(hasMoreGroups || kycStatus === "verified") && (
         <div className="mt-8 flex flex-col w-full max-w-md gap-3">
           {hasMoreGroups && (
-            <Link
-              to="/basket"
-              className="w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 bg-foreground text-background shadow-md hover:bg-foreground/90"
-            >
+            <Link to="/basket" className="btn-pine w-full">
               <ShoppingBag className="w-4 h-4" />
               Checkout Remaining Items
             </Link>
@@ -78,11 +74,7 @@ const SuccessHero = ({ orderData, hasMoreGroups, kycBanner, kycStatus }) => {
           {kycStatus === "verified" && (
             <Link
               to="/account/orders"
-              className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 ${
-                hasMoreGroups
-                  ? "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
-                  : "bg-foreground text-background shadow-md hover:bg-foreground/90"
-              }`}
+              className={`w-full ${hasMoreGroups ? "btn-outline-pine" : "btn-pine"}`}
             >
               View My Orders
               <ChevronRight className="w-4 h-4" />

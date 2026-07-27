@@ -53,7 +53,7 @@ const OrderSuccess = () => {
         </div>
       </header>
 
-      <main className="section-container pb-20 bg-[#FAF9F6]/70 min-h-screen">
+      <main className="section-container pb-20 bg-mint-pale/40 min-h-screen">
         {/* The KYC banner renders inside the hero, between the WhatsApp notice and
             the "Continue Browsing" CTA. orderData is threaded so /kyc and the
             return trip keep order context. */}

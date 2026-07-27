@@ -2,10 +2,10 @@ import { CheckCircle2, Phone, MessageCircle, HelpCircle, Download, FileText, Che
 import { Link } from "react-router-dom";
 
 export const IncludedBenefits = () => (
-  <div className="bg-success rounded-[24px] p-7 text-white shadow-xl shadow-success/20 relative overflow-hidden">
+  <div className="bg-mint rounded-[24px] p-7 text-ink shadow-soft relative overflow-hidden">
     <div className="relative z-10">
-      <h4 className="text-[15px] font-bold mb-5 uppercase tracking-[0.1em] text-white/90">
-        INCLUDED WITH YOUR RENTAL
+      <h4 className="text-sm font-bold mb-5 text-ink">
+        Included with your rental
       </h4>
       <div className="grid grid-cols-2 gap-x-4 gap-y-4">
         {[
@@ -16,34 +16,32 @@ export const IncludedBenefits = () => (
           "Return Anytime",
         ].map((benefit) => (
           <div key={benefit} className="flex items-center gap-2.5">
-            <div className="w-5 h-5 rounded-full border border-white/40 flex items-center justify-center flex-shrink-0">
-               <Check className="w-3 h-3 text-white" strokeWidth={3} />
+            <div className="w-5 h-5 rounded-full border border-jade-ink/40 flex items-center justify-center flex-shrink-0">
+               <Check className="w-3 h-3 text-jade-ink" strokeWidth={3} />
             </div>
-            <span className="text-[14px] font-bold text-white">{benefit}</span>
+            <span className="text-sm font-bold text-ink">{benefit}</span>
           </div>
         ))}
       </div>
     </div>
-    {/* Subtle design element */}
-    <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
   </div>
 );
 
 export const SupportHelp = () => (
-  <div className="bg-white border border-border rounded-[24px] p-6 shadow-sm hover:shadow-md transition-all flex flex-col items-center text-center">
-    <div className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center text-foreground mb-4">
+  <div className="bg-white border border-border rounded-[24px] p-6 shadow-soft hover:shadow-elevated transition-all flex flex-col items-center text-center">
+    <div className="w-14 h-14 rounded-full bg-sand flex items-center justify-center text-jade-ink mb-4">
       <HelpCircle className="w-6 h-6" strokeWidth={2.5} />
     </div>
-    <h4 className="text-[18px] font-bold text-foreground">Need Help?</h4>
-    <p className="text-[12px] text-muted-foreground mt-1 mb-5">We're here to assist with your order.</p>
+    <h4 className="text-lg font-bold text-foreground">Need Help?</h4>
+    <p className="text-xs text-muted-foreground mt-1 mb-5">We're here to assist with your order.</p>
     <p className="text-[13px] text-muted-foreground mb-8 leading-relaxed px-2">
       Our support team can help coordinate delivery timings, answer rental queries, or assist with installation.
     </p>
     <div className="flex flex-col w-full gap-3 mt-auto">
-      <a href="tel:+919959858473" className="w-full py-3.5 px-4 rounded-2xl text-foreground font-extrabold text-[13px] bg-secondary hover:bg-white border border-border shadow-sm transition-all flex items-center justify-center gap-2">
+      <a href="tel:+919959858473" className="w-full py-3.5 px-4 rounded-2xl text-foreground font-bold text-[13px] bg-secondary hover:bg-white border border-border shadow-soft transition-all flex items-center justify-center gap-2">
         <Phone className="w-4 h-4" /> Call Us
       </a>
-      <a href="https://wa.me/919959858473" target="_blank" rel="noopener noreferrer" className="w-full py-3.5 px-4 rounded-2xl text-success font-extrabold text-[13px] bg-success-muted transition-all hover:brightness-95 flex items-center justify-center gap-2">
+      <a href="https://wa.me/919959858473" target="_blank" rel="noopener noreferrer" className="w-full py-3.5 px-4 rounded-2xl text-success font-bold text-[13px] bg-success-muted transition-all hover:brightness-95 flex items-center justify-center gap-2">
         <MessageCircle className="w-4 h-4" /> WhatsApp
       </a>
     </div>
@@ -51,12 +49,12 @@ export const SupportHelp = () => (
 );
 
 export const SupportManage = () => (
-  <div className="bg-white border border-border rounded-[24px] p-6 shadow-sm hover:shadow-md transition-all flex flex-col items-center text-center">
-    <div className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center text-foreground mb-4">
+  <div className="bg-white border border-border rounded-[24px] p-6 shadow-soft hover:shadow-elevated transition-all flex flex-col items-center text-center">
+    <div className="w-14 h-14 rounded-full bg-sky flex items-center justify-center text-jade-ink mb-4">
       <FileText className="w-6 h-6" />
     </div>
-    <h4 className="text-[18px] font-bold text-foreground">Manage Order</h4>
-    <p className="text-[12px] text-muted-foreground mt-1 mb-5">Track and maintain your rentals.</p>
+    <h4 className="text-lg font-bold text-foreground">Manage Order</h4>
+    <p className="text-xs text-muted-foreground mt-1 mb-5">Track and maintain your rentals.</p>
     <ul className="w-full space-y-3 mb-8 px-4 text-left">
       {["View detailed invoice", "Track service requests", "Extend rental duration"].map((item, i) => (
         <li key={i} className="text-[13px] text-muted-foreground font-medium flex items-center gap-3">
@@ -65,7 +63,7 @@ export const SupportManage = () => (
       ))}
     </ul>
     <div className="w-full mt-auto">
-      <Link to="/#download" className="w-full py-3.5 px-4 rounded-2xl text-foreground font-extrabold text-[13px] bg-secondary border border-border shadow-sm transition-all hover:bg-white flex items-center justify-center gap-2">
+      <Link to="/#download" className="w-full py-3.5 px-4 rounded-2xl text-foreground font-bold text-[13px] bg-secondary border border-border shadow-soft transition-all hover:bg-white flex items-center justify-center gap-2">
         <Download className="w-4 h-4" /> Get App
       </Link>
     </div>
@@ -90,10 +88,10 @@ export const SuccessFAQ = () => (
           { q: "Is the security deposit entirely refundable?", a: "Yes, 100% of your security deposit is refunded when the items are successfully returned at the end of your tenure." },
           { q: "How do I raise a service request?", a: "You can raise a free maintenance request directly via the RentBasket app or by calling our support line." }
         ].map((faq, i) => (
-          <div key={i} className="bg-white border border-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+          <div key={i} className="bg-white border border-border rounded-2xl p-6 shadow-soft hover:shadow-elevated transition-all">
             <h4 className="text-base font-bold text-foreground flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
-                <HelpCircle className="w-4 h-4 text-foreground" />
+                <HelpCircle className="w-4 h-4 text-jade-ink" />
               </div>
               {faq.q}
             </h4>
