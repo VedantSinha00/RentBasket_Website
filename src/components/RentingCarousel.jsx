@@ -162,28 +162,61 @@ const RentingCarousel = () => {
   return (
     <section className="bg-mint-pale">
       <Wave color="text-white" />
-      <div className="section-container py-12 md:py-16">
+      <div className="section-container py-10 md:py-16">
         <motion.div
           initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <h2 className="font-display font-semibold text-ink tracking-tight text-center mb-2 md:mb-10"
-              style={{ fontSize: "clamp(1.875rem, 3.5vw, 2.75rem)", lineHeight: 1.1, letterSpacing: "-0.01em" }}>
-            <span className="md:hidden">What people are renting</span>
-            <span className="hidden md:inline">What people are renting in Gurgaon &amp; Noida</span>
-          </h2>
-          <p className="md:hidden text-center text-ink-muted font-sans text-sm mb-8">
-            in Gurgaon &amp; Noida
-          </p>
+          <div className="flex flex-col items-center text-center mb-6 md:mb-10 px-4">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 border border-jade/20 text-xs font-semibold text-jade-ink mb-2">
+              📍 Serving Gurgaon &amp; Noida
+            </div>
+            <h2 className="font-display font-semibold text-ink tracking-tight text-balance text-2xl sm:text-4xl md:text-5xl leading-tight">
+              What people are renting
+            </h2>
+          </div>
 
           {isLoading ? (
             <CardSkeleton />
           ) : (
             <div className="relative">
+              {/* Mobile (< md): Native 60fps hardware-accelerated CSS snap carousel */}
+              <div className="md:hidden flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-4 px-4 pb-4">
+                {items.map((item, i) => {
+                  const startingPrice = getStartingPrice(item);
+                  return (
+                    <Link
+                      to={`/product/${item.id}`}
+                      key={item.id}
+                      className="group shrink-0 w-[240px] snap-center flex flex-col bg-white rounded-2xl overflow-hidden shadow-card border border-border/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <div className={`h-[220px] w-full flex items-center justify-center p-5 overflow-hidden shrink-0 ${TINTS[i % TINTS.length]}`}>
+                        <ProductImage
+                          src={item.images?.[0] || item.image}
+                          alt={item.name}
+                          className="h-full w-full object-contain block group-hover:scale-[1.03] transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="p-4 flex flex-col gap-1 text-left">
+                        <h3 className="font-display font-semibold text-ink text-sm truncate leading-snug">
+                          {item.name}
+                        </h3>
+                        {startingPrice != null && (
+                          <span className="font-sans font-bold text-jade-ink text-sm mt-0.5 leading-none">
+                            ₹{startingPrice.toLocaleString("en-IN")}/mo
+                          </span>
+                        )}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {/* Tablet + Desktop (≥ md): rAF-driven continuous loop / arrow controls */}
               <div
-                className={`overflow-hidden pb-4 ${fewItems ? "flex justify-center" : ""}`}
+                className={`hidden md:block overflow-hidden pb-4 ${fewItems ? "flex justify-center" : ""}`}
               >
                 <div
                   ref={trackRef}

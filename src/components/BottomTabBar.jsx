@@ -38,8 +38,8 @@ const BottomTabBar = () => {
   };
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-t border-border/40">
-      <div className="flex items-center justify-around px-2 py-2 pb-safe">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-border/50 shadow-[0_-4px_24px_rgba(0,0,0,0.06)]">
+      <div className="flex items-center justify-around px-3 py-2 pb-safe max-w-md mx-auto">
         {tabs.map(({ to, icon: Icon, label }) => {
           const active = isActive(to);
           const showBadge = to === "/basket" && cartCount > 0;
@@ -50,12 +50,12 @@ const BottomTabBar = () => {
               <button
                 key={to}
                 onClick={() => setContactOpen(true)}
-                className="relative flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-colors"
+                className="relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all duration-200 active:scale-95 text-ink-muted hover:text-jade-ink"
               >
                 <div className="relative">
-                  <Icon className="w-5 h-5 text-primary" fill="none" />
+                  <Icon className="w-5 h-5" fill="none" />
                 </div>
-                <span className="text-[10px] font-semibold text-primary transition-colors">
+                <span className="text-[10px] font-semibold tracking-tight">
                   {label}
                 </span>
               </button>
@@ -66,20 +66,26 @@ const BottomTabBar = () => {
             <Link
               key={to}
               to={to}
-              className="relative flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-colors"
+              className={`relative flex flex-col items-center gap-1 px-3.5 py-1.5 rounded-2xl transition-all duration-200 active:scale-95 ${
+                active
+                  ? "bg-mint-pale text-jade-ink font-bold shadow-sm"
+                  : "text-ink-muted hover:text-ink"
+              }`}
             >
               <div className="relative">
                 <Icon
-                  className={`w-5 h-5 transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
+                  className={`w-5 h-5 transition-colors ${
+                    active ? "text-jade-ink stroke-[2.4]" : "text-ink-muted stroke-[1.8]"
+                  }`}
                   fill="none"
                 />
                 {showBadge && (
-                  <span className="absolute -top-1 -right-1.5 w-4 h-4 bg-primary text-primary-foreground text-[9px] font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-2 min-w-[18px] h-[18px] px-1 bg-pine text-white text-[9px] font-extrabold rounded-full flex items-center justify-center shadow-sm">
                     {badgeCount > 9 ? "9+" : badgeCount}
                   </span>
                 )}
               </div>
-              <span className={`text-[10px] font-semibold transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
+              <span className={`text-[10px] tracking-tight ${active ? "font-bold text-jade-ink" : "font-medium text-ink-muted"}`}>
                 {label}
               </span>
             </Link>

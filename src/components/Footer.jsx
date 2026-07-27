@@ -129,8 +129,8 @@ const Footer = () => {
 
         {/* Copyright — extra bottom clearance on mobile so the floating
             WhatsApp button never sits on top of this line */}
-        <div className="flex flex-col items-center justify-center gap-2 mt-12 pt-8 pb-16 md:pb-0 border-t border-white/15">
-          <p className="text-sm text-mint text-center">
+        <div className="flex flex-col items-center justify-center gap-2 mt-10 pt-6 pb-20 md:pb-0 border-t border-white/15">
+          <p className="text-xs sm:text-sm text-mint text-center">
             © 2023-2026 RentBasket, a brand of IG RentOK Private Limited. All rights reserved.
           </p>
         </div>

@@ -178,58 +178,11 @@ const TestimonialCard = ({ text, name, location, className = "w-[78vw] max-w-[32
 // scrollLeft with rAF instead. The user can swipe freely; auto-scroll pauses
 // while they touch and resumes after. Looping is seamless via doubled items:
 // once we pass the halfway point (one full set of cards) we subtract that width.
-const MobileScrollRow = ({ items, speed = 0.4, reverse = false }) => {
-  const scrollRef = useRef(null);
-  const pausedRef = useRef(false);
-  // The browser rounds/quantizes scrollLeft to integer pixels, so sub-pixel
-  // steps (0.4px) written then immediately read back from el.scrollLeft get
-  // rounded away every frame and the row never visibly moves. Keeping the
-  // true position in a float ref (only ever written to the DOM, never read
-  // back except to re-sync after a manual swipe) avoids that.
-  const posRef = useRef(0);
-  const doubled = [...items, ...items];
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    // Reverse rows start at the halfway point and drift left; forward rows
-    // start at 0 and drift right. Both wrap seamlessly across one card set.
-    const half = el.scrollWidth / 2;
-    posRef.current = reverse ? half : 0;
-    el.scrollLeft = posRef.current;
-
-    let frame;
-    const step = () => {
-      if (!pausedRef.current) {
-        let next = posRef.current + (reverse ? -speed : speed);
-        if (next >= half) next -= half; // forward: loop back to first set
-        if (next < 0) next += half;      // reverse: loop back to second set
-        posRef.current = next;
-        el.scrollLeft = next;
-      }
-      frame = requestAnimationFrame(step);
-    };
-    frame = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(frame);
-  }, [speed, reverse]);
-
-  // Re-sync the float position from the real scroll offset after a manual
-  // swipe, so auto-scroll resumes from where the user actually left it.
-  const resync = () => {
-    pausedRef.current = false;
-    if (scrollRef.current) posRef.current = scrollRef.current.scrollLeft;
-  };
-
+const MobileScrollRow = ({ items }) => {
   return (
-    <div
-      ref={scrollRef}
-      className="flex overflow-x-auto no-scrollbar px-4 md:px-0"
-      onTouchStart={() => { pausedRef.current = true; }}
-      onTouchEnd={resync}
-      onTouchCancel={resync}
-    >
-      {doubled.map((r, i) => (
-        <TestimonialCard key={i} {...r} />
+    <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 md:px-0 pb-2">
+      {items.map((r, i) => (
+        <TestimonialCard key={i} {...r} className="snap-center w-[82vw] max-w-[320px] md:w-[320px] shrink-0 mx-2" />
       ))}
     </div>
   );
@@ -385,7 +338,7 @@ const ReviewsSection = () => {
       ) : (
         <div className="max-w-7xl mx-auto flex flex-col gap-4 md:overflow-hidden md:[mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)] md:[-webkit-mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
           <MobileScrollRow items={filteredRow1} />
-          {filteredRow2.length > 0 && <MobileScrollRow items={filteredRow2} reverse />}
+          {filteredRow2.length > 0 && <MobileScrollRow items={filteredRow2} />}
         </div>
       )}
     </>

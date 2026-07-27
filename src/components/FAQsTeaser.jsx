@@ -35,7 +35,7 @@ const FAQsTeaser = () => {
   return (
     <section className="bg-cream">
       <Wave color="text-white" />
-      <div className="section-container py-12 md:py-16">
+      <div className="section-container py-10 md:py-16">
         <motion.div
           className="max-w-2xl mx-auto"
           initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
@@ -44,8 +44,7 @@ const FAQsTeaser = () => {
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
           <h2
-            className="font-display font-semibold text-ink tracking-tight text-center mb-8 md:mb-10 text-balance"
-            style={{ fontSize: "clamp(1.875rem, 3.5vw, 2.75rem)", lineHeight: 1.1, letterSpacing: "-0.01em" }}
+            className="font-display font-semibold text-ink tracking-tight text-center mb-6 md:mb-10 text-balance text-2xl sm:text-4xl md:text-5xl leading-tight"
           >
             Questions people actually ask
           </h2>
@@ -55,18 +54,18 @@ const FAQsTeaser = () => {
               <Accordion.Item
                 key={i}
                 value={`faq-${i}`}
-                className="bg-white rounded-2xl overflow-hidden shadow-soft"
+                className="bg-white rounded-2xl overflow-hidden shadow-soft border border-border/40"
               >
                 <Accordion.Header>
-                  <Accordion.Trigger className="group w-full flex items-center justify-between gap-4 px-6 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-2xl">
-                    <span className="font-sans font-semibold text-ink text-base">
+                  <Accordion.Trigger className="group w-full flex items-center justify-between gap-3 px-5 py-4 sm:px-6 sm:py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl">
+                    <span className="font-sans font-semibold text-ink text-sm sm:text-base leading-snug">
                       {faq.q}
                     </span>
                     <ChevronDown className="w-5 h-5 text-jade-ink shrink-0 transition-transform duration-300 group-data-[state=open]:rotate-180" />
                   </Accordion.Trigger>
                 </Accordion.Header>
                 <Accordion.Content className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
-                  <p className="px-6 pb-5 font-sans text-sm text-ink-muted leading-relaxed border-t border-border pt-4">
+                  <p className="px-5 pb-4 sm:px-6 sm:pb-5 font-sans text-xs sm:text-sm text-ink-muted leading-relaxed border-t border-border/40 pt-3 sm:pt-4">
                     {faq.a}
                   </p>
                 </Accordion.Content>
@@ -74,10 +73,10 @@ const FAQsTeaser = () => {
             ))}
           </Accordion.Root>
 
-          <div className="text-center mt-8">
+          <div className="text-center mt-6 sm:mt-8">
             <Link
               to="/faqs"
-              className="font-sans font-semibold text-sm text-jade-ink hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
+              className="font-sans font-semibold text-sm text-jade-ink hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
             >
               All questions →
             </Link>

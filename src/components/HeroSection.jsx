@@ -66,22 +66,22 @@ const HeroSection = () => {
   );
 
   return (
-    <section className="bg-white pt-4 pb-12 md:pt-6 md:pb-20">
+    <section className="bg-white pt-4 pb-10 md:pt-6 md:pb-20">
       <div className="section-container">
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center"
           variants={stagger}
           initial="hidden"
           animate="show"
         >
           {/* Left column */}
-          <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
+          <div className="flex flex-col gap-5 md:gap-6 text-center lg:text-left items-center lg:items-start">
             <motion.h1
               variants={riseFade}
               className="font-display font-bold text-ink tracking-tight text-balance"
               style={{
-                fontSize: "clamp(2.5rem, 5.5vw, 4.25rem)",
-                lineHeight: 1.05,
+                fontSize: "clamp(2rem, 6.5vw, 4.25rem)",
+                lineHeight: 1.08,
                 letterSpacing: "-0.02em",
               }}
             >
@@ -90,7 +90,7 @@ const HeroSection = () => {
 
             <motion.p
               variants={riseFade}
-              className="font-sans font-medium text-ink-muted text-lg leading-relaxed max-w-md sm:hidden"
+              className="font-sans font-medium text-ink-muted text-base sm:text-lg leading-relaxed max-w-md sm:hidden"
             >
               Rent premium furniture &amp; appliances in Delhi NCR — free delivery,
               maintenance, and swaps.
@@ -110,37 +110,41 @@ const HeroSection = () => {
               <Link
                 to={catalogLink}
                 data-testid="hero-cta"
-                className="btn-pine justify-center"
+                className="btn-pine justify-center w-full sm:w-auto text-base py-3.5 px-8"
               >
                 Start Renting
               </Link>
             </motion.div>
 
-            <StatChips className="w-full max-w-sm mt-2" />
+            <StatChips className="w-full max-w-sm mt-1" />
           </div>
 
           {/* Right column: pine-framed lifestyle photo */}
-          <motion.div variants={photoReveal} className="relative">
-            <div className="rounded-3xl bg-pine p-2.5 md:p-3 shadow-elevated">
+          <motion.div variants={photoReveal} className="relative mt-2 lg:mt-0">
+            <div className="rounded-3xl bg-pine p-2.5 md:p-3 shadow-elevated border border-white/10">
               <div className="relative rounded-[20px] overflow-hidden">
                 <img
                   src={heroLifestylePhoto}
                   alt="A styled living room chair, part of RentBasket's furniture catalogue"
-                  className="w-full h-[320px] sm:h-[400px] md:h-[480px] object-cover"
+                  className="w-full h-[260px] sm:h-[380px] md:h-[480px] object-cover"
                 />
+                {/* Floating tag badge on mobile instead of extra button */}
+                <div className="absolute top-3 left-3 md:hidden bg-pine/90 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full border border-white/20">
+                  ✨ Curated Living
+                </div>
               </div>
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-4 py-4 md:px-5 md:py-5">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-3.5 py-3.5 md:px-5 md:py-5">
                 <div>
-                  <h3 className="font-display font-semibold text-white text-lg md:text-xl leading-snug whitespace-nowrap md:whitespace-normal">
+                  <h3 className="font-display font-semibold text-white text-base md:text-xl leading-snug">
                     Modern living starts here
                   </h3>
-                  <p className="font-sans text-sm text-mint mt-1 max-w-[220px] hidden sm:block">
-                    Discover furniture that brings comfort and flexibility to every space.
+                  <p className="font-sans text-xs sm:text-sm text-mint mt-0.5 max-w-[240px]">
+                    Discover furniture that brings comfort &amp; flexibility.
                   </p>
                 </div>
                 <Link
                   to={catalogLink}
-                  className="btn-jade shrink-0 py-2.5 px-5 text-sm w-full md:w-auto justify-center"
+                  className="hidden md:inline-flex btn-jade shrink-0 py-2.5 px-5 text-sm w-full md:w-auto justify-center"
                 >
                   Browse Products
                 </Link>
