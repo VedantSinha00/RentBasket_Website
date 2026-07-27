@@ -18,7 +18,7 @@ const CheckoutProgress = ({ currentStep = "checkout" }) => {
 
         {/* Progress Line */}
         <div
-          className="absolute top-4 md:top-5 left-0 h-0.5 bg-foreground -translate-y-1/2 transition-all duration-500"
+          className="absolute top-4 md:top-5 left-0 h-0.5 bg-pine -translate-y-1/2 transition-all duration-500"
           style={{ width: `${(currentIndex / (STEPS.length - 1)) * 100}%` }}
         />
 
@@ -30,23 +30,23 @@ const CheckoutProgress = ({ currentStep = "checkout" }) => {
 
             return (
               <div key={step.id} className="flex flex-col items-center">
-                <div 
+                <div
                   className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 z-10 ${
-                    isCompleted 
-                      ? "bg-foreground border-foreground text-background shadow-md shadow-foreground/10" 
-                      : isActive 
-                        ? "bg-background border-foreground text-foreground shadow-md shadow-foreground/5" 
+                    isCompleted
+                      ? "bg-pine border-pine text-white shadow-soft"
+                      : isActive
+                        ? "bg-background border-pine text-pine shadow-soft"
                         : "bg-background border-border text-muted-foreground"
                   }`}
                 >
                   {isCompleted ? (
                     <Check className="w-4 h-4 md:w-5 md:h-5 stroke-[3px]" />
                   ) : (
-                    <StepIcon className={`w-4 h-4 md:w-5 md:h-5 ${isActive ? "animate-pulse" : ""}`} />
+                    <StepIcon className={`w-4 h-4 md:w-5 md:h-5 ${isActive ? "motion-safe:animate-pulse" : ""}`} />
                   )}
                 </div>
-                
-                <span className={`mt-2 text-[10px] md:text-xs font-bold uppercase tracking-wider transition-colors hidden sm:block ${
+
+                <span className={`mt-2 text-xs font-semibold transition-colors hidden sm:block ${
                   isActive ? "text-foreground" : "text-muted-foreground"
                 }`}>
                   {step.label}
@@ -58,10 +58,10 @@ const CheckoutProgress = ({ currentStep = "checkout" }) => {
 
         {/* Mobile Active Step Sub-Label */}
         <div className="block sm:hidden text-center mt-4">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+          <span className="text-xs font-semibold text-muted-foreground">
             Step {currentIndex + 1} of {STEPS.length}:
           </span>
-          <span className="text-xs font-bold text-foreground uppercase tracking-widest ml-1.5">
+          <span className="text-sm font-semibold text-foreground ml-1.5">
             {STEPS[currentIndex].label}
           </span>
         </div>

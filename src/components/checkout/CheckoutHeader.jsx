@@ -21,13 +21,13 @@ const CheckoutHeader = () => {
           {/* Secure Trust Badge (Center-rightish on desktop) */}
           <div className="hidden md:flex items-center gap-2 text-success bg-success-muted px-3 py-1.5 rounded-full border border-success-border">
             <ShieldCheck className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-wider">Secure Checkout</span>
+            <span className="text-xs font-semibold">Secure checkout</span>
           </div>
 
           {/* Support */}
           <div className="flex items-center gap-4 text-sm font-medium">
             <div className="hidden sm:flex flex-col items-end mr-2">
-              <span className="text-[10px] text-muted-foreground uppercase tracking-widest leading-none mb-1">Need Help?</span>
+              <span className="text-xs text-muted-foreground leading-none mb-1 font-semibold">Need help?</span>
               <a href="tel:+919959858473" className="text-foreground hover:text-foreground/80 transition-colors flex items-center gap-1.5">
                 <PhoneCall className="w-3.5 h-3.5" />
                 +91 99598 58473

@@ -13,7 +13,7 @@ const CheckoutCard = ({ title, icon: Icon, children, subtitle }) => (
         </div>
         <div>
           <h3 className="text-sm md:text-base font-bold text-foreground">{title}</h3>
-          {subtitle && <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
+          {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
         </div>
       </div>
     </div>
@@ -25,29 +25,29 @@ const CheckoutCard = ({ title, icon: Icon, children, subtitle }) => (
 
 const InputField = ({ label, icon: Icon, placeholder, type = "text", hint, ...props }) => (
   <div className="space-y-1.5">
-    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
+    <label className="text-xs font-semibold text-muted-foreground ml-1">
       {label}
     </label>
     <div className="relative group">
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-foreground transition-colors">
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-jade-ink transition-colors">
         <Icon className="w-4 h-4" />
       </div>
       <input
         type={type}
         placeholder={placeholder}
-        className="w-full pl-11 pr-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground focus:bg-background transition-all"
+        className="w-full pl-11 pr-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink focus:bg-background transition-all"
         {...props}
       />
     </div>
-    {hint && <div className="ml-1 text-[10px] mt-0.5">{hint}</div>}
+    {hint && <div className="ml-1 text-xs mt-0.5">{hint}</div>}
   </div>
 );
 
 const ServiceabilityNote = () => (
   <div className="p-3 bg-secondary/40 border border-border rounded-xl flex gap-3 mt-2">
     <Info className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
-    <p className="text-[11px] text-muted-foreground leading-relaxed">
-      <span className="font-bold text-foreground">Serviceability Note:</span> If your pincode is outside our primary zone, our team will coordinate for a custom delivery quote.
+    <p className="text-sm text-muted-foreground leading-relaxed">
+      <span className="font-semibold text-foreground">Serviceability note:</span> If your pincode is outside our primary zone, our team will coordinate for a custom delivery quote.
     </p>
   </div>
 );
@@ -139,11 +139,11 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
             <div className="flex items-center gap-2.5">
               <CheckCircle2 className="w-4 h-4 text-success flex-shrink-0" />
               <div>
-                <p className="text-[10px] font-bold text-success-muted-foreground uppercase tracking-wider">Mobile Verified</p>
-                <p className="text-sm font-bold text-foreground">+91 {formData.phone}</p>
+                <p className="text-xs font-semibold text-success-muted-foreground">Mobile verified</p>
+                <p className="text-sm font-semibold text-foreground">+91 {formData.phone}</p>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-success uppercase tracking-wider">Verified</span>
+            <span className="text-xs font-semibold text-success">Verified</span>
           </div>
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -190,7 +190,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
           <button
             type="button"
             onClick={() => setAddrEditing(true)}
-            className="w-full text-left p-4 bg-secondary/30 border border-border rounded-xl hover:border-foreground/35 hover:bg-background transition-all group"
+            className="w-full text-left p-4 bg-secondary/30 border border-border rounded-xl hover:border-jade-ink/35 hover:bg-background transition-all group"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
@@ -218,8 +218,8 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
                 geoState === "done"
                   ? "border-success/40 text-success bg-success/5"
                   : geoState === "denied"
-                  ? "border-orange-300 text-orange-600 hover:border-orange-400 bg-orange-50/40"
-                  : "border-border text-muted-foreground hover:border-foreground/35 hover:text-foreground"
+                  ? "border-terracotta/50 text-terracotta hover:border-terracotta bg-terracotta/10"
+                  : "border-border text-muted-foreground hover:border-jade-ink/35 hover:text-foreground"
               }`}
             >
               {geoState === "loading" ? (
@@ -282,18 +282,18 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
+                <label className="text-xs font-semibold text-muted-foreground ml-1">
                   City
                 </label>
                 <div className="relative group">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-foreground transition-colors">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-jade-ink transition-colors">
                     <MapPin className="w-4 h-4" />
                   </div>
                   <select
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    className="w-full pl-11 pr-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground focus:bg-background transition-all appearance-none"
+                    className="w-full pl-11 pr-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink focus:bg-background transition-all appearance-none"
                   >
                     <option value="">Select city</option>
                     {SERVED_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -344,7 +344,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
           />
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
+            <label className="text-xs font-semibold text-muted-foreground ml-1">
               Time Slot
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -354,10 +354,10 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
                       key={slot.id}
                       type="button"
                       onClick={() => setFormData((prev) => ({ ...prev, timeSlot: slot.id }))}
-                      className={`py-2.5 px-2 rounded-xl border text-[10px] md:text-xs font-bold transition-all ${
+                      className={`py-2.5 px-2 rounded-xl border text-xs font-semibold transition-all ${
                         formData.timeSlot === slot.id
-                          ? "bg-foreground border-foreground text-background shadow-sm"
-                          : "bg-secondary/30 border-border text-muted-foreground hover:border-foreground/35"
+                          ? "bg-pine border-pine text-white shadow-soft"
+                          : "bg-secondary/30 border-border text-muted-foreground hover:border-jade-ink/35"
                       }`}
                     >
                       {slot.slot_name}
@@ -368,26 +368,26 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
                       key={label}
                       type="button"
                       disabled
-                      className="py-2.5 px-2 rounded-xl border text-[10px] md:text-xs font-bold bg-secondary/30 border-border text-muted-foreground/40 animate-pulse"
+                      className="py-2.5 px-2 rounded-xl border text-xs font-semibold bg-secondary/30 border-border text-muted-foreground/40 motion-safe:animate-pulse"
                     >
                       {label}
                     </button>
                   ))}
             </div>
-            <p className="text-[10px] text-muted-foreground mt-1.5 leading-relaxed">
+            <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
               This is a preferred slot and does not confirm the actual time. Our delivery team will get in touch with you soon.
             </p>
           </div>
 
           <div className="md:col-span-2 space-y-1.5">
-            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
+            <label className="text-xs font-semibold text-muted-foreground ml-1">
               Special Instructions (Optional)
             </label>
             <textarea
               name="instructions"
               rows={3}
               placeholder="e.g. Entry via Gate 2, Lift access available, call after arriving at gate."
-              className="w-full px-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground focus:bg-background transition-all resize-none"
+              className="w-full px-4 py-3 bg-secondary/30 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink focus:bg-background transition-all resize-none"
               value={formData.instructions}
               onChange={handleChange}
             />
@@ -413,7 +413,7 @@ const CheckoutForm = ({ formData, setFormData, phoneVerified = false }) => {
             ].map((benefit) => (
               <div key={benefit} className="flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-white/70" />
-                <span className="text-xs font-medium text-white/90 uppercase tracking-wide">{benefit}</span>
+                <span className="text-xs font-semibold text-white/90">{benefit}</span>
               </div>
             ))}
           </div>

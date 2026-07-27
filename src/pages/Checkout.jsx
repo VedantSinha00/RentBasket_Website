@@ -182,7 +182,7 @@ const Checkout = () => {
     <div className="min-h-screen bg-background">
       <CheckoutHeader />
 
-      <main className="pb-20 bg-[#FAF9F6]/70 min-h-[calc(100vh-73px)]">
+      <main className="pb-20 bg-mint-pale/40 min-h-[calc(100vh-73px)]">
         <div className="section-container pt-4 md:pt-6">
           {/* Breadcrumb / Back Link */}
           <div className="mb-6 md:mb-8">
@@ -194,10 +194,10 @@ const Checkout = () => {
               Review Basket
             </Link>
             <div className="mt-4">
-              <h1 className="text-2xl md:text-4xl font-black text-foreground tracking-tight">
+              <h1 className="text-2xl md:text-4xl font-bold text-foreground tracking-tight">
                 Checkout
               </h1>
-              <p className="text-[11px] md:text-sm text-muted-foreground font-medium mt-1">
+              <p className="text-sm text-muted-foreground font-medium mt-1">
                 Enter your delivery details — you'll review the order summary next.
               </p>
             </div>
@@ -207,20 +207,20 @@ const Checkout = () => {
 
           <div className="max-w-3xl mx-auto mt-4 md:mt-8">
             {/* Trust Banner */}
-            <div className="flex flex-wrap items-center gap-4 bg-secondary border border-border/50 rounded-2xl p-4 mb-8">
+            <div className="flex flex-wrap items-center gap-4 bg-white shadow-soft rounded-2xl p-4 mb-8">
               <div className="flex items-center gap-2 text-foreground font-semibold">
-                <ShieldCheck className="w-5 h-5 text-muted-foreground" />
-                <span className="text-xs font-black uppercase tracking-wider">Secured Rental</span>
+                <ShieldCheck className="w-5 h-5 text-jade-ink" />
+                <span className="text-sm font-semibold">Secured rental</span>
               </div>
               <div className="h-4 w-px bg-border hidden md:block" />
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Truck className="w-4 h-4" />
-                <span className="text-[11px] font-bold uppercase tracking-wider">Free Delivery & Setup</span>
+              <div className="flex items-center gap-2 text-ink-muted">
+                <Truck className="w-4 h-4 text-jade-ink" />
+                <span className="text-sm font-semibold">Free delivery & setup</span>
               </div>
               <div className="h-4 w-px bg-border hidden md:block" />
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Clock className="w-4 h-4" />
-                <span className="text-[11px] font-bold uppercase tracking-wider">24/48 Hr Installation</span>
+              <div className="flex items-center gap-2 text-ink-muted">
+                <Clock className="w-4 h-4 text-jade-ink" />
+                <span className="text-sm font-semibold">Installed in 24–48 hours</span>
               </div>
             </div>
 
@@ -229,7 +229,7 @@ const Checkout = () => {
             {/* Proceed to Order Summary */}
             <button
               onClick={handleReviewSummary}
-              className="gradient-coral w-full py-4 rounded-2xl font-black text-lg shadow-lg shadow-primary/30 transition-all hover:shadow-primary/40 hover:opacity-95 active:scale-[0.98] flex items-center justify-center gap-3 group"
+              className="btn-pine w-full py-4 text-lg flex items-center justify-center gap-3 group"
             >
               Order Summary
               <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
@@ -238,8 +238,8 @@ const Checkout = () => {
             </button>
 
             {/* Bottom Note */}
-            <p className="text-xs text-muted-foreground text-center py-4 mt-3 bg-secondary/20 rounded-2xl border border-dashed border-border/50 font-medium">
-              Need help with your order? <a href="tel:+919959858473" className="text-foreground font-semibold hover:underline">Chat with us</a> for instant setup support.
+            <p className="text-sm text-muted-foreground text-center py-4 mt-3 font-medium">
+              Need help with your order? <a href="tel:+919959858473" className="text-foreground font-semibold hover:underline">Call us</a> for instant setup support.
             </p>
           </div>
         </div>
