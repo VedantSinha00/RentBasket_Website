@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import logo from "@/assets/7 1.png";
+import kuMascot from "@/assets/Ku_standing_proud.png";
 import { toast } from "sonner";
 import { setAuth } from "@/lib/auth";
 import { generateOtp, loginWithOtp, signUpWithOtp, getCities } from "@/api/otp";
@@ -163,7 +164,7 @@ const CustomerValidation = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/35 flex flex-col">
+    <div className="min-h-screen bg-mint-pale/40 flex flex-col">
       {/* Header */}
       <header className="bg-background/80 backdrop-blur-sm border-b border-border/50 py-2 sticky top-0 z-50">
         <div className="section-container">
@@ -177,9 +178,15 @@ const CustomerValidation = () => {
       <main className="flex-1 flex items-center justify-center px-4 py-8 md:py-16">
         <div className="w-full max-w-md">
           {/* Card */}
-          <div className="bg-white rounded-3xl shadow-lg p-8 md:p-10 border border-border/30">
+          <div className="bg-white rounded-3xl shadow-card p-8 md:p-10 border border-border/30">
 
             {/* Heading */}
+            <img
+              src={kuMascot}
+              alt=""
+              aria-hidden="true"
+              className="w-14 h-14 object-contain mx-auto mb-1 -mt-2"
+            />
             <h1 className="text-3xl md:text-4xl font-bold font-display text-foreground text-center mb-2">
               {step === "phone" ? "Sign Up or Login" : "Verify OTP"}
             </h1>
@@ -209,7 +216,7 @@ const CustomerValidation = () => {
                       onKeyDown={handleKeyDown}
                       disabled={isLoading}
                       maxLength="10"
-                      className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/40 font-medium tracking-normal"
+                      className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/40 font-medium tracking-normal"
                     />
                   </div>
 
@@ -217,7 +224,7 @@ const CustomerValidation = () => {
                   <button
                     onClick={handlePhoneSubmit}
                     disabled={isLoading || !phoneNumber}
-                    className="w-full py-2.5 gradient-coral text-white text-sm font-semibold rounded-xl hover:opacity-95 shadow-lg shadow-primary/20 transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="btn-pine w-full py-2.5 text-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {isLoading ? "Sending..." : "Generate OTP"}
                     {!isLoading && <ArrowRight className="w-5 h-5" />}
@@ -241,7 +248,7 @@ const CustomerValidation = () => {
                       onKeyDown={handleKeyDown}
                       disabled={isLoading}
                       maxLength="4"
-                      className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/40 font-medium tracking-widest text-center"
+                      className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink disabled:opacity-60 disabled:cursor-not-allowed bg-background placeholder-muted-foreground/40 font-medium tracking-widest text-center"
                     />
                   </div>
 
@@ -255,7 +262,7 @@ const CustomerValidation = () => {
                         value={cityId}
                         onChange={(e) => setCityId(e.target.value)}
                         disabled={isLoading}
-                        className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground disabled:opacity-60 disabled:cursor-not-allowed bg-background font-medium"
+                        className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink disabled:opacity-60 disabled:cursor-not-allowed bg-background font-medium"
                       >
                         <option value="" disabled>
                           {cities.length ? "Select your city" : "Loading cities…"}
@@ -276,7 +283,7 @@ const CustomerValidation = () => {
                   <button
                     onClick={handleOtpSubmit}
                     disabled={isLoading || !otp}
-                    className="w-full py-2.5 gradient-coral text-white text-sm font-semibold rounded-xl hover:opacity-95 shadow-lg shadow-primary/20 transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="btn-pine w-full py-2.5 text-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {isLoading ? "Verifying..." : "Verify & Continue"}
                     {!isLoading && <ArrowRight className="w-5 h-5" />}
@@ -307,7 +314,7 @@ const CustomerValidation = () => {
                         setCityId("");
                       }}
                       disabled={isLoading}
-                      className="text-muted-foreground hover:text-foreground transition-colors underline disabled:opacity-60"
+                      className="text-ink-muted hover:text-ink transition-colors underline disabled:opacity-60"
                     >
                       Change number
                     </button>
@@ -327,10 +334,10 @@ const CustomerValidation = () => {
             {/* Benefits Section */}
             {step === "phone" && (
               <div className="mt-6 space-y-3">
-                <p className="text-sm font-semibold text-foreground mb-3">By signing up:</p>
+                <p className="text-sm font-semibold text-foreground mb-3">Why sign up?</p>
                 {benefits.map((benefit, idx) => (
                   <div key={idx} className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground">
-                    <CheckCircle2 className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-jade-ink flex-shrink-0 mt-0.5" />
                     <span>{benefit}</span>
                   </div>
                 ))}
@@ -348,8 +355,8 @@ const CustomerValidation = () => {
       </main>
 
       {/* Footer Note */}
-      <footer className="text-center text-xs md:text-sm text-muted-foreground py-6 border-t border-border/30">
-        <p>Need help? <a href="tel:+919959858473" className="text-foreground font-semibold hover:underline">Call +91 9959858473</a></p>
+      <footer className="text-center text-xs md:text-sm text-ink-muted py-6 border-t border-border/30">
+        <p>Need help? <a href="tel:+919959858473" className="text-ink font-semibold hover:text-jade-ink hover:underline transition-colors">Call +91 9959858473</a></p>
       </footer>
     </div>
   );
