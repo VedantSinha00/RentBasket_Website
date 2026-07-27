@@ -15,25 +15,25 @@ const HeroSection = () => {
   const stagger = prefersReducedMotion
     ? { hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: 0.2 } } }
     : {
-        hidden: {},
-        show: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
-      };
+      hidden: {},
+      show: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
+    };
   const riseFade = prefersReducedMotion
     ? { hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: 0.2 } } }
     : {
-        hidden: { opacity: 0, y: 18 },
-        show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
-      };
+      hidden: { opacity: 0, y: 18 },
+      show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+    };
   const photoReveal = prefersReducedMotion
     ? { hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: 0.2 } } }
     : {
-        hidden: { opacity: 0, clipPath: "inset(0 0 0 100%)" },
-        show: {
-          opacity: 1,
-          clipPath: "inset(0 0 0 0%)",
-          transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.15 },
-        },
-      };
+      hidden: { opacity: 0, clipPath: "inset(0 0 0 100%)" },
+      show: {
+        opacity: 1,
+        clipPath: "inset(0 0 0 0%)",
+        transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.15 },
+      },
+    };
 
   const StatChips = ({ className = "" }) => (
     <motion.div variants={riseFade} className={`grid grid-cols-2 gap-3 ${className}`}>

@@ -15,11 +15,11 @@ const HIDDEN_ON = [
 ];
 
 const tabs = [
-  { to: "/",        icon: Home,        label: "Home"    },
-  { to: "/catalog", icon: LayoutGrid,   label: "Browse"  },
-  { to: "/basket",  icon: ShoppingBag, label: "Cart"    },
-  { to: "/profile", icon: User,        label: "Account" },
-  { to: "#contact", icon: Phone,       label: "Contact" },
+  { to: "/", icon: Home, label: "Home" },
+  { to: "/catalog", icon: LayoutGrid, label: "Browse" },
+  { to: "/basket", icon: ShoppingBag, label: "Cart" },
+  { to: "/profile", icon: User, label: "Account" },
+  { to: "#contact", icon: Phone, label: "Contact" },
 ];
 
 const BottomTabBar = () => {
@@ -66,17 +66,15 @@ const BottomTabBar = () => {
             <Link
               key={to}
               to={to}
-              className={`relative flex flex-col items-center gap-1 px-3.5 py-1.5 rounded-2xl transition-all duration-200 active:scale-95 ${
-                active
+              className={`relative flex flex-col items-center gap-1 px-3.5 py-1.5 rounded-2xl transition-all duration-200 active:scale-95 ${active
                   ? "bg-mint-pale text-jade-ink font-bold shadow-sm"
                   : "text-ink-muted hover:text-ink"
-              }`}
+                }`}
             >
               <div className="relative">
                 <Icon
-                  className={`w-5 h-5 transition-colors ${
-                    active ? "text-jade-ink stroke-[2.4]" : "text-ink-muted stroke-[1.8]"
-                  }`}
+                  className={`w-5 h-5 transition-colors ${active ? "text-jade-ink stroke-[2.4]" : "text-ink-muted stroke-[1.8]"
+                    }`}
                   fill="none"
                 />
                 {showBadge && (
