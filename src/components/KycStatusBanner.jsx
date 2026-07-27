@@ -5,9 +5,9 @@ import { FileCheck2, Clock, ShieldCheck, ChevronRight } from "lucide-react";
  * The single KYC status banner used across the app (Profile, Account Details,
  * Order Success). Renders one of three states from `kycStatus`:
  *
- *   "none"      → coral  "Complete your KYC" / Pending  → /kyc
- *   "submitted" → amber  "KYC Under Review" / Processing → /kyc?view
- *   "verified"  → green  "KYC Verified"                  → /kyc?view
+ *   "none"      → terracotta  "Complete your KYC" / Required → /kyc
+ *   "submitted" → butter/terracotta (pending recipe) "KYC Under Review" / Processing → /kyc?view
+ *   "verified"  → success  "KYC Verified"                    → /kyc?view
  *
  * The whole card is the tap target. The status badge sits in the top-right
  * corner; a chevron sits on the right. Keep every page rendering THIS component
@@ -34,12 +34,12 @@ const VARIANTS = {
     badge: "Required",
     to: "/kyc",
     view: false,
-    card: "border border-red-200 bg-red-50 hover:bg-red-100/70",
-    iconBg: "bg-red-500 text-white",
-    badgeCls: "bg-red-100 text-red-700",
-    chevron: "text-red-700/70",
-    titleCls: "text-red-900",
-    subtitleCls: "text-red-800/80",
+    card: "border border-terracotta/50 bg-terracotta/10 hover:bg-terracotta/20",
+    iconBg: "bg-terracotta text-white",
+    badgeCls: "bg-terracotta/20 text-ink",
+    chevron: "text-ink-muted",
+    titleCls: "text-ink",
+    subtitleCls: "text-ink-muted",
   },
   submitted: {
     Icon: Clock,
@@ -48,12 +48,12 @@ const VARIANTS = {
     badge: "Processing",
     to: "/kyc",
     view: true,
-    card: "border border-amber-200 bg-amber-50 hover:bg-amber-100/70",
-    iconBg: "bg-amber-400 text-white",
-    badgeCls: "bg-amber-100 text-amber-700",
-    chevron: "text-amber-700/70",
-    titleCls: "text-amber-900",
-    subtitleCls: "text-amber-800/80",
+    card: "border border-butter bg-butter/50 hover:bg-butter/70",
+    iconBg: "bg-terracotta text-white",
+    badgeCls: "bg-butter text-ink",
+    chevron: "text-ink-muted",
+    titleCls: "text-ink",
+    subtitleCls: "text-ink-muted",
   },
   verified: {
     Icon: ShieldCheck,
@@ -98,7 +98,7 @@ const KycStatusBanner = ({ kycStatus, size = "compact", orderData, returnTo, cla
       } ${className}`}
     >
       {v.badge && (
-        <span className={`absolute top-2.5 right-3 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-extrabold ${v.badgeCls}`}>
+        <span className={`absolute top-2.5 right-3 text-xs px-2 py-0.5 rounded-full font-semibold ${v.badgeCls}`}>
           {v.badge}
         </span>
       )}

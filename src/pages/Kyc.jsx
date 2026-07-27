@@ -200,7 +200,7 @@ const Kyc = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6]/70 pb-20">
+    <div className="min-h-screen bg-mint-pale/40 pb-20">
       {/* Minimal Navbar */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border py-4">
         <div className="section-container flex items-center justify-between">
@@ -211,7 +211,7 @@ const Kyc = () => {
           </Link>
           <div className="hidden md:flex items-center gap-2 text-success bg-success-muted px-3 py-1.5 rounded-full border border-success-border">
             <ShieldCheck className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-wider">Encrypted & Secure</span>
+            <span className="text-xs font-semibold">Encrypted & secure</span>
           </div>
         </div>
       </header>
@@ -230,10 +230,10 @@ const Kyc = () => {
 
           {/* Heading */}
           <div className="mt-4 mb-6">
-            <h1 className="text-2xl md:text-4xl font-black font-display text-foreground tracking-tight">
+            <h1 className="text-2xl md:text-4xl font-bold font-display text-ink tracking-tight">
               Complete your KYC
             </h1>
-            <p className="text-[11px] md:text-sm text-muted-foreground font-medium mt-1">
+            <p className="text-xs md:text-sm text-muted-foreground font-medium mt-1">
               Upload the required documents to verify your identity. This confirms your rental order
               {orderData?.orderId ? ` (#${orderData.orderId})` : ""}.
             </p>
@@ -278,7 +278,7 @@ const Kyc = () => {
               {/* Progress */}
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  <span className="text-xs font-semibold text-ink-muted">
                     {verifiedCount} of {docs.length} verified
                   </span>
                   {verifiedCount === docs.length ? (
@@ -286,8 +286,8 @@ const Kyc = () => {
                       <Check className="w-3.5 h-3.5" /> All documents verified
                     </span>
                   ) : allUploaded ? (
-                    <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-600">
-                      <Loader2 className="w-3.5 h-3.5" /> Under review
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-ink-muted">
+                      <Loader2 className="w-3.5 h-3.5 text-terracotta" /> Under review
                     </span>
                   ) : null}
                 </div>
@@ -313,8 +313,8 @@ const Kyc = () => {
                         verified
                           ? "border-success/40 bg-success-muted/40"
                           : uploaded
-                          ? "border-amber-300 bg-amber-50/50"
-                          : "border-dashed border-border bg-card hover:border-primary/40"
+                          ? "border-butter bg-butter/50"
+                          : "border-dashed border-border bg-card hover:border-jade/60"
                       }`}
                     >
                       <div className="flex items-center justify-between mb-3">
@@ -324,16 +324,16 @@ const Kyc = () => {
                               verified
                                 ? "bg-success text-white"
                                 : uploaded
-                                ? "bg-amber-500 text-white"
+                                ? "bg-terracotta text-white"
                                 : "bg-primary/10 text-primary"
                             }`}
                           >
                             {verified ? <Check className="w-4 h-4" /> : uploaded ? <Loader2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
                           </div>
                           <div>
-                            <p className="text-sm font-bold text-foreground leading-tight">{doc.name}</p>
+                            <p className="text-sm font-semibold text-ink leading-tight">{doc.name}</p>
                             {/* Show review/verified state, falling back to the upload prompt */}
-                            <p className={`text-[10px] ${verified ? "text-success font-semibold" : uploaded ? "text-amber-600 font-semibold" : "text-muted-foreground"}`}>
+                            <p className={`text-xs ${verified ? "text-success font-semibold" : uploaded ? "text-ink-muted font-semibold" : "text-muted-foreground"}`}>
                               {verified ? "Verified" : uploaded ? "Under review" : doc.user_prompt}
                             </p>
                           </div>
@@ -369,7 +369,7 @@ const Kyc = () => {
                           <span className="text-xs font-medium text-foreground truncate flex-1">{uploaded.name}</span>
                           {/* Re-upload allowed while not yet verified. */}
                           {!verified && (
-                            <label className="text-[11px] font-semibold text-foreground hover:underline cursor-pointer shrink-0">
+                            <label className="text-xs font-semibold text-foreground hover:underline cursor-pointer shrink-0">
                               Replace
                               <input
                                 type="file"
@@ -384,7 +384,7 @@ const Kyc = () => {
                         <label className="flex flex-col items-center justify-center gap-1.5 rounded-xl bg-secondary/30 border border-border/50 py-5 cursor-pointer hover:bg-secondary/50 transition-colors">
                           <Upload className="w-5 h-5 text-muted-foreground" />
                           <span className="text-xs font-semibold text-foreground">Upload</span>
-                          <span className="text-[10px] text-muted-foreground">
+                          <span className="text-xs text-muted-foreground">
                             {accept.includes("pdf") ? "Image or PDF" : "JPG / PNG"}
                           </span>
                           <input
@@ -401,7 +401,7 @@ const Kyc = () => {
               </div>
 
               {/* Privacy note */}
-              <div className="mt-5 flex items-start gap-2 text-[11px] text-muted-foreground bg-secondary/40 border border-border/50 rounded-xl p-3">
+              <div className="mt-5 flex items-start gap-2 text-xs text-muted-foreground bg-secondary/40 border border-border/50 rounded-xl p-3">
                 <Lock className="w-3.5 h-3.5 text-foreground flex-shrink-0 mt-0.5" />
                 <span>
                   Your documents are encrypted and used only for identity verification as per RentBasket's rental terms.
@@ -412,14 +412,14 @@ const Kyc = () => {
                   least one new/replaced file to send. If all docs are uploaded but
                   awaiting review (nothing new), show a non-actionable status. */}
               {allUploaded && pendingUploads.length === 0 ? (
-                <div className="w-full py-4 mt-6 rounded-2xl border-2 border-amber-300 bg-amber-50/60 text-amber-700 font-bold text-sm flex items-center justify-center gap-2">
-                  <Loader2 className="w-4 h-4" /> Documents submitted — under review
+                <div className="w-full py-4 mt-6 rounded-2xl border border-butter bg-butter/50 text-ink font-semibold text-sm flex items-center justify-center gap-2">
+                  <Loader2 className="w-4 h-4 text-terracotta" /> Documents submitted — under review
                 </div>
               ) : (
                 <button
                   onClick={handleSubmit}
                   disabled={!allUploaded || isSubmitting || pendingUploads.length === 0}
-                  className="gradient-coral w-full py-4 mt-6 rounded-2xl font-black text-lg shadow-lg shadow-primary/30 transition-all hover:shadow-primary/40 hover:opacity-95 active:scale-[0.98] disabled:opacity-60 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                  className="btn-pine w-full py-4 mt-6 text-lg disabled:opacity-60 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-3"
                 >
                   {isSubmitting ? (
                     <>
