@@ -97,17 +97,17 @@ const CartItemCard = ({ item }) => {
             <div className="flex-1 min-w-0">
               <Link
                 to={`/product/${item.productId}`}
-                className="text-sm font-semibold text-foreground leading-snug line-clamp-2 hover:text-foreground transition-colors block"
+                className="text-sm font-semibold text-ink leading-snug line-clamp-2 hover:text-ink transition-colors block"
               >
                 {item.name}
               </Link>
-              <p className="text-xs text-muted-foreground mt-0.5">{item.category}</p>
+              <p className="text-xs text-ink-muted mt-0.5">{item.category}</p>
             </div>
 
             {/* Remove */}
             <button
               onClick={() => removeFromCart(item.cartItemId)}
-              className="self-start p-1.5 rounded-lg hover:bg-red-50 text-muted-foreground hover:text-red-500 transition-colors"
+              className="self-start p-1.5 rounded-lg hover:bg-destructive/10 text-ink-muted hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
               title="Remove"
             >
               <Trash2 className="w-4 h-4" />
@@ -120,8 +120,8 @@ const CartItemCard = ({ item }) => {
             <div className="relative flex-1">
               <button
                 onClick={() => setShowDurationPicker(!showDurationPicker)}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl border text-sm font-medium bg-background transition-colors ${
-                  showDurationPicker ? "border-foreground ring-2 ring-foreground/10" : "border-border"
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl border text-sm font-medium bg-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                  showDurationPicker ? "border-jade-ink ring-2 ring-ring/20" : "border-border"
                 }`}
               >
                 <span>{item.durationLabel || "1 Month"}</span>
@@ -133,14 +133,14 @@ const CartItemCard = ({ item }) => {
             <div className="flex items-center border border-border rounded-xl overflow-hidden">
               <button
                 onClick={() => handleQuantityChange(-1)}
-                className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:bg-secondary disabled:opacity-30"
+                className="w-8 h-8 flex items-center justify-center text-ink-muted hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-30"
               >
                 <Minus className="w-3 h-3" />
               </button>
               <span className="w-8 text-center text-sm font-semibold select-none">{item.quantity}</span>
               <button
                 onClick={() => handleQuantityChange(1)}
-                className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:bg-secondary disabled:opacity-30"
+                className="w-8 h-8 flex items-center justify-center text-ink-muted hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-30"
                 disabled={item.quantity >= 10}
               >
                 <Plus className="w-3 h-3" />
@@ -151,21 +151,21 @@ const CartItemCard = ({ item }) => {
           {/* Pricing */}
           <div className="bg-secondary/40 rounded-xl px-3 py-2.5 space-y-1">
             <div className="flex justify-between text-xs font-medium">
-              <span className="text-muted-foreground">Rent</span>
+              <span className="text-ink-muted">Rent</span>
               <span className="flex items-center gap-1">
                 {line.listRentTotal > line.rentTotal && (
-                  <span className="text-muted-foreground text-[10px]">₹{line.listRentTotal.toLocaleString("en-IN")}</span>
+                  <span className="text-ink-muted text-[10px]">₹{line.listRentTotal.toLocaleString("en-IN")}</span>
                 )}
-                <span>₹{line.rentTotal.toLocaleString("en-IN")}{isMonthly ? "/mo" : ""}</span>
+                <span className="text-jade-ink font-semibold">₹{line.rentTotal.toLocaleString("en-IN")}{isMonthly ? "/mo" : ""}</span>
               </span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">GST (18%)</span>
+              <span className="text-ink-muted">GST (18%)</span>
               <span className="font-medium">₹{lineGst.toLocaleString("en-IN")}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">Deposit</span>
-              <span className="font-medium">₹{line.securityTotal.toLocaleString("en-IN")} <span className="text-success text-[10px]">refundable</span></span>
+              <span className="text-ink-muted">Deposit</span>
+              <span className="font-medium">₹{line.securityTotal.toLocaleString("en-IN")} <span className="text-success text-[12px]">refundable</span></span>
             </div>
             <div className="flex justify-between text-xs text-success">
               <span>Delivery + Install + Maintenance</span>
@@ -173,7 +173,7 @@ const CartItemCard = ({ item }) => {
             </div>
             <div className="flex justify-between text-sm pt-1.5 border-t border-border/50">
               <span className="font-bold">Total</span>
-              <span className="font-bold text-foreground">₹{lineTotal.toLocaleString("en-IN")}</span>
+              <span className="font-bold text-ink">₹{lineTotal.toLocaleString("en-IN")}</span>
             </div>
           </div>
         </div>
@@ -185,7 +185,7 @@ const CartItemCard = ({ item }) => {
           {/* Thumbnail */}
           <Link
             to={`/product/${item.productId}`}
-            className="w-28 h-28 bg-white rounded-xl overflow-hidden flex-shrink-0 border border-border/50 block hover:border-foreground/35 transition-colors"
+            className="w-28 h-28 bg-white rounded-xl overflow-hidden flex-shrink-0 border border-border/50 block hover:border-jade-ink/35 transition-colors"
           >
             <img
               src={resolvedImage}
@@ -203,11 +203,11 @@ const CartItemCard = ({ item }) => {
               <div>
                 <Link
                   to={`/product/${item.productId}`}
-                  className="text-base font-semibold text-foreground leading-snug hover:text-foreground transition-colors block"
+                  className="text-base font-semibold text-ink leading-snug hover:text-ink transition-colors block"
                 >
                   {item.name}
                 </Link>
-                <p className="text-sm text-muted-foreground mt-0.5 flex items-center gap-2 flex-wrap">
+                <p className="text-sm text-ink-muted mt-0.5 flex items-center gap-2 flex-wrap">
                   <span>{item.category}</span>
                   {item.startDate && (
                     <span className="inline-flex items-center gap-0.5">
@@ -225,8 +225,8 @@ const CartItemCard = ({ item }) => {
               <div className="relative">
                 <button
                   onClick={() => setShowDurationPicker(!showDurationPicker)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-medium bg-background transition-all ${
-                    showDurationPicker ? "border-foreground ring-2 ring-foreground/10" : "border-border hover:border-foreground/35"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-medium bg-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                    showDurationPicker ? "border-jade-ink ring-2 ring-ring/20" : "border-border hover:border-jade-ink/35"
                   }`}
                 >
                   <span>{item.durationLabel || "1 Month"}</span>
@@ -236,18 +236,18 @@ const CartItemCard = ({ item }) => {
 
               {/* Quantity */}
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Qty</span>
+                <span className="text-sm text-ink-muted">Qty</span>
                 <div className="flex items-center border border-border rounded-xl overflow-hidden">
                   <button
                     onClick={() => handleQuantityChange(-1)}
-                    className="w-9 h-9 flex items-center justify-center text-muted-foreground hover:bg-secondary transition-colors disabled:opacity-30"
+                    className="w-9 h-9 flex items-center justify-center text-ink-muted hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors disabled:opacity-30"
                       >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
                   <span className="w-10 text-center text-sm font-semibold select-none">{item.quantity}</span>
                   <button
                     onClick={() => handleQuantityChange(1)}
-                    className="w-9 h-9 flex items-center justify-center text-muted-foreground hover:bg-secondary transition-colors disabled:opacity-30"
+                    className="w-9 h-9 flex items-center justify-center text-ink-muted hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors disabled:opacity-30"
                     disabled={item.quantity >= 10}
                   >
                     <Plus className="w-3.5 h-3.5" />
@@ -259,7 +259,7 @@ const CartItemCard = ({ item }) => {
               <div className="flex items-center gap-3 ml-auto">
                 <button
                   onClick={() => removeFromCart(item.cartItemId)}
-                  className="text-xs text-red-500 hover:text-red-600 hover:underline transition-colors font-medium"
+                  className="text-xs text-ink-muted hover:text-destructive hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded transition-colors font-medium"
                 >
                   Remove
                 </button>
@@ -268,27 +268,27 @@ const CartItemCard = ({ item }) => {
           </div>
           </div>
 
-          {/* Right: pricing invoice panel (gray background, padded, left border) */}
+          {/* Right: pricing invoice panel */}
           <div className="w-52 flex-shrink-0 bg-secondary/35 p-5 border-l border-border/50 text-right flex flex-col justify-between space-y-1">
-            <div className="text-lg font-bold text-foreground flex flex-col items-end">
+            <div className="text-lg font-bold text-jade-ink flex flex-col items-end">
               {line.listRentTotal > line.rentTotal && (
-                <span className="text-muted-foreground text-xs font-normal">₹{line.listRentTotal.toLocaleString("en-IN")}/mo</span>
+                <span className="text-ink-muted text-xs font-normal">₹{line.listRentTotal.toLocaleString("en-IN")}/mo</span>
               )}
-              <span>₹{line.rentTotal.toLocaleString("en-IN")}{isMonthly ? <span className="text-sm font-normal text-muted-foreground">/mo</span> : ""}</span>
+              <span>₹{line.rentTotal.toLocaleString("en-IN")}{isMonthly ? <span className="text-sm font-normal text-ink-muted">/mo</span> : ""}</span>
             </div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-ink-muted">
               + ₹{lineGst.toLocaleString("en-IN")} GST (18%)
             </div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-ink-muted">
               + ₹{line.securityTotal.toLocaleString("en-IN")} deposit <span className="text-success">refundable</span>
             </div>
-            <div className="flex items-center justify-end gap-1 text-[10px] text-success mt-1">
+            <div className="flex items-center justify-end gap-1 text-[12px] text-success mt-1">
               <CheckCircle className="w-3 h-3" />
               Free Delivery + Installation
             </div>
             <div className="pt-2 border-t border-border/50 mt-2">
-              <span className="text-[10px] text-muted-foreground block mb-0.5">Due Today</span>
-              <span className="text-xl font-bold text-foreground">₹{lineTotal.toLocaleString("en-IN")}</span>
+              <span className="text-[12px] text-ink-muted block mb-0.5">Due Today</span>
+              <span className="text-xl font-bold text-ink">₹{lineTotal.toLocaleString("en-IN")}</span>
             </div>
           </div>
         </div>
@@ -304,7 +304,7 @@ const CartItemCard = ({ item }) => {
               className="overflow-hidden"
             >
               <div className="mt-4 pt-3 border-t border-border/50">
-                <p className="text-xs text-muted-foreground mb-2.5 font-medium">
+                <p className="text-xs text-ink-muted mb-2.5 font-medium">
                   Choose rental duration — longer plans save more
                 </p>
                 <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-1.5">
@@ -320,19 +320,19 @@ const CartItemCard = ({ item }) => {
                       <button
                         key={d.key}
                         onClick={() => handleDurationChange(d.key)}
-                        className={`relative flex flex-col items-center py-2.5 px-1.5 rounded-xl border text-center transition-all ${
+                        className={`relative flex flex-col items-center py-2.5 px-1.5 rounded-xl border text-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                           isSelected
-                            ? "border-foreground bg-foreground/5 text-foreground ring-1 ring-foreground/20"
-                            : "border-border text-muted-foreground hover:border-foreground/35 hover:bg-secondary/30"
+                            ? "border-pine bg-pine/5 text-ink ring-1 ring-pine/20"
+                            : "border-border text-ink-muted hover:border-jade-ink/35 hover:bg-secondary/30"
                         }`}
                       >
                         {is12m && (
-                          <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-success text-success-foreground text-[8px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                          <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-success text-success-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap">
                             Best Value
                           </span>
                         )}
                         <span className="text-xs font-semibold">{d.label}</span>
-                        <span className="text-[10px] mt-0.5">₹{dPrice?.toLocaleString("en-IN")}{isDM ? "/mo" : ""}</span>
+                        <span className="text-[12px] mt-0.5">₹{dPrice?.toLocaleString("en-IN")}{isDM ? "/mo" : ""}</span>
                       </button>
                     );
                   })}

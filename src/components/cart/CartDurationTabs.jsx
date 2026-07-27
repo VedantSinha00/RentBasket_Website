@@ -26,14 +26,14 @@ const CartDurationTabs = () => {
     <div className="mb-5 rounded-2xl border border-border bg-card p-4 md:p-5 shadow-soft">
       {/* Intro line — the single source of the "split into plans" message */}
       <div className="flex items-start gap-2.5 mb-3.5">
-        <div className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
-          <Clock className="w-4 h-4 text-foreground" />
+        <div className="w-8 h-8 rounded-xl bg-mint flex items-center justify-center flex-shrink-0">
+          <Clock className="w-4 h-4 text-jade-ink" />
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-bold text-foreground leading-tight">
+          <p className="text-sm font-bold text-ink leading-tight">
             {durationsInCart.length} rental plans in your basket
           </p>
-          <p className="text-xs text-muted-foreground mt-0.5 leading-snug">
+          <p className="text-xs text-ink-muted mt-0.5 leading-snug">
             Each plan checks out as a separate order.
           </p>
         </div>
@@ -56,22 +56,18 @@ const CartDurationTabs = () => {
               onClick={() => setSelectedDuration(key)}
               className={`group flex flex-shrink-0 snap-start items-center gap-2 rounded-xl border px-3.5 py-2.5 text-left transition-all ${
                 isSelected
-                  ? "border-foreground bg-foreground/5 shadow-sm"
-                  : "border-border bg-background hover:border-foreground/35 hover:bg-secondary/30"
+                  ? "border-pine bg-pine text-white shadow-sm"
+                  : "border-border bg-secondary text-ink-muted hover:bg-mint-pale hover:border-jade-ink/35"
               }`}
             >
-              <span
-                className={`text-sm font-bold ${
-                  isSelected ? "text-foreground" : "text-foreground"
-                }`}
-              >
+              <span className="text-sm font-bold">
                 {labelFor(key)}
               </span>
               <span
-                className={`inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-[11px] font-bold ${
+                className={`inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-[12px] font-bold ${
                   isSelected
-                    ? "bg-foreground text-background"
-                    : "bg-secondary text-muted-foreground"
+                    ? "bg-white/20 text-white"
+                    : "bg-white text-ink-muted"
                 }`}
               >
                 {count}

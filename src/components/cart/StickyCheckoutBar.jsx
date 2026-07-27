@@ -16,20 +16,20 @@ const StickyCheckoutBar = ({ onCheckout }) => {
       <div className="flex items-center justify-between px-4 py-3 gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline gap-1.5">
-            <span className="text-lg font-black text-foreground">
+            <span className="text-lg font-bold text-ink">
               ₹{b.upfront.toLocaleString("en-IN")}
             </span>
-            <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
-              Pay 50% Now
+            <span className="text-[12px] text-ink-muted font-semibold">
+              Pay 50% now
             </span>
           </div>
-          <p className="text-[10px] text-muted-foreground truncate">
+          <p className="text-[12px] text-ink-muted truncate">
             {itemCount} {itemCount === 1 ? "item" : "items"} · ₹{b.netFirstMonth.toLocaleString("en-IN")} first month total
           </p>
         </div>
         <button
           onClick={onCheckout}
-          className="btn-gradient-coral px-6 py-2.5 text-sm font-semibold whitespace-nowrap flex-shrink-0 inline-flex items-center gap-1.5"
+          className="btn-pine px-6 py-2.5 text-sm font-semibold whitespace-nowrap flex-shrink-0 inline-flex items-center gap-1.5"
         >
           <Lock className="w-3.5 h-3.5" />
           Checkout

@@ -96,7 +96,7 @@ const CrossSellStrip = () => {
         <div className="h-4 w-36 bg-secondary rounded animate-pulse mb-5" />
         <div className="flex gap-4 overflow-x-auto pb-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="w-[180px] shrink-0 bg-secondary rounded-2xl h-[260px] animate-pulse" />
+            <div key={i} className="w-[180px] shrink-0 bg-secondary rounded-2xl h-[260px] animate-pulse" aria-hidden="true" />
           ))}
         </div>
       </section>
@@ -166,10 +166,10 @@ const CrossSellStrip = () => {
   return (
     <section className="mt-8 md:mt-10">
       <div className="mb-4">
-        <h3 className="text-lg md:text-xl font-display font-bold text-foreground">
+        <h3 className="text-lg md:text-xl font-display font-bold text-ink">
           Complete your home setup
         </h3>
-        <p className="text-xs text-muted-foreground mt-0.5">Recommendations for you</p>
+        <p className="text-xs text-ink-muted mt-0.5">Recommendations for you</p>
       </div>
 
       <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar -mx-1 px-1">
@@ -197,17 +197,17 @@ const CrossSellStrip = () => {
               </Link>
 
               <Link to={`/product/${product.id}`} className="flex-1">
-                <h4 className="text-[12px] font-bold text-foreground line-clamp-2 mb-1.5 hover:text-foreground transition-colors leading-tight">
+                <h4 className="text-[12px] font-bold text-ink line-clamp-2 mb-1.5 hover:text-ink transition-colors leading-tight">
                   {product.name}
                 </h4>
               </Link>
 
               <div className="flex items-center gap-1.5 mb-2.5 flex-wrap">
-                <span className="text-[12px] font-extrabold text-foreground">
+                <span className="text-[12px] font-bold text-jade-ink">
                   ₹{displayPrice.toLocaleString("en-IN")}/mo
                 </span>
                 {displayPrice < maxCartPrice && (
-                  <span className="text-[10px] font-bold bg-success-muted text-success-muted-foreground border border-success-border px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                  <span className="text-[12px] font-bold bg-success-muted text-success-muted-foreground border border-success-border px-1.5 py-0.5 rounded-full whitespace-nowrap">
                     0 deposit
                   </span>
                 )}
@@ -215,7 +215,7 @@ const CrossSellStrip = () => {
 
               <button
                 onClick={() => handleQuickAdd(product)}
-                className="w-full flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl border border-border text-foreground bg-secondary text-[11px] font-bold hover:bg-foreground hover:text-background hover:border-foreground transition-all active:scale-95"
+                className="w-full flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl border border-border text-ink bg-secondary text-[12px] font-bold hover:bg-pine hover:text-white hover:border-pine focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all active:scale-95"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Add
