@@ -6,11 +6,11 @@ import KycStatusBanner from "@/components/KycStatusBanner";
 import { getAuth, clearAuth, isAuthenticated } from "@/lib/auth";
 import { useKycStatus } from "@/hooks/useKycStatus";
 
-const MenuItem = ({ to, state, icon: Icon, iconBg = "bg-secondary", iconColor = "text-foreground", title, subtitle }) => (
+const MenuItem = ({ to, state, icon: Icon, iconBg = "bg-mint", iconColor = "text-jade-ink", title, subtitle }) => (
   <Link
     to={to}
     state={state}
-    className="flex items-center gap-4 px-5 py-4 hover:bg-secondary transition-colors"
+    className="flex items-center gap-4 px-5 py-4 hover:bg-mint-pale/60 transition-colors"
   >
     <div className={`w-9 h-9 rounded-xl ${iconBg} flex items-center justify-center flex-shrink-0`}>
       <Icon className={`w-4 h-4 ${iconColor}`} />
@@ -41,8 +41,8 @@ const Profile = () => {
       <main className="flex-1 section-container py-10 md:py-16 max-w-lg mx-auto w-full">
         {/* Avatar block */}
         <div className="flex flex-col items-center gap-4 mb-10">
-          <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center">
-            <User className="w-9 h-9 text-foreground" />
+          <div className="w-20 h-20 rounded-full bg-mint flex items-center justify-center">
+            <User className="w-9 h-9 text-jade-ink" />
           </div>
           <div className="text-center">
             <h1 className="text-2xl font-bold font-display text-foreground">My Profile</h1>
@@ -63,18 +63,22 @@ const Profile = () => {
         )}
 
         {/* Menu items */}
-        <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden divide-y divide-border">
+        <div className="bg-white rounded-2xl border border-border shadow-soft overflow-hidden divide-y divide-border">
           {loggedIn && (
             <>
               <MenuItem
                 to="/account/details"
                 icon={UserCircle}
+                iconBg="bg-mint"
+                iconColor="text-jade-ink"
                 title="Personal Details"
                 subtitle="Your name and contact info"
               />
               <MenuItem
                 to="/account/orders"
                 icon={Package}
+                iconBg="bg-sky"
+                iconColor="text-ink"
                 title="My Orders"
                 subtitle="View and track your rentals"
               />
@@ -84,6 +88,8 @@ const Profile = () => {
                 to="/kyc"
                 state={{ view: true, returnTo: "/profile" }}
                 icon={ShieldCheck}
+                iconBg="bg-mint"
+                iconColor="text-jade-ink"
                 title="Identity Verification"
                 subtitle="View or complete your KYC"
               />
@@ -92,18 +98,24 @@ const Profile = () => {
           <MenuItem
             to="/wishlist"
             icon={Heart}
+            iconBg="bg-sand"
+            iconColor="text-ink"
             title="Wishlist"
             subtitle="Your saved items"
           />
           <MenuItem
             to="/faqs"
             icon={HelpCircle}
+            iconBg="bg-ivory"
+            iconColor="text-ink"
             title="FAQs"
             subtitle="Common questions answered"
           />
           <MenuItem
             to="/contact"
             icon={LifeBuoy}
+            iconBg="bg-ivory"
+            iconColor="text-ink"
             title="Support"
             subtitle="Get help with your order"
           />
@@ -112,6 +124,8 @@ const Profile = () => {
               to="/customer-validation"
               state={{ returnTo: "/profile" }}
               icon={LogIn}
+              iconBg="bg-mint"
+              iconColor="text-jade-ink"
               title="Login"
               subtitle="Sign in to your account"
             />
@@ -122,7 +136,7 @@ const Profile = () => {
         {loggedIn && (
           <button
             onClick={handleSignOut}
-            className="mt-8 w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+            className="mt-8 w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-mint-pale/60 transition-colors"
           >
             <LogOut className="w-4 h-4" />
             Sign Out
