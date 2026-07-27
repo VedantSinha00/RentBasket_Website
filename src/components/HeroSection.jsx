@@ -6,7 +6,7 @@ import heroLifestylePhoto from "@/assets/Home/gallery-2.jpg";
 // SP-01: Mobile-first hero (§5.2). On mobile (375px): content stacks
 // vertically, CTAs are always above the fold. On desktop (lg+): two-column
 // split with the pine-framed lifestyle photo on the right.
-const HeroSection = ({ onScrollToCarousel }) => {
+const HeroSection = () => {
   const catalogLink = "/catalog";
   const prefersReducedMotion = useReducedMotion();
 
@@ -34,13 +34,6 @@ const HeroSection = ({ onScrollToCarousel }) => {
           transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.15 },
         },
       };
-
-  const handleBrowseProducts = (e) => {
-    if (onScrollToCarousel) {
-      e.preventDefault();
-      onScrollToCarousel();
-    }
-  };
 
   const StatChips = ({ className = "" }) => (
     <motion.div variants={riseFade} className={`grid grid-cols-2 gap-3 ${className}`}>
@@ -116,7 +109,6 @@ const HeroSection = ({ onScrollToCarousel }) => {
               </Link>
               <Link
                 to={catalogLink}
-                onClick={handleBrowseProducts}
                 className="btn-outline-pine justify-center"
               >
                 Browse Products

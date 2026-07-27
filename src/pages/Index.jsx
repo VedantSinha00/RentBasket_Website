@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import RentingCarousel from "@/components/RentingCarousel";
@@ -9,18 +8,12 @@ import FAQsTeaser from "@/components/FAQsTeaser";
 import Footer from "@/components/Footer";
 
 const Index = () => {
-  const carouselRef = useRef(null);
-
-  const scrollToCarousel = () => {
-    carouselRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
   return (
     <div className="min-h-screen">
       <Header />
       <main>
-        <HeroSection onScrollToCarousel={scrollToCarousel} />
-        <RentingCarousel innerRef={carouselRef} />
+        <HeroSection />
+        <RentingCarousel />
         <WhatMakesDifferent />
         <MythOrFact />
         <Testimonials />

@@ -37,7 +37,7 @@ const CardSkeleton = () => (
   </div>
 );
 
-const RentingCarousel = ({ innerRef }) => {
+const RentingCarousel = () => {
   const { data: products = [], isLoading, isError } = useProducts();
   const prefersReducedMotion = useReducedMotion();
 
@@ -160,7 +160,7 @@ const RentingCarousel = ({ innerRef }) => {
   if (!isLoading && (isError || items.length === 0)) return null;
 
   return (
-    <section ref={innerRef} className="bg-mint-pale">
+    <section className="bg-mint-pale">
       <Wave color="text-white" />
       <div className="section-container py-12 md:py-16">
         <motion.div
