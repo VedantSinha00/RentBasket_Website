@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ChevronLeft, User, Phone, Mail, LogOut, CheckCircle2, Loader2, MapPin, Save } from "lucide-react";
 import { useKycStatus } from "@/hooks/useKycStatus";
+import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import KycStatusBanner from "@/components/KycStatusBanner";
 import { getAuth, setAuth, clearAuth } from "@/lib/auth";
@@ -287,6 +288,7 @@ const AccountDetails = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <Header />
       <main className="flex-1 section-container py-10 md:py-14 max-w-lg mx-auto w-full">
         <Link
           to="/profile"
@@ -306,7 +308,7 @@ const AccountDetails = () => {
           <h1 className="text-2xl font-bold font-display text-foreground">Personal Details</h1>
         </div>
 
-        <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-5">
+        <div className="bg-white rounded-2xl border border-border shadow-soft p-6 space-y-5">
           {/* Name */}
           <div>
             <label className="text-xs font-semibold text-foreground block mb-1.5">
@@ -319,7 +321,7 @@ const AccountDetails = () => {
               onChange={(e) => setName(e.target.value)}
               onBlur={handleNameBlur}
               disabled={isSaving}
-              className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink bg-background placeholder-muted-foreground/40 disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -337,18 +339,18 @@ const AccountDetails = () => {
                 onChange={handleEmailChange}
                 onBlur={handleEmailBlur}
                 disabled={isSaving || emailStep === "otp" || emailStep === "verifying"}
-                className="w-full pl-9 pr-28 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full pl-9 pr-28 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink bg-background placeholder-muted-foreground/40 disabled:opacity-60 disabled:cursor-not-allowed"
               />
               <div className="absolute right-2 top-1/2 -translate-y-1/2">
                 {emailVerified ? (
-                  <span className="flex items-center gap-1 text-[11px] font-semibold text-success">
+                  <span className="flex items-center gap-1 text-[12px] font-semibold text-success">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Verified
                   </span>
                 ) : email.trim() && emailStep === "idle" ? (
                   <button
                     type="button"
                     onClick={handleSendEmailOtp}
-                    className="text-[11px] font-semibold text-foreground hover:underline"
+                    className="text-[12px] font-semibold text-jade-ink hover:underline"
                   >
                     Verify Email
                   </button>
@@ -361,10 +363,10 @@ const AccountDetails = () => {
             {/* Inline OTP entry */}
             {emailStep === "otp" || emailStep === "verifying" ? (
               <div className="mt-3 space-y-2">
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-[12px] text-muted-foreground">
                   OTP sent to <span className="font-semibold text-foreground">{pendingEmail}</span>
                 </p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-[12px] text-muted-foreground">
                   Can't find it? Check your <span className="font-semibold text-foreground">spam</span> or
                   <span className="font-semibold text-foreground"> junk</span> folder.
                 </p>
@@ -378,19 +380,19 @@ const AccountDetails = () => {
                     onChange={(e) => setEmailOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     onKeyDown={(e) => e.key === "Enter" && handleVerifyEmailOtp()}
                     disabled={emailStep === "verifying"}
-                    className="flex-1 px-3 py-2 border border-border rounded-lg text-sm text-center tracking-widest font-medium focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background disabled:opacity-60"
+                    className="flex-1 px-3 py-2 border border-border rounded-lg text-sm text-center tracking-widest font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink bg-background disabled:opacity-60"
                   />
                   <button
                     type="button"
                     onClick={handleVerifyEmailOtp}
                     disabled={emailStep === "verifying" || !emailOtp}
-                    className="px-4 py-2 bg-foreground text-background text-sm font-semibold rounded-lg hover:bg-foreground/90 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-1.5"
+                    className="px-4 py-2 bg-pine text-white text-sm font-semibold rounded-lg hover:bg-pine-hover disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-1.5"
                   >
                     {emailStep === "verifying" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
                     {emailStep === "verifying" ? "Verifying…" : "Confirm"}
                   </button>
                 </div>
-                <div className="flex items-center justify-between text-[11px]">
+                <div className="flex items-center justify-between text-[12px]">
                   {resendIn > 0 ? (
                     <span className="text-muted-foreground">
                       Resend in <span className="font-semibold text-foreground tabular-nums">0:{String(resendIn).padStart(2, "0")}</span>
@@ -430,7 +432,7 @@ const AccountDetails = () => {
                 className="w-full pl-9 pr-3.5 py-2.5 border border-border rounded-lg text-sm bg-secondary/40 text-muted-foreground cursor-not-allowed select-none"
               />
             </div>
-            <p className="text-[11px] text-muted-foreground mt-1.5">
+            <p className="text-[12px] text-muted-foreground mt-1.5">
               Contact number cannot be changed. It is tied to your account.
             </p>
           </div>
@@ -439,8 +441,8 @@ const AccountDetails = () => {
         {/* Delivery Address */}
         <div className="mt-8">
           <div className="flex items-center gap-3 mb-5">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-              <MapPin className="w-5 h-5 text-emerald-600" />
+            <div className="w-10 h-10 rounded-xl bg-mint flex items-center justify-center">
+              <MapPin className="w-5 h-5 text-jade-ink" />
             </div>
             <h2 className="text-xl font-bold font-display text-foreground">Delivery Address</h2>
           </div>
@@ -454,7 +456,7 @@ const AccountDetails = () => {
             <button
               type="button"
               onClick={() => setAddrEditing(true)}
-              className="w-full text-left bg-white rounded-2xl border border-border shadow-sm px-5 py-4 hover:border-foreground/35 hover:shadow-md transition-all group"
+              className="w-full text-left bg-white rounded-2xl border border-border shadow-soft px-5 py-4 hover:border-jade-ink/35 hover:shadow-elevated transition-all group"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -473,23 +475,23 @@ const AccountDetails = () => {
             </button>
           ) : (
             /* Edit form */
-            <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
+            <div className="bg-white rounded-2xl border border-border shadow-soft p-6 space-y-4">
               {/* Contact Name + Phone */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-foreground block mb-1.5">
-                    Contact Name <span className="text-primary">*</span>
+                    Contact Name <span className="text-destructive">*</span>
                   </label>
                   <input
                     type="text"
                     placeholder="e.g. Rahul Sharma"
                     value={addr.contact_name}
                     onChange={setAddrField("contact_name")}
-                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40"
+                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink bg-background placeholder-muted-foreground/40"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-foreground block mb-1.5">Contact Phone <span className="text-primary">*</span></label>
+                  <label className="text-xs font-semibold text-foreground block mb-1.5">Contact Phone <span className="text-destructive">*</span></label>
                   <input
                     type="tel"
                     placeholder="10-digit number"
@@ -497,7 +499,7 @@ const AccountDetails = () => {
                     onChange={setAddrField("contact_phone")}
                     maxLength={10}
                     inputMode="numeric"
-                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40"
+                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink bg-background placeholder-muted-foreground/40"
                   />
                 </div>
               </div>
@@ -511,8 +513,8 @@ const AccountDetails = () => {
                   geoState === "done"
                     ? "border-success/40 text-success bg-success/5"
                     : geoState === "denied"
-                    ? "border-orange-300 text-orange-600 hover:border-orange-400 bg-orange-50/40"
-                    : "border-border text-muted-foreground hover:border-foreground/35 hover:text-foreground"
+                    ? "border-terracotta/50 text-terracotta hover:border-terracotta bg-terracotta/10"
+                    : "border-border text-muted-foreground hover:border-jade-ink/35 hover:text-foreground"
                 }`}
               >
                 {geoState === "loading" ? (
@@ -529,14 +531,14 @@ const AccountDetails = () => {
               {/* Address lines */}
               <div>
                 <label className="text-xs font-semibold text-foreground block mb-1.5">
-                  Address Line 1 <span className="text-primary">*</span>
+                  Address Line 1 <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="text"
                   placeholder="House / Flat / Block No."
                   value={addr.address_line_1}
                   onChange={setAddrField("address_line_1")}
-                  className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40"
+                  className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink bg-background placeholder-muted-foreground/40"
                 />
               </div>
               <div>
@@ -546,7 +548,7 @@ const AccountDetails = () => {
                   placeholder="Street, Colony, Area"
                   value={addr.address_line_2}
                   onChange={setAddrField("address_line_2")}
-                  className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40"
+                  className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink bg-background placeholder-muted-foreground/40"
                 />
               </div>
 
@@ -559,12 +561,12 @@ const AccountDetails = () => {
                     placeholder="Near metro, school, etc."
                     value={addr.landmark}
                     onChange={setAddrField("landmark")}
-                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40"
+                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink bg-background placeholder-muted-foreground/40"
                   />
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-foreground block mb-1.5">
-                    Pincode <span className="text-primary">*</span>
+                    Pincode <span className="text-destructive">*</span>
                   </label>
                   <input
                     type="text"
@@ -573,15 +575,15 @@ const AccountDetails = () => {
                     onChange={handlePincodeChange}
                     maxLength={6}
                     inputMode="numeric"
-                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40"
+                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink bg-background placeholder-muted-foreground/40"
                   />
                   {pincodeState === "done" && (
-                    <p className="text-[10px] mt-1 text-success flex items-center gap-1">
+                    <p className="text-[12px] mt-1 text-success flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" /> City &amp; state filled
                     </p>
                   )}
                   {pincodeState === "error" && (
-                    <p className="text-[10px] mt-1 text-muted-foreground">Not found — enter manually</p>
+                    <p className="text-[12px] mt-1 text-muted-foreground">Not found — enter manually</p>
                   )}
                 </div>
               </div>
@@ -590,12 +592,12 @@ const AccountDetails = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-foreground block mb-1.5">
-                    City <span className="text-primary">*</span>
+                    City <span className="text-destructive">*</span>
                   </label>
                   <select
                     value={addr.city}
                     onChange={setAddrField("city")}
-                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background appearance-none"
+                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink bg-background appearance-none"
                   >
                     <option value="">Select city</option>
                     {SERVED_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -603,14 +605,14 @@ const AccountDetails = () => {
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-foreground block mb-1.5">
-                    State <span className="text-primary">*</span>
+                    State <span className="text-destructive">*</span>
                   </label>
                   <input
                     type="text"
                     placeholder="State"
                     value={addr.state}
                     onChange={setAddrField("state")}
-                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground bg-background placeholder-muted-foreground/40"
+                    className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-jade-ink bg-background placeholder-muted-foreground/40"
                   />
                 </div>
               </div>
@@ -629,7 +631,7 @@ const AccountDetails = () => {
                   type="button"
                   onClick={handleSaveAddress}
                   disabled={addrSaving}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 gradient-coral text-white text-sm font-semibold rounded-xl hover:opacity-95 shadow-lg shadow-primary/20 transition-all active:scale-95 disabled:opacity-60"
+                  className="btn-pine flex-1 text-sm disabled:opacity-60"
                 >
                   {addrSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   {addrSaving ? "Saving…" : "Save Address"}
