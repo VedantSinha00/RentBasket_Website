@@ -387,7 +387,7 @@ const OrderSummary = () => {
     <div className="min-h-screen bg-background">
       <CheckoutHeader />
 
-      <main className="pb-20 bg-[#FAF9F6]/70 min-h-[calc(100vh-73px)]">
+      <main className="pb-20 bg-mint-pale/40 min-h-[calc(100vh-73px)]">
         <div className="section-container pt-4 md:pt-6">
           {/* Back to details */}
           <div className="mb-6 md:mb-8">
@@ -400,10 +400,10 @@ const OrderSummary = () => {
               Edit Details
             </Link>
             <div className="mt-4">
-              <h1 className="text-2xl md:text-4xl font-black text-foreground tracking-tight">
+              <h1 className="text-2xl md:text-4xl font-bold text-foreground tracking-tight">
                 Order Summary
               </h1>
-              <p className="text-[11px] md:text-sm text-muted-foreground font-medium mt-1">
+              <p className="text-sm text-muted-foreground font-medium mt-1">
                 Review your rental, then confirm and pay.
               </p>
             </div>
@@ -420,7 +420,7 @@ const OrderSummary = () => {
                   <Link
                     to="/checkout"
                     state={{ verifiedPhone, formData }}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-foreground hover:underline"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-jade-ink hover:underline"
                   >
                   <Pencil className="w-3 h-3" />
                   Edit
@@ -428,19 +428,19 @@ const OrderSummary = () => {
               </div>
               <div className="p-5 space-y-3 text-sm">
                 <div className="flex items-center gap-2.5 text-foreground">
-                  <User className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <User className="w-4 h-4 text-jade-ink flex-shrink-0" />
                   <span className="font-semibold">{formData.fullName}</span>
                 </div>
                 <div className="flex items-center gap-2.5 text-muted-foreground">
-                  <Phone className="w-4 h-4 flex-shrink-0" />
+                  <Phone className="w-4 h-4 text-jade-ink flex-shrink-0" />
                   <span>+91 {formData.phone}</span>
                 </div>
                 <div className="flex items-start gap-2.5 text-muted-foreground">
-                  <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <MapPin className="w-4 h-4 text-jade-ink flex-shrink-0 mt-0.5" />
                   <span className="leading-relaxed">{addressLine}</span>
                 </div>
                 <div className="flex items-center gap-2.5 text-muted-foreground">
-                  <Calendar className="w-4 h-4 flex-shrink-0" />
+                  <Calendar className="w-4 h-4 text-jade-ink flex-shrink-0" />
                   <span>
                     Starts{" "}
                     {new Date(formData.startDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}

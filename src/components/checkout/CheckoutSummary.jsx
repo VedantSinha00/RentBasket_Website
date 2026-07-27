@@ -20,10 +20,10 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
         {/* Header */}
         <div className="px-6 py-5 border-b border-border/50 bg-secondary/10">
           <h3 className="text-base font-bold flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-foreground/80" />
+            <span className="w-2 h-2 rounded-full bg-pine/80" />
             Order Summary
           </h3>
-          <p className="text-[11px] text-muted-foreground mt-1 font-medium uppercase tracking-wider">
+          <p className="text-xs text-muted-foreground mt-1 font-semibold">
             {itemCount} {itemCount === 1 ? "Item" : "Items"} in your rental plan
           </p>
         </div>
@@ -40,13 +40,13 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-bold text-foreground line-clamp-1">{item.name}</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">
+                    <p className="text-xs text-muted-foreground mt-0.5 font-medium">
                       {item.durationLabel} • {item.quantity} {item.quantity === 1 ? "Unit" : "Units"}
                     </p>
                     <div className="flex items-center justify-between mt-1">
-                      <span className="text-[11px] font-bold text-foreground flex items-center gap-1">
+                      <span className="text-xs font-bold text-jade-ink flex items-center gap-1">
                         {line.listRentTotal > line.rentTotal && (
-                          <span className="text-muted-foreground text-[9px]">₹{line.listRentTotal.toLocaleString("en-IN")}</span>
+                          <span className="text-muted-foreground text-[11px] line-through">₹{line.listRentTotal.toLocaleString("en-IN")}</span>
                         )}
                         <span>₹{line.rentTotal.toLocaleString("en-IN")}/mo</span>
                       </span>
@@ -61,7 +61,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground font-medium">Total Rent</span>
-              <span className="text-muted-foreground text-xs">₹{b.totalRent.toLocaleString("en-IN")}/mo</span>
+              <span className="text-ink text-xs">₹{b.totalRent.toLocaleString("en-IN")}/mo</span>
             </div>
 
             {b.itemSavings > 0 && (
@@ -80,22 +80,22 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
 
             <div className="flex items-center justify-between text-sm border-t border-border/30 pt-2 font-medium">
               <span className="text-muted-foreground">Base Rent</span>
-              <span>₹{b.netBaseRent.toLocaleString("en-IN")}/mo</span>
+              <span className="text-ink">₹{b.netBaseRent.toLocaleString("en-IN")}/mo</span>
             </div>
 
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>GST (18%)</span>
-              <span>₹{b.gst.toLocaleString("en-IN")}/mo</span>
+              <span className="text-ink">₹{b.gst.toLocaleString("en-IN")}/mo</span>
             </div>
 
             <div className="flex items-center justify-between text-sm font-bold border-t border-border/30 pt-2">
-              <span>Net Monthly Rent</span>
-              <span>₹{b.netMonthlyRent.toLocaleString("en-IN")}/mo</span>
+              <span className="text-ink">Net Monthly Rent</span>
+              <span className="text-ink">₹{b.netMonthlyRent.toLocaleString("en-IN")}/mo</span>
             </div>
-            
+
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground font-medium">Refundable Security</span>
-              <span className="font-bold">₹{b.security.toLocaleString("en-IN")}</span>
+              <span className="font-bold text-ink">₹{b.security.toLocaleString("en-IN")}</span>
             </div>
 
             <div className="pt-2 space-y-2 border-t border-border/50">
@@ -103,22 +103,22 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
                 { label: "Delivery & Installation", icon: Truck },
               ].map(({ label, icon: Icon }) => (
                 <div key={label} className="flex items-center justify-between">
-                  <span className="text-[11px] text-muted-foreground flex items-center gap-2 font-medium uppercase tracking-wider">
+                  <span className="text-xs text-muted-foreground flex items-center gap-2 font-semibold">
                     <Icon className="w-3 h-3" />
                     {label}
                   </span>
-                  <span className="text-[11px] font-bold text-success flex items-center gap-1 uppercase tracking-wider">
+                  <span className="text-xs font-bold text-success flex items-center gap-1">
                     <CheckCircle className="w-3 h-3" />
                     Free
                   </span>
                 </div>
               ))}
               <div className="flex items-center justify-between">
-                <span className="text-[11px] text-muted-foreground flex items-center gap-2 font-medium uppercase tracking-wider">
+                <span className="text-xs text-muted-foreground flex items-center gap-2 font-semibold">
                   <Wrench className="w-3 h-3" />
                   Maintenance & Support
                 </span>
-                <span className="text-[11px] font-bold text-success uppercase tracking-wider">Included</span>
+                <span className="text-xs font-bold text-success">Included</span>
               </div>
             </div>
           </div>
@@ -127,14 +127,14 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
           <div className="border-t border-border pt-5 bg-secondary/10 -mx-6 px-6 pb-2">
             <div className="flex items-baseline justify-between mb-1">
               <span className="text-base font-bold text-foreground">Total (First Month)</span>
-              <span className="text-2xl font-black text-foreground tracking-tight">
+              <span className="text-2xl font-bold text-jade-ink tracking-tight">
                 ₹{b.netFirstMonth.toLocaleString("en-IN")}
               </span>
             </div>
 
             {/* Payment choice — Full vs 50% upfront. Drives razorpay payment_type. */}
             <div className="mt-3 space-y-2.5">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              <p className="text-xs font-bold text-muted-foreground">
                 Choose how much to pay now
               </p>
               {[
@@ -158,28 +158,28 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
                     type="button"
                     onClick={() => onPaymentChoiceChange?.(opt.id)}
                     aria-pressed={isSelected}
-                    className={`w-full flex items-center justify-between gap-3 p-3.5 rounded-xl border-2 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20 active:scale-[0.99] ${
+                    className={`w-full flex items-center justify-between gap-3 p-3.5 rounded-xl border-2 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99] ${
                       isSelected
-                        ? "border-foreground bg-foreground/5 ring-1 ring-foreground/20"
-                        : "border-border bg-background hover:border-foreground/35 hover:bg-secondary/20"
+                        ? "border-pine bg-mint-pale/60"
+                        : "border-border bg-background hover:border-pine/35 hover:bg-secondary/20"
                     }`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <span
                         className={`w-5 h-5 rounded-full flex items-center justify-center border-2 flex-shrink-0 transition-colors ${
-                          isSelected ? "bg-foreground border-foreground text-background" : "border-border text-transparent"
+                          isSelected ? "bg-pine border-pine text-white" : "border-border text-transparent"
                         }`}
                       >
                         <Check className="w-3 h-3 stroke-[3px]" />
                       </span>
                       <div className="min-w-0">
-                        <p className="text-sm font-bold text-foreground">
+                        <p className="text-sm font-bold text-ink">
                           {opt.title}
                         </p>
-                        <p className="text-[10px] text-muted-foreground font-medium leading-tight">{opt.sub}</p>
+                        <p className="text-xs text-muted-foreground font-medium leading-tight">{opt.sub}</p>
                       </div>
                     </div>
-                    <span className="text-base font-black tracking-tight flex-shrink-0 text-foreground">
+                    <span className="text-base font-bold tracking-tight flex-shrink-0 text-jade-ink">
                       ₹{opt.amount.toLocaleString("en-IN")}
                     </span>
                   </button>
@@ -189,7 +189,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
 
             <div className="flex items-center gap-1.5 text-success bg-success-muted px-2.5 py-1.5 rounded-xl border border-success-border mt-3 shadow-sm justify-center">
               <ShieldCheck className="w-4 h-4 flex-shrink-0" />
-              <p className="text-[10px] font-bold leading-tight uppercase tracking-wider">
+              <p className="text-xs font-bold leading-tight">
                 Full Security Deposit Refundable
               </p>
             </div>
@@ -205,7 +205,7 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
                 </div>
                 <button
                   onClick={removeCoupon}
-                  className="text-xs text-red-500 hover:underline font-medium"
+                  className="text-xs text-destructive hover:underline font-medium"
                 >
                   Remove
                 </button>
@@ -217,15 +217,15 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
           <button
             onClick={onPlaceOrder}
             disabled={isProcessing}
-            className="gradient-coral w-full py-4 rounded-2xl font-black text-lg shadow-lg shadow-primary/30 transition-all hover:shadow-primary/40 hover:opacity-95 active:scale-[0.98] disabled:opacity-70 disabled:grayscale flex items-center justify-center gap-3 group"
+            className="btn-pine w-full py-4 text-lg font-bold transition-all active:scale-[0.98] disabled:opacity-70 disabled:grayscale flex items-center justify-center gap-3 group"
           >
             {isProcessing
               ? "Processing..."
               : `Confirm & Pay ₹${(paymentChoice === "full" ? b.netFirstMonth : b.upfront).toLocaleString("en-IN")}`}
             {!isProcessing && <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">→</div>}
           </button>
-          
-          <p className="text-center text-[10px] text-muted-foreground font-medium flex items-center justify-center gap-1.5 opacity-70">
+
+          <p className="text-center text-xs text-muted-foreground font-medium flex items-center justify-center gap-1.5 opacity-70">
             <ShieldCheck className="w-3 h-3" />
             100% Encrypted & Secure Checkout
           </p>
@@ -239,10 +239,10 @@ const CheckoutSummary = ({ onPlaceOrder, isProcessing, items, paymentChoice = "m
           { icon: ShieldCheck, label: "Trust Guaranteed" },
         ].map((badg, idx) => (
           <div key={idx} className="flex items-center gap-2 p-3 bg-card border border-border rounded-2xl shadow-sm">
-            <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-foreground flex-shrink-0">
+            <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-jade-ink flex-shrink-0">
               <badg.icon className="w-3.5 h-3.5" />
             </div>
-            <span className="text-[10px] font-bold text-foreground leading-tight uppercase tracking-wider">{badg.label}</span>
+            <span className="text-xs font-bold text-foreground leading-tight">{badg.label}</span>
           </div>
         ))}
       </div>
