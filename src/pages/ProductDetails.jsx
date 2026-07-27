@@ -80,8 +80,7 @@ const ProductDetails = () => {
             </div>
             <h3 className="text-lg font-semibold mb-2">Couldn't load this product</h3>
             <p className="text-sm text-muted-foreground max-w-sm mb-5">
-              Something went wrong fetching the product. Please check your connection
-              and try again.
+              We couldn't load this product. Check your connection and try again.
             </p>
             <button
               onClick={() => refetch()}

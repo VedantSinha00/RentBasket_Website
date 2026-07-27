@@ -84,7 +84,7 @@ const AddToCartBlock = ({ product, selectedDuration, quantity, onQuantityChange 
         <button
           onClick={handleAddToCart}
           disabled={isOutOfStock}
-          className="btn-gradient-coral w-full py-3.5 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale"
+          className="btn-pine w-full py-3.5 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale"
         >
           {isOutOfStock ? "Out of Stock" : "Add to Basket"}
         </button>
@@ -97,7 +97,7 @@ const AddToCartBlock = ({ product, selectedDuration, quantity, onQuantityChange 
             key={i}
             className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground"
           >
-            <tp.icon className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+            <tp.icon className="w-3.5 h-3.5 text-jade-ink flex-shrink-0" />
             {tp.label}
           </div>
         ))}

@@ -18,14 +18,14 @@ const Breadcrumb = ({ product }) => {
           <li key={i} className="flex items-center gap-1.5">
             <Link
               to={crumb.to}
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-ink-muted hover:text-ink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
             >
               {crumb.label}
             </Link>
-            <ChevronRight className="w-3 h-3 text-muted-foreground/50" />
+            <ChevronRight className="w-3 h-3 text-ink-muted/50" />
           </li>
         ))}
-        <li className="text-foreground font-medium truncate max-w-[200px] md:max-w-none">
+        <li className="text-ink font-semibold truncate max-w-[200px] md:max-w-none">
           {product.name}
         </li>
       </ol>

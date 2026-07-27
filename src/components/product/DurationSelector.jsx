@@ -35,21 +35,21 @@ const DurationSelector = ({ product, selectedDuration, onDurationChange }) => {
             <button
               key={d.key}
               onClick={() => onDurationChange(d.key)}
-              className={`relative flex flex-col items-center justify-center px-2 py-3 md:py-3.5 rounded-xl border-2 transition-all duration-200 text-center ${
+              className={`relative flex flex-col items-center justify-center px-2 py-3 md:py-3.5 rounded-xl border-2 transition-all duration-200 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                 isSelected
-                  ? "border-foreground bg-foreground/5 shadow-sm"
-                  : "border-border hover:border-foreground/35 bg-background"
+                  ? "border-pine bg-pine/5 shadow-sm"
+                  : "border-border hover:border-pine/35 bg-background"
               }`}
             >
               {/* Badge — floats above the top border of the box */}
               {badge && (
                 <span
-                  className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap z-10 ${
+                  className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap z-10 ${
                     badge === "Best Value"
-                      ? "bg-foreground text-background"
+                      ? "bg-pine text-white"
                       : badge === "Most Popular"
                       ? "bg-secondary text-foreground"
-                      : "bg-foreground text-background"
+                      : "bg-pine text-white"
                   }`}
                 >
                   {badge}
@@ -64,8 +64,8 @@ const DurationSelector = ({ product, selectedDuration, onDurationChange }) => {
                 {d.label}
               </span>
               <span
-                className={`text-[11px] md:text-xs font-medium ${
-                  isSelected ? "text-foreground/80" : "text-muted-foreground"
+                className={`text-xs font-medium ${
+                  isSelected ? "text-jade-ink" : "text-muted-foreground"
                 }`}
               >
                 {formatPrice(d.key)}
@@ -94,7 +94,7 @@ const DurationSelector = ({ product, selectedDuration, onDurationChange }) => {
             </span>
           </span>
         </span>
-        <span className="text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground px-2 py-1 rounded-full whitespace-nowrap">
+        <span className="text-xs font-semibold bg-muted text-muted-foreground px-2 py-1 rounded-full whitespace-nowrap">
           Coming soon
         </span>
       </button>

@@ -40,9 +40,9 @@ const ProductGallery = ({ product }) => {
           {allTags.map((tag, i) => (
             <span
               key={i}
-              className={`text-[10px] md:text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm ${
+              className={`text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm ${
                 i === 0
-                  ? "bg-foreground text-background font-medium"
+                  ? "bg-pine text-white font-medium"
                   : "bg-white/90 text-foreground backdrop-blur-sm border border-border/50"
               }`}
             >
@@ -85,10 +85,10 @@ const ProductGallery = ({ product }) => {
             <button
               key={i}
               onClick={() => setActiveIndex(i)}
-              className={`w-16 h-16 md:w-20 md:h-20 rounded-xl border-2 overflow-hidden bg-white transition-all duration-200 flex-shrink-0 ${
+              className={`w-16 h-16 md:w-20 md:h-20 rounded-xl border-2 overflow-hidden bg-white transition-all duration-200 flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                 activeIndex === i
-                  ? "border-foreground shadow-sm"
-                  : "border-border hover:border-foreground/35"
+                  ? "border-pine shadow-sm"
+                  : "border-border hover:border-pine/35"
               }`}
             >
               <img

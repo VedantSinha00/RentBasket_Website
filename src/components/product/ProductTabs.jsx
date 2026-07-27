@@ -93,9 +93,9 @@ const ProductTabs = ({ product }) => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-5 py-3 text-sm font-medium transition-all relative ${
+              className={`px-5 py-3 text-sm font-medium transition-all relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-t-lg ${
                 activeTab === tab.key
-                  ? "text-foreground"
+                  ? "text-jade-ink"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -103,7 +103,7 @@ const ProductTabs = ({ product }) => {
               {activeTab === tab.key && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-foreground rounded-full"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-jade rounded-full"
                 />
               )}
             </button>

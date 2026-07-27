@@ -5,8 +5,8 @@ import { shareProduct } from "@/lib/share";
 
 const STOCK_STATUS = {
   in_stock: { label: "In Stock", Icon: CheckCircle, className: "text-success" },
-  limited: { label: "Limited Stock", Icon: CheckCircle, className: "text-amber-500" },
-  out_of_stock: { label: "Out of Stock", Icon: XCircle, className: "text-muted-foreground" },
+  limited: { label: "Limited Stock", Icon: CheckCircle, className: "text-terracotta" },
+  out_of_stock: { label: "Out of Stock", Icon: XCircle, className: "text-destructive" },
 };
 
 const ProductInfo = ({ product }) => {
@@ -40,7 +40,7 @@ const ProductInfo = ({ product }) => {
           type="button"
           onClick={handleShare}
           aria-label={`Share ${product.name}`}
-          className="shrink-0 mt-1 inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-2 text-sm font-sans font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          className="shrink-0 mt-1 inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-2 text-sm font-sans font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           {justCopied ? (
             <Check className="h-4 w-4 text-success" />
@@ -71,7 +71,7 @@ const ProductInfo = ({ product }) => {
           );
         })()}
         <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
-          <MapPin className="w-3.5 h-3.5 text-primary" />
+          <MapPin className="w-3.5 h-3.5 text-jade-ink" />
           Available in Delhi NCR
         </span>
       </div>

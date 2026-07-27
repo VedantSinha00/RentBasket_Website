@@ -28,9 +28,9 @@ const RelatedProducts = ({ productId }) => {
           You may also like
         </h2>
         <div className="flex gap-5 md:gap-6 overflow-x-auto pb-5 pt-2 px-2 -mx-2 custom-scrollbar">
-          {related.map((product) => (
+          {related.map((product, index) => (
             <div key={product.id} className="w-[280px] sm:w-[320px] shrink-0">
-              <ProductCard product={product} />
+              <ProductCard product={product} index={index} />
             </div>
           ))}
         </div>

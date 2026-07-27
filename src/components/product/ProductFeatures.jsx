@@ -17,8 +17,8 @@ const ProductFeatures = ({ product }) => {
               key={i}
               className="bg-card border border-border rounded-xl p-4 text-center hover:shadow-soft transition-shadow group"
             >
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-2.5 group-hover:scale-110 transition-transform">
-                <IconComp className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 rounded-lg bg-mint flex items-center justify-center mx-auto mb-2.5 group-hover:scale-110 transition-transform">
+                <IconComp className="w-5 h-5 text-jade-ink" />
               </div>
               <span className="text-xs md:text-sm font-medium text-foreground">
                 {f.label}

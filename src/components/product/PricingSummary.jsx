@@ -21,7 +21,7 @@ const PricingSummary = ({ product, selectedDuration, quantity }) => {
   ]);
 
   return (
-    <div className="bg-card border border-border/50 rounded-2xl p-5 md:p-6 shadow-soft">
+    <div className="bg-mint-pale/40 border border-border/50 rounded-2xl p-5 md:p-6 shadow-soft">
       <h3 className="text-base font-bold mb-4 flex items-center gap-2">
         <span className="w-2 h-2 rounded-full bg-foreground/80" />
         Pricing Summary
@@ -59,7 +59,7 @@ const PricingSummary = ({ product, selectedDuration, quantity }) => {
         {/* Net Monthly Rent */}
         <div className="flex items-center justify-between font-bold text-foreground">
           <span className="text-sm">Net Monthly Rent</span>
-          <span className="text-sm">
+          <span className="text-sm text-jade-ink font-semibold">
             ₹{b.netMonthlyRent.toLocaleString("en-IN")}
             {isMonthly ? "/mo" : ""}
           </span>
@@ -84,7 +84,7 @@ const PricingSummary = ({ product, selectedDuration, quantity }) => {
             <span className="text-base font-bold text-foreground">
               Total (First Month)
             </span>
-            <span className="text-xl md:text-2xl font-black text-foreground tracking-tight">
+            <span className="text-xl md:text-2xl font-bold text-jade-ink tracking-tight">
               ₹{b.netMonthlyRent.toLocaleString("en-IN")}
               {isMonthly ? "/mo" : ""}
             </span>
