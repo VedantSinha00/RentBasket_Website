@@ -106,7 +106,7 @@ const Contact = () => {
               rel="noopener noreferrer"
               className="flex items-center gap-2 hover:text-foreground transition-colors"
             >
-              <MessageSquare className="w-5 h-5 text-[#2E7D32]" />
+              <MessageSquare className="w-5 h-5 text-jade-ink" />
               WhatsApp Support (+91 99598 58473)
             </a>
           </div>

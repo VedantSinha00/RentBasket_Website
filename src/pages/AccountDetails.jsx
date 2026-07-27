@@ -290,7 +290,7 @@ const AccountDetails = () => {
       <main className="flex-1 section-container py-10 md:py-14 max-w-lg mx-auto w-full">
         <Link
           to="/profile"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest mb-6"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-muted hover:text-ink transition-colors mb-6"
         >
           <ChevronLeft className="w-3.5 h-3.5" /> Profile
         </Link>

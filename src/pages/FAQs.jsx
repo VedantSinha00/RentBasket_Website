@@ -120,7 +120,7 @@ const FAQs = () => {
               href="https://wa.me/919959858473"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 md:flex-none whitespace-nowrap flex items-center justify-center gap-2 h-11 px-5 rounded-full text-white font-sans font-bold text-sm bg-[#2E7D32] hover:bg-[#2E7D32]/90 transition-colors"
+              className="flex-1 md:flex-none whitespace-nowrap flex items-center justify-center gap-2 h-11 px-5 rounded-full text-white font-sans font-bold text-sm bg-pine hover:bg-pine-hover transition-colors"
             >
               <MessageSquare className="w-4 h-4" />
               WhatsApp

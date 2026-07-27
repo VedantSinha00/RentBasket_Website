@@ -21,7 +21,7 @@ const FloatingSupport = () => {
       href="https://wa.me/919958096702"
       target="_blank"
       rel="noopener noreferrer"
-      className={`fixed right-4 md:right-6 z-50 flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-elevated hover:scale-105 active:scale-95 transition-all duration-300
+      className={`fixed right-4 md:right-6 z-50 flex items-center justify-center w-14 h-14 bg-pine hover:bg-pine-hover text-white rounded-full shadow-elevated hover:scale-105 active:scale-95 transition-all duration-300
         ${isTabBarHidden ? "bottom-6" : "bottom-20 md:bottom-6"}
       `}
       title="Chat on WhatsApp"

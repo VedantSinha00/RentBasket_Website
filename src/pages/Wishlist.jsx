@@ -14,7 +14,7 @@ const Wishlist = () => {
         {/* Back link */}
         <Link
           to="/catalog"
-          className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest mb-6"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-ink-muted hover:text-ink transition-colors mb-6"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
           Browse Catalogue

@@ -222,7 +222,7 @@ const Kyc = () => {
           <Link
             to={returnTo}
             state={returnTo === "/order-success" ? { orderData } : undefined}
-            className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-ink-muted hover:text-ink transition-colors"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             {backLabel}

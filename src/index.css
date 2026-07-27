@@ -74,19 +74,12 @@
       hsl(350, 88%, 50%) 50.11%,
       hsl(45, 98%, 76%) 129.44%
     );
-    --gradient-hero: linear-gradient(
-      86.65deg,
-      hsl(4, 76%, 51%) 15.65%,
-      hsl(350, 88%, 50%) 53.1%,
-      hsl(43, 90%, 78%) 90.55%
-    );
     --gradient-download: linear-gradient(
       to right,
       hsl(4, 77%, 50%),
       hsl(4, 77%, 38%)
     );
-    --gradient-myth-card: linear-gradient(180deg, hsl(4, 70%, 60%) 0%, hsl(4, 77%, 50%) 100%);
-    
+
     /* Shadows */
     --shadow-soft: 0 4px 20px -4px rgba(0, 0, 0, 0.1);
     --shadow-card: 0 8px 30px -8px rgba(0, 0, 0, 0.12);
@@ -246,26 +239,8 @@
     color: hsl(var(--primary-foreground));
   }
 
-  .text-gradient-coral {
-    background: var(--gradient-coral);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  .gradient-hero-text {
-    background-image: var(--gradient-hero);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
   .bg-gradient-download {
     background: var(--gradient-download);
-  }
-
-  .gradient-myth {
-    background: var(--gradient-myth-card);
   }
 }
 

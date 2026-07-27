@@ -10,7 +10,7 @@ const CartHeader = () => {
     <div className="section-container pt-6 pb-4 md:pt-8 md:pb-6">
       <Link
         to="/catalog"
-        className="inline-flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest mb-4"
+        className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-muted hover:text-ink transition-colors mb-4"
       >
         <ChevronLeft className="w-3.5 h-3.5" />
         Continue Shopping
