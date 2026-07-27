@@ -23,6 +23,7 @@ import { DURATION_OPTIONS } from "@/data/products";
 import { discountedRent } from "@/lib/pricing";
 import { dateNDaysFromToday } from "@/lib/delivery";
 import AppNudge from "@/components/AppNudge";
+import Footer from "@/components/Footer";
 
 const SUPPORT_WHATSAPP = "https://wa.me/919959858473";
 
@@ -164,7 +165,7 @@ const OrderCard = ({ order }) => {
             </p>
           </div>
         </div>
-        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border ${cfg.badgeClass}`}>
+        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${cfg.badgeClass}`}>
           <StatusIcon className="w-3.5 h-3.5" />
           {cfg.label}
         </span>
@@ -176,7 +177,7 @@ const OrderCard = ({ order }) => {
           <div key={idx} className="flex gap-4 pb-4 border-b border-border/30 last:border-0 last:pb-0">
             <Link
               to={`/product/${item.amenity_type_id}`}
-              className="w-16 h-16 bg-gray-50 rounded-xl border border-border/50 flex-shrink-0 p-1.5 hover:border-foreground/35 transition-colors group flex items-center justify-center"
+              className="w-16 h-16 bg-secondary rounded-xl border border-border/50 flex-shrink-0 p-1.5 hover:border-jade/60 transition-colors group flex items-center justify-center"
             >
               {item.image ? (
                 <img
@@ -202,7 +203,7 @@ const OrderCard = ({ order }) => {
                 <span className="w-1 h-1 rounded-full bg-border" />
                 <span>Qty: {item.quantity}</span>
               </div>
-              <span className="text-sm font-black text-foreground mt-1.5 inline-block">
+              <span className="text-sm font-bold text-jade-ink mt-1.5 inline-block">
                 ₹{item.rent.toLocaleString("en-IN")}/mo
               </span>
             </div>
@@ -214,9 +215,9 @@ const OrderCard = ({ order }) => {
       <div className="px-5 md:px-6 pb-5 md:pb-6 space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="rounded-xl border border-border/50 bg-background p-3.5">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 mb-2">
+            <p className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5 mb-2">
               <MapPin className="w-3.5 h-3.5 text-primary" />
-              {order.status === "completed" ? "Was Delivered To" : order.status === "active" ? "Delivered To" : "Delivering To"}
+              {order.status === "completed" ? "Was delivered to" : order.status === "active" ? "Delivered to" : "Delivering to"}
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed">{order.address || "Address on file"}</p>
             <p className="text-[11px] font-medium text-foreground mt-1.5">
@@ -224,7 +225,7 @@ const OrderCard = ({ order }) => {
             </p>
           </div>
           <div className="rounded-xl border border-border/50 bg-background p-3.5">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Billing</p>
+            <p className="text-xs font-semibold text-muted-foreground mb-2">Billing</p>
             <div className="space-y-1 text-xs">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Monthly Rent</span>
@@ -257,7 +258,7 @@ const OrderCard = ({ order }) => {
           {order.status === "completed" ? (
             <button
               onClick={handleRentAgain}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-foreground bg-secondary hover:bg-foreground hover:text-background transition-all border border-border/80 active:scale-95"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold text-ink bg-secondary hover:bg-pine hover:text-white transition-all border border-border/80 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Rent Again
@@ -265,7 +266,7 @@ const OrderCard = ({ order }) => {
           ) : order.status === "active" ? (
             <a
               href="tel:+919959858473"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-foreground bg-secondary hover:bg-foreground hover:text-background transition-all border border-border/80 active:scale-95"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold text-ink bg-secondary hover:bg-pine hover:text-white transition-all border border-border/80 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <Headset className="w-3.5 h-3.5" />
               Get Support
@@ -275,7 +276,7 @@ const OrderCard = ({ order }) => {
               href={SUPPORT_WHATSAPP}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-foreground bg-secondary hover:bg-foreground hover:text-background transition-all border border-border/80 active:scale-95"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold text-ink bg-secondary hover:bg-pine hover:text-white transition-all border border-border/80 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <Truck className="w-3.5 h-3.5" />
               Track Delivery
@@ -348,7 +349,7 @@ const MyOrders = () => {
                 <img src={logo} alt="RentBasket logo" className="w-24 md:w-28" />
               </div>
             </Link>
-            <Link to="/catalog" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/catalog" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">
               Browse More
             </Link>
           </div>
@@ -370,7 +371,7 @@ const MyOrders = () => {
               <ShoppingBag className="w-5 h-5 text-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl md:text-4xl font-black font-display text-foreground tracking-tight">
+              <h1 className="text-2xl md:text-4xl font-bold font-display text-foreground tracking-tight">
                 My Orders
               </h1>
               <p className="text-[11px] md:text-sm text-muted-foreground font-medium">
@@ -387,12 +388,12 @@ const MyOrders = () => {
                 <button
                   key={f.key}
                   onClick={() => setFilter(f.key)}
-                  className={`flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all active:scale-95 ${
-                    isActive ? "bg-foreground text-background shadow-sm" : "bg-secondary/40 text-muted-foreground hover:bg-secondary/70"
+                  className={`flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                    isActive ? "bg-pine text-white shadow-sm" : "bg-secondary text-ink-muted hover:bg-mint-pale"
                   }`}
                 >
                   {f.label}
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isActive ? "bg-white/20" : "bg-background"}`}>
+                  <span className={`text-xs px-1.5 py-0.5 rounded-full ${isActive ? "bg-white/20" : "bg-background"}`}>
                     {countFor(f.key)}
                   </span>
                 </button>
@@ -409,7 +410,7 @@ const MyOrders = () => {
           />
 
           {loadError && !isLoading && (
-            <div className="mb-5 rounded-xl border border-border bg-secondary px-4 py-3 text-xs font-medium text-foreground">
+            <div className="mb-5 rounded-xl border border-butter bg-butter/50 px-4 py-3 text-xs font-medium text-ink">
               We couldn't refresh your orders just now. Showing recent activity from this device — pull up again in a bit.
             </div>
           )}
@@ -426,7 +427,7 @@ const MyOrders = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 px-6 bg-card border border-dashed border-border rounded-2xl">
+            <div className="text-center py-16 px-6 bg-card border border-border rounded-2xl">
               <div className="w-16 h-16 rounded-2xl bg-secondary/40 flex items-center justify-center mx-auto mb-4">
                 <Package className="w-7 h-7 text-muted-foreground" />
               </div>
@@ -436,7 +437,7 @@ const MyOrders = () => {
                   ? `You don't have any ${filter} orders.`
                   : "You haven't placed any orders yet."} Browse our catalogue and set up your home in minutes.
               </p>
-              <Link to="/catalog" className="btn-gradient-coral inline-flex px-6 py-3 text-sm font-semibold">
+              <Link to="/catalog" className="btn-pine inline-flex px-6 py-3 text-sm">
                 Browse Catalogue
               </Link>
             </div>
@@ -444,12 +445,14 @@ const MyOrders = () => {
 
           <div className="mt-10 text-center text-xs md:text-sm text-muted-foreground py-6 border-t border-border/50">
             Need help with an order?{" "}
-            <a href="tel:+919959858473" className="text-foreground font-semibold hover:underline">
+            <a href="tel:+919959858473" className="text-ink font-semibold hover:underline">
               Call +91 9959858473
             </a>
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };
