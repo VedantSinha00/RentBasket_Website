@@ -107,12 +107,6 @@ const HeroSection = () => {
               >
                 Start Renting
               </Link>
-              <Link
-                to={catalogLink}
-                className="btn-outline-pine justify-center"
-              >
-                Browse Products
-              </Link>
             </motion.div>
 
             <StatChips className="w-full max-w-sm mt-2" />
@@ -141,7 +135,7 @@ const HeroSection = () => {
                   to={catalogLink}
                   className="btn-jade shrink-0 py-2.5 px-5 text-sm"
                 >
-                  Rent Now
+                  Browse Products
                 </Link>
               </div>
             </div>
