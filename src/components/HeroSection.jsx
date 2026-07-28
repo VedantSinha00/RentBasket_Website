@@ -119,8 +119,8 @@ const HeroSection = () => {
             <StatChips className="w-full max-w-sm mt-1" />
           </div>
 
-          {/* Right column: pine-framed lifestyle photo */}
-          <motion.div variants={photoReveal} className="relative mt-2 lg:mt-0">
+          {/* Right column: pine-framed lifestyle photo (desktop only) */}
+          <motion.div variants={photoReveal} className="hidden lg:block relative mt-2 lg:mt-0">
             <div className="rounded-3xl bg-pine p-2.5 md:p-3 shadow-elevated border border-white/10">
               <div className="relative rounded-[20px] overflow-hidden">
                 <img
