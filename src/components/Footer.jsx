@@ -45,6 +45,30 @@ const Footer = () => {
                 </li>
                 <li>
                   <Link
+                    to="/reviews"
+                    className="hover:text-white hover:underline underline-offset-4 transition-colors duration-200 inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
+                  >
+                    Reviews
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/case-study"
+                    className="hover:text-white hover:underline underline-offset-4 transition-colors duration-200 inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
+                  >
+                    Case Studies
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/blog"
+                    className="hover:text-white hover:underline underline-offset-4 transition-colors duration-200 inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
+                  >
+                    Blog
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/terms-n-conditions"
                     className="hover:text-white hover:underline underline-offset-4 transition-colors duration-200 inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
                   >
