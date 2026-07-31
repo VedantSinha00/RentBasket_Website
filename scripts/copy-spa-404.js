@@ -90,6 +90,19 @@ for (const slug of categorySlugs) {
   writeRouteIndex("rent", slug);
 }
 
+// Blog posts (dynamic :slug route)
+const blogPostsSource = readFileSync(
+  join(process.cwd(), "src", "data", "blogPosts.js"),
+  "utf8"
+);
+const blogSlugs = [
+  ...blogPostsSource.matchAll(/^\s+slug:\s*"([^"]+)"/gm),
+].map((m) => m[1]);
+
+for (const slug of blogSlugs) {
+  writeRouteIndex("blog", slug);
+}
+
 // Regenerate the AEO section of the sitemap so it can't drift from the data
 // files above. Static/core page entries live in the sitemap source file
 // itself and are preserved as-is.
@@ -105,6 +118,10 @@ if (existsSync(sitemapPath)) {
       (slug) =>
         `  <url>\n    <loc>${SITE_URL}/rent/${slug}/</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>`
     ),
+    ...blogSlugs.map(
+      (slug) =>
+        `  <url>\n    <loc>${SITE_URL}/blog/${slug}/</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.5</priority>\n  </url>`
+    ),
   ].join("\n");
   sitemap = sitemap.replace(
     /<!-- AEO-GENERATED-START -->[\s\S]*<!-- AEO-GENERATED-END -->/,
@@ -114,5 +131,5 @@ if (existsSync(sitemapPath)) {
 }
 
 console.log(
-  `copy-spa-404: wrote 404.html + ${staticRoutes.length} routes + ${productIds.length} product pages + ${locationSlugs.length} location pages + ${categorySlugs.length} category pages`
+  `copy-spa-404: wrote 404.html + ${staticRoutes.length} routes + ${productIds.length} product pages + ${locationSlugs.length} location pages + ${categorySlugs.length} category pages + ${blogSlugs.length} blog posts`
 );

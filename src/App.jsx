@@ -32,6 +32,7 @@ import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import LocationPage from "./pages/locations/LocationPage";
 import ProductCategoryPage from "./pages/products/ProductCategoryPage";
+import BlogPost from "./pages/BlogPost";
 import CaseStudy from "./pages/CaseStudy";
 import Reviews from "./pages/Reviews";
 import NotFound from "./pages/NotFound";
@@ -101,6 +102,7 @@ const RouterApp = () => {
           {routePair("/about", <About />)}
           {routePair("/contact", <Contact />)}
           {routePair("/blog", <Blog />)}
+          {routePair("/blog/:slug", <BlogPost />)}
           {routePair("/rent-in/:citySlug", <LocationPage />)}
           {routePair("/rent/:categorySlug", <ProductCategoryPage />)}
           {routePair("/case-study", <CaseStudy />)}
