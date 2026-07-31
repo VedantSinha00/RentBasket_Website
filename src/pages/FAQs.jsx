@@ -3,41 +3,18 @@ import { ChevronDown, Phone, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
+import { faqs } from "@/data/faqs";
 
-const faqs = [
-  {
-    q: "How does the rental booking process work?",
-    a: "Booking with RentBasket is simple. Browse our catalogue, select your desired products and rental duration, and add them to your basket. When you click checkout, fill in your address and delivery details. Since this is V1, you will be redirected to WhatsApp with your itemized quote to confirm the details. You pay 50% upfront to confirm the booking, and the remaining 50% upon delivery."
-  },
-  {
-    q: "What KYC verification is required before delivery?",
-    a: "To ensure safety and secure transactions, we require: (1) A valid Government Photo ID (Aadhaar Card, PAN Card, or Passport) and (2) Address proof of your new residence (registered Rent Agreement, Utility Bill, or Company Joining/Relocation Letter). Our verification team will review these before dispatching your products."
-  },
-  {
-    q: "How is the security deposit calculated and refunded?",
-    a: "The refundable security deposit is calculated as a multiple of the product's monthly list rent (typically 2x). It is 100% interest-free and refundable. Once your rental duration ends and the items are picked up, our QA team will inspect the assets. The refund is processed directly to your bank account within 7–10 working days of return."
-  },
-  {
-    q: "Are delivery, installation, and setup free?",
-    a: "Yes! Delivery, professional installation, and demo are entirely free for all monthly rentals in our serviceable zones across Gurgaon and Noida (Delhi NCR). Our expert technicians handle the entire heavy lifting and setup."
-  },
-  {
-    q: "What is your policy on damages and normal wear-and-tear?",
-    a: "We expect normal wear-and-tear from daily use, such as minor scuffs on wood or slight fabric wear, which incur absolutely zero charges. However, major structural damages, deep burns, severe water damage from negligence, or missing parts are charged. Repair costs will be deducted from your security deposit."
-  },
-  {
-    q: "Is maintenance and repair service free?",
-    a: "Yes, all manufacturing defects and functional issues (such as an AC not cooling or a washing machine error code) are fully covered. Simply contact our support, and we will send a technician to repair or replace the item at no cost."
-  },
-  {
-    q: "Can I relocate my rented items if I move?",
-    a: "Yes! If you are relocating within our serviceable areas in Gurgaon or Noida, RentBasket offers a one-time free relocation service. Our team will safely uninstall, transport, and reinstall your rented items at your new address."
-  },
-  {
-    q: "What is the minimum lock-in period, and can I cancel early?",
-    a: "Our minimum rental lock-in period is 3 months. If you wish to cancel and return your items before the end of your selected tenure or before the 3-month mark, a foreclosure fee will be charged based on the standard non-discounted rates or the remaining lock-in period."
-  }
-];
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: { "@type": "Answer", text: a },
+  })),
+};
 
 const FAQs = () => {
   const [openIndex, setOpenIndex] = useState(null);
@@ -45,6 +22,13 @@ const FAQs = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="Furniture & Appliance Rental FAQs"
+        description="Answers to common questions about renting furniture and appliances from RentBasket in Delhi NCR — deposits, KYC, delivery, maintenance, relocation, and payments."
+        keywords="furniture rental faq, appliance rental faq, rentbasket faq, furniture on rent questions delhi ncr"
+        path="/faqs/"
+        jsonLd={faqJsonLd}
+      />
       <Header />
       <main className="section-container py-12 md:py-20 max-w-3xl">
         <div className="text-center mb-12">
