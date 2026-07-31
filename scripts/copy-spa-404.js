@@ -3,10 +3,15 @@
  * (even when 404.html loads the SPA). This script:
  * 1. Copies index.html → 404.html (fallback for unknown paths)
  * 2. Copies index.html → <route>/index.html (HTTP 200 for known routes)
+ * 3. Appends the AEO location/category page URLs to public/sitemap.xml's
+ *    build output, so that list never drifts from the data files it's
+ *    derived from.
  * @see https://github.com/rafgraph/spa-github-pages
  */
-import { copyFileSync, existsSync, mkdirSync, readFileSync } from "fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
+
+const SITE_URL = "https://home.rentbasket.com";
 
 const distDir = join(process.cwd(), "dist");
 const indexPath = join(distDir, "index.html");
@@ -72,6 +77,42 @@ for (const slug of locationSlugs) {
   writeRouteIndex("rent-in", slug);
 }
 
+// Product category landing pages (dynamic :categorySlug route)
+const productCategoriesSource = readFileSync(
+  join(process.cwd(), "src", "data", "productCategories.js"),
+  "utf8"
+);
+const categorySlugs = [
+  ...productCategoriesSource.matchAll(/^\s+slug:\s*"([^"]+)"/gm),
+].map((m) => m[1]);
+
+for (const slug of categorySlugs) {
+  writeRouteIndex("rent", slug);
+}
+
+// Regenerate the AEO section of the sitemap so it can't drift from the data
+// files above. Static/core page entries live in the sitemap source file
+// itself and are preserved as-is.
+const sitemapPath = join(process.cwd(), "public", "sitemap.xml");
+if (existsSync(sitemapPath)) {
+  let sitemap = readFileSync(sitemapPath, "utf8");
+  const aeoUrls = [
+    ...locationSlugs.map(
+      (slug) =>
+        `  <url>\n    <loc>${SITE_URL}/rent-in/${slug}/</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>`
+    ),
+    ...categorySlugs.map(
+      (slug) =>
+        `  <url>\n    <loc>${SITE_URL}/rent/${slug}/</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>`
+    ),
+  ].join("\n");
+  sitemap = sitemap.replace(
+    /<!-- AEO-GENERATED-START -->[\s\S]*<!-- AEO-GENERATED-END -->/,
+    `<!-- AEO-GENERATED-START -->\n${aeoUrls}\n  <!-- AEO-GENERATED-END -->`
+  );
+  writeFileSync(join(distDir, "sitemap.xml"), sitemap);
+}
+
 console.log(
-  `copy-spa-404: wrote 404.html + ${staticRoutes.length} routes + ${productIds.length} product pages + ${locationSlugs.length} location pages`
+  `copy-spa-404: wrote 404.html + ${staticRoutes.length} routes + ${productIds.length} product pages + ${locationSlugs.length} location pages + ${categorySlugs.length} category pages`
 );

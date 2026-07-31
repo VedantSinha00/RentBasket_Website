@@ -31,6 +31,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import LocationPage from "./pages/locations/LocationPage";
+import ProductCategoryPage from "./pages/products/ProductCategoryPage";
 import CaseStudy from "./pages/CaseStudy";
 import Reviews from "./pages/Reviews";
 import NotFound from "./pages/NotFound";
@@ -101,6 +102,7 @@ const RouterApp = () => {
           {routePair("/contact", <Contact />)}
           {routePair("/blog", <Blog />)}
           {routePair("/rent-in/:citySlug", <LocationPage />)}
+          {routePair("/rent/:categorySlug", <ProductCategoryPage />)}
           {routePair("/case-study", <CaseStudy />)}
           {routePair("/reviews", <Reviews />)}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
