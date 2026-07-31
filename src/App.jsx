@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { HelmetProvider } from "react-helmet-async";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -112,6 +113,7 @@ const RouterApp = () => {
 const App = () => {
   return (
     <ErrorBoundary>
+      <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <WishlistProvider>
         <CartProvider>
@@ -126,6 +128,7 @@ const App = () => {
         </CartProvider>
         </WishlistProvider>
       </QueryClientProvider>
+      </HelmetProvider>
     </ErrorBoundary>
   );
 };
