@@ -93,6 +93,22 @@ const Footer = () => {
                 </li>
               </ul>
             </div>
+
+            <div>
+              <h4 className="font-display font-bold text-sm mb-4">Rent By City</h4>
+              <ul className="space-y-2 text-sm text-mint">
+                {["gurgaon", "noida", "delhi"].map((slug) => (
+                  <li key={slug}>
+                    <Link
+                      to={`/rent-in/${slug}`}
+                      className="hover:text-white hover:underline underline-offset-4 transition-colors duration-200 inline-block capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-pine rounded"
+                    >
+                      Furniture on Rent in {slug}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Office Locations */}

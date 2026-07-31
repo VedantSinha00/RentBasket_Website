@@ -41,6 +41,21 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://home.rentbasket.com/rent-in/gurgaon/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://home.rentbasket.com/rent-in/noida/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://home.rentbasket.com/rent-in/delhi/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://home.rentbasket.com/case-study/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>

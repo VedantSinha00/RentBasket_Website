@@ -39,8 +39,9 @@ const staticRoutes = [
   "shipping-returns",
   "faqs",
   "about",
-  "contact"
+  "contact",
 ];
+
 for (const route of staticRoutes) {
   writeRouteIndex(route);
 }
@@ -58,6 +59,19 @@ for (const id of productIds) {
   writeRouteIndex("product", id);
 }
 
+// Location landing pages (dynamic :citySlug route — enumerate from data file)
+const locationsSource = readFileSync(
+  join(process.cwd(), "src", "data", "locations.js"),
+  "utf8"
+);
+const locationSlugs = [
+  ...locationsSource.matchAll(/^\s+slug:\s*"([^"]+)"/gm),
+].map((m) => m[1]);
+
+for (const slug of locationSlugs) {
+  writeRouteIndex("rent-in", slug);
+}
+
 console.log(
-  `copy-spa-404: wrote 404.html + ${staticRoutes.length} routes + ${productIds.length} product pages`
+  `copy-spa-404: wrote 404.html + ${staticRoutes.length} routes + ${productIds.length} product pages + ${locationSlugs.length} location pages`
 );
