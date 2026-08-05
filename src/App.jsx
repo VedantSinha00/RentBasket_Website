@@ -30,6 +30,8 @@ import ShippingReturns from "./pages/ShippingReturns";
 import FAQs from "./pages/FAQs";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import BlogPost from "./pages/BlogPost";
+import Blogs from "./pages/Blogs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -119,6 +121,8 @@ const RouterApp = () => {
           {routePair("/faqs", <FAQs />)}
           {routePair("/about", <About />)}
           {routePair("/contact", <Contact />)}
+          {routePair("/blogs", <Blogs />)}
+          {routePair("/blogs/:slug", <BlogPost />)}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
