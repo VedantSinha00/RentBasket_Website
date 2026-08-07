@@ -8,6 +8,36 @@ import ContactModal from "@/components/ContactModal";
 const Header = () => {
   const [contactOpen, setContactOpen] = useState(false);
   const [headerBg, setHeaderBg] = useState("bg-background/80");
+
+  const [showBanner, setShowBanner] = useState(() => {
+    try {
+      return sessionStorage.getItem("appBannerDismissed") !== "true";
+    } catch {
+      return true;
+    }
+  });
+
+  const dismissBanner = () => {
+    try {
+      sessionStorage.setItem("appBannerDismissed", "true");
+    } catch (e) {
+      // non-fatal
+    }
+    setShowBanner(false);
+  };
+
+  const [isIos, setIsIos] = useState(false);
+  useEffect(() => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+      setIsIos(true);
+    }
+  }, []);
+
+  const appLink = isIos
+    ? "https://apps.apple.com/in/app/rentbasket/id6477462224"
+    : "https://play.google.com/store/apps/details?id=com.rentoktenant&pcampaignid=web_share&pli=1";
+
   const { getCartItemCount } = useCart();
   const cartCount = getCartItemCount();
   const navigate = useNavigate();
@@ -131,6 +161,38 @@ const Header = () => {
 
   return (
     <header className={`sticky top-0 z-50 backdrop-blur-md border-b border-border/40 transition-colors duration-500 ${headerBg}`}>
+      {/* Smart App Banner */}
+      {showBanner && (
+        <div className="md:hidden bg-[#1E1E1E] text-[#F3F3F3] py-2.5 px-4 flex items-center justify-between border-b border-white/5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <button
+              onClick={dismissBanner}
+              aria-label="Dismiss Banner"
+              className="p-1 -ml-1 rounded-full text-white/50 hover:text-white transition-colors shrink-0"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+            <img
+              src={logo}
+              alt="RentBasket App"
+              className="w-7 h-7 object-contain bg-white rounded-lg p-0.5 shrink-0 border border-white/10"
+            />
+            <div className="min-w-0 leading-tight">
+              <p className="font-sans font-bold text-xs text-white truncate">RentBasket App</p>
+              <p className="font-sans text-[10px] text-white/60 truncate">Fast KYC & Live Tracking</p>
+            </div>
+          </div>
+          <a
+            href={appLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11px] font-sans font-bold bg-primary text-primary-foreground py-1 px-3 rounded-full hover:opacity-90 active:scale-95 transition-all shadow-sm shrink-0"
+          >
+            GET
+          </a>
+        </div>
+      )}
+
       {/* Wider than .section-container's 1600px cap and with its own edge
           padding — the header anchors to the actual viewport edges on
           ultra-wide screens instead of sitting in the same narrow centered
