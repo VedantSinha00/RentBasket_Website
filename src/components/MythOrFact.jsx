@@ -502,7 +502,8 @@ const MobileQuizSection = () => {
            fully interactive. Used after dismissal and for reduced motion. */
         <div
           ref={staticRef}
-          className="lg:hidden flex flex-col gap-5 items-center py-10 px-4 w-full bg-background border-b border-border/20"
+          data-header-bg="sage"
+          className="lg:hidden flex flex-col gap-5 items-center py-10 px-4 w-full bg-sage border-b border-border/20"
         >
           <h2 className="text-3xl sm:text-4xl font-semibold font-display tracking-tight text-foreground text-center">
             Myth or Reality?
@@ -513,7 +514,7 @@ const MobileQuizSection = () => {
         </div>
       ) : (
         /* Dynamic Runway / Sticky View */
-        <div ref={containerRef} className="lg:hidden relative w-full h-[220vh] bg-cream border-b border-border/20">
+        <div ref={containerRef} data-header-bg="sage" className="lg:hidden relative w-full h-[220vh] bg-sage border-b border-border/20">
           <div
             className={`sticky top-0 w-full h-screen overflow-hidden flex items-start justify-center pointer-events-none ${
               isCurrentlyFullscreen ? "z-[100]" : "z-10"
@@ -608,7 +609,7 @@ const MythOrFact = () => {
   return (
     <>
       {/* ── Desktop (≥ lg): 2-column editorial split ── */}
-      <section className="hidden lg:block py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-background border-b border-border/20">
+      <section data-header-bg="sage" className="hidden lg:block py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-sage border-b border-border/20">
         <div className="grid grid-cols-[1fr_2fr] gap-16 max-w-7xl mx-auto">
           {/* Left column: sticky title + CTA */}
           <div className="flex flex-col items-start text-left gap-6 lg:sticky lg:top-28 h-fit max-w-sm">
@@ -632,7 +633,7 @@ const MythOrFact = () => {
             {data.map((item, index) => (
               <div
                 key={index}
-                className="flex flex-row gap-8 bg-cream/35 border border-border/40 rounded-2xl p-6 shadow-soft hover:shadow-card hover:-translate-y-0.5 transition-all duration-300"
+                className="flex flex-row gap-8 bg-background border border-border/40 rounded-2xl p-6 shadow-soft hover:shadow-card hover:-translate-y-0.5 transition-all duration-300"
               >
                 {/* Belief */}
                 <div className="flex-1 flex flex-col gap-2">

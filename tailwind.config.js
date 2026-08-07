@@ -58,6 +58,7 @@ export default {
         coral: "hsl(var(--coral))",
         gold: "hsl(var(--gold))",
         cream: "hsl(var(--cream))",
+        sage: "hsl(var(--sage-mint))",
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",

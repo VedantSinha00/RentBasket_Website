@@ -24,11 +24,13 @@ const Index = () => {
     <div className="min-h-screen">
       <Header />
       <main>
-        <HeroSection
-          activeCategory={activeCategory}
-          onCategoryChange={handleCategoryChange}
-        />
-        <div ref={galleryRef} className="-mt-2">
+        <div data-header-bg="white">
+          <HeroSection
+            activeCategory={activeCategory}
+            onCategoryChange={handleCategoryChange}
+          />
+        </div>
+        <div ref={galleryRef} className="-mt-2" data-header-bg="white">
           <FurnitureGallery />
         </div>
         <WhatMakesDifferent />

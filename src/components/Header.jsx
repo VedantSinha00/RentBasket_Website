@@ -7,6 +7,7 @@ import ContactModal from "@/components/ContactModal";
 
 const Header = () => {
   const [contactOpen, setContactOpen] = useState(false);
+  const [headerBg, setHeaderBg] = useState("bg-background/80");
   const { getCartItemCount } = useCart();
   const cartCount = getCartItemCount();
   const navigate = useNavigate();
@@ -60,6 +61,42 @@ const Header = () => {
     if (!onCatalog) setQuery("");
   }, [onCatalog]);
 
+  useEffect(() => {
+    // Only run on the homepage
+    if (pathname !== "/" && pathname !== "") {
+      setHeaderBg("bg-background/80");
+      return;
+    }
+
+    const handleScroll = () => {
+      const sections = document.querySelectorAll("[data-header-bg]");
+      let activeBg = "bg-background/80"; // default fallback
+
+      const headerHeight = 64; // approximate height of header
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        // If the section is overlapping the header's baseline
+        if (rect.top <= headerHeight && rect.bottom > headerHeight) {
+          const bgType = section.getAttribute("data-header-bg");
+          if (bgType === "cream") {
+            activeBg = "bg-cream/90";
+          } else if (bgType === "sage") {
+            activeBg = "bg-sage/90";
+          } else if (bgType === "white") {
+            activeBg = "bg-background/90";
+          }
+        }
+      });
+
+      setHeaderBg(activeBg);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // run once on mount
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pathname]);
+
   const handleChange = (e) => {
     const val = e.target.value;
     setQuery(val);
@@ -93,7 +130,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/40">
+    <header className={`sticky top-0 z-50 backdrop-blur-md border-b border-border/40 transition-colors duration-500 ${headerBg}`}>
       {/* Wider than .section-container's 1600px cap and with its own edge
           padding — the header anchors to the actual viewport edges on
           ultra-wide screens instead of sitting in the same narrow centered

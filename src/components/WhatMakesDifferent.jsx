@@ -46,7 +46,7 @@ const WhatMakesDifferent = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <section className="bg-cream/35 py-8 md:py-12 border-t border-b border-border/20">
+    <section data-header-bg="cream" className="bg-cream py-8 md:py-12 border-t border-b border-border/20">
       <div className="section-container">
 
         {/* Editorial Title */}

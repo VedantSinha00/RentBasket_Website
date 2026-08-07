@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useProducts } from "@/hooks/useProducts";
 import ProductImage from "@/components/ui/ProductImage";
@@ -47,12 +48,22 @@ const GallerySkeleton = () => (
 );
 
 // Continuous auto-scroll speed, in px/second.
-const AUTO_SPEED = 40;
+const AUTO_SPEED = 20;
 
 const FurnitureGallery = () => {
   const { data: products = [], isLoading } = useProducts();
   const [autoScroll, setAutoScroll] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [randomProducts, setRandomProducts] = useState([]);
   const trackRef = useRef(null);
+  const row1TrackRef = useRef(null);
+  const row2TrackRef = useRef(null);
+  const row1OffsetRef = useRef(0);
+  const row2OffsetRef = useRef(0);
+  const row1SetWidthRef = useRef(0);
+  const row2SetWidthRef = useRef(0);
+  const row1DragRef = useRef(null);
+  const row2DragRef = useRef(null);
   const rafRef = useRef(null);
   const resumeTimeoutRef = useRef(null);
 
@@ -96,6 +107,42 @@ const FurnitureGallery = () => {
     return [...curated, ...backfill].slice(0, TARGET_CARD_COUNT);
   }, [products]);
 
+  // Select 16 random products once on page load (excluding those in the horizontal marquee)
+  useEffect(() => {
+    if (products.length > 0 && items.length > 0 && randomProducts.length === 0) {
+      const shownIds = new Set(items.map((p) => String(p.id)));
+      const candidates = products.filter(
+        (p) => !shownIds.has(String(p.id)) && p.stock_status === "in_stock"
+      );
+      // Shuffle candidates and pick 16
+      const shuffled = [...candidates].sort(() => 0.5 - Math.random());
+      setRandomProducts(shuffled.slice(0, 16));
+    }
+  }, [products, items, randomProducts.length]);
+
+  // Measure the width of one loop copy for Row 2 and Row 3
+  useEffect(() => {
+    if (!isExpanded || randomProducts.length < 16) return;
+
+    const measureRow = (trackRef, setWidthRef) => {
+      const track = trackRef.current;
+      if (!track) return;
+      const cards = track.children;
+      if (cards.length < 16) return;
+      const first = cards[0];
+      const firstOfSecondSet = cards[8]; // start of second copy
+      setWidthRef.current = firstOfSecondSet.offsetLeft - first.offsetLeft;
+    };
+
+    // Measure after rendering settles
+    const timer = setTimeout(() => {
+      measureRow(row1TrackRef, row1SetWidthRef);
+      measureRow(row2TrackRef, row2SetWidthRef);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [isExpanded, randomProducts]);
+
   // True circular strip: the item list is rendered twice back-to-back and
   // moved with a CSS transform (not scrollLeft). Because both halves are
   // pixel-identical, the offset can be wrapped with a modulo the instant it
@@ -130,25 +177,45 @@ const FurnitureGallery = () => {
     setWidthRef.current = firstOfSecondSet.offsetLeft - first.offsetLeft;
   }, [items, loopItems]);
 
-  // Continuous rAF-driven scroll — no discrete jumps, so there's nothing to
-  // visibly "snap." The offset wraps via modulo against one set's width,
-  // which is invisible because both copies are identical.
+  // Continuous rAF-driven scroll for all three carousels
   useEffect(() => {
     if (!autoScroll || items.length === 0) return;
     let last = performance.now();
+
     const tick = (now) => {
       const dt = now - last;
       last = now;
-      const setWidth = setWidthRef.current;
-      if (setWidth > 0) {
-        offsetRef.current = (offsetRef.current + AUTO_SPEED * (dt / 1000)) % setWidth;
-        applyOffset();
+      const delta = AUTO_SPEED * (dt / 1000);
+
+      // 1. Main Track (Row 1 of page - right-to-left)
+      const mainWidth = setWidthRef.current;
+      if (mainWidth > 0 && trackRef.current) {
+        offsetRef.current = (offsetRef.current + delta) % mainWidth;
+        trackRef.current.style.transform = `translateX(-${offsetRef.current}px)`;
       }
+
+      // 2. Expanded Row 1 (Row 2 of page - left-to-right)
+      if (isExpanded && randomProducts.length >= 16) {
+        const row1Width = row1SetWidthRef.current;
+        if (row1Width > 0 && row1TrackRef.current) {
+          row1OffsetRef.current = (row1OffsetRef.current - delta + row1Width) % row1Width;
+          row1TrackRef.current.style.transform = `translateX(-${row1OffsetRef.current}px)`;
+        }
+
+        // 3. Expanded Row 2 (Row 3 of page - right-to-left)
+        const row2Width = row2SetWidthRef.current;
+        if (row2Width > 0 && row2TrackRef.current) {
+          row2OffsetRef.current = (row2OffsetRef.current + delta) % row2Width;
+          row2TrackRef.current.style.transform = `translateX(-${row2OffsetRef.current}px)`;
+        }
+      }
+
       rafRef.current = requestAnimationFrame(tick);
     };
+
     rafRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [autoScroll, items.length]);
+  }, [autoScroll, items.length, isExpanded, randomProducts.length]);
 
   const nudge = (dir) => {
     setAutoScroll(false);
@@ -163,6 +230,34 @@ const FurnitureGallery = () => {
     resumeTimeoutRef.current = setTimeout(() => setAutoScroll(true), 2000);
   };
 
+  const nudgeRow1 = (dir) => {
+    setAutoScroll(false);
+    clearTimeout(resumeTimeoutRef.current);
+    const setWidth = row1SetWidthRef.current;
+    if (setWidth > 0) {
+      const cardStep = setWidth / 8;
+      // Row 2 is left-to-right (opposite direction), so we subtract dir
+      row1OffsetRef.current =
+        ((row1OffsetRef.current - dir * cardStep) % setWidth + setWidth) % setWidth;
+      row1TrackRef.current.style.transform = `translateX(-${row1OffsetRef.current}px)`;
+    }
+    resumeTimeoutRef.current = setTimeout(() => setAutoScroll(true), 2000);
+  };
+
+  const nudgeRow2 = (dir) => {
+    setAutoScroll(false);
+    clearTimeout(resumeTimeoutRef.current);
+    const setWidth = row2SetWidthRef.current;
+    if (setWidth > 0) {
+      const cardStep = setWidth / 8;
+      // Row 3 is right-to-left (standard direction), so we add dir
+      row2OffsetRef.current =
+        ((row2OffsetRef.current + dir * cardStep) % setWidth + setWidth) % setWidth;
+      row2TrackRef.current.style.transform = `translateX(-${row2OffsetRef.current}px)`;
+    }
+    resumeTimeoutRef.current = setTimeout(() => setAutoScroll(true), 2000);
+  };
+
   // Manual drag/swipe: same offset + modulo wrap as the auto-loop and the
   // arrow buttons, so all three input methods move through the same
   // seamless circular track.
@@ -170,6 +265,7 @@ const FurnitureGallery = () => {
 
   const pointerX = (e) => (e.touches ? e.touches[0].clientX : e.clientX);
 
+  // Main row drag handlers
   const onDragStart = (e) => {
     setAutoScroll(false);
     clearTimeout(resumeTimeoutRef.current);
@@ -192,11 +288,57 @@ const FurnitureGallery = () => {
     resumeTimeoutRef.current = setTimeout(() => setAutoScroll(true), 2000);
   };
 
+  // Row 2 Drag Handlers (Left-to-Right)
+  const onRow1DragStart = (e) => {
+    setAutoScroll(false);
+    clearTimeout(resumeTimeoutRef.current);
+    row1DragRef.current = { startX: pointerX(e), startOffset: row1OffsetRef.current };
+  };
+
+  const onRow1DragMove = (e) => {
+    if (!row1DragRef.current) return;
+    const setWidth = row1SetWidthRef.current;
+    if (setWidth <= 0) return;
+    const delta = row1DragRef.current.startX - pointerX(e);
+    row1OffsetRef.current =
+      ((row1DragRef.current.startOffset + delta) % setWidth + setWidth) % setWidth;
+    row1TrackRef.current.style.transform = `translateX(-${row1OffsetRef.current}px)`;
+  };
+
+  const onRow1DragEnd = () => {
+    if (!row1DragRef.current) return;
+    row1DragRef.current = null;
+    resumeTimeoutRef.current = setTimeout(() => setAutoScroll(true), 2000);
+  };
+
+  // Row 3 Drag Handlers (Right-to-Left)
+  const onRow2DragStart = (e) => {
+    setAutoScroll(false);
+    clearTimeout(resumeTimeoutRef.current);
+    row2DragRef.current = { startX: pointerX(e), startOffset: row2OffsetRef.current };
+  };
+
+  const onRow2DragMove = (e) => {
+    if (!row2DragRef.current) return;
+    const setWidth = row2SetWidthRef.current;
+    if (setWidth <= 0) return;
+    const delta = row2DragRef.current.startX - pointerX(e);
+    row2OffsetRef.current =
+      ((row2DragRef.current.startOffset + delta) % setWidth + setWidth) % setWidth;
+    row2TrackRef.current.style.transform = `translateX(-${row2OffsetRef.current}px)`;
+  };
+
+  const onRow2DragEnd = () => {
+    if (!row2DragRef.current) return;
+    row2DragRef.current = null;
+    resumeTimeoutRef.current = setTimeout(() => setAutoScroll(true), 2000);
+  };
+
   return (
     <section className="bg-cream/40 pt-0 pb-4 md:pb-10 -mt-1">
       <div className="section-container">
-        <h2 className="font-display text-xl sm:text-2xl font-semibold text-foreground tracking-tight mb-4 md:mb-6">
-          What people are renting in Gurgaon &amp; Noida
+        <h2 className="font-display text-xl sm:text-2xl font-semibold text-foreground tracking-tight mb-4 md:mb-6 text-center md:text-left">
+          What people are renting in <span className="whitespace-nowrap">Gurgaon &amp; Noida</span>
         </h2>
         {/* Catalog scroll */}
         <div className="relative">
@@ -255,22 +397,196 @@ const FurnitureGallery = () => {
             </div>
           )}
 
-          {/* Scroll nudge buttons (desktop) */}
+          {/* Scroll nudge buttons */}
           <button
             onClick={() => nudge(-1)}
-            className="hidden md:flex absolute -left-4 lg:-left-6 top-1/2 -translate-y-1/2 bg-white hover:bg-cream w-11 h-11 rounded-full shadow-elevated items-center justify-center transition-all hover:scale-105 z-10"
+            className="flex absolute -left-2 md:-left-4 lg:-left-6 top-1/2 -translate-y-1/2 bg-white hover:bg-cream w-9 h-9 md:w-11 md:h-11 rounded-full shadow-elevated items-center justify-center transition-all hover:scale-105 z-10"
             aria-label="Scroll left"
           >
-            <ChevronLeft className="w-5 h-5 text-foreground" />
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-foreground" />
           </button>
           <button
             onClick={() => nudge(1)}
-            className="hidden md:flex absolute -right-4 lg:-right-6 top-1/2 -translate-y-1/2 bg-white hover:bg-cream w-11 h-11 rounded-full shadow-elevated items-center justify-center transition-all hover:scale-105 z-10"
+            className="flex absolute -right-2 md:-right-4 lg:-right-6 top-1/2 -translate-y-1/2 bg-white hover:bg-cream w-9 h-9 md:w-11 md:h-11 rounded-full shadow-elevated items-center justify-center transition-all hover:scale-105 z-10"
             aria-label="Scroll right"
           >
-            <ChevronRight className="w-5 h-5 text-foreground" />
+            <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-foreground" />
           </button>
         </div>
+
+        {/* Toggle Button */}
+        {randomProducts.length > 0 && !isExpanded && (
+          <div className="mt-2 text-center">
+            <button
+              onClick={() => setIsExpanded(true)}
+              className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 mx-auto group py-1.5 px-3 rounded-md hover:bg-muted/10"
+            >
+              <span>Explore More Products</span>
+              <ChevronDown className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* Expanded Random Products Carousel (2 Rows) */}
+        <AnimatePresence initial={false}>
+          {isExpanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              className="-mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 overflow-hidden"
+            >
+              <div className="flex flex-col gap-6 pt-3 mt-1">
+                {/* Row 1 Wrapper */}
+                <div className="relative group/row-1">
+                  {/* Left fade */}
+                  <div className="pointer-events-none absolute left-0 top-0 bottom-4 w-12 z-10 bg-gradient-to-r from-cream/60 to-transparent" />
+                  {/* Right fade */}
+                  <div className="pointer-events-none absolute right-0 top-0 bottom-4 w-16 z-10 bg-gradient-to-l from-cream/60 to-transparent" />
+
+                  {/* Track Container */}
+                  <div className="overflow-hidden pb-4 px-2 md:px-4">
+                    <div
+                      ref={row1TrackRef}
+                      className="flex gap-4 md:gap-6 w-max will-change-transform"
+                      onTouchStart={onRow1DragStart}
+                      onTouchMove={onRow1DragMove}
+                      onTouchEnd={onRow1DragEnd}
+                      onMouseDown={onRow1DragStart}
+                      onMouseMove={onRow1DragMove}
+                      onMouseUp={onRow1DragEnd}
+                      onMouseLeave={onRow1DragEnd}
+                    >
+                      {[...randomProducts.slice(0, 8), ...randomProducts.slice(0, 8)].map((item, i) => {
+                        const startingPrice = getStartingPrice(item);
+                        return (
+                          <Link
+                            to={`/product/${item.id}`}
+                            key={i}
+                            draggable={false}
+                            className="group shrink-0 w-[210px] md:w-[250px] flex flex-col bg-white border border-border/40 rounded-2xl overflow-hidden shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300"
+                          >
+                            {/* Product image */}
+                            <div className="h-[220px] md:h-[260px] w-full bg-muted/5 flex items-center justify-center p-3 border-b border-border/20 overflow-hidden shrink-0">
+                              <ProductImage
+                                src={item.images?.[0] || item.image}
+                                alt={item.name}
+                                draggable={false}
+                                className="h-full w-full object-contain block group-hover:scale-[1.03] transition-transform duration-500 pointer-events-none"
+                              />
+                            </div>
+
+                            {/* Product info */}
+                            <div className="p-4 flex flex-col gap-1 text-left">
+                              <h3 className="font-display font-semibold text-foreground text-sm truncate leading-snug">
+                                {item.name}
+                              </h3>
+                              {startingPrice != null && (
+                                <span className="font-sans font-bold text-primary text-xs mt-1 leading-none">
+                                  From ₹{startingPrice.toLocaleString("en-IN")}/mo
+                                </span>
+                              )}
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Row 1 Navigation arrows */}
+                  <button
+                    onClick={() => nudgeRow1(-1)}
+                    className="flex absolute -left-2 md:-left-4 lg:-left-6 top-1/2 -translate-y-1/2 bg-white hover:bg-cream w-9 h-9 md:w-11 md:h-11 rounded-full shadow-elevated items-center justify-center transition-all hover:scale-105 z-10"
+                    aria-label="Scroll left"
+                  >
+                    <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-foreground" />
+                  </button>
+                  <button
+                    onClick={() => nudgeRow1(1)}
+                    className="flex absolute -right-2 md:-right-4 lg:-right-6 top-1/2 -translate-y-1/2 bg-white hover:bg-cream w-9 h-9 md:w-11 md:h-11 rounded-full shadow-elevated items-center justify-center transition-all hover:scale-105 z-10"
+                    aria-label="Scroll right"
+                  >
+                    <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-foreground" />
+                  </button>
+                </div>
+
+                {/* Row 2 Wrapper */}
+                <div className="relative group/row-2">
+                  {/* Left fade */}
+                  <div className="pointer-events-none absolute left-0 top-0 bottom-4 w-12 z-10 bg-gradient-to-r from-cream/60 to-transparent" />
+                  {/* Right fade */}
+                  <div className="pointer-events-none absolute right-0 top-0 bottom-4 w-16 z-10 bg-gradient-to-l from-cream/60 to-transparent" />
+
+                  {/* Track Container */}
+                  <div className="overflow-hidden pb-4 px-2 md:px-4">
+                    <div
+                      ref={row2TrackRef}
+                      className="flex gap-4 md:gap-6 w-max will-change-transform"
+                      onTouchStart={onRow2DragStart}
+                      onTouchMove={onRow2DragMove}
+                      onTouchEnd={onRow2DragEnd}
+                      onMouseDown={onRow2DragStart}
+                      onMouseMove={onRow2DragMove}
+                      onMouseUp={onRow2DragEnd}
+                      onMouseLeave={onRow2DragEnd}
+                    >
+                      {[...randomProducts.slice(8, 16), ...randomProducts.slice(8, 16)].map((item, i) => {
+                        const startingPrice = getStartingPrice(item);
+                        return (
+                          <Link
+                            to={`/product/${item.id}`}
+                            key={i}
+                            draggable={false}
+                            className="group shrink-0 w-[210px] md:w-[250px] flex flex-col bg-white border border-border/40 rounded-2xl overflow-hidden shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300"
+                          >
+                            {/* Product image */}
+                            <div className="h-[220px] md:h-[260px] w-full bg-muted/5 flex items-center justify-center p-3 border-b border-border/20 overflow-hidden shrink-0">
+                              <ProductImage
+                                src={item.images?.[0] || item.image}
+                                alt={item.name}
+                                draggable={false}
+                                className="h-full w-full object-contain block group-hover:scale-[1.03] transition-transform duration-500 pointer-events-none"
+                              />
+                            </div>
+
+                            {/* Product info */}
+                            <div className="p-4 flex flex-col gap-1 text-left">
+                              <h3 className="font-display font-semibold text-foreground text-sm truncate leading-snug">
+                                {item.name}
+                              </h3>
+                              {startingPrice != null && (
+                                <span className="font-sans font-bold text-primary text-xs mt-1 leading-none">
+                                  From ₹{startingPrice.toLocaleString("en-IN")}/mo
+                                </span>
+                              )}
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Row 2 Navigation arrows */}
+                  <button
+                    onClick={() => nudgeRow2(-1)}
+                    className="flex absolute -left-2 md:-left-4 lg:-left-6 top-1/2 -translate-y-1/2 bg-white hover:bg-cream w-9 h-9 md:w-11 md:h-11 rounded-full shadow-elevated items-center justify-center transition-all hover:scale-105 z-10"
+                    aria-label="Scroll left"
+                  >
+                    <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-foreground" />
+                  </button>
+                  <button
+                    onClick={() => nudgeRow2(1)}
+                    className="flex absolute -right-2 md:-right-4 lg:-right-6 top-1/2 -translate-y-1/2 bg-white hover:bg-cream w-9 h-9 md:w-11 md:h-11 rounded-full shadow-elevated items-center justify-center transition-all hover:scale-105 z-10"
+                    aria-label="Scroll right"
+                  >
+                    <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-foreground" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );

@@ -284,7 +284,7 @@ const VideoTestimonialRow = ({ items }) => {
 };
 
 const Testimonials = () => (
-  <section className="pt-4 pb-14 md:pt-6 md:pb-20 overflow-hidden bg-white">
+  <section data-header-bg="cream" className="pt-4 pb-14 md:pt-6 md:pb-20 overflow-hidden bg-cream">
     {/* Section heading (moved here from the removed LovedByCustomers fan) */}
     <div className="text-center mb-6 md:mb-8 px-4">
       <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-foreground tracking-tight leading-tight">
