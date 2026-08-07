@@ -1,5 +1,6 @@
 import turtleMascot from "@/assets/Group 50.png";
 import phoneAppScreen from "@/assets/iPhone 15 Pro.png";
+import { PLAY_STORE_URL, APP_STORE_URL } from "@/components/StoreButtons";
 
 const DownloadSection = () => {
   return (
@@ -69,7 +70,7 @@ const DownloadSection = () => {
             {/* Mobile/Tablet Buttons */}
             <div className="flex lg:hidden flex-row gap-3 w-full items-center justify-center -mt-12 sm:-mt-16 md:-mt-20 relative z-20">
               <a
-                href="https://play.google.com/store/apps/details?id=com.rentoktenant&pcampaignid=web_share&pli=1"
+                href={PLAY_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full"
@@ -83,7 +84,7 @@ const DownloadSection = () => {
               </a>
 
               <a
-                href="https://apps.apple.com/in/app/rentbasket/id6477462224"
+                href={APP_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full"
@@ -100,7 +101,7 @@ const DownloadSection = () => {
             {/* Desktop Buttons */}
             <div className="hidden lg:flex flex-col gap-3 md:gap-4 w-full md:w-auto items-start">
               <a
-                href="https://play.google.com/store/apps/details?id=com.rentoktenant&pcampaignid=web_share&pli=1"
+                href={PLAY_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -113,7 +114,7 @@ const DownloadSection = () => {
               </a>
 
               <a
-                href="https://apps.apple.com/in/app/rentbasket/id6477462224"
+                href={APP_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
               >

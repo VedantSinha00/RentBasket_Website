@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/context/CartContext";
 import ContactModal from "@/components/ContactModal";
+import { PLAY_STORE_URL, APP_STORE_URL } from "@/components/StoreButtons";
 
 const Header = () => {
   const [contactOpen, setContactOpen] = useState(false);
@@ -34,9 +35,7 @@ const Header = () => {
     }
   }, []);
 
-  const appLink = isIos
-    ? "https://apps.apple.com/in/app/rentbasket/id6477462224"
-    : "https://play.google.com/store/apps/details?id=com.rentoktenant&pcampaignid=web_share&pli=1";
+  const appLink = isIos ? APP_STORE_URL : PLAY_STORE_URL;
 
   const { getCartItemCount } = useCart();
   const cartCount = getCartItemCount();

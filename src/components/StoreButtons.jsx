@@ -9,8 +9,8 @@
  */
 
 export const PLAY_STORE_URL =
-  "https://play.google.com/store/apps/details?id=com.rentoktenant&pcampaignid=web_share&pli=1";
-export const APP_STORE_URL = "https://apps.apple.com/in/app/rentbasket/id6477462224";
+  "https://play.google.com/store/apps/details?id=com.rentbasket&pcampaignid=web_share";
+export const APP_STORE_URL = "https://apps.apple.com/in/app/rentbasket/id6776469758";
 
 const AndroidIcon = ({ className = "h-4 w-4 shrink-0" }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">

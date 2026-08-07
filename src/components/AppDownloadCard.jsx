@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { PLAY_STORE_URL, APP_STORE_URL } from "@/components/StoreButtons";
 
 const AppDownloadCard = () => {
   const [visible, setVisible] = useState(true);
@@ -34,7 +35,7 @@ const AppDownloadCard = () => {
 
             <div className="flex gap-2 px-4 pb-4">
               <a
-                href="https://play.google.com/store/apps/details?id=com.rentoktenant&pcampaignid=web_share&pli=1"
+                href={PLAY_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl bg-primary text-white text-sm font-semibold active:scale-[0.97] transition-transform"
@@ -45,7 +46,7 @@ const AppDownloadCard = () => {
                 Android
               </a>
               <a
-                href="https://apps.apple.com/in/app/rentbasket/id6477462224"
+                href={APP_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl bg-background/15 text-background text-sm font-semibold active:scale-[0.97] transition-transform"
